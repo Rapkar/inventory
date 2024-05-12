@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -18,6 +19,7 @@ type Users struct {
 	ID          uint   `gorm:"primaryKey"`
 	Name        string `gorm:"size:255;index:idx_name,unique"`
 	Email       string `gorm:"size:255;"`
+	Password    string `gorm:"type:varchar(255)"`
 	Phonenumber string `gorm:"size:255;"`
 	Role        string `gorm:"size:255;"`
 }
@@ -31,10 +33,11 @@ func URL() string {
 
 // Validate user pass
 func checkAuth(login Login) bool {
-	dbuser := "admin@admin.co"
-	dbpass := "0000"
+	a, _ := HashPassword("0000")
+	dbpass := login.pass
 	result := false
-	if login.email == dbuser && login.pass == dbpass {
+	fmt.Println("sssssssssssssssssssssssssssssss")
+	if CheckPasswordHash(dbpass, a) {
 		result = true
 	}
 	return result
@@ -68,10 +71,23 @@ func loginEndpoint(c *gin.Context) {
 	})
 }
 
+// password hashing
+
+func HashPassword(password string) (string, error) {
+	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
+	return string(bytes), err
+}
+func CheckPasswordHash(password, hash string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+	return err == nil
+}
+
 func main() {
 
 	dsn := "root:0311121314@tcp(127.0.0.1:3306)/Inventory?charset=utf8mb4&parseTime=True&loc=Local"
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+
+	// fmt.Println("pass is:", CheckPasswordHash("!HS0311121314", a), "pass \n")
 	if err == nil {
 		fmt.Print("Connection success : ", db)
 
@@ -79,9 +95,9 @@ func main() {
 
 		// result := db.Create(&Users)
 		if result == nil {
-			User := Users{Name: "hossein Soltanian", Email: "hosseinbidar7@gmail.com", Role: "Admin", Phonenumber: "09125174854"}
-			result := db.Create(&User)
-			fmt.Println("soooooooooo", *result, "soooooooooo")
+			a, _ := HashPassword("0000")
+			User := Users{Name: "hossein Soltanian", Email: "hosseinbidar7@gmail.com", Password: a, Role: "Admin", Phonenumber: "09125174854"}
+			db.Create(&User)
 		}
 	} else {
 		fmt.Println(err)
