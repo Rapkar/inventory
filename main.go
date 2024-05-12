@@ -1,15 +1,25 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
 )
 
 // login Structure
 type Login struct {
 	email string `json:"email" binding:"required"`
 	pass  string `json:"pass" binding:"required"`
+}
+type Users struct {
+	ID          uint   `gorm:"primaryKey"`
+	Name        string `gorm:"size:255;index:idx_name,unique"`
+	Email       string `gorm:"size:255;"`
+	Phonenumber string `gorm:"size:255;"`
+	Role        string `gorm:"size:255;"`
 }
 
 /*  helper  */
@@ -57,7 +67,25 @@ func loginEndpoint(c *gin.Context) {
 		"message": "pong",
 	})
 }
+
 func main() {
+
+	dsn := "root:0311121314@tcp(127.0.0.1:3306)/Inventory?charset=utf8mb4&parseTime=True&loc=Local"
+	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	if err == nil {
+		fmt.Print("Connection success : ", db)
+
+		result := db.Migrator().CreateTable(Users{})
+
+		// result := db.Create(&Users)
+		if result == nil {
+			User := Users{Name: "hossein Soltanian", Email: "hosseinbidar7@gmail.com", Role: "Admin", Phonenumber: "09125174854"}
+			result := db.Create(&User)
+			fmt.Println("soooooooooo", *result, "soooooooooo")
+		}
+	} else {
+		fmt.Println(err)
+	}
 
 	r := gin.Default()
 	r.LoadHTMLGlob("templates/*")
