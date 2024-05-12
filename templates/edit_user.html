@@ -1,0 +1,47 @@
+{{template "header.html"}}
+{{template "navbar.html"}}
+<body>
+    <div class="h-100 d-flex align-items-center mt-5">
+        <div class="container mt-5">
+
+            <div class="col-xs-12 col-sm-9">
+                <form class="form-horizontal">
+                  <div class="panel panel-default">
+                    <div class="panel-heading">
+                    <h4 class="panel-title">اطلاعات کاربر</h4>
+                    </div>
+                    <div class="panel-body">
+                      <div class="form-group">
+                        <label class="col-sm-2 control-label">نام و نام خانوادگی</label>
+                        <div class="col-sm-10">
+                          <input type="text" class="form-control">
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label class="col-sm-2 control-label">شماره تماس</label>
+                        <div class="col-sm-10">
+                          <input type="tel" class="form-control">
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label class="col-sm-2 control-label">آدرس ایمیل (نام کاربری)</label>
+                        <div class="col-sm-10">
+                          <input type="email" class="form-control">
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label class="col-sm-2 control-label">رمز عبور</label>
+                        <div class="col-sm-10">
+                          <input type="password" class="form-control">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <button  type="button" class=" mt-5 btn btn-success">ارسال درخواست </button>
+              
+                </form>
+              </div>
+
+        </div>
+    </div>
+  {{template "footer.html"}}
