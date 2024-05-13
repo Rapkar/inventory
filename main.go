@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"inventory/app/middleware"
+	utility "inventory/app/utility"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -26,17 +28,13 @@ type Users struct {
 
 /*  helper  */
 
-// make home page URL
-func URL() string {
-	return "http://127.0.0.1:8080"
-}
+// make home page utility.HomeUrl
 
 // Validate user pass
 func checkAuth(login Login) bool {
 	a, _ := HashPassword("0000")
 	dbpass := login.pass
 	result := false
-	fmt.Println("sssssssssssssssssssssssssssssss")
 	if CheckPasswordHash(dbpass, a) {
 		result = true
 	}
@@ -46,25 +44,6 @@ func checkAuth(login Login) bool {
 
 /*  helper  */
 
-/* Middleware */
-
-// Auth Middleware
-func authMiddleware() gin.HandlerFunc {
-	return func(c *gin.Context) {
-
-		Cookie, err := c.Cookie("Auth")
-
-		if Cookie == "logedin" && err == nil {
-
-			c.Next()
-		} else {
-
-			c.Redirect(http.StatusMovedPermanently, "/auth/")
-		}
-	}
-}
-
-/* Middleware */
 func loginEndpoint(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"message": "pong",
@@ -83,7 +62,7 @@ func CheckPasswordHash(password, hash string) bool {
 }
 
 func main() {
-
+	utility.TeataSay()
 	dsn := "root:0311121314@tcp(127.0.0.1:3306)/Inventory?charset=utf8mb4&parseTime=True&loc=Local"
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 
@@ -107,12 +86,12 @@ func main() {
 	r.LoadHTMLGlob("templates/*")
 
 	// Defualt  Routes
-	r.GET("/", authMiddleware(), func(c *gin.Context) {
-		c.Redirect(http.StatusMovedPermanently, URL()+"/Dashboard")
+	r.GET("/", middleware.AuthMiddleware(), func(c *gin.Context) {
+		c.Redirect(http.StatusMovedPermanently, utility.HomeUrl()+"/Dashboard")
 	})
 	v1 := r.Group("/auth")
 	{
-		//defult login page every user can see this page in open login URL
+		//defult login page every user can see this page in open login utility.HomeUrl
 		v1.GET("/", func(c *gin.Context) {
 			c.HTML(http.StatusOK, "login.html", gin.H{
 				"title": "Main website",
@@ -120,7 +99,7 @@ func main() {
 		})
 		// login page after submit form
 		v1.GET("/login", func(c *gin.Context) {
-			c.Redirect(http.StatusMovedPermanently, URL()+"/Dashboard")
+			c.Redirect(http.StatusMovedPermanently, utility.HomeUrl()+"/Dashboard")
 		})
 		// login page after submit form
 		v1.POST("/login", func(c *gin.Context) {
@@ -128,8 +107,8 @@ func main() {
 			login.email = c.PostForm("email")
 			login.pass = c.PostForm("pass")
 			if checkAuth(login) {
-				c.SetCookie("Auth", "logedin", 3600, "/Dashboard/", URL(), false, true)
-				c.Redirect(http.StatusMovedPermanently, URL()+"/Dashboard")
+				c.SetCookie("Auth", "logedin", 3600, "/Dashboard/", utility.HomeUrl(), false, true)
+				c.Redirect(http.StatusMovedPermanently, utility.HomeUrl()+"/Dashboard")
 			}
 
 		})
@@ -141,17 +120,39 @@ func main() {
 	v2 := r.Group("/Dashboard")
 	{
 
-		v2.GET("/", authMiddleware(), func(c *gin.Context) {
+		v2.GET("/", middleware.AuthMiddleware(), func(c *gin.Context) {
 			c.HTML(http.StatusOK, "dashboard.html", gin.H{
 				"title": "Main website",
 			})
 		})
 
-		v2.GET("/users", authMiddleware(), func(c *gin.Context) {
+		v2.GET("/users", middleware.AuthMiddleware(), func(c *gin.Context) {
 			c.HTML(http.StatusOK, "users.html", gin.H{
 				"title":   "Main website",
 				"user_id": 1,
 			})
+		})
+		v2.GET("/admin_users", middleware.AuthMiddleware(), func(c *gin.Context) {
+			c.HTML(http.StatusOK, "admins.html", gin.H{
+				"title":   "Main website",
+				"user_id": 1,
+			})
+		})
+		v2.GET("/add_user", middleware.AuthMiddleware(), func(c *gin.Context) {
+			c.HTML(http.StatusOK, "edit_user.html", gin.H{
+				"title":   "Main website",
+				"user_id": 1,
+			})
+		})
+		v2.POST("/add_user", middleware.AuthMiddleware(), func(c *gin.Context) {
+			var user Users
+			user.Name = c.PostForm("Name")
+			user.Email = c.PostForm("Email")
+			user.Phonenumber = c.PostForm("Phonenumber")
+			user.Password = c.PostForm("Password")
+			user.Role = c.PostForm("Role")
+			user.Password, _ = HashPassword(user.Password)
+			db.Create(&user)
 		})
 		v2.GET("/edituser", func(c *gin.Context) {
 

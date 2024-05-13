@@ -9,17 +9,28 @@
             <li class="nav-item active">
                 <a class="nav-link" href="/Dashboard">صفحه اصلی <span class="sr-only">(فعال)</span></a>
             </li>
+
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">کاربران</a>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="./users">کاربران عمومی</a></li>
+                  <li><a class="dropdown-item" href="./admin_users">کاربران ادمین</a></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li><a class="dropdown-item" href="./add_user">افزودن کاربر</a></li>
+                </ul>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">موجودی انبار</a>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="#">انبار شماره 1</a></li>
+                  <li><a class="dropdown-item" href="#">انبار شماره 2</a></li>
+                </ul>
+              </li>
             <li class="nav-item">
-                <a class="nav-link" href="/Dashboard/users">کاربران</a>
+                <a class="nav-link" href="./export">خریدها</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/Dashboard/Inventory">موجودی انبار</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/Dashboard/export">خریدها</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/Dashboard/options">تنظیمات</a>
+                <a class="nav-link" href="./options">تنظیمات</a>
             </li>
         </ul>
         <span class="navbar-text ms-auto float-right">
