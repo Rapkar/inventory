@@ -31,11 +31,41 @@ type Users struct {
 // make home page utility.HomeUrl
 
 // Validate user pass
+func db() *gorm.DB {
+
+	dsn := "root:0311121314@tcp(127.0.0.1:3306)/Inventory?charset=utf8mb4&parseTime=True&loc=Local"
+	db, _ := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+
+	return db
+
+}
+
+// get all user with rol [Admin , guest]
+
+func GetAllUsersByRole() []Users {
+	var users []Users
+	db().Model(&Users{}).Select("*").Scan(&users)
+	return users
+}
+
+// get user By email [Admin , guest]
+
+func GetUserByEmail(login Login) []Users {
+	var users []Users
+	db().Model(&Users{}).Select("*").Where("Email = ?", "hosseinbidar7@gmail.com").Scan(&users)
+	return users
+}
+
+// get user By email [Admin , guest]
+
 func checkAuth(login Login) bool {
-	a, _ := HashPassword("0000")
+	pass := ""
+	for _, user := range GetUserByEmail(login) {
+		pass = user.Password
+	}
 	dbpass := login.pass
 	result := false
-	if CheckPasswordHash(dbpass, a) {
+	if CheckPasswordHash(dbpass, pass) {
 		result = true
 	}
 	return result
@@ -62,24 +92,31 @@ func CheckPasswordHash(password, hash string) bool {
 }
 
 func main() {
-	utility.TeataSay()
-	dsn := "root:0311121314@tcp(127.0.0.1:3306)/Inventory?charset=utf8mb4&parseTime=True&loc=Local"
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 
 	// fmt.Println("pass is:", CheckPasswordHash("!HS0311121314", a), "pass \n")
-	if err == nil {
-		fmt.Print("Connection success : ", db)
 
-		result := db.Migrator().CreateTable(Users{})
+	// var users Users
+	var user = Users{}
+	// db().Where("email = ?", "hosseinbidar7@gmail.com").First(&user)
+	db().Where("email = ?", "hosseinbidar7@gmail.com").First(&user)
+	// rows, _ := db().Model(&Users{}).Rows()
+	// defer rows.Close()
+	// fmt.Println(rows.Next())
+	var users []Users
+	db().Model(&Users{}).Select("*").Where("Email = ?", "hosseinbidar7@gmail.com").Scan(&users)
+	pass := ""
+	for _, user := range users {
+		pass = user.Password
+	}
+	fmt.Println(pass)
 
-		// result := db.Create(&Users)
-		if result == nil {
-			a, _ := HashPassword("0000")
-			User := Users{Name: "hossein Soltanian", Email: "hosseinbidar7@gmail.com", Password: a, Role: "Admin", Phonenumber: "09125174854"}
-			db.Create(&User)
-		}
-	} else {
-		fmt.Println(err)
+	result := db().Migrator().CreateTable(Users{})
+
+	// result := db.Create(&Users)
+	if result == nil {
+		a, _ := HashPassword("0000")
+		User := Users{Name: "hossein Soltanian", Email: "hosseinbidar7@gmail.com", Password: a, Role: "Admin", Phonenumber: "09125174854"}
+		db().Create(&User)
 	}
 
 	r := gin.Default()
@@ -127,9 +164,11 @@ func main() {
 		})
 
 		v2.GET("/users", middleware.AuthMiddleware(), func(c *gin.Context) {
+
+			// result := "a"
 			c.HTML(http.StatusOK, "users.html", gin.H{
-				"title":   "Main website",
-				"user_id": 1,
+				"title": "Main website",
+				"users": GetAllUsersByRole(),
 			})
 		})
 		v2.GET("/admin_users", middleware.AuthMiddleware(), func(c *gin.Context) {
@@ -152,7 +191,7 @@ func main() {
 			user.Password = c.PostForm("Password")
 			user.Role = c.PostForm("Role")
 			user.Password, _ = HashPassword(user.Password)
-			db.Create(&user)
+			db().Create(&user)
 		})
 		v2.GET("/edituser", func(c *gin.Context) {
 
