@@ -150,8 +150,9 @@ func main() {
 		v2.GET("/addproduct", func(c *gin.Context) {
 
 			c.HTML(http.StatusOK, "add_product.html", gin.H{
-				"title":  "Main website",
-				"action": "addproduct",
+				"title":           "Main website",
+				"action":          "addproduct",
+				"InventoryNumber": utility.GetCurrentInventory(c),
 			})
 		})
 		v2.POST("/addproduct", middleware.AuthMiddleware(), func(c *gin.Context) {
@@ -161,7 +162,7 @@ func main() {
 			product.RolePrice = utility.StringToFloat(c.PostForm("RolePrice"))
 			product.MeterPrice = utility.StringToFloat(c.PostForm("MeterPrice"))
 			product.Count = utility.StringToInt(c.PostForm("Count"))
-			product.InventoryNumber = utility.GetCurrentInventory(c)
+			product.InventoryNumber = utility.StringToInt32(c.PostForm("InventoryNumber"))
 			boot.DB().Create(&product)
 			fmt.Println(product)
 			c.Redirect(http.StatusMovedPermanently, utility.HomeUrl()+"/Dashboard/inventory")
@@ -172,7 +173,15 @@ func main() {
 
 			c.HTML(http.StatusOK, "inventory.html", gin.H{
 				"title":    "Main website",
-				"products": model.GetAllProductsByInventory(1),
+				"products": model.GetAllProductsByInventory(utility.GetCurrentInventory(c)),
+			})
+		})
+
+		v2.GET("/export", func(c *gin.Context) {
+
+			c.HTML(http.StatusOK, "export.html", gin.H{
+				"title":    "Main website",
+				"products": model.GetAllProductsByInventory(utility.GetCurrentInventory(c)),
 			})
 		})
 
