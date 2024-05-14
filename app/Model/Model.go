@@ -4,24 +4,15 @@ import (
 	"inventory/boot"
 )
 
-type Users struct {
-	ID          uint   `gorm:"primaryKey"`
-	Name        string `gorm:"size:255;index:idx_name,unique"`
-	Email       string `gorm:"size:255;"`
-	Password    string `gorm:"type:varchar(255)"`
-	Phonenumber string `gorm:"size:255;"`
-	Role        string `gorm:"size:255;"`
-}
-
 // get All user by role , arg is [Admin , guest]
 
-func GetAllUsersByRole(role string) []Users {
-	var users []Users
+func GetAllUsersByRole(role string) []boot.Users {
+	var users []boot.Users
 	switch role {
 	case "Admin":
-		boot.DB().Model(&Users{}).Select("*").Where("role = ? ", "Admin").Scan(&users)
+		boot.DB().Model(&boot.Users{}).Select("*").Where("role = ? ", "Admin").Scan(&users)
 	case "guest":
-		boot.DB().Model(&Users{}).Select("*").Where("role = ? ", "guest").Scan(&users)
+		boot.DB().Model(&boot.Users{}).Select("*").Where("role = ? ", "guest").Scan(&users)
 	}
 
 	return users
@@ -29,8 +20,15 @@ func GetAllUsersByRole(role string) []Users {
 
 // get user By email [hosseinbidar7@gmail.com]
 
-func GetUserByEmail(login boot.Login) []Users {
-	var users []Users
-	boot.DB().Model(&Users{}).Select("*").Where("Email = ?", login.Email).Scan(&users)
+func GetUserByEmail(login boot.Login) []boot.Users {
+	var users []boot.Users
+	boot.DB().Model(boot.Users{}).Select("*").Where("Email = ?", login.Email).Scan(&users)
 	return users
+}
+
+// get user by id
+func GetUserById(userid boot.Users) []boot.Users {
+	var user []boot.Users
+	boot.DB().Model(&boot.Users{}).Select("*").Where("ID = ?", userid.ID).Scan(&user)
+	return user
 }

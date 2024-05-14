@@ -14,40 +14,31 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type Users struct {
-	ID          uint   `gorm:"primaryKey"`
-	Name        string `gorm:"size:255;index:idx_name,unique"`
-	Email       string `gorm:"size:255;"`
-	Password    string `gorm:"type:varchar(255)"`
-	Phonenumber string `gorm:"size:255;"`
-	Role        string `gorm:"size:255;"`
-}
-
 func main() {
 
 	// fmt.Println("pass is:", CheckPasswordHash("!HS0311121314", a), "pass \n")
 
 	// var users Users
-	var user = Users{}
+	var user = boot.Users{}
 	// boot.DB().Where("email = ?", "hosseinbidar7@gmail.com").First(&user)
 	boot.DB().Where("email = ?", "hosseinbidar7@gmail.com").First(&user)
-	// rows, _ := boot.DB().Model(&Users{}).Rows()
+	// rows, _ := boot.DB().Model(&boot.Users{}).Rows()
 	// defer rows.Close()
 	// fmt.Println(rows.Next())
-	var users []Users
-	boot.DB().Model(&Users{}).Select("*").Where("Email = ?", "hosseinbidar7@gmail.com").Scan(&users)
+	var users []boot.Users
+	boot.DB().Model(&boot.Users{}).Select("*").Where("Email = ?", "hosseinbidar7@gmail.com").Scan(&users)
 	pass := ""
 	for _, user := range users {
 		pass = user.Password
 	}
 	fmt.Println(pass)
 
-	result := boot.DB().Migrator().CreateTable(Users{})
+	result := boot.DB().Migrator().CreateTable(boot.Users{})
 
 	// result := db.Create(&Users)
 	if result == nil {
 		a, _ := utility.HashPassword("0000")
-		User := Users{Name: "hossein Soltanian", Email: "hosseinbidar7@gmail.com", Password: a, Role: "Admin", Phonenumber: "09125174854"}
+		User := boot.Users{Name: "hossein Soltanian", Email: "hosseinbidar7@gmail.com", Password: a, Role: "Admin", Phonenumber: "09125174854"}
 		boot.DB().Create(&User)
 	}
 
@@ -128,7 +119,7 @@ func main() {
 			})
 		})
 		v2.POST("/add_user", middleware.AuthMiddleware(), func(c *gin.Context) {
-			var user Users
+			var user boot.Users
 			user.Name = c.PostForm("Name")
 			user.Email = c.PostForm("Email")
 			user.Phonenumber = c.PostForm("Phonenumber")
@@ -138,10 +129,10 @@ func main() {
 			boot.DB().Create(&user)
 		})
 		v2.GET("/edituser", func(c *gin.Context) {
-
+			currentusrt := utility.GetCurrentUser(c)
 			c.HTML(http.StatusOK, "edit_user.html", gin.H{
-				"title":   "Main website",
-				"user_id": 1,
+				"title": "Main website",
+				"user":  currentusrt,
 			})
 		})
 
