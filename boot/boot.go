@@ -26,3 +26,13 @@ type Users struct {
 	Phonenumber string `gorm:"size:255;"`
 	Role        string `gorm:"size:255;"`
 }
+
+type Inventory struct {
+	ID         uint64  `gorm:"primaryKey"`
+	Name       string  `gorm:"type:varchar(100);unique_index"`
+	Number     int     `gorm:"size:255;"`
+	RolePrice  float64 `gorm:"type:float"`
+	MeterPrice float32 `gorm:"type:float"`
+	Count      int     `gorm:"size:255;"`
+	Inventory  int     `gorm:"size:255;"`
+}

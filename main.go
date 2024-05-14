@@ -15,16 +15,10 @@ import (
 )
 
 func main() {
-
-	// fmt.Println("pass is:", CheckPasswordHash("!HS0311121314", a), "pass \n")
-
 	// var users Users
 	var user = boot.Users{}
 	// boot.DB().Where("email = ?", "hosseinbidar7@gmail.com").First(&user)
 	boot.DB().Where("email = ?", "hosseinbidar7@gmail.com").First(&user)
-	// rows, _ := boot.DB().Model(&boot.Users{}).Rows()
-	// defer rows.Close()
-	// fmt.Println(rows.Next())
 	var users []boot.Users
 	boot.DB().Model(&boot.Users{}).Select("*").Where("Email = ?", "hosseinbidar7@gmail.com").Scan(&users)
 	pass := ""
@@ -34,12 +28,17 @@ func main() {
 	fmt.Println(pass)
 
 	result := boot.DB().Migrator().CreateTable(boot.Users{})
+	result2 := boot.DB().Migrator().CreateTable(boot.Inventory{})
 
 	// result := db.Create(&Users)
 	if result == nil {
 		a, _ := utility.HashPassword("0000")
 		User := boot.Users{Name: "hossein Soltanian", Email: "hosseinbidar7@gmail.com", Password: a, Role: "Admin", Phonenumber: "09125174854"}
 		boot.DB().Create(&User)
+	}
+	if result2 == nil {
+		Inventory := boot.Inventory{Name: "hossein Soltanian", Number: 10, RolePrice: 99.250, MeterPrice: 102.500, Count: 100, Inventory: 1}
+		boot.DB().Create(&Inventory)
 	}
 
 	r := gin.Default()
@@ -51,6 +50,9 @@ func main() {
 	r.GET("/", middleware.AuthMiddleware(), func(c *gin.Context) {
 		c.Redirect(http.StatusMovedPermanently, utility.HomeUrl()+"/Dashboard")
 	})
+
+	// auth Route
+	// Like (admin user page or Crud pages)
 	v1 := r.Group("/auth")
 	{
 		//defult login page every user can see this page in open login utility.HomeUrl
@@ -114,8 +116,8 @@ func main() {
 		})
 		v2.GET("/add_user", middleware.AuthMiddleware(), func(c *gin.Context) {
 			c.HTML(http.StatusOK, "edit_user.html", gin.H{
-				"title":   "Main website",
-				"user_id": 1,
+				"title":  "Main website",
+				"action": "add_user",
 			})
 		})
 		v2.POST("/add_user", middleware.AuthMiddleware(), func(c *gin.Context) {
@@ -129,6 +131,30 @@ func main() {
 			boot.DB().Create(&user)
 		})
 		v2.GET("/edituser", func(c *gin.Context) {
+			currentusrt := utility.GetCurrentUser(c)
+			c.HTML(http.StatusOK, "edit_user.html", gin.H{
+				"title":  "Main website",
+				"user":   currentusrt,
+				"action": "edituser",
+			})
+		})
+		v2.POST("/edituser", func(c *gin.Context) {
+			currentusrt := utility.GetCurrentUser(c)
+			c.HTML(http.StatusOK, "edit_user.html", gin.H{
+				"title": "Main website",
+				"user":  currentusrt,
+			})
+		})
+
+		// inventory
+		v2.GET("/addproduct", func(c *gin.Context) {
+
+			c.HTML(http.StatusOK, "add_product.html", gin.H{
+				"title":     "Main website",
+				"inventory": 1,
+			})
+		})
+		v2.POST("/addproduct", func(c *gin.Context) {
 			currentusrt := utility.GetCurrentUser(c)
 			c.HTML(http.StatusOK, "edit_user.html", gin.H{
 				"title": "Main website",
