@@ -37,7 +37,7 @@ func main() {
 		boot.DB().Create(&User)
 	}
 	if result2 == nil {
-		Inventory := boot.Inventory{Name: "hossein Soltanian", Number: 10, RolePrice: 99.250, MeterPrice: 102.500, Count: 100, Inventory: 1}
+		Inventory := boot.Inventory{Name: "ایزوگام شرق", Number: "10", RolePrice: 99.250, MeterPrice: 102.500, Count: 100, InventoryNumber: 1}
 		boot.DB().Create(&Inventory)
 	}
 
@@ -146,19 +146,33 @@ func main() {
 			})
 		})
 
-		// inventory
+		// Product
 		v2.GET("/addproduct", func(c *gin.Context) {
 
 			c.HTML(http.StatusOK, "add_product.html", gin.H{
-				"title":     "Main website",
-				"inventory": 1,
+				"title":  "Main website",
+				"action": "addproduct",
 			})
 		})
-		v2.POST("/addproduct", func(c *gin.Context) {
-			currentusrt := utility.GetCurrentUser(c)
-			c.HTML(http.StatusOK, "edit_user.html", gin.H{
-				"title": "Main website",
-				"user":  currentusrt,
+		v2.POST("/addproduct", middleware.AuthMiddleware(), func(c *gin.Context) {
+			var product boot.Inventory
+			product.Name = c.PostForm("Name")
+			product.Number = c.PostForm("Number")
+			product.RolePrice = utility.StringToFloat(c.PostForm("RolePrice"))
+			product.MeterPrice = utility.StringToFloat(c.PostForm("MeterPrice"))
+			product.Count = utility.StringToInt(c.PostForm("Count"))
+			product.InventoryNumber = utility.GetCurrentInventory(c)
+			boot.DB().Create(&product)
+			fmt.Println(product)
+			c.Redirect(http.StatusMovedPermanently, utility.HomeUrl()+"/Dashboard/inventory")
+
+		})
+		// inventory
+		v2.GET("/inventory", func(c *gin.Context) {
+
+			c.HTML(http.StatusOK, "inventory.html", gin.H{
+				"title":    "Main website",
+				"products": model.GetAllProductsByInventory(1),
 			})
 		})
 

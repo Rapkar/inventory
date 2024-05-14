@@ -28,11 +28,11 @@ type Users struct {
 }
 
 type Inventory struct {
-	ID         uint64  `gorm:"primaryKey"`
-	Name       string  `gorm:"type:varchar(100);unique_index"`
-	Number     int     `gorm:"size:255;"`
-	RolePrice  float64 `gorm:"type:float"`
-	MeterPrice float32 `gorm:"type:float"`
-	Count      int     `gorm:"size:255;"`
-	Inventory  int     `gorm:"size:255;"`
+	ID              uint64  `gorm:"primaryKey"`
+	Name            string  `gorm:"type:varchar(100)"`
+	Number          string  `gorm:"size:255;"`
+	RolePrice       float64 `gorm:"type:float"`
+	MeterPrice      float64 `gorm:"type:float"`
+	Count           int8    `gorm:"size:255;"`
+	InventoryNumber int32   `gorm:"size:255;"`
 }

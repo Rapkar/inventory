@@ -35,3 +35,17 @@ func GetCurrentUser(c *gin.Context) []boot.Users {
 	currentUser := model.GetUserById(USERID)
 	return currentUser
 }
+func GetCurrentInventory(c *gin.Context) int32 {
+	Id := c.Request.URL.Query().Get("inventory")
+	Inventoryid, _ := strconv.ParseInt(Id, 10, 32)
+
+	return int32(Inventoryid)
+}
+func StringToFloat(value string) float64 {
+	NewValue, _ := strconv.ParseFloat(value, 64)
+	return float64(NewValue)
+}
+func StringToInt(value string) int8 {
+	newValue, _ := strconv.ParseInt(value, 2, 8)
+	return int8(newValue)
+}
