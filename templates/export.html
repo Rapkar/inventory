@@ -1,5 +1,5 @@
-{{template "header.html"}}
-{{template "navbar.html"}}
+{{template "header" . }}
+{{template "navbar" . }}
 
 <body>
     <div class="h-100 d-flex align-items-center mt-5">
@@ -16,73 +16,152 @@
                                 <div class="form-group col-lg-6  mt-3">
                                     <label class="col-sm-12 control-label">نام خریدار</label>
                                     <div class="col-sm-12">
-                                        <input required name="Email" type="text" class="form-control">
+                                        <input required name="Email" type="text" placeholder="سالار کمیلی"
+                                            class="form-control">
                                     </div>
                                 </div>
                                 <div class="form-group col-lg-6  mt-3">
                                     <label class="col-sm-12 control-label"> شماره تماس</label>
                                     <div class="col-sm-12">
-                                        <input required name="Email" type="text" class="form-control">
+                                        <input required name="Email" type="text" placeholder="0912 517 4854"
+                                            class="form-control">
                                     </div>
                                 </div>
                                 <div class="form-group col-lg-12  mt-3">
                                     <label class="col-sm-12 control-label">آدرس</label>
                                     <div class="col-sm-12">
-                                        <textarea class="col-sm-12"></textarea>
+                                        <textarea class="col-sm-12"
+                                            placeholder="استان البرز - کرج - شاهین  ویلا - شهرک یاس..."></textarea>
                                     </div>
                                 </div>
-                                <div class="form-group col-12  mt-3">
-                                    <label class="col-sm-12 control-label">نام کالا</label>
-                                    <div class="col-sm-12">
-                                        <select multiple class="col-12">
-                                            <option value="1">ایزوگام شرق</option>
-                                            <option value="1">ایزوگام شرق</option>
-                                            <option value="1">ایزوگام شرق</option>
-                                            <option value="1">ایزوگام شرق</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="form-group col-lg-6  mt-3">
-                                    <label class="col-sm-12 control-label">تعداد رول</label>
-                                    <div class="col-sm-12">
-                                        <input style="text-align:right;" name="number" type="text" class="form-control">
-                                    </div>
-                                </div>
-                                <div class="form-group col-lg-6  mt-3">
-                                    <label class="col-sm-12 control-label">متراژ</label>
-                                    <div class="col-sm-12">
-                                        <input required name="Email" type="number" class="form-control">
-                                    </div>
-                                </div>
-                                <div class="form-group col-lg-6  mt-3">
-                                    <label class="col-sm-12 control-label">قیمت هر رول</label>
-                                    <div class="col-sm-12">
-                                        <input required name="Email" type="number" value="{{.Email}}"
-                                            class="form-control">
-                                    </div>
-                                </div>
-                                <div class="form-group  col-lg-6  mt-3">
-                                    <label class="col-sm-12 control-label">قیمت هر متر</label>
-                                    <div class="col-sm-12">
-                                        <input required name="Email" type="number" value="{{.Email}}"
-                                            class="form-control">
-                                    </div>
-                                </div>
-                                <div class="form-group mt-3">
-                                    <label class="col-sm-12 control-label">مجموع قیمت </label>
-                                    <div class="col-sm-12">
-                                        <input type="number" value="12000">هزار تومان
-                                    </div>
-                                </div>
+                                <div id="ExportProductsList">
+                                    <table class="table" dir="rtl">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">#</th>
+                                                <th scope="col">نام محصول</th>
+                                                <th scope="col">شماره محصول</th>
+                                                <th scope="col">تعداد رول</th>
+                                                <th scope="col">متراژ</th>
+                                                <th scope="col">قیمت واحد</th>
+                                                <th scope="col"> قیمت کل</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <td  colspan="7" >محصولی اضافه نشده است</td>
+                                        </tbody>
+                                        <tfoot style="background-color: #ddd;">
+                                            <tr><td colspan="7"  style="text-align: left;">0</td></tr>
 
+                                        </tfoot>
+                                    </table>
 
+                                </div>
+                                <div class="form-group col-lg-12  mt-3 text-left d-flex justify-content-end">
+                                    <button type="button" id="modal" class="btn btn-primary ms-auto "
+                                        data-toggle="modal" data-target="#ProductBox">
+                                        افزودن محصول +
+                                    </button>
+                                </div>
+                                <!-- Modal -->
+                                <div class="modal fade bd-example-modal-lg ExportPeoducts" id="ProductBox" tabindex="-1"
+                                    role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLongTitle">انتخاب محصول</h5>
+                                                <button type="button" class="close" data-dismiss="modal"
+                                                    aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="row">
+                                                    <div class="form-group col-12  mt-3">
+                                                        <label class="col-sm-12 control-label">نام انبار</label>
+                                                        <div class="col-sm-12">
+
+                                                            <select name="InventoryIS" id="InventoryIS" class="col-12">
+                                                                <option defualt value="0">لطفا یک انبار را انتخاب کنید</option>
+                                                                <option  value="1">انبار شماره 1</option>
+                                                                <option  value="2">انبار شماره 2</option>
+                                                            </select>
+
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group col-12  mt-3 ProductIs" style="display: none;">
+                                                        <label class="col-sm-12 control-label">نام کالا</label>
+                                                        <div class="col-sm-12">
+
+                                                            <select  disabled name="ProductName" id="ProductIs" class="col-12">
+                                                                <option defualt value="0">لطفا یک محصول را انتخاب کنید</option>
+                                                            </select>
+
+                                                        </div>
+                                                    </div>
+                                                
+                                                <div class=" Content" style="display: none;">
+                                                    <div class="row">
+                                                    <div class="form-group col-lg-6  mt-3">
+                                                        <label class="col-sm-12 control-label" min="0">تعداد رول</label>
+                                                        <div class="col-sm-12">
+                                                            <input style="text-align:right;" name="Count" type="number"
+                                                                class="form-control">
+                                                            <span class="ProductsCount"> موجودی </span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group col-lg-6  mt-3">
+                                                        <label class="col-sm-12 control-label" min="0">متراژ</label>
+                                                        <div class="col-sm-12">
+                                                            <input required name="Meter" min="0" type="number"
+                                                                class="form-control">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group col-lg-6  mt-3">
+                                                        <label class="col-sm-12  control-label" min="0">قیمت هر رول</label>
+                                                        <div class="col-sm-12">
+                                                            <input required name="RolePrice" min="0" readonly type="number"
+                                                                value="{{.Email}}" class="form-control">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group  col-lg-6  mt-3">
+                                                        <label class="col-sm-12 control-label" min="0">قیمت هر متر</label>
+                                                        <div class="col-sm-12">
+                                                            <input required name="MeterPrice" min="0" readonly type="number"
+                                                                value="{{.Email}}" class="form-control">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group mt-3">
+                                                        <label class="col-sm-12 control-label" min="0">مجموع قیمت </label>
+                                                        <div class="col-sm-12">
+                                                            <input type="number" class="form-control"  min="0" name="TotalPrice"
+                                                                readonly>هزار تومان
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer" style="display: none;">
+                                            <button type="button" class="btn btn-secondary"
+                                                data-dismiss="modal">بستن</button>
+                                            <button id="AddProductToExport" type="button" class="btn btn-primary">ذخیره
+                                                اطلاعات</button>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <button type="submit" class=" mt-5 btn btn-success">ارسال درخواست </button>
-                    </div>
-                </form>
-            </div>
 
+
+
+
+                        </div>
+                    </div>
+                    <button type="submit" class=" mt-5 btn btn-success">ثبت فاکتور</button>
+            </div>
+            </form>
         </div>
+
+    </div>
     </div>
     {{template "footer.html"}}

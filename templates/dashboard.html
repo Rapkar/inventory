@@ -1,62 +1,66 @@
-{{template "header.html" }}
-{{template "navbar.html"}}
+{{template "header" . }}
+{{template "navbar" . }}
+
 <body>
-    <div class="h-100 d-flex align-items-center mt-5">
-        <div class="container mt-5">
-            <div class="row">
-                <div class="col-lg-6">
-                    <h2>ثبت فاکتور</h2>
-                    <div class="jumbotron">
-                        <a class="btn btn-primary btn-lg" href="#" role="button">ثبت فاکتور جدید</a>
-                      </p>
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                        <h2>آخرین کاربران</h2>
-                    <table dir="rtl"  class="table table-sm table-dark">
-                        <thead>
-                          <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">نام کاربر</th>
-                            <th scope="col">شماره تماس</th>
-                            <th scope="col">نام کاربری</th>
-                          </tr>
-                        </thead>
-                        <tbody dir="rtl">
-                          <tr>
-                            <th scope="row">1</th>
-                            <td>حسین سلطانیان</td>
-                            <td dir="ltr" style="text-align:right;" >0912 514 4854</td>
-                            <td dir="ltr" style="text-align:right;" >hosseinbidar7@gmail.com</td>
-                          </tr>
-                        </tbody>
-                      </table>
-                </div>
-                <div class="col-lg-6">
-                    <h2>موجودی انبار</h2>
-                <table dir="rtl"  class="table table-sm table-dark">
-                    <thead>
-                      <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">نام کاربر</th>
-                        <th scope="col">شماره تماس</th>
-                        <th scope="col">نام کاربری</th>
-                      </tr>
-                    </thead>
-                    <tbody dir="rtl">
-                      <tr>
-                        <th scope="row">1</th>
-                        <td>حسین سلطانیان</td>
-                        <td dir="ltr" style="text-align:right;" >0912 514 4854</td>
-                        <td dir="ltr" style="text-align:right;" >hosseinbidar7@gmail.com</td>
-                      </tr>
-                    </tbody>
-                  </table>
-            </div>
-
-            </div>
-
-
+  {{if .success}}
+  {{template "success_notif" .}}
+  {{end}}
+  <div class="h-100 d-flex align-items-center mt-5">
+    <div class="container mt-5">
+      <div class="row">
+        <div class="col-lg-6">
+          <h2>ثبت فاکتور</h2>
+          <div class="jumbotron">
+            <a class="btn btn-primary btn-lg" href="#" role="button">ثبت فاکتور جدید</a>
+            </p>
+          </div>
         </div>
+        <div class="col-lg-6">
+          <h2>آخرین کاربران</h2>
+          <table dir="rtl" class="table table-sm table-dark">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">نام کاربر</th>
+                <th scope="col">شماره تماس</th>
+                <th scope="col">نام کاربری</th>
+              </tr>
+            </thead>
+            <tbody dir="rtl">
+              <tr>
+                <th scope="row">1</th>
+                <td>حسین سلطانیان</td>
+                <td dir="ltr" style="text-align:right;">0912 514 4854</td>
+                <td dir="ltr" style="text-align:right;">hosseinbidar7@gmail.com</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="col-lg-6">
+          <h2>موجودی انبار</h2>
+          <table dir="rtl" class="table table-sm table-dark">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">نام کاربر</th>
+                <th scope="col">شماره تماس</th>
+                <th scope="col">نام کاربری</th>
+              </tr>
+            </thead>
+            <tbody dir="rtl">
+              <tr>
+                <th scope="row">1</th>
+                <td>حسین سلطانیان</td>
+                <td dir="ltr" style="text-align:right;">0912 514 4854</td>
+                <td dir="ltr" style="text-align:right;">hosseinbidar7@gmail.com</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+
+
     </div>
-    {{template "footer.html"}}
+  </div>
+  {{template "footer.html"}}

@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	ptime "github.com/yaa110/go-persian-calendar"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -52,4 +53,12 @@ func StringToInt(value string) int8 {
 func StringToInt32(value string) int32 {
 	newValue, _ := strconv.ParseInt(value, 10, 32)
 	return int32(newValue)
+}
+
+func CurrentTser() string {
+
+	var pt = ptime.Now()
+	exportFormat := pt.Format("yyyy/MM/dd E hh:mm:ss a")
+
+	return exportFormat
 }

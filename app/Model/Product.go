@@ -13,3 +13,9 @@ func GetAllProductsByInventory(inventory int32) []boot.Inventory {
 
 	return products
 }
+func GetProductById(id int) []boot.Inventory {
+	var products []boot.Inventory
+	boot.DB().Model(&boot.Inventory{}).Select("*").Where("id= ? ", id).Scan(&products)
+
+	return products
+}

@@ -1,9 +1,14 @@
-{{template "header.html"}}
-{{template "navbar.html"}}
+{{template "header" . }}
+{{template "navbar" . }}
 
 <body>
   <div class="h-100 d-flex align-items-center mt-5">
     <div class="container mt-5">
+      {{if .success}}
+      {{template "success_notif" .}}
+    {{else if eq .success false}}
+      {{template "danger_notif" .}}
+    {{end}}
       <div class="col-xs-12 col-sm-9">
         <form class="form-horizontal" method="post" action="/Dashboard/{{.action}}">
           <div class="panel panel-default">

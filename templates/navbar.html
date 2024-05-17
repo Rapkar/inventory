@@ -1,3 +1,4 @@
+{{ define "navbar" }}
 <nav class="navbar navbar-expand-lg  navbar-dark bg-primary px-5">
     <a class="navbar-brand" href="">نرم افزار انبار داری</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText"
@@ -34,7 +35,7 @@
                 </ul>
               </li>
               <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">خرید ها</a>
+                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">فاکتور</a>
                 <ul class="dropdown-menu">
                   <li><a class="dropdown-item" href="./export">ثبت فاکتور</a></li>
                   <li><a class="dropdown-item" href="./export-list">لیست فاکتورها</a></li>
@@ -44,8 +45,9 @@
                 <a class="nav-link" href="./options">تنظیمات</a>
             </li>
         </ul>
-        <span class="navbar-text ms-auto float-right">
-            کاربر ادمین خوش آمدید
+        <span class="navbar-text ms-auto ">
+            کاربر  {{.Username}}  خوش آمدید
         </span>
     </div>
 </nav>
+{{ end }}
