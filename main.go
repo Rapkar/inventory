@@ -50,7 +50,7 @@ func main() {
 		boot.DB().Create(&ExportProduct)
 	}
 	if result4 == nil {
-		Export := boot.Export{Name: "رضا توانگر", Number: "9283422", Phonenumber: "09199656725", Address: "کرج -کرج=-ایران -سیسی", TotalPrice: 10000000, Tax: 10, ExportProducts: ExportProduct, InventoryNumber: 1, CreatedAt: utility.CurrentTser()}
+		Export := boot.Export{Name: "رضا توانگر", Number: "9283422", Phonenumber: "09199656725", Address: "کرج -کرج=-ایران -سیسی", TotalPrice: 10000000, Tax: 10, ExportProducts: ExportProduct, InventoryNumber: 1, CreatedAt: utility.CurrentTime()}
 		boot.DB().Create(&Export)
 	}
 
@@ -249,6 +249,7 @@ func main() {
 			session := sessions.Default(c)
 			c.HTML(http.StatusOK, "export.html", gin.H{
 				"Username": session.Get("UserName"),
+				"action":   "export",
 				"title":    "فاکتور",
 				"products": model.GetAllProductsByInventory(1),
 			})
@@ -283,17 +284,21 @@ func main() {
 			product := model.GetProductById(int(val))
 			c.JSON(http.StatusOK, gin.H{"result": product})
 		})
-		v2.POST("/Export", func(c *gin.Context) {
+		v2.POST("/export", func(c *gin.Context) {
 			var data struct {
-				Name string `json:"name"`
-				Id   string `json:"location"`
+				Name    string `json:"name"`
+				Content string `json:"content"`
 			}
+
+			// fmt.Println("data.content")
 			if err := c.BindJSON(&data); err != nil {
 				log.Println(err)
 				c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 				return
 			}
-			fmt.Println(data.Name)
+
+			utility.Unserialize(data.Content)
+			// datas["Address"]
 			c.JSON(http.StatusOK, gin.H{"message": "Data received successfully"})
 		})
 		v2.GET("/export-list", middleware.AuthMiddleware(), func(c *gin.Context) {

@@ -1,8 +1,6 @@
 
 let CurrentProductName = "";
 jQuery('#myModal').modal('show')
-console.log(jQuery("#ExportProductsList tbody tr").length);
-
 // add  New product to export list
 
 jQuery("#AddProductToExport").on("click", function () {
@@ -26,6 +24,12 @@ jQuery("#AddProductToExport").on("click", function () {
     jQuery("#ExportProductsList tbody").append(value);
     //   jQuery('body').removeClass("modal-open");
     //   jQuery(".modal-backdrop").remove();
+    var oldprice=jQuery(".TotalPriceOut td").html();
+    oldprice=parseFloat(oldprice);
+    TotalPrice=parseFloat(TotalPrice)
+    TotalPrice=oldprice+TotalPrice;
+    jQuery(".TotalPriceOut td").html(TotalPrice)
+    jQuery(".Notfound").slideUp();
     jQuery(".close").click()
 })
 
@@ -147,4 +151,18 @@ jQuery("input[name='Meter']").on("change", function () {
     jQuery("input[name='TotalPrice']").val(TotalPrice)
     // },1000)
 
+})
+
+jQuery("form[name='expotform']").submit(function(e){
+    e.preventDefault();
+    jQuery.ajax({
+        method: "POST",
+        url: "/Dashboard/export",
+        data: JSON.stringify({ name: "expotform", Content: jQuery("form[name='expotform']").serialize() }),
+        contentType: "application/json; charset=utf-8",
+    })
+        .done(function (msg) {
+            console.log(msg)
+        });
+  
 })

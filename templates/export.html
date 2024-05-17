@@ -5,7 +5,7 @@
     <div class="h-100 d-flex align-items-center mt-5">
         <div class="container mt-5">
             <div class="col-xs-12 col-sm-9">
-                <form class="form-horizontal" method="post" action="/Dashboard/{{.action}}">
+                <form name="expotform" class="form-horizontal" method="post" action="/Dashboard/{{.action}}">
                     <div class="row ">
                         <div class="panel panel-default col-12">
                             <div class="panel-heading col-12">
@@ -16,22 +16,36 @@
                                 <div class="form-group col-lg-6  mt-3">
                                     <label class="col-sm-12 control-label">نام خریدار</label>
                                     <div class="col-sm-12">
-                                        <input required name="Email" type="text" placeholder="سالار کمیلی"
+                                        <input required name="Name" type="text" placeholder="سالار کمیلی"
                                             class="form-control">
                                     </div>
                                 </div>
                                 <div class="form-group col-lg-6  mt-3">
                                     <label class="col-sm-12 control-label"> شماره تماس</label>
                                     <div class="col-sm-12">
-                                        <input required name="Email" type="text" placeholder="0912 517 4854"
+                                        <input required name="Phonenumber" type="tel" placeholder="0912 517 4854"
                                             class="form-control">
                                     </div>
                                 </div>
                                 <div class="form-group col-lg-12  mt-3">
                                     <label class="col-sm-12 control-label">آدرس</label>
                                     <div class="col-sm-12">
-                                        <textarea class="col-sm-12"
+                                        <textarea name="Address" class="col-sm-12"
                                             placeholder="استان البرز - کرج - شاهین  ویلا - شهرک یاس..."></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group col-lg-6  mt-3">
+                                    <label class="col-sm-12 control-label">شماره فاکتور </label>
+                                    <div class="col-sm-12">
+                                        <input required name="ExportNumber" type="number" placeholder="0912 517 4854"
+                                            class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group col-lg-6  mt-3">
+                                    <label class="col-sm-12 control-label">مالیات</label>
+                                    <div class="col-sm-12">
+                                        <input required name="Tax" type="number" placeholder="10"
+                                            class="form-control">
                                     </div>
                                 </div>
                                 <div id="ExportProductsList">
@@ -48,11 +62,11 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <td  colspan="7" >محصولی اضافه نشده است</td>
+                                            <td class="Notfound"  colspan="7" >محصولی اضافه نشده است</td>
                                         </tbody>
                                         <tfoot style="background-color: #ddd;">
-                                            <tr><td colspan="7"  style="text-align: left;">0</td></tr>
-
+                                            <tr class="TotalPriceOut"><td colspan="7"  style="text-align: left;">0</td></tr>
+                                            <input class="d-none" name="ExportTotalPrice" type="number">
                                         </tfoot>
                                     </table>
 
@@ -113,21 +127,21 @@
                                                     <div class="form-group col-lg-6  mt-3">
                                                         <label class="col-sm-12 control-label" min="0">متراژ</label>
                                                         <div class="col-sm-12">
-                                                            <input required name="Meter" min="0" type="number"
+                                                            <input  name="Meter" min="0" type="number"
                                                                 class="form-control">
                                                         </div>
                                                     </div>
                                                     <div class="form-group col-lg-6  mt-3">
                                                         <label class="col-sm-12  control-label" min="0">قیمت هر رول</label>
                                                         <div class="col-sm-12">
-                                                            <input required name="RolePrice" min="0" readonly type="number"
+                                                            <input  name="RolePrice" min="0" readonly type="number"
                                                                 value="{{.Email}}" class="form-control">
                                                         </div>
                                                     </div>
                                                     <div class="form-group  col-lg-6  mt-3">
                                                         <label class="col-sm-12 control-label" min="0">قیمت هر متر</label>
                                                         <div class="col-sm-12">
-                                                            <input required name="MeterPrice" min="0" readonly type="number"
+                                                            <input  name="MeterPrice" min="0" readonly type="number"
                                                                 value="{{.Email}}" class="form-control">
                                                         </div>
                                                     </div>

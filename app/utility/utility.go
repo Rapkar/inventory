@@ -5,6 +5,7 @@ import (
 	model "inventory/app/Model"
 	"inventory/boot"
 	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	ptime "github.com/yaa110/go-persian-calendar"
@@ -55,10 +56,23 @@ func StringToInt32(value string) int32 {
 	return int32(newValue)
 }
 
-func CurrentTser() string {
+func CurrentTime() string {
 
 	var pt = ptime.Now()
 	exportFormat := pt.Format("yyyy/MM/dd E hh:mm:ss a")
 
 	return exportFormat
+}
+
+func Unserialize(value string) map[string]string {
+	datas := make(map[string]string)
+	pairs := strings.Split(value, "&")
+	for _, val := range pairs {
+		kv := strings.SplitN(val, "=", 2)
+		if len(kv) == 2 {
+			datas[kv[0]] = kv[1]
+		}
+
+	}
+	return datas
 }
