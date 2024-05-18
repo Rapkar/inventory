@@ -1,5 +1,6 @@
 
 let CurrentProductName = "";
+let ProductsOfExport = [];
 jQuery('#myModal').modal('show')
 // add  New product to export list
 
@@ -21,13 +22,21 @@ jQuery("#AddProductToExport").on("click", function () {
     var MeterPrice = jQuery("#ProductBox input[name='MeterPrice']").val()
     var TotalPrice = jQuery("#ProductBox input[name='TotalPrice']").val()
     var value = '<tr><th scope="row">' + ID + '</th><td>' + CurrentProductName + '</td><td>23423</td><td>' + Count + '</td><td>' + MeterPrice + '</td><td>' + RolePrice + '</td><td>' + TotalPrice + '</td></tr>';
+    var newRow = {
+        // ExportID: ID,
+        Name: CurrentProductName,
+        count: Count,
+        meterPrice: MeterPrice,
+        rolePrice: RolePrice,
+        totalPrice: TotalPrice
+    };
+    ProductsOfExport.push(newRow)
+    console.log(ProductsOfExport)
     jQuery("#ExportProductsList tbody").append(value);
-    //   jQuery('body').removeClass("modal-open");
-    //   jQuery(".modal-backdrop").remove();
-    var oldprice=jQuery(".TotalPriceOut td").html();
-    oldprice=parseFloat(oldprice);
-    TotalPrice=parseFloat(TotalPrice)
-    TotalPrice=oldprice+TotalPrice;
+    var oldprice = jQuery(".TotalPriceOut td").html();
+    oldprice = parseFloat(oldprice);
+    TotalPrice = parseFloat(TotalPrice)
+    TotalPrice = oldprice + TotalPrice;
     jQuery(".TotalPriceOut td").html(TotalPrice)
     jQuery(".Notfound").slideUp();
     jQuery(".close").click()
@@ -60,9 +69,9 @@ jQuery(".ExportPeoducts select#InventoryIS").on("change", function () {
                     }
                 }, 200)
                 setTimeout(function () {
-                jQuery("#ProductIs").prop("disabled", false);
-                jQuery(".ProductIs").slideDown();
-                },210)
+                    jQuery("#ProductIs").prop("disabled", false);
+                    jQuery(".ProductIs").slideDown();
+                }, 210)
             });
     } else {
         jQuery(".modal-footer").slideUp();
@@ -106,11 +115,11 @@ jQuery(".ExportPeoducts select#ProductIs").on("change", function () {
 // Calculate TotalPrice by Count of Role 
 
 jQuery("input[name='Count']").on("change", function () {
-    var number= parseInt(this.value)
-    if (number != 0){
+    var number = parseInt(this.value)
+    if (number != 0) {
         jQuery(".modal-footer").slideDown();
 
-    }else{
+    } else {
         jQuery(".modal-footer").slideUp();
     }
     // setTimeout(function(){
@@ -131,11 +140,11 @@ jQuery("input[name='Count']").on("change", function () {
 // Calculate TotalPrice by price of meter  
 
 jQuery("input[name='Meter']").on("change", function () {
-   var number= parseInt(this.value)
-    if ( number != 0){
+    var number = parseInt(this.value)
+    if (number != 0) {
         jQuery(".modal-footer").slideDown();
 
-    }else{
+    } else {
         jQuery(".modal-footer").slideUp();
     }
     // setTimeout(function(){
@@ -152,17 +161,31 @@ jQuery("input[name='Meter']").on("change", function () {
     // },1000)
 
 })
+// function getFormData($form){
+//     var unindexed_array = $form;
+//     var indexed_array = {};
 
-jQuery("form[name='expotform']").submit(function(e){
+//     jQuery.map(unindexed_array, function(n, i){
+//         indexed_array[n['name']] = n['value'];
+//     });
+
+//     return indexed_array;
+// }
+
+jQuery("form[name='expotform']").submit(function (e) {
     e.preventDefault();
+    var formValues = jQuery("form[name='expotform']").find("input, select, textarea").map(function() {
+        return $(this).attr("name") + "=" + $(this).val();
+      }).get().join("&");
     jQuery.ajax({
         method: "POST",
         url: "/Dashboard/export",
-        data: JSON.stringify({ name: "expotform", Content: jQuery("form[name='expotform']").serialize() }),
-        contentType: "application/json; charset=utf-8",
+        data: JSON.stringify({ Name: "expotform", Content:formValues, Products: ProductsOfExport }),
+        // data: { Name: "expotform", Content: jQuery("form[name='expotform']").serialize(), Products: ProductsOfExport },
+        // contentType: "application/json; charset=utf-8",
     })
         .done(function (msg) {
             console.log(msg)
         });
-  
+
 })

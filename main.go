@@ -285,21 +285,68 @@ func main() {
 			c.JSON(http.StatusOK, gin.H{"result": product})
 		})
 		v2.POST("/export", func(c *gin.Context) {
-			var data struct {
-				Name    string `json:"name"`
-				Content string `json:"content"`
+			// mmm := map[string]string
+			type Product struct {
+				ID              string `gorm:"primaryKey"`
+				ExportID        string `gorm:"size:255;"`
+				Name            string `gorm:"type:varchar(100)" json:"name"`
+				Number          string `gorm:"size:255;"`
+				RolePrice       string `gorm:"type:float"`
+				MeterPrice      string `gorm:"type:float"`
+				Count           string `gorm:"size:255;"`
+				Meter           string `gorm:"size:255;"`
+				TotalPrice      string `gorm:"size:255;"`
+				InventoryNumber string `gorm:"size:255;"`
 			}
 
-			// fmt.Println("data.content")
+			var data struct {
+				Name     string    `json:"Name"`
+				Content  string    `json:"Content"`
+				Products []Product `json:"Products"`
+			}
 			if err := c.BindJSON(&data); err != nil {
 				log.Println(err)
 				c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 				return
 			}
+			exportproducts := make([]boot.ExportProducts, len(data.Products))
+			// fmt.Println(data)
+			for a, _ := range data.Products {
+				exportproducts[a].ExportID, _ = strconv.ParseUint(data.Products[a].ExportID, 10, 64)
+				exportproducts[a].Name = data.Products[a].Name
+				exportproducts[a].Number = data.Products[a].ExportID
+				exportproducts[a].RolePrice, _ = strconv.ParseFloat(data.Products[a].RolePrice, 64)
+				exportproducts[a].MeterPrice, _ = strconv.ParseFloat(data.Products[a].MeterPrice, 64)
+				Count, _ := strconv.ParseInt(data.Products[a].Count, 10, 8)
+				exportproducts[a].Count = int8(Count)
+				InventoryNumber, _ := strconv.ParseInt(data.Products[a].InventoryNumber, 10, 32)
+				exportproducts[a].InventoryNumber = int32(InventoryNumber)
 
-			utility.Unserialize(data.Content)
+			}
+			result۲ := utility.Unserialize(data.Content)
+			fmt.Println("data", result۲, exportproducts)
+
+			// byteSlice, err := json.Marshal(data.Products)
+			// if err != nil {
+			// 	panic(err)
+			// }
+			// // fmt.Println(reflect.TypeOf(data.Products), data.Products, byteSlice)
+			// var products []boot.ExportProducts
+			// json(data.Products)
+			// fmt.Println(reflect.TypeOf(data.Products), data.Products)
+			// for va, in := range data.Products {
+			// 	fmt.Println(in, va)
+			// }
+
+			// fmt.Println(re, result۲)
+			// Export:=[]boot.Export{
+			// 	Name:result[""]
+			// }
+
+			// fmt.Println(html.EscapeString(result["Name"]))
+
 			// datas["Address"]
-			c.JSON(http.StatusOK, gin.H{"message": "Data received successfully"})
+			c.JSON(http.StatusOK, gin.H{"message": "data"})
 		})
 		v2.GET("/export-list", middleware.AuthMiddleware(), func(c *gin.Context) {
 			session := sessions.Default(c)
