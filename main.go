@@ -2,11 +2,11 @@ package main
 
 import (
 	"fmt"
-	auth "inventory/app/Auth"
-	model "inventory/app/Model"
-	"inventory/app/middleware"
-	utility "inventory/app/utility"
-	"inventory/boot"
+	auth "inventory/App/Auth"
+	boot "inventory/App/Boot"
+	model "inventory/App/Model"
+	"inventory/App/Utility"
+	"inventory/App/middleware"
 	"log"
 	"net/http"
 	"strconv"
@@ -17,42 +17,8 @@ import (
 )
 
 func main() {
-	// var users Users
-	var user = boot.Users{}
-	// boot.DB().Where("email = ?", "hosseinbidar7@gmail.com").First(&user)
-	boot.DB().Where("email = ?", "hosseinbidar7@gmail.com").First(&user)
-	var users []boot.Users
-	boot.DB().Model(&boot.Users{}).Select("*").Where("Email = ?", "hosseinbidar7@gmail.com").Scan(&users)
-	pass := ""
-	for _, user := range users {
-		pass = user.Password
-	}
-	fmt.Println(pass)
 
-	result := boot.DB().Migrator().CreateTable(boot.Users{})
-	result2 := boot.DB().Migrator().CreateTable(boot.Inventory{})
-	result3 := boot.DB().Migrator().CreateTable(boot.ExportProducts{})
-	result4 := boot.DB().Migrator().CreateTable(boot.Export{})
-
-	// result := db.Create(&Users)
-	if result == nil {
-		a, _ := utility.HashPassword("0000")
-		User := boot.Users{Name: "hossein Soltanian", Email: "hosseinbidar7@gmail.com", Password: a, Role: "Admin", Phonenumber: "09125174854"}
-		boot.DB().Create(&User)
-	}
-	if result2 == nil {
-		Inventory := boot.Inventory{Name: "ایزوگام شرق", Number: "10", RolePrice: 99.250, MeterPrice: 102.500, Count: 100, InventoryNumber: 1}
-		boot.DB().Create(&Inventory)
-	}
-	ExportProduct := []boot.ExportProducts{}
-	if result3 == nil {
-		ExportProduct = []boot.ExportProducts{{Name: "ایزوگام شرق", Number: "10", RolePrice: 99.250, MeterPrice: 102.500, Count: 100, InventoryNumber: 1, TotalPrice: 2000000, Meter: 10}}
-		boot.DB().Create(&ExportProduct)
-	}
-	if result4 == nil {
-		Export := boot.Export{Name: "رضا توانگر", Number: "9283422", Phonenumber: "09199656725", Address: "کرج -کرج=-ایران -سیسی", TotalPrice: 10000000, Tax: 10, ExportProducts: ExportProduct, InventoryNumber: 1, CreatedAt: utility.CurrentTime()}
-		boot.DB().Create(&Export)
-	}
+	boot.Init()
 
 	r := gin.Default()
 	r.LoadHTMLGlob("templates/*")
@@ -62,7 +28,7 @@ func main() {
 
 	// Defualt  Routes
 	r.GET("/", middleware.AuthMiddleware(), func(c *gin.Context) {
-		c.Redirect(http.StatusMovedPermanently, utility.HomeUrl()+"/Dashboard")
+		c.Redirect(http.StatusMovedPermanently, Utility.HomeUrl()+"/Dashboard")
 	})
 	r.NoRoute(func(c *gin.Context) {
 		c.HTML(http.StatusOK, "404.html", gin.H{
@@ -79,7 +45,7 @@ func main() {
 	// Like (admin user page or Crud pages)
 	v1 := r.Group("/auth")
 	{
-		//defult login page every user can see this page in open login utility.HomeUrl
+		//defult login page every user can see this page in open login Utility.HomeUrl
 		v1.GET("/", func(c *gin.Context) {
 			c.HTML(http.StatusOK, "login.html", gin.H{
 				"title": "ورود به حساب",
@@ -87,7 +53,7 @@ func main() {
 		})
 		// login page after submit form
 		v1.GET("/login", func(c *gin.Context) {
-			c.Redirect(http.StatusMovedPermanently, utility.HomeUrl()+"/Dashboard")
+			c.Redirect(http.StatusMovedPermanently, Utility.HomeUrl()+"/Dashboard")
 		})
 		// login page after submit form
 		v1.POST("/login", func(c *gin.Context) {
@@ -102,8 +68,8 @@ func main() {
 					session.Set("UserName", name)
 					session.Save()
 				}
-				c.SetCookie("Auth", "logedin", 3600, "/Dashboard/", utility.HomeUrl(), false, true)
-				c.Redirect(http.StatusMovedPermanently, utility.HomeUrl()+"/Dashboard")
+				c.SetCookie("Auth", "logedin", 3600, "/Dashboard/", Utility.HomeUrl(), false, true)
+				c.Redirect(http.StatusMovedPermanently, Utility.HomeUrl()+"/Dashboard")
 			}
 
 		})
@@ -158,7 +124,7 @@ func main() {
 			user.Phonenumber = c.PostForm("Phonenumber")
 			user.Password = c.PostForm("Password")
 			user.Role = c.PostForm("Role")
-			user.Password, _ = utility.HashPassword(user.Password)
+			user.Password, _ = Utility.HashPassword(user.Password)
 			res := boot.DB().Create(&user)
 			if res.RowsAffected > 0 {
 				c.HTML(http.StatusOK, "edit_user.html", gin.H{
@@ -180,7 +146,7 @@ func main() {
 		})
 		v2.GET("/edituser", middleware.AuthMiddleware(), func(c *gin.Context) {
 			session := sessions.Default(c)
-			currentusrt := utility.GetCurrentUser(c)
+			currentusrt := model.GetCurrentUser(c)
 			c.HTML(http.StatusOK, "edit_user.html", gin.H{
 				"Username": session.Get("UserName"),
 				"title":    "ویرایش کاربر",
@@ -189,7 +155,7 @@ func main() {
 			})
 		})
 		v2.POST("/edituser", middleware.AuthMiddleware(), func(c *gin.Context) {
-			currentusrt := utility.GetCurrentUser(c)
+			currentusrt := model.GetCurrentUser(c)
 			c.HTML(http.StatusOK, "edit_user.html", gin.H{
 				"title":   "ویرایش کاربر",
 				"action":  "add_user",
@@ -206,17 +172,17 @@ func main() {
 				"Username":        session.Get("UserName"),
 				"title":           "محصول",
 				"action":          "addproduct",
-				"InventoryNumber": utility.GetCurrentInventory(c),
+				"InventoryNumber": Utility.GetCurrentInventory(c),
 			})
 		})
 		v2.POST("/addproduct", middleware.AuthMiddleware(), func(c *gin.Context) {
 			var product boot.Inventory
 			product.Name = c.PostForm("Name")
 			product.Number = c.PostForm("Number")
-			product.RolePrice = utility.StringToFloat(c.PostForm("RolePrice"))
-			product.MeterPrice = utility.StringToFloat(c.PostForm("MeterPrice"))
-			product.Count = utility.StringToInt(c.PostForm("Count"))
-			product.InventoryNumber = utility.StringToInt32(c.PostForm("InventoryNumber"))
+			product.RolePrice = Utility.StringToFloat(c.PostForm("RolePrice"))
+			product.MeterPrice = Utility.StringToFloat(c.PostForm("MeterPrice"))
+			product.Count = Utility.StringToInt(c.PostForm("Count"))
+			product.InventoryNumber = Utility.StringToInt32(c.PostForm("InventoryNumber"))
 			res := boot.DB().Create(&product)
 			if res.RowsAffected > 0 {
 				c.HTML(http.StatusOK, "add_product.html", gin.H{
@@ -241,7 +207,7 @@ func main() {
 			c.HTML(http.StatusOK, "inventory.html", gin.H{
 				"Username": session.Get("UserName"),
 				"title":    "انبار",
-				"products": model.GetAllProductsByInventory(utility.GetCurrentInventory(c)),
+				"products": model.GetAllProductsByInventory(Utility.GetCurrentInventory(c)),
 			})
 		})
 
@@ -285,7 +251,9 @@ func main() {
 			c.JSON(http.StatusOK, gin.H{"result": product})
 		})
 		v2.POST("/export", func(c *gin.Context) {
-			// mmm := map[string]string
+
+			// make  product  struct  for bind and for data struct
+
 			type Product struct {
 				ID              string `gorm:"primaryKey"`
 				ExportID        string `gorm:"size:255;"`
@@ -298,17 +266,23 @@ func main() {
 				TotalPrice      string `gorm:"size:255;"`
 				InventoryNumber string `gorm:"size:255;"`
 			}
-
+			// make  Data  struct  for bind
 			var data struct {
 				Name     string    `json:"Name"`
 				Content  string    `json:"Content"`
 				Products []Product `json:"Products"`
 			}
+
+			// bind data from ajax to Data
+
 			if err := c.BindJSON(&data); err != nil {
 				log.Println(err)
 				c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 				return
 			}
+
+			// bind data struct to  ExportProducts for make row in db
+
 			exportproducts := make([]boot.ExportProducts, len(data.Products))
 			for a, _ := range data.Products {
 				exportproducts[a].ExportID, _ = strconv.ParseUint(data.Products[a].ExportID, 10, 64)
@@ -323,17 +297,18 @@ func main() {
 
 			}
 
-			// Export assign
+			// bind result " data.Content " from ajax to  Export for make row in db
+
 			Export := boot.Export{}
-			result := utility.Unserialize(data.Content)
+			result := Utility.Unserialize(data.Content)
 			Export.Name = result["Name"]
 			Export.Number = result["Number"]
 			Export.Phonenumber = result["Phonenumber"]
 			Export.Address = result["Address"]
-			Export.TotalPrice = utility.StringToFloat(result["TotalPrice"])
-			Export.Tax = utility.StringToFloat(result["Tax"])
-			Export.CreatedAt = result["CreatedAt"]
-			Export.InventoryNumber = utility.StringToInt32(result["InventoryNumber"])
+			Export.TotalPrice = Utility.StringToFloat(result["TotalPrice"])
+			Export.Tax = Utility.StringToFloat(result["Tax"])
+			Export.CreatedAt = Utility.CurrentTime()
+			Export.InventoryNumber = Utility.StringToInt32(result["InventoryNumber"])
 			Export.ExportProducts = exportproducts
 			// output: Export,exportproducts
 			if boot.DB().Create(&exportproducts).RowsAffected > 0 && boot.DB().Create(&Export).RowsAffected > 0 {
@@ -345,10 +320,17 @@ func main() {
 		})
 		v2.GET("/export-list", middleware.AuthMiddleware(), func(c *gin.Context) {
 			session := sessions.Default(c)
-			// Export:=model.GetAllExports()
-			// Export.TotalPrice=model.FloatToString(Export.TotalPrice)
 			fmt.Println(model.GetAllExports())
 			c.HTML(http.StatusOK, "export_list.html", gin.H{
+				"Username": session.Get("UserName"),
+				"title":    "فاکتورها",
+				"exports":  model.GetAllExports(),
+			})
+		})
+		v2.GET("/exportshow", middleware.AuthMiddleware(), func(c *gin.Context) {
+			session := sessions.Default(c)
+			fmt.Println(model.GetAllExports())
+			c.HTML(http.StatusOK, "exportshow.html", gin.H{
 				"Username": session.Get("UserName"),
 				"title":    "فاکتورها",
 				"exports":  model.GetAllExports(),

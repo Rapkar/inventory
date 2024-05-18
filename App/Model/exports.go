@@ -1,23 +1,23 @@
-package model
+package Model
 
 import (
 	"encoding/json"
 
-	"inventory/boot"
+	"inventory/App/Boot"
 )
 
-func GetAllExports() []boot.EscapeExport {
-	var Export []boot.Export
-	var EscapeExport []boot.EscapeExport
-	boot.DB().Model(&boot.Export{}).Select("*").Scan(&Export)
+func GetAllExports() []Boot.EscapeExport {
+	var Export []Boot.Export
+	var EscapeExport []Boot.EscapeExport
+	Boot.DB().Model(&Boot.Export{}).Select("*").Scan(&Export)
 	// if len(Export) == 0 {
-	// 	return []boot.EscapeExport{}
+	// 	return []Boot.EscapeExport{}
 	// }
 
-	EscapeExport = make([]boot.EscapeExport, len(Export))
+	EscapeExport = make([]Boot.EscapeExport, len(Export))
 
 	for i, value := range Export {
-		var escapeExport boot.EscapeExport
+		var escapeExport Boot.EscapeExport
 		escapeExport.Name = value.Name
 		escapeExport.Address = value.Address
 		escapeExport.Number = value.Number

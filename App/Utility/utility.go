@@ -1,9 +1,9 @@
-package utility
+package Utility
 
 import (
-	"fmt"
-	model "inventory/app/Model"
-	"inventory/boot"
+
+	// Model "inventory/app/Model"
+
 	"strconv"
 	"strings"
 
@@ -12,10 +12,6 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func TeataSay() {
-
-	fmt.Println("asd")
-}
 func HomeUrl() string {
 	return "http://127.0.0.1:8080"
 }
@@ -30,13 +26,7 @@ func CheckPasswordHash(password, hash string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
 	return err == nil
 }
-func GetCurrentUser(c *gin.Context) []boot.Users {
-	Id := c.Request.URL.Query().Get("user-id")
-	userIdUint, _ := strconv.ParseUint(Id, 10, 64)
-	USERID := boot.Users{ID: userIdUint}
-	currentUser := model.GetUserById(USERID)
-	return currentUser
-}
+
 func GetCurrentInventory(c *gin.Context) int32 {
 	Id := c.Request.URL.Query().Get("inventory")
 	Inventoryid, _ := strconv.ParseInt(Id, 10, 32)
@@ -56,6 +46,7 @@ func StringToInt32(value string) int32 {
 	return int32(newValue)
 }
 
+// get the Persian Current Time
 func CurrentTime() string {
 
 	var pt = ptime.Now()
@@ -64,7 +55,9 @@ func CurrentTime() string {
 	return exportFormat
 }
 
+// Unserialize string value to array with "&"" char
 func Unserialize(value string) map[string]string {
+
 	datas := make(map[string]string)
 	pairs := strings.Split(value, "&")
 	for _, val := range pairs {
@@ -76,3 +69,11 @@ func Unserialize(value string) map[string]string {
 	}
 	return datas
 }
+
+// func TableFound(table string) bool {
+// 	if db.Query("select * from "+table+";") == nil {
+// 		return false
+// 	} else {
+// 		return true
+// 	}
+// }

@@ -2,15 +2,15 @@ package auth
 
 import (
 	"fmt"
-	model "inventory/app/Model"
-	"inventory/app/utility"
-	"inventory/boot"
+	"inventory/App/Boot"
+	"inventory/App/Model"
+	"inventory/App/Utility"
 )
 
-func CheckAuth(login boot.Login) (bool, string) {
+func CheckAuth(login Boot.Login) (bool, string) {
 	pass := ""
 	name := ""
-	CurentUser := model.GetUserByEmail(login)
+	CurentUser := Model.GetUserByEmail(login)
 	for _, user := range CurentUser {
 		pass = user.Password
 		name = user.Name
@@ -18,7 +18,7 @@ func CheckAuth(login boot.Login) (bool, string) {
 	fmt.Println("aaAAAAAAAAAAAAAAAA", name)
 	dbpass := login.Password
 	result := false
-	if utility.CheckPasswordHash(dbpass, pass) {
+	if Utility.CheckPasswordHash(dbpass, pass) {
 
 		result = true
 	}

@@ -1,4 +1,4 @@
-package boot
+package Boot
 
 func Messages(value string) string {
 	var messages = map[string]string{
