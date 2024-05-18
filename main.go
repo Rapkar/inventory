@@ -310,7 +310,6 @@ func main() {
 				return
 			}
 			exportproducts := make([]boot.ExportProducts, len(data.Products))
-			// fmt.Println(data)
 			for a, _ := range data.Products {
 				exportproducts[a].ExportID, _ = strconv.ParseUint(data.Products[a].ExportID, 10, 64)
 				exportproducts[a].Name = data.Products[a].Name
@@ -323,30 +322,26 @@ func main() {
 				exportproducts[a].InventoryNumber = int32(InventoryNumber)
 
 			}
-			result۲ := utility.Unserialize(data.Content)
-			fmt.Println("data", result۲, exportproducts)
 
-			// byteSlice, err := json.Marshal(data.Products)
-			// if err != nil {
-			// 	panic(err)
-			// }
-			// // fmt.Println(reflect.TypeOf(data.Products), data.Products, byteSlice)
-			// var products []boot.ExportProducts
-			// json(data.Products)
-			// fmt.Println(reflect.TypeOf(data.Products), data.Products)
-			// for va, in := range data.Products {
-			// 	fmt.Println(in, va)
-			// }
+			// Export assign
+			Export := boot.Export{}
+			result := utility.Unserialize(data.Content)
+			Export.Name = result["Name"]
+			Export.Number = result["Number"]
+			Export.Phonenumber = result["Phonenumber"]
+			Export.Address = result["Address"]
+			Export.TotalPrice = utility.StringToFloat(result["TotalPrice"])
+			Export.Tax = utility.StringToFloat(result["Tax"])
+			Export.CreatedAt = result["CreatedAt"]
+			Export.InventoryNumber = utility.StringToInt32(result["InventoryNumber"])
+			Export.ExportProducts = exportproducts
+			// output: Export,exportproducts
+			if boot.DB().Create(&exportproducts).RowsAffected > 0 && boot.DB().Create(&Export).RowsAffected > 0 {
+				c.JSON(http.StatusOK, gin.H{"message": "success"})
+			} else {
+				c.JSON(http.StatusOK, gin.H{"message": "invalid request"})
+			}
 
-			// fmt.Println(re, result۲)
-			// Export:=[]boot.Export{
-			// 	Name:result[""]
-			// }
-
-			// fmt.Println(html.EscapeString(result["Name"]))
-
-			// datas["Address"]
-			c.JSON(http.StatusOK, gin.H{"message": "data"})
 		})
 		v2.GET("/export-list", middleware.AuthMiddleware(), func(c *gin.Context) {
 			session := sessions.Default(c)
