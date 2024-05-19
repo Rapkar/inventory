@@ -31,7 +31,7 @@ type Export struct {
 	Address         string           `gorm:"size:255;"`
 	TotalPrice      float64          `gorm:"type:decimal(10,2);"`
 	Tax             float64          `gorm:"type:float"`
-	CreatedAt       string           `json:"start_date"` // assign the format to a string
+	CreatedAt       string           `json:"CreatedAt"` // assign the format to a string
 	InventoryNumber int32            `gorm:"size:255;"`
 	ExportProducts  []ExportProducts `gorm:"foreignKey:ExportID"`
 }
@@ -43,7 +43,7 @@ type EscapeExport struct {
 	Address         string           `gorm:"size:255;"`
 	TotalPrice      string           `gorm:"type:string"`
 	Tax             float64          `gorm:"type:float"`
-	CreatedAt       string           `json:"start_date"` // assign the format to a string
+	CreatedAt       string           `json:"CreatedAt"` // assign the format to a string
 	InventoryNumber int32            `gorm:"size:255;"`
 	ExportProducts  []ExportProducts `gorm:"foreignKey:ExportID"`
 }

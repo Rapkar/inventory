@@ -2,8 +2,11 @@ package main
 
 import (
 	"fmt"
+	"html/template"
 	auth "inventory/App/Auth"
+	"inventory/App/Boot"
 	boot "inventory/App/Boot"
+	controller "inventory/App/Controller"
 	model "inventory/App/Model"
 	"inventory/App/Utility"
 	"inventory/App/middleware"
@@ -36,11 +39,6 @@ func main() {
 		})
 	})
 
-	// r.GET("assets/images/", func(c *gin.Context) {
-	// 	c.File("./assets/images" + c.Param("images"))
-	// 	fmt.Println("imageeeeeeee", c.Param("images"))
-	// })
-
 	// auth Route
 	// Like (admin user page or Crud pages)
 	v1 := r.Group("/auth")
@@ -61,6 +59,7 @@ func main() {
 			login.Email = c.PostForm("email")
 			login.Password = c.PostForm("pass")
 			authorized, name := auth.CheckAuth(login)
+			// fmt.Print(authorized, c.PostForm("email"), c.b, authorized)
 			if authorized {
 				session := sessions.Default(c)
 				if session.Get("Auth") != "logedin" {
@@ -68,7 +67,10 @@ func main() {
 					session.Set("UserName", name)
 					session.Save()
 				}
-				c.SetCookie("Auth", "logedin", 3600, "/Dashboard/", Utility.HomeUrl(), false, true)
+				c.SetCookie("email", login.Email, 3600, "/Dashboard/", Utility.HomeUrl(), false, true)
+				c.SetCookie("pass", login.Password, 3600, "/Dashboard/", Utility.HomeUrl(), false, true)
+
+				// c.JSON(http.StatusOK, gin.H{"message": "success"})
 				c.Redirect(http.StatusMovedPermanently, Utility.HomeUrl()+"/Dashboard")
 			}
 
@@ -213,6 +215,7 @@ func main() {
 
 		v2.GET("/export", middleware.AuthMiddleware(), func(c *gin.Context) {
 			session := sessions.Default(c)
+
 			c.HTML(http.StatusOK, "export.html", gin.H{
 				"Username": session.Get("UserName"),
 				"action":   "export",
@@ -256,6 +259,7 @@ func main() {
 
 			type Product struct {
 				ID              string `gorm:"primaryKey"`
+				ProductId       string `gorm:"size:255;"`
 				ExportID        string `gorm:"size:255;"`
 				Name            string `gorm:"type:varchar(100)" json:"name"`
 				Number          string `gorm:"size:255;"`
@@ -284,7 +288,10 @@ func main() {
 			// bind data struct to  ExportProducts for make row in db
 
 			exportproducts := make([]boot.ExportProducts, len(data.Products))
+			Ids := make(map[int64]int64)
 			for a, _ := range data.Products {
+				ids, _ := strconv.ParseInt(data.Products[a].ProductId, 10, 64)
+
 				exportproducts[a].ExportID, _ = strconv.ParseUint(data.Products[a].ExportID, 10, 64)
 				exportproducts[a].Name = data.Products[a].Name
 				exportproducts[a].Number = data.Products[a].ExportID
@@ -294,6 +301,7 @@ func main() {
 				exportproducts[a].Count = int8(Count)
 				InventoryNumber, _ := strconv.ParseInt(data.Products[a].InventoryNumber, 10, 32)
 				exportproducts[a].InventoryNumber = int32(InventoryNumber)
+				Ids[int64(ids)] = int64(Count)
 
 			}
 
@@ -307,11 +315,13 @@ func main() {
 			Export.Address = result["Address"]
 			Export.TotalPrice = Utility.StringToFloat(result["TotalPrice"])
 			Export.Tax = Utility.StringToFloat(result["Tax"])
-			Export.CreatedAt = Utility.CurrentTime()
+			Export.CreatedAt = string(Utility.CurrentTime())
 			Export.InventoryNumber = Utility.StringToInt32(result["InventoryNumber"])
 			Export.ExportProducts = exportproducts
 			// output: Export,exportproducts
+
 			if boot.DB().Create(&exportproducts).RowsAffected > 0 && boot.DB().Create(&Export).RowsAffected > 0 {
+				controller.InventoryCalculation(Ids)
 				c.JSON(http.StatusOK, gin.H{"message": "success"})
 			} else {
 				c.JSON(http.StatusOK, gin.H{"message": "invalid request"})
@@ -320,12 +330,51 @@ func main() {
 		})
 		v2.GET("/export-list", middleware.AuthMiddleware(), func(c *gin.Context) {
 			session := sessions.Default(c)
-			fmt.Println(model.GetAllExports())
 			c.HTML(http.StatusOK, "export_list.html", gin.H{
 				"Username": session.Get("UserName"),
 				"title":    "فاکتورها",
-				"exports":  model.GetAllExports(),
+				"Paginate": template.HTML(Utility.MakePaginate(model.GetCountOfExports() / 1)),
+				"exports":  model.GetAllExportsByPaginate(0, 1),
 			})
+		})
+
+		v2.POST("/export-list", middleware.AuthMiddleware(), func(c *gin.Context) {
+			var data struct {
+				Page   string `json:"page"`
+				Offset string `json:"offset"`
+			}
+			if err := c.BindJSON(&data); err != nil {
+				log.Println(err)
+				c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+				return
+			}
+			page, _ := strconv.ParseInt(data.Page, 10, 8)
+			limit := int(page) * int(1)
+
+			result := []Boot.EscapeExport{}
+			if page == 1 {
+				result = model.GetAllExportsByPaginate(0, 1)
+
+			} else {
+				result = model.GetAllExportsByPaginate(limit, 1)
+
+			}
+			fmt.Println(result)
+			c.JSON(http.StatusOK, gin.H{"message": result})
+		})
+		v2.POST("/export-find", middleware.AuthMiddleware(), func(c *gin.Context) {
+			var data struct {
+				Term string `json:"term"`
+			}
+			if err := c.BindJSON(&data); err != nil {
+				log.Println(err)
+				c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+				return
+			}
+			fmt.Println(data)
+			result := model.GetAllExportsByPhoneAndName(data.Term)
+			fmt.Println(result)
+			c.JSON(http.StatusOK, gin.H{"message": result})
 		})
 		v2.GET("/exportshow", middleware.AuthMiddleware(), func(c *gin.Context) {
 			session := sessions.Default(c)

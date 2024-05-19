@@ -1,45 +1,88 @@
 {{template "header" . }}
 {{template "navbar" . }}
+
 <body>
-    <div class="h-100 d-flex align-items-center mt-5">
-        <div class="container mt-5">
-
-
-            <table dir="rtl"  class="table table-sm table-dark">
-                <thead>
-                  <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">نام کاربر</th>
-                    <th scope="col">شماره شماره محصول</th>
-                    <th scope="col">تلفن تماس</th>
-                    <th scope="col">آدرس خریدار</th>
-                    <th scope="col">قیمت کل خرید</th>
-                    <th scope="col">مالیات</th>
-                    <th scope="col">تاریخ خرید</th>
-                    <th scope="col">شماره انبار</th>
-                    <th scope="col">ویرایش</th>
-                  </tr>
-                </thead>
-                <tbody dir="rtl">
-                  {{range .exports}}
-                  <tr>
-                    <th scope="row">{{.ID}}</th>
-                    <td>{{.Name}}</td>
-                    <td>{{.Number}}</td>
-                    <td dir="ltr" style="text-align:right;" >{{.Phonenumber}}</td>
-                    <td dir="ltr" style="text-align:right;" >{{.Address}}</td>
-                    <td dir="ltr" style="text-align:right;" >{{.TotalPrice}}</td>
-                    <td dir="ltr" style="text-align:right;" >{{.Tax}}</td>
-                    <td dir="ltr" style="text-align:right;" >{{.CreatedAt}}</td>
-                    <td dir="ltr" style="text-align:right;" >{{.InventoryNumber}}</td>
-                    <td dir="ltr" type="password" style="text-align:right;" ><a href="./edituser?user-id={{.ID}}" ><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pen" viewBox="0 0 16 16">
-                        <path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001m-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708z"/>
-                      </svg></a></td>
-                  </tr>
-                  {{end}}
-                </tbody>
-              </table>
-
+  <div class="h-100 d-flex align-items-center mt-5">
+    <div class="container ">
+<style>
+  .pagination li{
+    display: none;
+  }
+  .pagination li.active,.pagination li.inpending{
+    display: block;
+  }
+</style>
+      <div class="row justify-content-center mb-5">
+        <div class="col-12 col-md-10 col-lg-8">
+          <form class="card card-sm">
+            <div class="card-body row no-gutters align-items-center">
+              <div class="col-auto">
+                <i class="fas fa-search h4 text-body"></i>
+              </div>
+              <!--end of col-->
+              <div class="col">
+                <input class="form-control form-control-lg form-control-borderless" id="findval" type="search"
+                  placeholder="نام کاربر - شماره تماس">
+              </div>
+              <!--end of col-->
+              <div class="col-auto">
+                <button class="btn btn-lg btn-success" id="find" type="submit">جستجو کنید</button>
+              </div>
+              <!--end of col-->
+            </div>
+          </form>
         </div>
+        <!--end of col-->
+      </div>
+      <table dir="rtl" class="table table-sm table-dark " id="exportlist">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">نام کاربر</th>
+            <th scope="col"> شماره محصول</th>
+            <th scope="col">تلفن تماس</th>
+            <th scope="col">آدرس خریدار</th>
+            <th scope="col">قیمت کل خرید</th>
+            <th scope="col">مالیات</th>
+            <th scope="col">تاریخ خرید</th>
+            <th scope="col">شماره انبار</th>
+            <th scope="col">ویرایش</th>
+          </tr>
+        </thead>
+
+        <tbody dir="rtl">
+          {{range .exports}}
+          <tr>
+            <th scope="row">{{.ID}}</th>
+            <td>{{.Name}}</td>
+            <td>{{.Number}}</td>
+            <td dir="ltr" class="Phonenumber" style="text-align:right;">{{.Phonenumber}}</td>
+            <td dir="ltr" class="Address" style="text-align:right;">{{.Address}}</td>
+            <td dir="ltr" class="TotalPrice" style="text-align:right;">{{.TotalPrice}}</td>
+            <td dir="ltr" class="Tax" style="text-align:right;">{{.Tax}}</td>
+            <td dir="" class="CreatedAt" style="text-align:right;">{{.CreatedAt}}</td>
+            <td dir="" class="InventoryNumber" style="text-align:right;">{{.InventoryNumber}}</td>
+            <td dir="ltr" class="Edit" style="text-align:right;"><a href="./edituser?user-id={{.ID}}"><svg
+                  xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pen"
+                  viewBox="0 0 16 16">
+                  <path
+                    d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001m-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708z" />
+                </svg></a></td>
+          </tr>
+          {{end}}
+        </tbody>
+      </table>
+
     </div>
+
+  </div>
+  <div class="container ">
+    <nav aria-label="Page navigation example" class="justify-content-center d-flex" id="exportspaginate">
+      <ul class="pagination">
+
+        {{.Paginate }}
+
+      </ul>
+    </nav>
+  </div>
   {{template "footer.html"}}

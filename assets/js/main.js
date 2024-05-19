@@ -23,6 +23,7 @@ jQuery("#AddProductToExport").on("click", function () {
     var TotalPrice = jQuery("#ProductBox input[name='TotalPrice']").val()
     var value = '<tr><th scope="row">' + ID + '</th><td>' + CurrentProductName + '</td><td>23423</td><td>' + Count + '</td><td>' + MeterPrice + '</td><td>' + RolePrice + '</td><td>' + TotalPrice + '</td></tr>';
     var newRow = {
+        ProductId: ID,
         // ExportID: ID,
         Name: CurrentProductName,
         count: Count,
@@ -57,8 +58,6 @@ jQuery(".ExportPeoducts select#InventoryIS").on("change", function () {
             contentType: "application/json; charset=utf-8",
         })
             .done(function (msg) {
-
-                console.log(msg.result.length)
                 setTimeout(function () {
                     jQuery("#ProductIs").empty();
                     jQuery("#ProductIs").append('<option value="0">لطفا یک گزینه را انتخاب کنید</option>')
@@ -147,7 +146,6 @@ jQuery("input[name='Meter']").on("change", function () {
     } else {
         jQuery(".modal-footer").slideUp();
     }
-    // setTimeout(function(){
     jQuery("input[name='Count']").val(0);
     RolePrice = parseFloat(jQuery(".ExportPeoducts input[name='MeterPrice']").val());
     Count = parseFloat(jQuery(this).val());
@@ -158,7 +156,6 @@ jQuery("input[name='Meter']").on("change", function () {
         var TotalPrice = RolePrice * Count;
     }
     jQuery("input[name='TotalPrice']").val(TotalPrice)
-    // },1000)
 
 })
 // function getFormData($form){
@@ -173,14 +170,14 @@ jQuery("input[name='Meter']").on("change", function () {
 // }
 
 jQuery("form[name='expotform']").submit(function (e) {
-   e.preventDefault();
-    var formValues = jQuery("form[name='expotform']").find("input, select, textarea").map(function() {
+    e.preventDefault();
+    var formValues = jQuery("form[name='expotform']").find("input, select, textarea").map(function () {
         return $(this).attr("name") + "=" + $(this).val();
-      }).get().join("&");
+    }).get().join("&");
     jQuery.ajax({
         method: "POST",
         url: "/Dashboard/export",
-        data: JSON.stringify({ Name: "expotform", Content:formValues, Products: ProductsOfExport }),
+        data: JSON.stringify({ Name: "expotform", Content: formValues, Products: ProductsOfExport }),
         // data: { Name: "expotform", Content: jQuery("form[name='expotform']").serialize(), Products: ProductsOfExport },
         // contentType: "application/json; charset=utf-8",
     })
@@ -189,65 +186,98 @@ jQuery("form[name='expotform']").submit(function (e) {
         });
 
 })
-function printpage() {
-  
- const divToPrint = document.getElementById('card');
-const style = document.createElement('style');
-style.media = 'print';
-style.innerHTML = `
-  @media print {
-    /* hide all elements except the div */
-    * {
-      display: none;
-    }
-    #myDiv {
-      display: block;
-    }
-  }
-`;
-document.head.appendChild(style);
-window.print();
-}
-
-// share
 
 
-    const shareButtons = document.querySelectorAll('.sharebtn');
 
-    // Add click event listener to each button
-    shareButtons.forEach(button => {
-       button.addEventListener('click', () => {
-          // Get the URL of the current page
-          const url = window.location.href;
-    
-          // Get the social media platform from the button's class name
-          const platform = button.classList[1];
-    
-          // Set the URL to share based on the social media platform
-          let shareUrl;
-          switch (platform) {
-             case 'facebook':
-             shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
-             break;
-             case 'twitter':
-             shareUrl = `https://twitter.com/share?url=${encodeURIComponent(url)}`;
-             break;
-             case 'linkedin':
-             shareUrl = `https://www.linkedin.com/shareArticle?url=${encodeURIComponent(url)}`;
-             break;
-             case 'pinterest':
-             shareUrl = `https://pinterest.com/pin/create/button/?url=${encodeURIComponent(url)}`;
-             break;
-             case 'reddit':
-             shareUrl = `https://reddit.com/submit?url=${encodeURIComponent(url)}`;
-             break;
-             case 'whatsapp':
-             shareUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(url)}`;
-             break;
-          }
-    
-          // Open a new window to share the URL
-          window.open(shareUrl, '_blank');
-       });
-    });
-    
+jQuery("#exportspaginate a").on("click", function (e) {
+
+    e.preventDefault();
+    jQuery("#exportspaginate .page-item").removeClass("active")
+    jQuery("#exportspaginate .page-item").removeClass("inpending")
+    var page = jQuery(this).attr("attr-page")
+    jQuery.ajax({
+        method: "POST",
+        url: "/Dashboard/export-list",
+        data: JSON.stringify({ page: page, offset: "1" }),
+        // data: { Name: "expotform", Content: jQuery("form[name='expotform']").serialize(), Products: ProductsOfExport },
+        // contentType: "application/json; charset=utf-8",
+    })
+        .done(function (msg) {
+            console.log(msg.message)
+            var lengthofres = msg.message.length;
+            if (lengthofres > 0) {
+                let html = "";
+                msg.message.forEach(function (index) {
+                    html += '<tr>';
+                    html += '<td class="' + index.ID + '" style="text-align:right;">' + index.ID + '</td>';
+                    html += '<td class="' + index.Name + '" style="text-align:right;">' + index.Name + '</td>';
+                    html += '<td class="' + index.Number + '" style="text-align:right;">' + index.Number + '</td>';
+                    html += '<td class="' + index.Phonenumber + '" style="text-align:right;">' + index.Phonenumber + '</td>';
+                    html += '<td class="' + index.Address + '" style="text-align:right;">' + index.Address + '</td>';
+                    html += '<td class="' + index.TotalPrice + '" style="text-align:right;">' + index.TotalPrice + '</td>';
+                    html += '<td class="' + index.Tax + '" style="text-align:right;">' + index.Tax + '</td>';
+                    html += '<td class="' + index.CreatedAt + '" style="text-align:right;">' + index.CreatedAt + '</td>';
+                    html += '<td class="' + index.InventoryNumber + '" style="text-align:right;">' + index.inventory_number + '</td>';
+                    html += '<td dir="ltr" class="Edit" style="text-align:right;"><a href="./edituser?user-id=' + index.ID + '"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pen" viewBox="0 0 16 16">';
+                    html += '<path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44 .854A1.5 1.5 0 0 1 11.5 .796a1.5 1.5 0 0 1 1.998-.001m-.644 .766a.5 .5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a .5 .5 0 0 0 0-.708z"/></svg></a></td>';
+                    html += '</tr>';
+                    jQuery(e.target).parent().closest("li").addClass("active")
+                    jQuery(e.target).parent().closest("li").next("li").addClass("inpending");
+                    jQuery(e.target).parent().closest("li").prev("li").addClass("inpending");
+                    jQuery(this).addClass("active");
+                    // jQuery(this).parent("li").addClass("active");
+                    // jQuery(this).closest("li").addClass("active")
+                    jQuery(this).addClass("active")
+                });
+                if (html.length > 0) {
+                    jQuery("#exportlist tbody").empty()
+                    jQuery("#exportlist tbody").append(html)
+
+                }
+            }
+
+        });
+})
+jQuery("#find").on("click",function(e){
+    e.preventDefault()
+    var value=jQuery("#findval").val()
+    // console.log(value)
+    // value="حسین سلطانیان"
+    jQuery.ajax({
+        method: "POST",
+        url: "/Dashboard/export-find",
+        data: JSON.stringify({ term: value}),
+        // data: { Name: "expotform", Content: jQuery("form[name='expotform']").serialize(), Products: ProductsOfExport },
+        // contentType: "application/json; charset=utf-8",
+    })
+        .done(function (msg) {
+            var lengthofres = msg.message.length;
+            
+            if (lengthofres > 0) {
+                let html = "";
+                msg.message.forEach(function (index) {
+                    html += '<tr>';
+                    html += '<td class="' + index.ID + '" style="text-align:right;">' + index.ID + '</td>';
+                    html += '<td class="' + index.Name + '" style="text-align:right;">' + index.Name + '</td>';
+                    html += '<td class="' + index.Number + '" style="text-align:right;">' + index.Number + '</td>';
+                    html += '<td class="' + index.Phonenumber + '" style="text-align:right;">' + index.Phonenumber + '</td>';
+                    html += '<td class="' + index.Address + '" style="text-align:right;">' + index.Address + '</td>';
+                    html += '<td class="' + index.TotalPrice + '" style="text-align:right;">' + index.TotalPrice + '</td>';
+                    html += '<td class="' + index.Tax + '" style="text-align:right;">' + index.Tax + '</td>';
+                    html += '<td class="' + index.CreatedAt + '" style="text-align:right;">' + index.CreatedAt + '</td>';
+                    html += '<td class="' + index.InventoryNumber + '" style="text-align:right;">' + index.InventoryNumber + '</td>';
+                    html += '<td dir="ltr" class="Edit" style="text-align:right;"><a href="./edituser?user-id=' + index.ID + '"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pen" viewBox="0 0 16 16">';
+                    html += '<path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44 .854A1.5 1.5 0 0 1 11.5 .796a1.5 1.5 0 0 1 1.998-.001m-.644 .766a.5 .5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a .5 .5 0 0 0 0-.708z"/></svg></a></td>';
+                    html += '</tr>';
+                    // console.log(html)
+                });
+                // console.log(html)
+                if (html.length > 0) {
+                    jQuery("#exportlist tbody").empty()
+                    jQuery("#exportlist tbody").append(html)
+
+                }
+            }
+
+        });
+})
