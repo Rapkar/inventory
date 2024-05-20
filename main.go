@@ -10,7 +10,6 @@ import (
 	model "inventory/App/Model"
 	"inventory/App/Utility"
 	"inventory/App/middleware"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -89,6 +88,8 @@ func main() {
 				"Username": session.Get("UserName"),
 				"message":  boot.Messages("login success"),
 				"success":  true,
+				"users":    model.GetAllUsersByRole("guest"),
+				"exports":  model.GetAllExportsByPaginate(0, 5),
 			})
 		})
 
@@ -229,7 +230,6 @@ func main() {
 				Id   string `json:"id"`
 			}
 			if err := c.BindJSON(&data); err != nil {
-				log.Println(err)
 				c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 				return
 			}
@@ -245,7 +245,6 @@ func main() {
 				Id   string `json:"id"`
 			}
 			if err := c.BindJSON(&data); err != nil {
-				log.Println(err)
 				c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 				return
 			}
@@ -276,14 +275,13 @@ func main() {
 				Content  string    `json:"Content"`
 				Products []Product `json:"Products"`
 			}
-
 			// bind data from ajax to Data
 
 			if err := c.BindJSON(&data); err != nil {
-				log.Println(err)
 				c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 				return
 			}
+			fmt.Println("serialize", data.Content, "serialize")
 
 			// bind data struct to  ExportProducts for make row in db
 
@@ -300,6 +298,7 @@ func main() {
 				Count, _ := strconv.ParseInt(data.Products[a].Count, 10, 8)
 				exportproducts[a].Count = int8(Count)
 				InventoryNumber, _ := strconv.ParseInt(data.Products[a].InventoryNumber, 10, 32)
+
 				exportproducts[a].InventoryNumber = int32(InventoryNumber)
 				Ids[int64(ids)] = int64(Count)
 
@@ -317,6 +316,7 @@ func main() {
 			Export.Tax = Utility.StringToFloat(result["Tax"])
 			Export.CreatedAt = string(Utility.CurrentTime())
 			Export.InventoryNumber = Utility.StringToInt32(result["InventoryNumber"])
+			fmt.Println("inve", result["InventoryNumber"], Export.InventoryNumber, "/inve")
 			Export.ExportProducts = exportproducts
 			// output: Export,exportproducts
 
@@ -334,7 +334,7 @@ func main() {
 				"Username": session.Get("UserName"),
 				"title":    "فاکتورها",
 				"Paginate": template.HTML(Utility.MakePaginate(model.GetCountOfExports() / 1)),
-				"exports":  model.GetAllExportsByPaginate(0, 1),
+				"exports":  model.GetAllExportsByPaginate(0, 50),
 			})
 		})
 
@@ -344,7 +344,6 @@ func main() {
 				Offset string `json:"offset"`
 			}
 			if err := c.BindJSON(&data); err != nil {
-				log.Println(err)
 				c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 				return
 			}
@@ -359,7 +358,6 @@ func main() {
 				result = model.GetAllExportsByPaginate(limit, 1)
 
 			}
-			fmt.Println(result)
 			c.JSON(http.StatusOK, gin.H{"message": result})
 		})
 		v2.POST("/export-find", middleware.AuthMiddleware(), func(c *gin.Context) {
@@ -367,18 +365,15 @@ func main() {
 				Term string `json:"term"`
 			}
 			if err := c.BindJSON(&data); err != nil {
-				log.Println(err)
+
 				c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 				return
 			}
-			fmt.Println(data)
 			result := model.GetAllExportsByPhoneAndName(data.Term)
-			fmt.Println(result)
 			c.JSON(http.StatusOK, gin.H{"message": result})
 		})
 		v2.GET("/exportshow", middleware.AuthMiddleware(), func(c *gin.Context) {
 			session := sessions.Default(c)
-			fmt.Println(model.GetAllExports())
 			c.HTML(http.StatusOK, "exportshow.html", gin.H{
 				"Username": session.Get("UserName"),
 				"title":    "فاکتورها",

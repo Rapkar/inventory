@@ -14,7 +14,8 @@ jQuery("#AddProductToExport").on("click", function () {
     //     .done(function (msg) {
     //         console.log(msg);
     //     });
-    var ID = jQuery("#ProductIs").val()
+    var ID = jQuery("#ProductIs").val();
+    var InventoryNumber= jQuery("#InventoryIS").val();
     // var Name=jQuery("#ProductIs").html()
     var Count = jQuery("#ProductBox input[name='Count']").val()
     var MeterPrice = jQuery("#ProductBox input[name='Meter']").val()
@@ -23,6 +24,7 @@ jQuery("#AddProductToExport").on("click", function () {
     var TotalPrice = jQuery("#ProductBox input[name='TotalPrice']").val()
     var value = '<tr><th scope="row">' + ID + '</th><td>' + CurrentProductName + '</td><td>23423</td><td>' + Count + '</td><td>' + MeterPrice + '</td><td>' + RolePrice + '</td><td>' + TotalPrice + '</td></tr>';
     var newRow = {
+        InventoryNumber:InventoryNumber,
         ProductId: ID,
         // ExportID: ID,
         Name: CurrentProductName,
@@ -32,7 +34,6 @@ jQuery("#AddProductToExport").on("click", function () {
         totalPrice: TotalPrice
     };
     ProductsOfExport.push(newRow)
-    console.log(ProductsOfExport)
     jQuery("#ExportProductsList tbody").append(value);
     var oldprice = jQuery(".TotalPriceOut td").html();
     oldprice = parseFloat(oldprice);

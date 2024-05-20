@@ -40,7 +40,7 @@ func GetAllExportsByPaginate(offset int, limit int) []Boot.EscapeExport {
 	// if len(Export) == 0 {
 	// 	return []Boot.EscapeExport{}
 	// }
-	fmt.Println(Export)
+
 	EscapeExport = make([]Boot.EscapeExport, len(Export))
 
 	for i, value := range Export {
@@ -51,6 +51,7 @@ func GetAllExportsByPaginate(offset int, limit int) []Boot.EscapeExport {
 		escapeExport.Phonenumber = value.Phonenumber
 		escapeExport.Tax = value.Tax
 		escapeExport.InventoryNumber = value.InventoryNumber
+		fmt.Println(value.InventoryNumber)
 		escapeExport.ExportProducts = value.ExportProducts
 		escapeExport.CreatedAt = value.CreatedAt
 		escapeExport.TotalPrice = value.TotalPrice
@@ -66,7 +67,6 @@ func GetAllExportsByPhoneAndName(searchTerm string) []Boot.EscapeExport {
 
 	Boot.DB().Model(&Boot.Export{}).Where("name LIKE ? OR phonenumber LIKE ?", "%"+searchTerm+"%", "%"+searchTerm+"%").Find(&Export)
 	// Boot.DB().Model(&Boot.Export{}).Where("name = ?", searchTerm).Limit(3).Find(&Export)
-	fmt.Println(Export)
 	// if len(Export) == 0 {
 	// 	return []Boot.EscapeExport{}
 	// }
@@ -87,7 +87,7 @@ func GetAllExportsByPhoneAndName(searchTerm string) []Boot.EscapeExport {
 		// Add other fields here...
 		EscapeExport[i] = escapeExport
 	}
-	fmt.Println(EscapeExport)
+
 	return EscapeExport
 }
 
