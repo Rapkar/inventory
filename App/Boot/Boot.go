@@ -9,7 +9,8 @@ type Users struct {
 	Name        string `gorm:"size:255;index:idx_name,unique"`
 	Email       string `gorm:"size:255;"`
 	Password    string `gorm:"type:varchar(255)"`
-	Phonenumber string `gorm:"size:255;"`
+	Phonenumber string `gorm:"size:255,unique"`
+	Address     string `gorm:"size:255;"`
 	Role        string `gorm:"size:255;"`
 }
 

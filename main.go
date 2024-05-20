@@ -19,7 +19,7 @@ import (
 )
 
 func main() {
-
+	const postperpage int = 100
 	boot.Init()
 
 	r := gin.Default()
@@ -71,6 +71,9 @@ func main() {
 
 				// c.JSON(http.StatusOK, gin.H{"message": "success"})
 				c.Redirect(http.StatusMovedPermanently, Utility.HomeUrl()+"/Dashboard")
+			} else {
+
+				c.Redirect(http.StatusMovedPermanently, Utility.HomeUrl()+"/auth")
 			}
 
 		})
@@ -93,6 +96,12 @@ func main() {
 			})
 		})
 
+		v2.GET("/signout", middleware.AuthMiddleware(), func(c *gin.Context) {
+			session := sessions.Default(c)
+			session.Delete("Auth")
+			c.Redirect(http.StatusMovedPermanently, Utility.HomeUrl()+"/auth")
+
+		})
 		v2.GET("/users", middleware.AuthMiddleware(), func(c *gin.Context) {
 			session := sessions.Default(c)
 			// result := "a"
@@ -234,14 +243,14 @@ func main() {
 					"message":  boot.Messages("Export removed success"),
 					"success":  true,
 					"Paginate": template.HTML(Utility.MakePaginate(model.GetCountOfExports() / 1)),
-					"exports":  model.GetAllExportsByPaginate(0, 50),
+					"exports":  model.GetAllExportsByPaginate(0, postperpage),
 				})
 			} else {
 				c.HTML(http.StatusOK, "export_list.html", gin.H{
 					"Username": session.Get("UserName"),
 					"title":    "فاکتورها",
 					"Paginate": template.HTML(Utility.MakePaginate(model.GetCountOfExports() / 1)),
-					"exports":  model.GetAllExportsByPaginate(0, 50),
+					"exports":  model.GetAllExportsByPaginate(0, postperpage),
 				})
 			}
 		})
@@ -326,27 +335,36 @@ func main() {
 			}
 
 			// bind result " data.Content " from ajax to  Export for make row in db
+			User := boot.Users{}
 
 			Export := boot.Export{}
 			result := Utility.Unserialize(data.Content)
-			Export.Name = result["Name"]
+			User.Name, Export.Name = result["Name"], result["Name"]
 			Export.Number = result["Number"]
-			Export.Phonenumber = result["Phonenumber"]
-			Export.Address = result["Address"]
+			User.Phonenumber, Export.Phonenumber = result["Phonenumber"], result["Phonenumber"]
+			User.Address, Export.Address = result["Address"], result["Address"]
 			Export.TotalPrice = Utility.StringToFloat(result["TotalPrice"])
 			Export.Tax = Utility.StringToFloat(result["Tax"])
 			Export.CreatedAt = string(Utility.CurrentTime())
 			Export.InventoryNumber = Utility.StringToInt32(result["InventoryNumber"])
-			fmt.Println("inve", result["InventoryNumber"], Export.InventoryNumber, "/inve")
+			// fmt.Println("inve", result["InventoryNumber"], Export.InventoryNumber, "/inve")
 			Export.ExportProducts = exportproducts
 			// output: Export,exportproducts
+			User.Role = "guest"
 
-			if boot.DB().Create(&exportproducts).RowsAffected > 0 && boot.DB().Create(&Export).RowsAffected > 0 {
+			if boot.DB().Create(&User).RowsAffected > 0 && boot.DB().Create(&exportproducts).RowsAffected > 0 && boot.DB().Create(&Export).RowsAffected > 0 {
 				controller.InventoryCalculation(Ids)
 				c.JSON(http.StatusOK, gin.H{"message": "success"})
 			} else {
 				c.JSON(http.StatusOK, gin.H{"message": "invalid request"})
 			}
+			session := sessions.Default(c)
+
+			c.HTML(http.StatusOK, "exportshow.html", gin.H{
+				"Username": session.Get("UserName"),
+				"title":    "فاکتورها",
+				"exports":  model.GetAllExports(),
+			})
 
 		})
 		v2.GET("/export-list", middleware.AuthMiddleware(), func(c *gin.Context) {
@@ -355,7 +373,7 @@ func main() {
 				"Username": session.Get("UserName"),
 				"title":    "فاکتورها",
 				"Paginate": template.HTML(Utility.MakePaginate(model.GetCountOfExports() / 1)),
-				"exports":  model.GetAllExportsByPaginate(0, 50),
+				"exports":  model.GetAllExportsByPaginate(0, postperpage),
 			})
 		})
 
@@ -369,14 +387,14 @@ func main() {
 				return
 			}
 			page, _ := strconv.ParseInt(data.Page, 10, 8)
-			limit := int(page) * int(1)
+			offset := int(page) * int(1)
 
 			result := []Boot.EscapeExport{}
 			if page == 1 {
-				result = model.GetAllExportsByPaginate(0, 1)
+				result = model.GetAllExportsByPaginate(0, postperpage)
 
 			} else {
-				result = model.GetAllExportsByPaginate(limit, 1)
+				result = model.GetAllExportsByPaginate(offset, postperpage)
 
 			}
 			c.JSON(http.StatusOK, gin.H{"message": result})

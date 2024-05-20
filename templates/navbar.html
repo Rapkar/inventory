@@ -45,9 +45,16 @@
                 <a class="nav-link" href="./options">تنظیمات</a>
             </li>
         </ul>
-        <span class="navbar-text ms-auto ">
-            کاربر  {{.Username}}  خوش آمدید
+        <span class=" navbar navbar-dark bg-primary ms-auto ">
+          <li class="nav-item dropdown list-unstyled">
+            <a class="nav-link dropdown-toggle text-white" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">کاربر  {{.Username}}  خوش آمدید</a>
+            <ul class="dropdown-menu">
+              <li class=""><a class="dropdown-item" href="./signout">خروج</a></li>
+            </ul>
+          </li>
+            
         </span>
+   
     </div>
 </nav>
 {{ end }}
