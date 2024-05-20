@@ -224,6 +224,27 @@ func main() {
 				"products": model.GetAllProductsByInventory(1),
 			})
 		})
+		v2.GET("/deleteExport", middleware.AuthMiddleware(), func(c *gin.Context) {
+			session := sessions.Default(c)
+
+			if model.RemoveCurrentExport(c) {
+				c.HTML(http.StatusOK, "export_list.html", gin.H{
+					"Username": session.Get("UserName"),
+					"title":    "فاکتورها",
+					"message":  boot.Messages("Export removed success"),
+					"success":  true,
+					"Paginate": template.HTML(Utility.MakePaginate(model.GetCountOfExports() / 1)),
+					"exports":  model.GetAllExportsByPaginate(0, 50),
+				})
+			} else {
+				c.HTML(http.StatusOK, "export_list.html", gin.H{
+					"Username": session.Get("UserName"),
+					"title":    "فاکتورها",
+					"Paginate": template.HTML(Utility.MakePaginate(model.GetCountOfExports() / 1)),
+					"exports":  model.GetAllExportsByPaginate(0, 50),
+				})
+			}
+		})
 		v2.POST("/getproductbyinventory", func(c *gin.Context) {
 			var data struct {
 				Name string `json:"name"`

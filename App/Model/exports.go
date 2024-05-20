@@ -1,9 +1,11 @@
 package Model
 
 import (
-	"fmt"
 	"inventory/App/Boot"
 	"inventory/App/Utility"
+	"strconv"
+
+	"github.com/gin-gonic/gin"
 )
 
 func GetAllExports() []Boot.EscapeExport {
@@ -45,13 +47,13 @@ func GetAllExportsByPaginate(offset int, limit int) []Boot.EscapeExport {
 
 	for i, value := range Export {
 		var escapeExport Boot.EscapeExport
+		escapeExport.ID = value.ID
 		escapeExport.Name = value.Name
 		escapeExport.Address = value.Address
 		escapeExport.Number = value.Number
 		escapeExport.Phonenumber = value.Phonenumber
 		escapeExport.Tax = value.Tax
 		escapeExport.InventoryNumber = value.InventoryNumber
-		fmt.Println(value.InventoryNumber)
 		escapeExport.ExportProducts = value.ExportProducts
 		escapeExport.CreatedAt = value.CreatedAt
 		escapeExport.TotalPrice = value.TotalPrice
@@ -95,4 +97,18 @@ func GetCountOfExports() int64 {
 	var count int64
 	Boot.DB().Model(&[]Boot.Export{}).Find(&[]Boot.Export{}).Count(&count)
 	return count
+}
+func RemoveCurrentExport(c *gin.Context) bool {
+	Id := c.Request.URL.Query().Get("ExportId")
+	ExportID, err := strconv.ParseUint(Id, 10, 64)
+	if err != nil {
+		// handle the error
+		return false
+	}
+	result := Boot.DB().Delete(&Boot.Export{}, ExportID)
+	if result.RowsAffected == 0 {
+		// if no rows were affected, the deletion failed
+		return false
+	}
+	return true
 }
