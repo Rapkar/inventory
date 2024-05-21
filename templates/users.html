@@ -3,6 +3,11 @@
 <body>
     <div class="h-100 d-flex align-items-center mt-5">
         <div class="container mt-5">
+          {{if .success}}
+          {{template "success_notif" .}}
+        {{else if eq .success false}}
+          {{template "danger_notif" .}}
+        {{end}}
           <form class="card card-sm">
             <div class="card-body row no-gutters align-items-center">
               <div class="col-auto">

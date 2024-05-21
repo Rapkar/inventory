@@ -179,7 +179,29 @@ func main() {
 			}
 			c.JSON(http.StatusOK, gin.H{"message": result})
 		})
+		v2.GET("/deleteuser", middleware.AuthMiddleware(), func(c *gin.Context) {
+			session := sessions.Default(c)
 
+			if model.RemoveCurrentUser(c) {
+				c.HTML(http.StatusOK, "users.html", gin.H{
+					"Username": session.Get("UserName"),
+					"title":    "کاربران",
+					"message":  boot.Messages("user remove success"),
+					"success":  true,
+					"Paginate": template.HTML(Utility.MakePaginate(model.GetCountOfUsers()/1, "export-list")),
+					"exports":  model.GetAllUsersByPaginate(0, postperpage),
+				})
+			} else {
+				c.HTML(http.StatusOK, "users.html", gin.H{
+					"Username": session.Get("UserName"),
+					"title":    "فاکتورها",
+					"success":  false,
+					"message":  boot.Messages("user remove faild"),
+					"Paginate": template.HTML(Utility.MakePaginate(model.GetCountOfExports()/1, "export-list")),
+					"exports":  model.GetAllExportsByPaginate(0, postperpage),
+				})
+			}
+		})
 		v2.GET("/edituser", middleware.AuthMiddleware(), func(c *gin.Context) {
 			session := sessions.Default(c)
 			currentusrt := model.GetCurrentUser(c)

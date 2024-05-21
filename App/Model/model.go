@@ -52,3 +52,17 @@ func GetAllUsersByPaginate(offset int, limit int) []Boot.Users {
 	Boot.DB().Model(&Boot.Users{}).Select("*").Offset(offset).Limit(limit).Scan(&Users)
 	return Users
 }
+func RemoveCurrentUser(c *gin.Context) bool {
+	Id := c.Request.URL.Query().Get("UserId")
+	ExportID, err := strconv.ParseUint(Id, 10, 64)
+	if err != nil {
+		// handle the error
+		return false
+	}
+	result := Boot.DB().Delete(&Boot.Users{}, ExportID)
+	if result.RowsAffected == 0 {
+		// if no rows were affected, the deletion failed
+		return false
+	}
+	return true
+}

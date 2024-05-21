@@ -6,9 +6,12 @@ func Messages(value string) string {
 		"login faild":            "اطلاعات ورود اشتباه است",
 		"user made success":      "کاربر با موفقیت افزوده شد",
 		"user made faild":        "افزودن کاربر با مشکل مواجه شد",
+		"user remove success":    "کاربر با موفقیت حذف شد",
+		"user remove faild":      "حذف کاربر با مشکل مواجه شد",
 		"product made success":   "محصول با موفقیت افزوده شد",
 		"product made faild":     "افزودن محصول با مشکل مواجه شد",
 		"Export removed success": "فاکتور با موفقیت حذف شد ",
+		"Export removed faild":   "حذف فاکتور با خطا مواچه شد ",
 	}
 	return messages[value]
 }
