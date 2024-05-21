@@ -88,13 +88,13 @@ func FloatToString(value float64) string {
 	return vals
 }
 
-func MakePaginate(value int64) string {
+func MakePaginate(value int64, url string) string {
 	var paginate string
 	for i := 1; i < int(value); i++ {
 		if i == 1 {
-			paginate += "<li class='page-item active'><a class='page-link' attr-page='" + fmt.Sprintf("%d", i) + "' href='./export-list/?page=" + fmt.Sprintf("%d", i) + "'> " + fmt.Sprintf("%d", i) + "</a></li> "
+			paginate += "<li class='page-item active'><a class='page-link' attr-page='" + fmt.Sprintf("%d", i) + "' href='./" + url + "/?page=" + fmt.Sprintf("%d", i) + "'> " + fmt.Sprintf("%d", i) + "</a></li> "
 		} else {
-			paginate += "<li class='page-item'><a class='page-link' attr-page='" + fmt.Sprintf("%d", i) + "' href='./export-list/?page=" + fmt.Sprintf("%d", i) + "'> " + fmt.Sprintf("%d", i) + "</a></li> "
+			paginate += "<li class='page-item'><a class='page-link' attr-page='" + fmt.Sprintf("%d", i) + "' href='./" + url + "/?page=" + fmt.Sprintf("%d", i) + "'> " + fmt.Sprintf("%d", i) + "</a></li> "
 
 		}
 	}

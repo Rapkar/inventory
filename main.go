@@ -109,7 +109,8 @@ func main() {
 
 				"Username": session.Get("UserName"),
 				"title":    "کاربران",
-				"users":    model.GetAllUsersByRole("guest"),
+				"Paginate": template.HTML(Utility.MakePaginate(model.GetCountOfUsers()/1, "user-list")),
+				"users":    model.GetAllUsersByPaginate(0, postperpage),
 			})
 		})
 		v2.GET("/admin_users", middleware.AuthMiddleware(), func(c *gin.Context) {
@@ -156,6 +157,29 @@ func main() {
 			}
 
 		})
+		v2.POST("/user-list", middleware.AuthMiddleware(), func(c *gin.Context) {
+			var data struct {
+				Page   string `json:"page"`
+				Offset string `json:"offset"`
+			}
+			if err := c.BindJSON(&data); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+				return
+			}
+			page, _ := strconv.ParseInt(data.Page, 10, 8)
+			offset := int(page) * int(1)
+
+			result := []Boot.Users{}
+			if page == 1 {
+				result = model.GetAllUsersByPaginate(0, postperpage)
+
+			} else {
+				result = model.GetAllUsersByPaginate(offset, postperpage)
+
+			}
+			c.JSON(http.StatusOK, gin.H{"message": result})
+		})
+
 		v2.GET("/edituser", middleware.AuthMiddleware(), func(c *gin.Context) {
 			session := sessions.Default(c)
 			currentusrt := model.GetCurrentUser(c)
@@ -242,14 +266,14 @@ func main() {
 					"title":    "فاکتورها",
 					"message":  boot.Messages("Export removed success"),
 					"success":  true,
-					"Paginate": template.HTML(Utility.MakePaginate(model.GetCountOfExports() / 1)),
+					"Paginate": template.HTML(Utility.MakePaginate(model.GetCountOfExports()/1, "export-list")),
 					"exports":  model.GetAllExportsByPaginate(0, postperpage),
 				})
 			} else {
 				c.HTML(http.StatusOK, "export_list.html", gin.H{
 					"Username": session.Get("UserName"),
 					"title":    "فاکتورها",
-					"Paginate": template.HTML(Utility.MakePaginate(model.GetCountOfExports() / 1)),
+					"Paginate": template.HTML(Utility.MakePaginate(model.GetCountOfExports()/1, "export-list")),
 					"exports":  model.GetAllExportsByPaginate(0, postperpage),
 				})
 			}
@@ -351,20 +375,19 @@ func main() {
 			Export.ExportProducts = exportproducts
 			// output: Export,exportproducts
 			User.Role = "guest"
-
-			if boot.DB().Create(&User).RowsAffected > 0 && boot.DB().Create(&exportproducts).RowsAffected > 0 && boot.DB().Create(&Export).RowsAffected > 0 {
+			boot.DB().Create(&User)
+			if boot.DB().Create(&exportproducts).RowsAffected > 0 && boot.DB().Create(&Export).RowsAffected > 0 {
 				controller.InventoryCalculation(Ids)
-				c.JSON(http.StatusOK, gin.H{"message": "success"})
+				session := sessions.Default(c)
+
+				c.HTML(http.StatusOK, "exportshow.html", gin.H{
+					"Username": session.Get("UserName"),
+					"title":    "فاکتورها",
+					"exports":  model.GetAllExports(),
+				})
 			} else {
 				c.JSON(http.StatusOK, gin.H{"message": "invalid request"})
 			}
-			session := sessions.Default(c)
-
-			c.HTML(http.StatusOK, "exportshow.html", gin.H{
-				"Username": session.Get("UserName"),
-				"title":    "فاکتورها",
-				"exports":  model.GetAllExports(),
-			})
 
 		})
 		v2.GET("/export-list", middleware.AuthMiddleware(), func(c *gin.Context) {
@@ -372,7 +395,7 @@ func main() {
 			c.HTML(http.StatusOK, "export_list.html", gin.H{
 				"Username": session.Get("UserName"),
 				"title":    "فاکتورها",
-				"Paginate": template.HTML(Utility.MakePaginate(model.GetCountOfExports() / 1)),
+				"Paginate": template.HTML(Utility.MakePaginate(model.GetCountOfExports()/1, "export-list")),
 				"exports":  model.GetAllExportsByPaginate(0, postperpage),
 			})
 		})

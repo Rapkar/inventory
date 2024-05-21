@@ -42,3 +42,13 @@ func GetCurrentUser(c *gin.Context) []Boot.Users {
 	currentUser := GetUserById(USERID)
 	return currentUser
 }
+func GetCountOfUsers() int64 {
+	var count int64
+	Boot.DB().Model(&[]Boot.Users{}).Find(&[]Boot.Users{}).Count(&count)
+	return count
+}
+func GetAllUsersByPaginate(offset int, limit int) []Boot.Users {
+	var Users []Boot.Users
+	Boot.DB().Model(&Boot.Users{}).Select("*").Offset(offset).Limit(limit).Scan(&Users)
+	return Users
+}
