@@ -10,8 +10,10 @@ import (
 	model "inventory/App/Model"
 	"inventory/App/Utility"
 	"inventory/App/middleware"
+	"math/rand"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
@@ -188,8 +190,8 @@ func main() {
 					"title":    "کاربران",
 					"message":  boot.Messages("user remove success"),
 					"success":  true,
-					"Paginate": template.HTML(Utility.MakePaginate(model.GetCountOfUsers()/1, "export-list")),
-					"exports":  model.GetAllUsersByPaginate(0, postperpage),
+					"Paginate": template.HTML(Utility.MakePaginate(model.GetCountOfUsers()/1, "user-list")),
+					"users":    model.GetAllUsersByPaginate(0, postperpage),
 				})
 			} else {
 				c.HTML(http.StatusOK, "users.html", gin.H{
@@ -197,8 +199,8 @@ func main() {
 					"title":    "فاکتورها",
 					"success":  false,
 					"message":  boot.Messages("user remove faild"),
-					"Paginate": template.HTML(Utility.MakePaginate(model.GetCountOfExports()/1, "export-list")),
-					"exports":  model.GetAllExportsByPaginate(0, postperpage),
+					"Paginate": template.HTML(Utility.MakePaginate(model.GetCountOfUsers()/1, "user-list")),
+					"users":    model.GetAllExportsByPaginate(0, postperpage),
 				})
 			}
 		})
@@ -271,12 +273,29 @@ func main() {
 
 		v2.GET("/export", middleware.AuthMiddleware(), func(c *gin.Context) {
 			session := sessions.Default(c)
+			// exportnumber := "123A1236"
+
+			// Set the seed for the random number generator
+			rand.Seed(time.Now().UnixNano())
+
+			// Generate a random uppercase letter
+			letters := []rune("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+			letter := letters[rand.Intn(len(letters))]
+
+			// Generate a random number
+			num := rand.Intn(10000)
+
+			// Combine the letter and number into a unique string
+			uniqueString := fmt.Sprintf("%c%05d", letter, num)
 
 			c.HTML(http.StatusOK, "export.html", gin.H{
-				"Username": session.Get("UserName"),
-				"action":   "export",
-				"title":    "فاکتور",
-				"products": model.GetAllProductsByInventory(1),
+
+				"Username":     session.Get("UserName"),
+				"action":       "export",
+				"title":        "فاکتور",
+				"date":         Utility.CurrentTime(),
+				"exportnumber": uniqueString,
+				"products":     model.GetAllProductsByInventory(1),
 			})
 		})
 		v2.GET("/deleteExport", middleware.AuthMiddleware(), func(c *gin.Context) {
@@ -357,9 +376,8 @@ func main() {
 				c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 				return
 			}
-			fmt.Println("serialize", data.Content, "serialize")
-
-			// bind data struct to  ExportProducts for make row in db
+			// fmt.Println("serialize", "serialize")
+			// // bind data struct to  ExportProducts for make row in db
 
 			exportproducts := make([]boot.ExportProducts, len(data.Products))
 			Ids := make(map[int64]int64)
@@ -367,6 +385,7 @@ func main() {
 				ids, _ := strconv.ParseInt(data.Products[a].ProductId, 10, 64)
 
 				exportproducts[a].ExportID, _ = strconv.ParseUint(data.Products[a].ExportID, 10, 64)
+				fmt.Println(data.Products[a].ExportID)
 				exportproducts[a].Name = data.Products[a].Name
 				exportproducts[a].Number = data.Products[a].ExportID
 				exportproducts[a].RolePrice, _ = strconv.ParseFloat(data.Products[a].RolePrice, 64)
@@ -374,7 +393,8 @@ func main() {
 				Count, _ := strconv.ParseInt(data.Products[a].Count, 10, 8)
 				exportproducts[a].Count = int8(Count)
 				InventoryNumber, _ := strconv.ParseInt(data.Products[a].InventoryNumber, 10, 32)
-
+				exportproducts[a].TotalPrice, _ = strconv.ParseFloat(data.Products[a].TotalPrice, 64)
+				fmt.Println(exportproducts[a].TotalPrice)
 				exportproducts[a].InventoryNumber = int32(InventoryNumber)
 				Ids[int64(ids)] = int64(Count)
 
@@ -386,27 +406,26 @@ func main() {
 			Export := boot.Export{}
 			result := Utility.Unserialize(data.Content)
 			User.Name, Export.Name = result["Name"], result["Name"]
-			Export.Number = result["Number"]
+			Export.Number = result["ExportID"]
 			User.Phonenumber, Export.Phonenumber = result["Phonenumber"], result["Phonenumber"]
 			User.Address, Export.Address = result["Address"], result["Address"]
-			Export.TotalPrice = Utility.StringToFloat(result["TotalPrice"])
+			Tprice := Utility.StringToFloat(result["ExportTotalPrice"])
+			Export.TotalPrice = Tprice
 			Export.Tax = Utility.StringToFloat(result["Tax"])
+
+			fmt.Println(result["Tax"], Utility.StringToFloat(result["Tax"]), Export.Tax)
 			Export.CreatedAt = string(Utility.CurrentTime())
 			Export.InventoryNumber = Utility.StringToInt32(result["InventoryNumber"])
-			// fmt.Println("inve", result["InventoryNumber"], Export.InventoryNumber, "/inve")
+
 			Export.ExportProducts = exportproducts
-			// output: Export,exportproducts
 			User.Role = "guest"
+			// c.Redirect(http.StatusMovedPermanently, Utility.HomeUrl()+"/export-list")
+			fmt.Println(Export)
 			boot.DB().Create(&User)
 			if boot.DB().Create(&exportproducts).RowsAffected > 0 && boot.DB().Create(&Export).RowsAffected > 0 {
 				controller.InventoryCalculation(Ids)
-				session := sessions.Default(c)
 
-				c.HTML(http.StatusOK, "exportshow.html", gin.H{
-					"Username": session.Get("UserName"),
-					"title":    "فاکتورها",
-					"exports":  model.GetAllExports(),
-				})
+				c.JSON(http.StatusOK, gin.H{"message": "sucess"})
 			} else {
 				c.JSON(http.StatusOK, gin.H{"message": "invalid request"})
 			}
@@ -432,8 +451,8 @@ func main() {
 				return
 			}
 			page, _ := strconv.ParseInt(data.Page, 10, 8)
-			offset := int(page) * int(1)
-
+			offset := int(page) * int(postperpage)
+			fmt.Println(offset, page)
 			result := []Boot.EscapeExport{}
 			if page == 1 {
 				result = model.GetAllExportsByPaginate(0, postperpage)
@@ -458,12 +477,26 @@ func main() {
 		})
 		v2.GET("/exportshow", middleware.AuthMiddleware(), func(c *gin.Context) {
 			session := sessions.Default(c)
+			exports, products := model.GetExportById(c)
 			c.HTML(http.StatusOK, "exportshow.html", gin.H{
 				"Username": session.Get("UserName"),
 				"title":    "فاکتورها",
-				"exports":  model.GetAllExports(),
+				"exports":  exports,
+				"products": products,
 			})
 		})
+		// v2.GET("/Download", middleware.AuthMiddleware(), func(c *gin.Context) {
+		// 	session := sessions.Default(c)
+		// 	// Id := c.Request.URL.Query().Get("ExportId")
+		// 	exports, products := model.GetExportById(c)
+		// 	Utility.GooglePDF("http://127.0.0.1:8080/Dashboard/exportshow?ExportId=3", "file1")
+		// 	c.HTML(http.StatusOK, "exportshow.html", gin.H{
+		// 		"Username": session.Get("UserName"),
+		// 		"title":    "فاکتورها",
+		// 		"exports":  exports,
+		// 		"products": products,
+		// 	})
+		// })
 
 	}
 	// Dashboard Route

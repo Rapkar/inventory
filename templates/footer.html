@@ -9,25 +9,42 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
         crossorigin="anonymous"></script>
-        <script src="../assets/js/main.js"></script>
-    		<!-- Load PersianTools.js -->
-		<script src="https://cdn.jsdelivr.net/npm/@persian-tools/persian-tools/build/persian-tools.umd.js"></script>
 
-		<!-- Place your code in the script tag below. You can also use an external .js file -->
-		<script type="text/javascript">
-			// Notice there is no 'import' statement. 'all persian-tools functions like digitsEnToFa, etc...' is available on the index-page
-			// because of the script tag above.
+    <!-- Load PersianTools.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@persian-tools/persian-tools/build/persian-tools.umd.js"></script>
+    <script src="https://unpkg.com/jspdf@latest/dist/jspdf.umd.min.js"></script>
+    <script src="../assets/js/main.js"></script>
+    <!-- Place your code in the script tag below. You can also use an external .js file -->
+    <script type="text/javascript">
+        // Notice there is no 'import' statement. 'all persian-tools functions like digitsEnToFa, etc...' is available on the index-page
+        // because of the script tag above.
 
-			// Takes a string made of English digits only, and returns a string that represents the same number but with Persian digits
-			// jQuery("input").on("keyup",function(){
-            //     var val =jQuery(this).val()
-            //     var convertToFa = PersianTools.digitsEnToFa(val);
-            //     // jQuery(elem).value(convertToFa)
-            //     jQuery(this).val(convertToFa)
-            // })
+        // Takes a string made of English digits only, and returns a string that represents the same number but with Persian digits
+        jQuery("input[type='number']").on("keyup", function () {
+            var val = jQuery(this).val()
+            var convertToFa = PersianTools.digitsEnToFa(val, { addCommas: true });
+            convertToFa = PersianTools.addCommas(convertToFa)
+            numberToWords = PersianTools.numberToWords(val)
+            // jQuery(elem).value(convertToFa)
+            jQuery(this).parent().closest(".form-group").find(".out").html(convertToFa + "   " + numberToWords)
 
-			// etc...
-		</script>
+        })
+        jQuery("input[type='number']").each(function () {
+            var val = jQuery(this).val();
+            var val = PersianTools.addCommas(val);
+            var convertToFa = PersianTools.digitsEnToFa(val);
+            var numberToWords = PersianTools.numberToWords(val);
+            jQuery(this).parent().closest(".form-group").find(".out").html(convertToFa + "   " + numberToWords);
+        });
+        jQuery("td.TotalPrice,td.price,.price,td.prn").each(function () {
+            var val = jQuery(this).html();
+            var val = PersianTools.addCommas(val);
+            var convertToFa = PersianTools.digitsEnToFa(val);
+
+            jQuery(this).html(convertToFa);
+        });
+        // etc...
+    </script>
 </footer>
 
 

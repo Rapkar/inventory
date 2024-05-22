@@ -63,6 +63,53 @@ func GetAllExportsByPaginate(offset int, limit int) []Boot.EscapeExport {
 
 	return EscapeExport
 }
+func GetExportById(c *gin.Context) ([]Boot.EscapeExport, []Boot.EscapeExportProducts) {
+	Id := c.Request.URL.Query().Get("ExportId")
+	ExportID, _ := strconv.ParseUint(Id, 10, 64)
+	var Export []Boot.Export
+
+	Boot.DB().Model(&Boot.Export{}).Where("id = ?", ExportID).Scan(&Export)
+	var ExportProducts []Boot.ExportProducts
+	var EscapeExport []Boot.EscapeExport
+
+	EscapeExport = make([]Boot.EscapeExport, len(Export))
+	for i, value := range Export {
+		var escapeExport Boot.EscapeExport
+		escapeExport.Name = value.Name
+		escapeExport.Address = value.Address
+		escapeExport.Number = value.Number
+		escapeExport.Phonenumber = value.Phonenumber
+		escapeExport.Tax = value.Tax
+		escapeExport.InventoryNumber = value.InventoryNumber
+		escapeExport.ExportProducts = value.ExportProducts
+		escapeExport.CreatedAt = value.CreatedAt
+		escapeExport.TotalPrice = Utility.FloatToString(value.TotalPrice)
+		// Add other fields here...
+		EscapeExport[i] = escapeExport
+	}
+
+	for _, e := range Export {
+		Boot.DB().Model(&Boot.ExportProducts{}).Where("export_id = ?", uint64(e.ID)).Find(&ExportProducts)
+
+	}
+	var EscapeExportProducts []Boot.EscapeExportProducts
+	EscapeExportProducts = make([]Boot.EscapeExportProducts, len(ExportProducts))
+	for i, value := range ExportProducts {
+		var escapeExport Boot.EscapeExportProducts
+		escapeExport.ID = value.ID
+		escapeExport.Name = value.Name
+		escapeExport.ExportID = value.ExportID
+		escapeExport.Number = value.Number
+		escapeExport.RolePrice = Utility.FloatToString(value.RolePrice)
+		escapeExport.MeterPrice = Utility.FloatToString(value.MeterPrice)
+		escapeExport.InventoryNumber = value.InventoryNumber
+		escapeExport.TotalPrice = Utility.FloatToString(value.TotalPrice)
+		escapeExport.Count = Utility.IntToString(value.Count)
+		// Add other fields here...
+		EscapeExportProducts[i] = escapeExport
+	}
+	return EscapeExport, EscapeExportProducts
+}
 func GetAllExportsByPhoneAndName(searchTerm string) []Boot.EscapeExport {
 	var Export []Boot.Export
 	var EscapeExport []Boot.EscapeExport

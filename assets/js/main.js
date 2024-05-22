@@ -1,6 +1,7 @@
 
 let CurrentProductName = "";
 let ProductsOfExport = [];
+let ExportTotalPrice = [];
 jQuery('#myModal').modal('show')
 // add  New product to export list
 
@@ -15,30 +16,45 @@ jQuery("#AddProductToExport").on("click", function () {
     //         console.log(msg);
     //     });
     var ID = jQuery("#ProductIs").val();
-    var InventoryNumber= jQuery("#InventoryIS").val();
+    var ExportID = jQuery("input[name='ExportNumber']").val();
+    var InventoryNumber = jQuery("#InventoryIS").val();
     // var Name=jQuery("#ProductIs").html()
     var Count = jQuery("#ProductBox input[name='Count']").val()
     var MeterPrice = jQuery("#ProductBox input[name='Meter']").val()
     var RolePrice = jQuery("#ProductBox input[name='RolePrice']").val()
     var MeterPrice = jQuery("#ProductBox input[name='MeterPrice']").val()
     var TotalPrice = jQuery("#ProductBox input[name='TotalPrice']").val()
-    var value = '<tr><th scope="row">' + ID + '</th><td>' + CurrentProductName + '</td><td>23423</td><td>' + Count + '</td><td>' + MeterPrice + '</td><td>' + RolePrice + '</td><td>' + TotalPrice + '</td></tr>';
+ 
+    // var oldprice = jQuery("input[name='TotalPrice']")
+    // oldprice=parseFloat(1)
+    // TotalPrice = parseFloat(TotalPrice)
+    // ExportTotalPrice = jQuery("input[name='ExportTotalPrice']").val()
+    var value = '<tr><th scope="row">' + ID + '</th><td>' + CurrentProductName + '</td><td>23423</td><td>' + Count + '</td><td>' + MeterPrice + '</td><td>' + RolePrice + '</td><td class="itemtotalprice">' + TotalPrice + '</td></tr>';
     var newRow = {
-        InventoryNumber:InventoryNumber,
+        InventoryNumber: InventoryNumber,
         ProductId: ID,
-        // ExportID: ID,
+        ExportID: ExportID,
         Name: CurrentProductName,
         count: Count,
         meterPrice: MeterPrice,
         rolePrice: RolePrice,
         totalPrice: TotalPrice
+
     };
+    var NewPrice={
+        price:TotalPrice
+    }
+
     ProductsOfExport.push(newRow)
+    ExportTotalPrice.push(NewPrice)
+    // console.log(ExportTotalPrice)
+    exporttotal_Price="0"
+    ExportTotalPrice.forEach(function(e,i){
+        exporttotal_Price = parseFloat(exporttotal_Price) +  parseFloat(e.price)
+    })
+    jQuery("#ExportTotalPrice").attr("value",exporttotal_Price);
+    jQuery("#ExportTotalPrice").val(exporttotal_Price);
     jQuery("#ExportProductsList tbody").append(value);
-    var oldprice = jQuery(".TotalPriceOut td").html();
-    oldprice = parseFloat(oldprice);
-    TotalPrice = parseFloat(TotalPrice)
-    TotalPrice = oldprice + TotalPrice;
     jQuery(".TotalPriceOut td").html(TotalPrice)
     jQuery(".Notfound").slideUp();
     jQuery(".close").click()
@@ -92,7 +108,6 @@ jQuery(".ExportPeoducts select#ProductIs").on("change", function () {
             contentType: "application/json; charset=utf-8",
         })
             .done(function (msg) {
-                console.log(msg.result.length)
                 if (msg.result.length > 0) {
                     var product = msg.result[0];
                     jQuery(".ExportPeoducts .ProductsCount").html(product.Count + "تعداد موجود")
@@ -102,7 +117,6 @@ jQuery(".ExportPeoducts select#ProductIs").on("change", function () {
                     jQuery(".ExportPeoducts input[name='TotalPrice']").val(product.MeterPrice)
                     jQuery(".ExportPeoducts .Content").slideDown();
                 }
-                console.log(msg.result[0]);
             });
     } else {
         jQuery(".modal-footer").slideUp();
@@ -114,7 +128,7 @@ jQuery(".ExportPeoducts select#ProductIs").on("change", function () {
 
 // Calculate TotalPrice by Count of Role 
 
-jQuery("input[name='Count']").on("change", function () {
+jQuery("input[name='Count']").on("keyup", function () {
     var number = parseInt(this.value)
     if (number != 0) {
         jQuery(".modal-footer").slideDown();
@@ -131,6 +145,7 @@ jQuery("input[name='Count']").on("change", function () {
         console.log("Invalid number");
     } else {
         var TotalPrice = RolePrice * Count;
+        // ExportTotalPrice =parseFloat(ExportTotalPrice) + parseFloat(TotalPrice)
     }
     jQuery("input[name='TotalPrice']").val(TotalPrice)
     // },1000)
@@ -178,12 +193,14 @@ jQuery("form[name='expotform']").submit(function (e) {
     jQuery.ajax({
         method: "POST",
         url: "/Dashboard/export",
-        data: JSON.stringify({ Name: "expotform", Content: formValues, Products: ProductsOfExport }),
+        data: JSON.stringify({ Name: "expotform", TotalPrice: ExportTotalPrice, Content: formValues, Products: ProductsOfExport }),
         // data: { Name: "expotform", Content: jQuery("form[name='expotform']").serialize(), Products: ProductsOfExport },
         // contentType: "application/json; charset=utf-8",
     })
         .done(function (msg) {
-            console.log(msg)
+            if (msg.message == "sucess") {
+                 window.location.replace("./export-list");
+            }
         });
 
 })
@@ -282,21 +299,21 @@ jQuery("#userspaginate a").on("click", function (e) {
 
         });
 })
-jQuery("#find").on("click",function(e){
+jQuery("#find").on("click", function (e) {
     e.preventDefault()
-    var value=jQuery("#findval").val()
+    var value = jQuery("#findval").val()
     // console.log(value)
     // value="حسین سلطانیان"
     jQuery.ajax({
         method: "POST",
         url: "/Dashboard/export-find",
-        data: JSON.stringify({ term: value}),
+        data: JSON.stringify({ term: value }),
         // data: { Name: "expotform", Content: jQuery("form[name='expotform']").serialize(), Products: ProductsOfExport },
         // contentType: "application/json; charset=utf-8",
     })
         .done(function (msg) {
             var lengthofres = msg.message.length;
-            
+
             if (lengthofres > 0) {
                 let html = "";
                 msg.message.forEach(function (index) {
@@ -325,3 +342,7 @@ jQuery("#find").on("click",function(e){
 
         });
 })
+function Print(){
+    window.print();
+
+}

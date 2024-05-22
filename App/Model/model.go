@@ -1,6 +1,7 @@
 package Model
 
 import (
+	"fmt"
 	"inventory/App/Boot"
 	"strconv"
 
@@ -53,7 +54,8 @@ func GetAllUsersByPaginate(offset int, limit int) []Boot.Users {
 	return Users
 }
 func RemoveCurrentUser(c *gin.Context) bool {
-	Id := c.Request.URL.Query().Get("UserId")
+	Id := c.Request.URL.Query().Get("user-id")
+	fmt.Println(Id)
 	ExportID, err := strconv.ParseUint(Id, 10, 64)
 	if err != nil {
 		// handle the error

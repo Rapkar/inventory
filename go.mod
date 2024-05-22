@@ -11,6 +11,8 @@ require (
 
 require (
 	filippo.io/edwards25519 v1.1.0 // indirect
+	github.com/SebastiaanKlippert/go-wkhtmltopdf v1.9.2 // indirect
+	github.com/andrewcharlton/wkhtmltopdf-go v0.0.0-20181104223037-0049d75fb708 // indirect
 	github.com/bytedance/sonic v1.11.3 // indirect
 	github.com/chenzhuoyu/base64x v0.0.0-20230717121745-296ad89f973d // indirect
 	github.com/chenzhuoyu/iasm v0.9.1 // indirect

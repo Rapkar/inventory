@@ -14,7 +14,14 @@
                     <div class="row ">
                         <div class="panel panel-default col-12">
                             <div class="panel-heading col-12">
-                                <h4 class="panel-title">فاکتور جدید</h4>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <h2>ثبت فاکتور</h2>
+                                    </div>
+                                    <div class="col-6">
+                                        <h4>تاریخ :{{.date}}</h4>
+                                    </div>
+                                </div>
                             </div>
 
                             <div class="panel-body row">
@@ -42,14 +49,14 @@
                                 <div class="form-group col-lg-6  mt-3">
                                     <label class="col-sm-12 control-label">شماره فاکتور </label>
                                     <div class="col-sm-12">
-                                        <input required name="ExportNumber"  inputmode="numeric" pattern="[0-9]*"type="text" placeholder="0912 517 4854"
+                                        <input required name="ExportID" readonly  value="{{.exportnumber}}" type="text" placeholder="0912 517 4854"
                                             class="form-control">
                                     </div>
                                 </div>
                                 <div class="form-group col-lg-6  mt-3">
                                     <label class="col-sm-12 control-label">مالیات</label>
                                     <div class="col-sm-12">
-                                        <input required name="Tax" type="text"   inputmode="numeric" pattern="[0-9]*"  placeholder="10" class="form-control">
+                                        <input required name="Tax" type="number" max="100" maxlength="100"  inputmode="numeric" pattern="[0-9]*"  placeholder="10" class="form-control">
                                     </div>
                                 </div>
                                 <div id="ExportProductsList">
@@ -58,7 +65,7 @@
                                             <tr>
                                                 <th scope="col">#</th>
                                                 <th scope="col">نام محصول</th>
-                                                <th scope="col">شماره محصول</th>
+                                                <th scope="col">شماره فاکتور</th>
                                                 <th scope="col">تعداد رول</th>
                                                 <th scope="col">متراژ</th>
                                                 <th scope="col">قیمت واحد</th>
@@ -72,7 +79,7 @@
                                             <tr class="TotalPriceOut">
                                                 <td colspan="7" style="text-align: left;">0</td>
                                             </tr>
-                                            <input class="d-none" name="ExportTotalPrice" type="number">
+                                            <input class="d-none" name="ExportTotalPrice" novalidate id="ExportTotalPrice" type="number">
                                         </tfoot>
                                     </table>
 
@@ -130,7 +137,7 @@
                                                                 <label class="col-sm-12 control-label" min="0">تعداد
                                                                     رول</label>
                                                                 <div class="col-sm-12">
-                                                                    <input style="text-align:right;" name="Count"
+                                                                    <input style="text-align:right;" min="0" name="Count"
                                                                         type="number" class="form-control">
                                                                     <span class="ProductsCount"> موجودی </span>
                                                                 </div>
@@ -139,18 +146,19 @@
                                                                 <label class="col-sm-12 control-label"
                                                                     min="0">متراژ</label>
                                                                 <div class="col-sm-12">
-                                                                    <input name="Meter" min="0" type="number"
-                                                                        class="form-control">
+                                                                    <input  name="Meter" min="0" type="number"
+                                                                        class="form-control ">
                                                                 </div>
                                                             </div>
                                                             <div class="form-group col-lg-6  mt-3">
-                                                                <label class="col-sm-12  control-label" min="0">قیمت هر
+                                                                <label class="col-sm-12   control-label" min="0">قیمت هر
                                                                     رول</label>
                                                                 <div class="col-sm-12">
                                                                     <input name="RolePrice" min="0" readonly
                                                                         type="number" value="{{.Email}}"
                                                                         class="form-control">
                                                                 </div>
+                                                                <span class="out"></span>&nbsp;تومان 
                                                             </div>
                                                             <div class="form-group  col-lg-6  mt-3">
                                                                 <label class="col-sm-12 control-label" min="0">قیمت هر
@@ -160,6 +168,7 @@
                                                                         type="number" value="{{.Email}}"
                                                                         class="form-control">
                                                                 </div>
+                                                                <span class="out"></span>&nbsp;تومان 
                                                             </div>
                                                             <div class="form-group mt-3">
                                                                 <label class="col-sm-12 control-label" min="0">مجموع
@@ -168,6 +177,7 @@
                                                                     <input type="number" class="form-control" min="0"
                                                                         name="TotalPrice" readonly>هزار تومان
                                                                 </div>
+                                                                <span class="out"></span>&nbsp;تومان 
                                                             </div>
                                                         </div>
                                                     </div>
