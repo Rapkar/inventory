@@ -21,7 +21,7 @@ import (
 )
 
 func main() {
-	const postperpage int = 100
+	const postperpage int = 50
 	boot.Init()
 
 	r := gin.Default()
@@ -111,7 +111,7 @@ func main() {
 
 				"Username": session.Get("UserName"),
 				"title":    "کاربران",
-				"Paginate": template.HTML(Utility.MakePaginate(model.GetCountOfUsers()/1, "user-list")),
+				"Paginate": template.HTML(Utility.MakePaginate(model.GetCountOfUsers()/int64(postperpage), "user-list")),
 				"users":    model.GetAllUsersByPaginate(0, postperpage),
 			})
 		})
@@ -224,7 +224,18 @@ func main() {
 				"user":    currentusrt,
 			})
 		})
+		v2.POST("/users-find", middleware.AuthMiddleware(), func(c *gin.Context) {
+			var data struct {
+				Term string `json:"term"`
+			}
+			if err := c.BindJSON(&data); err != nil {
 
+				c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+				return
+			}
+			result := model.GetAllUsersByPhoneAndName(data.Term)
+			c.JSON(http.StatusOK, gin.H{"message": result})
+		})
 		// Product
 		v2.GET("/addproduct", middleware.AuthMiddleware(), func(c *gin.Context) {
 			session := sessions.Default(c)

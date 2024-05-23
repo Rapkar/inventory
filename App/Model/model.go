@@ -68,3 +68,9 @@ func RemoveCurrentUser(c *gin.Context) bool {
 	}
 	return true
 }
+func GetAllUsersByPhoneAndName(searchTerm string) []Boot.Users {
+	var Users []Boot.Users
+
+	Boot.DB().Model(&Boot.Users{}).Where("name LIKE ? OR phonenumber LIKE ?", "%"+searchTerm+"%", "%"+searchTerm+"%").Find(&Users)
+	return Users
+}

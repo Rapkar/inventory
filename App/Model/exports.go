@@ -114,7 +114,7 @@ func GetAllExportsByPhoneAndName(searchTerm string) []Boot.EscapeExport {
 	var Export []Boot.Export
 	var EscapeExport []Boot.EscapeExport
 
-	Boot.DB().Model(&Boot.Export{}).Where("name LIKE ? OR phonenumber LIKE ?", "%"+searchTerm+"%", "%"+searchTerm+"%").Find(&Export)
+	Boot.DB().Model(&Boot.Export{}).Where("name LIKE ? OR phonenumber LIKE ? OR number LIKE ?", "%"+searchTerm+"%", "%"+searchTerm+"%", "%"+searchTerm+"%").Find(&Export)
 	// Boot.DB().Model(&Boot.Export{}).Where("name = ?", searchTerm).Limit(3).Find(&Export)
 	// if len(Export) == 0 {
 	// 	return []Boot.EscapeExport{}

@@ -13,7 +13,7 @@
     <!-- Load PersianTools.js -->
     <script src="https://cdn.jsdelivr.net/npm/@persian-tools/persian-tools/build/persian-tools.umd.js"></script>
     <script src="https://unpkg.com/jspdf@latest/dist/jspdf.umd.min.js"></script>
-    <script src="../assets/js/main.js"></script>
+
     <!-- Place your code in the script tag below. You can also use an external .js file -->
     <script type="text/javascript">
         // Notice there is no 'import' statement. 'all persian-tools functions like digitsEnToFa, etc...' is available on the index-page
@@ -29,22 +29,29 @@
             jQuery(this).parent().closest(".form-group").find(".out").html(convertToFa + "   " + numberToWords)
 
         })
-        jQuery("input[type='number']").each(function () {
-            var val = jQuery(this).val();
-            var val = PersianTools.addCommas(val);
-            var convertToFa = PersianTools.digitsEnToFa(val);
-            var numberToWords = PersianTools.numberToWords(val);
-            jQuery(this).parent().closest(".form-group").find(".out").html(convertToFa + "   " + numberToWords);
-        });
-        jQuery("td.TotalPrice,td.price,.price,td.prn").each(function () {
+        // jQuery("input[type='number']").each(function () {
+        //     var val = jQuery(this).val();
+        //     var val = PersianTools.addCommas(val);
+        //     var convertToFa = PersianTools.digitsEnToFa(val);
+        //     var numberToWords = PersianTools.numberToWords(val);
+        //     jQuery(this).parent().closest(".form-group").find(".out").html(convertToFa + "   " + numberToWords);
+        // });
+        jQuery("td.TotalPrice,td.price,.price,td.prn,td.Tax").each(function () {
             var val = jQuery(this).html();
             var val = PersianTools.addCommas(val);
             var convertToFa = PersianTools.digitsEnToFa(val);
 
             jQuery(this).html(convertToFa);
         });
+        jQuery("td.Phonenumber").each(function () {
+            var val = jQuery(this).html();
+            var convertToFa = PersianTools.digitsEnToFa(val);
+
+            jQuery(this).html(convertToFa);
+        });
         // etc...
     </script>
+        <script src="../assets/js/main.js"></script>
 </footer>
 
 

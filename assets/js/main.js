@@ -29,7 +29,14 @@ jQuery("#AddProductToExport").on("click", function () {
     // oldprice=parseFloat(1)
     // TotalPrice = parseFloat(TotalPrice)
     // ExportTotalPrice = jQuery("input[name='ExportTotalPrice']").val()
-    var value = '<tr><th scope="row">' + ID + '</th><td>' + CurrentProductName + '</td><td>23423</td><td>' + Count + '</td><td>' + MeterPrice + '</td><td>' + RolePrice + '</td><td class="itemtotalprice">' + TotalPrice + '</td></tr>';
+   
+        var val = jQuery(this).html();
+        var val = PersianTools.addCommas(TotalPrice);
+        var TotalPricefa = PersianTools.digitsEnToFa(val);
+
+    
+ 
+    var value = '<tr><th scope="row">' + ID + '</th><td>' + CurrentProductName + '</td><td>23423</td><td>' + Count + '</td><td class="price">' + MeterPrice + '</td><td>' + RolePrice + '</td><td class="itemtotalprice price">' + TotalPricefa + '</td></tr>';
     var newRow = {
         InventoryNumber: InventoryNumber,
         ProductId: ID,
@@ -52,12 +59,14 @@ jQuery("#AddProductToExport").on("click", function () {
     ExportTotalPrice.forEach(function(e,i){
         exporttotal_Price = parseFloat(exporttotal_Price) +  parseFloat(e.price)
     })
+
     jQuery("#ExportTotalPrice").attr("value",exporttotal_Price);
     jQuery("#ExportTotalPrice").val(exporttotal_Price);
     jQuery("#ExportProductsList tbody").append(value);
     jQuery(".TotalPriceOut td").html(TotalPrice)
     jQuery(".Notfound").slideUp();
     jQuery(".close").click()
+    
 })
 
 
@@ -147,8 +156,16 @@ jQuery("input[name='Count']").on("keyup", function () {
         var TotalPrice = RolePrice * Count;
         // ExportTotalPrice =parseFloat(ExportTotalPrice) + parseFloat(TotalPrice)
     }
+    jQuery("input[type='number']").each(function () {
+        var val = jQuery(this).val();
+        var val = PersianTools.addCommas(val);
+        var convertToFa = PersianTools.digitsEnToFa(val);
+        var numberToWords = PersianTools.numberToWords(val);
+        jQuery(this).parent().closest(".form-group").find(".out").html(convertToFa + "   " + numberToWords);
+    });
     jQuery("input[name='TotalPrice']").val(TotalPrice)
     // },1000)
+
 
 })
 
@@ -342,6 +359,50 @@ jQuery("#find").on("click", function (e) {
 
         });
 })
+jQuery("#Userfind").on("click", function (e) {
+    e.preventDefault()
+    var value = jQuery("#findval").val()
+    // console.log(value)
+    // value="حسین سلطانیان"
+    jQuery.ajax({
+        method: "POST",
+        url: "/Dashboard/users-find",
+        data: JSON.stringify({ term: value }),
+        // data: { Name: "expotform", Content: jQuery("form[name='expotform']").serialize(), Products: ProductsOfExport },
+        // contentType: "application/json; charset=utf-8",
+    })
+        .done(function (msg) {
+            var lengthofres = msg.message.length;
+
+            if (lengthofres > 0) {
+                let html = "";
+                msg.message.forEach(function (index) {
+                    
+                    html += '<tr>';
+                    html += '<td class="' + index.ID + '" style="text-align:right;">' + index.ID + '</td>';
+                    html += '<td class="' + index.Name + '" style="text-align:right;">' + index.Name + '</td>';
+                    html += '<td class="' + index.Phonenumber + '" style="text-align:right;">' + index.Phonenumber + '</td>';
+                    html += '<td class="' + index.Address + '" style="text-align:right;">' + index.Address + '</td>';
+                    html += '<td dir="ltr" class="Edit" style="text-align:right;"><a href="./deleteuser?user-id=' + index.ID + '">  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">';
+                    html += '<path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5"/></svg></a></td>';
+                    html += '</tr>';
+
+                  
+                     
+                    // console.log(html)
+
+                });
+                // console.log(html)
+                if (html.length > 0) {
+                    jQuery("#userlist tbody").empty()
+                    jQuery("#userlist tbody").append(html)
+
+                }
+            }
+
+        });
+})
+
 function Print(){
     window.print();
 
