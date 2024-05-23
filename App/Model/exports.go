@@ -159,3 +159,14 @@ func RemoveCurrentExport(c *gin.Context) bool {
 	}
 	return true
 }
+
+func CheckExportNumberFound(value string) bool {
+	var Export []Boot.Export
+
+	Boot.DB().Model(&Boot.Export{}).Where("number LIKE ?", "%"+value+"%").Find(&Export)
+
+	if Export != nil {
+		return false
+	}
+	return true
+}

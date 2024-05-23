@@ -1,7 +1,11 @@
 package Model
 
 import (
+	"fmt"
 	"inventory/App/Boot"
+	"strconv"
+
+	"github.com/gin-gonic/gin"
 )
 
 func GetAllProductsByInventory(inventory int32) []Boot.Inventory {
@@ -20,4 +24,19 @@ func GetProductById(id int) []Boot.Inventory {
 	Boot.DB().Model(&Boot.Inventory{}).Select("*").Where("id= ? ", id).Scan(&products)
 
 	return products
+}
+func RemoveCurrentProduct(c *gin.Context) bool {
+	Id := c.Request.URL.Query().Get("product-id")
+	fmt.Println(Id)
+	ProductID, err := strconv.ParseUint(Id, 10, 64)
+	if err != nil {
+		// handle the error
+		return false
+	}
+	result := Boot.DB().Delete(&Boot.Inventory{}, ProductID)
+	if result.RowsAffected == 0 {
+		// if no rows were affected, the deletion failed
+		return false
+	}
+	return true
 }

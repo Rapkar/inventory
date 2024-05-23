@@ -21,6 +21,7 @@ type Inventory struct {
 	RolePrice       float64 `gorm:"type:float"`
 	MeterPrice      float64 `gorm:"type:float"`
 	Count           int8    `gorm:"size:255;"`
+	Meter           float64 `gorm:"size:255;"`
 	InventoryNumber int32   `gorm:"size:255;"`
 }
 

@@ -8,6 +8,8 @@ func Messages(value string) string {
 		"user made faild":        "افزودن کاربر با مشکل مواجه شد",
 		"user remove success":    "کاربر با موفقیت حذف شد",
 		"user remove faild":      "حذف کاربر با مشکل مواجه شد",
+		"product remove success": "محصول با موفقیت حذف شد",
+		"product remove faild":   "حذف محصول با مشکل مواجه شد",
 		"product made success":   "محصول با موفقیت افزوده شد",
 		"product made faild":     "افزودن محصول با مشکل مواجه شد",
 		"Export removed success": "فاکتور با موفقیت حذف شد ",

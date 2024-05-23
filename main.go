@@ -10,10 +10,8 @@ import (
 	model "inventory/App/Model"
 	"inventory/App/Utility"
 	"inventory/App/middleware"
-	"math/rand"
 	"net/http"
 	"strconv"
-	"time"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
@@ -253,6 +251,7 @@ func main() {
 			product.RolePrice = Utility.StringToFloat(c.PostForm("RolePrice"))
 			product.MeterPrice = Utility.StringToFloat(c.PostForm("MeterPrice"))
 			product.Count = Utility.StringToInt(c.PostForm("Count"))
+			product.Meter = Utility.StringToFloat(c.PostForm("Meter"))
 			product.InventoryNumber = Utility.StringToInt32(c.PostForm("InventoryNumber"))
 			res := boot.DB().Create(&product)
 			if res.RowsAffected > 0 {
@@ -272,6 +271,29 @@ func main() {
 			}
 
 		})
+		v2.GET("/deleteproduct", middleware.AuthMiddleware(), func(c *gin.Context) {
+			session := sessions.Default(c)
+			inventory := c.Request.URL.Query().Get("inventory")
+			InventoryID, _ := strconv.ParseUint(inventory, 10, 64)
+
+			if model.RemoveCurrentProduct(c) {
+				c.HTML(http.StatusOK, "users.html", gin.H{
+					"Username": session.Get("UserName"),
+					"title":    "محصولات",
+					"message":  boot.Messages("product remove success"),
+					"success":  true,
+					"products": model.GetAllProductsByInventory(int32(InventoryID)),
+				})
+			} else {
+				c.HTML(http.StatusOK, "users.html", gin.H{
+					"Username": session.Get("UserName"),
+					"title":    "محصولات",
+					"success":  false,
+					"message":  boot.Messages("product remove faild"),
+					"products": model.GetAllProductsByInventory(int32(InventoryID)),
+				})
+			}
+		})
 		// inventory
 		v2.GET("/inventory", middleware.AuthMiddleware(), func(c *gin.Context) {
 			session := sessions.Default(c)
@@ -284,20 +306,13 @@ func main() {
 
 		v2.GET("/export", middleware.AuthMiddleware(), func(c *gin.Context) {
 			session := sessions.Default(c)
-			// exportnumber := "123A1236"
 
-			// Set the seed for the random number generator
-			rand.Seed(time.Now().UnixNano())
-
-			// Generate a random uppercase letter
-			letters := []rune("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
-			letter := letters[rand.Intn(len(letters))]
-
-			// Generate a random number
-			num := rand.Intn(10000)
-
-			// Combine the letter and number into a unique string
-			uniqueString := fmt.Sprintf("%c%05d", letter, num)
+			uniqueString := "E08240"
+			if !model.CheckExportNumberFound(uniqueString) {
+				uniqueString = Utility.MakeRandValue()
+			} else {
+				return
+			}
 
 			c.HTML(http.StatusOK, "export.html", gin.H{
 
@@ -308,6 +323,7 @@ func main() {
 				"exportnumber": uniqueString,
 				"products":     model.GetAllProductsByInventory(1),
 			})
+
 		})
 		v2.GET("/deleteExport", middleware.AuthMiddleware(), func(c *gin.Context) {
 			session := sessions.Default(c)

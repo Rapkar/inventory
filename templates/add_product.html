@@ -25,16 +25,15 @@
                 </div>
               </div>
               <div class="form-group  mt-3">
-                <label class="col-sm-2 control-label">شماره کالا</label>
-                <div class="col-sm-10">
-                  <input style="text-align:right;" name="Phonenumber" value="{{.Phonenumber}}" type="text"
-                    class="form-control">
-                </div>
-              </div>
-              <div class="form-group  mt-3">
                 <label class="col-sm-2 control-label">تعداد موجود</label>
                 <div class="col-sm-10">
                   <input required name="Email" type="number" value="{{.Email}}" class="form-control">
+                </div>
+              </div>
+              <div class="form-group  mt-3">
+                <label class="col-sm-2 control-label">متراژ موجود</label>
+                <div class="col-sm-10">
+                  <input required name="Meter" type="number" value="{{.Meter}}" class="form-control">
                 </div>
               </div>
               <div class="form-group  mt-3">
@@ -52,17 +51,6 @@
                 <span class="out"></span>&nbsp;تومان 
 
               </div>
-              <div class="form-group mt-3">
-                <label class="col-sm-2 control-label">شماره انبار</label>
-                <div class="col-sm-10">
-                  <select required name="Role" class="w-100">
-                    <option value="Admin">ادمین</option>
-                    <option value="guest">مشتری</option>
-
-                  </select>
-
-                </div>
-              </div>
               {{end}}
               {{else}}
               <div class="panel-body">
@@ -73,15 +61,15 @@
                   </div>
                 </div>
                 <div class="form-group  mt-3">
-                  <label class="col-sm-2 control-label">شماره کالا</label>
-                  <div class="col-sm-10">
-                    <input style="text-align:right;" name="Number" type="test" class="form-control">
-                  </div>
-                </div>
-                <div class="form-group  mt-3">
                   <label class="col-sm-2 control-label">تعداد موجود</label>
                   <div class="col-sm-10">
                     <input required  type="Number" name="Count" class="form-control">
+                  </div>
+                </div>
+                <div class="form-group  mt-3">
+                  <label class="col-sm-2 control-label">متراژ موجود</label>
+                  <div class="col-sm-10">
+                    <input required name="Meter" type="number" value="{{.Meter}}" class="form-control">
                   </div>
                 </div>
                 <div class="form-group  mt-3">

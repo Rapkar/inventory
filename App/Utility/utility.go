@@ -5,8 +5,10 @@ import (
 	// Model "inventory/app/Model"
 	"encoding/json"
 	"fmt"
+	"math/rand"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	ptime "github.com/yaa110/go-persian-calendar"
@@ -102,6 +104,15 @@ func MakePaginate(value int64, url string) string {
 		}
 	}
 	return paginate
+}
+func MakeRandValue() string {
+	rand.Seed(time.Now().UnixNano())
+	letters := []rune("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+	letter := letters[rand.Intn(len(letters))]
+	num := rand.Intn(10000)
+	uniqueString := fmt.Sprintf("%c%05d", letter, num)
+
+	return uniqueString
 }
 
 // func ExampleNewPDFGenerator() {
