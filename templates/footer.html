@@ -22,8 +22,9 @@
         // Takes a string made of English digits only, and returns a string that represents the same number but with Persian digits
         jQuery("input[type='number']").on("keyup", function () {
             var val = jQuery(this).val()
-            var convertToFa = PersianTools.digitsEnToFa(val, { addCommas: true });
-            convertToFa = PersianTools.addCommas(convertToFa)
+            convertToFa = PersianTools.addCommas(val)
+            var convertToFa = PersianTools.digitsEnToFa(convertToFa);
+  
             numberToWords = PersianTools.numberToWords(val)
             // jQuery(elem).value(convertToFa)
             jQuery(this).parent().closest(".form-group").find(".out").html(convertToFa + "   " + numberToWords)
@@ -49,6 +50,24 @@
 
             jQuery(this).html(convertToFa);
         });
+
+
+
+
+
+
+        const printButton = document.getElementById('printButton');
+const myTable = document.getElementById('myTable');
+
+printButton.addEventListener('click', (e) => {
+    e.preventDefault()
+//   const tableHTML = myTable.outerHTML;
+//   const printWindow = window.open('', '_blank', 'width=1000,height=800');
+//   printWindow.document.write('<html><head><title>Printable Table</title></head><body>' + tableHTML + '</body></html>');
+//   printWindow.print();
+//   printWindow.close();
+window.print()
+});
         // etc...
     </script>
         <script src="../assets/js/main.js"></script>

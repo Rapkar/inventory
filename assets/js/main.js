@@ -2,6 +2,7 @@
 let CurrentProductName = "";
 let ProductsOfExport = [];
 let ExportTotalPrice = [];
+let tax = parseFloat(jQuery("input[name='Tax']").val())
 jQuery('#myModal').modal('show')
 // add  New product to export list
 
@@ -20,23 +21,22 @@ jQuery("#AddProductToExport").on("click", function () {
     var InventoryNumber = jQuery("#InventoryIS").val();
     // var Name=jQuery("#ProductIs").html()
     var Count = jQuery("#ProductBox input[name='Count']").val()
-    var MeterPrice = jQuery("#ProductBox input[name='Meter']").val()
+    var Meter = jQuery("#ProductBox input[name='Meter']").val()
     var RolePrice = jQuery("#ProductBox input[name='RolePrice']").val()
     var MeterPrice = jQuery("#ProductBox input[name='MeterPrice']").val()
-    var TotalPrice = jQuery("#ProductBox input[name='TotalPrice']").val()
- 
+    var TotalPrice = `${CalculateItems()}`
+
     // var oldprice = jQuery("input[name='TotalPrice']")
     // oldprice=parseFloat(1)
     // TotalPrice = parseFloat(TotalPrice)
     // ExportTotalPrice = jQuery("input[name='ExportTotalPrice']").val()
-   
-        var val = jQuery(this).html();
-        var val = PersianTools.addCommas(TotalPrice);
-        var TotalPricefa = PersianTools.digitsEnToFa(val);
 
-    
- 
-    var value = '<tr><th scope="row">' + ID + '</th><td>' + CurrentProductName + '</td><td>23423</td><td>' + Count + '</td><td class="price">' + MeterPrice + '</td><td>' + RolePrice + '</td><td class="itemtotalprice price">' + TotalPricefa + '</td></tr>';
+    var edit = `<td dir="ltr" class="Edit" style="text-align:right;">
+     <a class="me-3 remove"  href="./deleteExport?ExportId={{.ID}}"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
+       <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5"/>
+     </svg></a>
+     </td>`;
+    var value = '<tr><td class="id" scope="row">' + ID + '</td><td>' + CurrentProductName + '</td><td class="prn">' + Count + '</td><td class="price">' + Meter + '</td><td class="price">' + MeterPrice + '</td><td class="price">' + RolePrice + '</td><td class="itemtotalprice price">' + CalculateItems() + '</td>' + edit + '</tr>';
     var newRow = {
         InventoryNumber: InventoryNumber,
         ProductId: ID,
@@ -48,27 +48,57 @@ jQuery("#AddProductToExport").on("click", function () {
         totalPrice: TotalPrice
 
     };
-    var NewPrice={
-        price:TotalPrice
+    var NewPrice = {
+        ProductId: ID,
+        price: TotalPrice
     }
-
-    ProductsOfExport.push(newRow)
     ExportTotalPrice.push(NewPrice)
-    // console.log(ExportTotalPrice)
-    exporttotal_Price="0"
-    ExportTotalPrice.forEach(function(e,i){
-        exporttotal_Price = parseFloat(exporttotal_Price) +  parseFloat(e.price)
-    })
+    ProductsOfExport.push(newRow)
 
-    jQuery("#ExportTotalPrice").attr("value",exporttotal_Price);
-    jQuery("#ExportTotalPrice").val(exporttotal_Price);
+    // console.log(ExportTotalPrice)
+    exporttotal_Price = "0"
+    // ExportTotalPrice.forEach(function(e,i){
+    //     exporttotal_Price = parseFloat(exporttotal_Price) +  parseFloat(e.price)
+    // })
+    res = GetExportTotalPrice(ExportTotalPrice);
+
+    jQuery("tfoot td").html(res);
+    jQuery("#ExportTotalPrice").val(res);
     jQuery("#ExportProductsList tbody").append(value);
     jQuery(".TotalPriceOut td").html(TotalPrice)
     jQuery(".Notfound").slideUp();
     jQuery(".close").click()
-    
-})
+    jQuery("td.TotalPrice,td.price,.price,td.prn,td.Tax").each(function () {
+        var val = jQuery(this).html();
+        var val = PersianTools.addCommas(val);
+        var convertToFa = PersianTools.digitsEnToFa(val);
 
+        jQuery(this).html(convertToFa);
+    });
+
+})
+function GetExportTotalPrice(ExportTotalPrice) {
+    exporttotal_Price = 0
+    ExportTotalPrice.forEach(function (e, i) {
+        exporttotal_Price = parseFloat(exporttotal_Price) + parseFloat(e.price) + tax
+    })
+    return exporttotal_Price
+
+}
+function CalculateItems() {
+    jQuery(".Content input[type='number']").each(function (item) {
+        if (jQuery(this).val() == "" || jQuery(this).val() == null) {
+            jQuery(this).val(0)
+        }
+    });
+    var Meter = jQuery("input[name='Meter']").val()
+    var MeterPrice = jQuery("input[name='MeterPrice']").val()
+    var Count = jQuery("input[name='Count']").val()
+    var CountPrice = jQuery("input[name='RolePrice']").val()
+    var result = (parseFloat(Meter) * parseFloat(MeterPrice)) + (parseFloat(Count) * parseFloat(CountPrice))
+    jQuery("input[name='TotalPrice']").val(result)
+    return result
+}
 
 // Select  Inventory name for fech the produts of inventory
 
@@ -152,8 +182,9 @@ jQuery("input[name='Count']").on("keyup", function () {
     } else {
         jQuery(".modal-footer").slideUp();
     }
-    // setTimeout(function(){
-    // jQuery("input[name='Meter']").val(0);
+
+
+
     RolePrice = parseFloat(jQuery(".ExportPeoducts input[name='RolePrice']").val());
     Count = parseFloat(jQuery(this).val());
 
@@ -163,6 +194,8 @@ jQuery("input[name='Count']").on("keyup", function () {
         var TotalPrice = RolePrice * Count;
         // ExportTotalPrice =parseFloat(ExportTotalPrice) + parseFloat(TotalPrice)
     }
+
+    jQuery("input[name='TotalPrice']").val(CalculateItems())
     jQuery("#ProductBox input[type='number']").each(function () {
         var val = jQuery(this).val();
         var val = PersianTools.addCommas(val);
@@ -170,15 +203,13 @@ jQuery("input[name='Count']").on("keyup", function () {
         var numberToWords = PersianTools.numberToWords(val);
         jQuery(this).parent().closest(".form-group").find(".out").html(convertToFa + "   " + numberToWords);
     });
-    jQuery("input[name='TotalPrice']").val(TotalPrice)
-    // },1000)
 
 
 })
 
 // Calculate TotalPrice by price of meter  
 
-jQuery("input[name='Meter']").on("change", function () {
+jQuery("input[name='Meter']").on("keyup", function () {
     var number = parseInt(this.value)
     if (number != 0) {
         jQuery(".modal-footer").slideDown();
@@ -195,7 +226,16 @@ jQuery("input[name='Meter']").on("change", function () {
     } else {
         var TotalPrice = RolePrice * Count;
     }
-    jQuery("input[name='TotalPrice']").val(TotalPrice)
+
+
+    jQuery("input[name='TotalPrice']").val(CalculateItems())
+    jQuery("#ProductBox input[type='number']").each(function () {
+        var val = jQuery(this).val();
+        var val = PersianTools.addCommas(val);
+        var convertToFa = PersianTools.digitsEnToFa(val);
+        var numberToWords = PersianTools.numberToWords(val);
+        jQuery(this).parent().closest(".form-group").find(".out").html(convertToFa + "   " + numberToWords);
+    });
 
 })
 // function getFormData($form){
@@ -223,7 +263,7 @@ jQuery("form[name='expotform']").submit(function (e) {
     })
         .done(function (msg) {
             if (msg.message == "sucess") {
-                 window.location.replace("./export-list");
+                window.location.replace("./export-list");
             }
         });
 
@@ -352,9 +392,9 @@ jQuery("#find").on("click", function (e) {
                     html += '<td class="' + index.CreatedAt + '" style="text-align:right;">' + index.CreatedAt + '</td>';
                     html += '<td class="' + index.InventoryNumber + '" style="text-align:right;">' + index.InventoryNumber + '</td>';
                     html += '<td dir="ltr" class="Edit" style="text-align:right;">';
-                    html +='<a href="./exportshow?ExportId=' + index.ID + '"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">';
-                    html +='<path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z"/><path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"/></svg></a>';
-                    html +='<a class="me-3" href="./deleteExport?ExportId='+ index.ID +'"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">';
+                    html += '<a href="./exportshow?ExportId=' + index.ID + '"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">';
+                    html += '<path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z"/><path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"/></svg></a>';
+                    html += '<a class="me-3" href="./deleteExport?ExportId=' + index.ID + '"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">';
                     html += '<path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5"/>';
                     html += '</td>';
                     html += '</tr>';
@@ -388,7 +428,7 @@ jQuery("#Userfind").on("click", function (e) {
             if (lengthofres > 0) {
                 let html = "";
                 msg.message.forEach(function (index) {
-                    
+
                     html += '<tr>';
                     html += '<td class="' + index.ID + '" style="text-align:right;">' + index.ID + '</td>';
                     html += '<td class="' + index.Name + '" style="text-align:right;">' + index.Name + '</td>';
@@ -398,8 +438,8 @@ jQuery("#Userfind").on("click", function (e) {
                     html += '<path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5"/></svg></a></td>';
                     html += '</tr>';
 
-                  
-                     
+
+
                     // console.log(html)
 
                 });
@@ -414,7 +454,60 @@ jQuery("#Userfind").on("click", function (e) {
         });
 })
 
-function Print(){
+
+jQuery("input[name='Tax']").on("keyup", function (e) {
+    oldval = GetExportTotalPrice(ExportTotalPrice);
+    newval = parseFloat(this.value)
+    res = oldval + newval
+    console.log(newval, oldval, res)
+
+
+    jQuery("tfoot td").html(res);
+    jQuery("td.TotalPrice,td.price,.price,td.prn,td.Tax").each(function () {
+        var val = jQuery(this).html();
+        var val = PersianTools.addCommas(val);
+        var convertToFa = PersianTools.digitsEnToFa(val);
+
+        jQuery(this).html(convertToFa);
+    });
+})
+jQuery(document).on('click', '.remove', function (e) {
+    e.preventDefault()
+    var id = jQuery(this).parent().closest("tr").find(".id").html();
+    console.log(id, jQuery(this).parent().closest("tr").find(".id").html(), jQuery(this).parent().closest("tr").html())
+    id = parseInt(id)
+    RemoveItem(this, id);
+})
+
+function RemoveItem(target, id) {
+    console.log(ExportTotalPrice, ProductsOfExport)
+
+    ExportTotalPrice.forEach((element, index) => {
+        console.log(index == id,element.ProductId,id)
+        if ( parseInt(element.ProductId) == id) {
+            ExportTotalPrice.splice(index, 1);
+        }
+      });
+    ProductsOfExport.forEach((element, index) => {
+        if (parseInt(element.ProductId) == id) {
+            ProductsOfExport.splice(index, 1);
+        }
+      });
+    console.log(ExportTotalPrice, ProductsOfExport)
+    res = GetExportTotalPrice(ExportTotalPrice);
+
+    jQuery("tfoot td").html(res);
+    jQuery(target).parent().closest("tr").remove()
+    jQuery("td.TotalPrice,td.price,.price,td.prn,td.Tax").each(function () {
+        var val = jQuery(this).html();
+        var val = PersianTools.addCommas(val);
+        var convertToFa = PersianTools.digitsEnToFa(val);
+
+        jQuery(this).html(convertToFa);
+    });
+}
+function Print() {
     window.print();
 
 }
+

@@ -405,6 +405,7 @@ func main() {
 			}
 			// fmt.Println("serialize", "serialize")
 			// // bind data struct to  ExportProducts for make row in db
+			fmt.Println(data)
 
 			exportproducts := make([]boot.ExportProducts, len(data.Products))
 			Ids := make(map[int64]int64)
