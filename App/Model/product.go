@@ -1,7 +1,6 @@
 package Model
 
 import (
-	"fmt"
 	"inventory/App/Boot"
 	"strconv"
 
@@ -27,7 +26,6 @@ func GetProductById(id int) []Boot.Inventory {
 }
 func RemoveCurrentProduct(c *gin.Context) bool {
 	Id := c.Request.URL.Query().Get("product-id")
-	fmt.Println(Id)
 	ProductID, err := strconv.ParseUint(Id, 10, 64)
 	if err != nil {
 		// handle the error
