@@ -248,10 +248,10 @@ func main() {
 			var product boot.Inventory
 			product.Name = c.PostForm("Name")
 			product.Number = c.PostForm("Number")
-			product.RolePrice = Utility.StringToFloat(c.PostForm("RolePrice"))
-			product.MeterPrice = Utility.StringToFloat(c.PostForm("MeterPrice"))
+			product.RolePrice = Utility.StringToInt64(c.PostForm("RolePrice"))
+			product.MeterPrice = Utility.StringToInt64(c.PostForm("MeterPrice"))
 			product.Count = Utility.StringToInt(c.PostForm("Count"))
-			product.Meter = Utility.StringToFloat(c.PostForm("Meter"))
+			product.Meter = Utility.StringToInt64(c.PostForm("Meter"))
 			product.InventoryNumber = Utility.StringToInt32(c.PostForm("InventoryNumber"))
 			res := boot.DB().Create(&product)
 			if res.RowsAffected > 0 {
@@ -416,12 +416,12 @@ func main() {
 				fmt.Println(data.Products[a].ExportID)
 				exportproducts[a].Name = data.Products[a].Name
 				exportproducts[a].Number = data.Products[a].ExportID
-				exportproducts[a].RolePrice, _ = strconv.ParseFloat(data.Products[a].RolePrice, 64)
-				exportproducts[a].MeterPrice, _ = strconv.ParseFloat(data.Products[a].MeterPrice, 64)
+				exportproducts[a].RolePrice, _ = strconv.ParseInt(data.Products[a].RolePrice, 10, 64)
+				exportproducts[a].MeterPrice, _ = strconv.ParseInt(data.Products[a].MeterPrice, 10, 64)
 				Count, _ := strconv.ParseInt(data.Products[a].Count, 10, 8)
 				exportproducts[a].Count = int8(Count)
 				InventoryNumber, _ := strconv.ParseInt(data.Products[a].InventoryNumber, 10, 32)
-				exportproducts[a].TotalPrice, _ = strconv.ParseFloat(data.Products[a].TotalPrice, 64)
+				exportproducts[a].TotalPrice, _ = strconv.ParseInt(data.Products[a].TotalPrice, 10, 64)
 				fmt.Println(exportproducts[a].TotalPrice)
 				exportproducts[a].InventoryNumber = int32(InventoryNumber)
 				Ids[int64(ids)] = int64(Count)
@@ -437,9 +437,9 @@ func main() {
 			Export.Number = result["ExportID"]
 			User.Phonenumber, Export.Phonenumber = result["Phonenumber"], result["Phonenumber"]
 			User.Address, Export.Address = result["Address"], result["Address"]
-			Tprice := Utility.StringToFloat(result["ExportTotalPrice"])
+			Tprice := Utility.StringToInt64(result["ExportTotalPrice"])
 			Export.TotalPrice = Tprice
-			Export.Tax = Utility.StringToFloat(result["Tax"])
+			Export.Tax = Utility.StringToInt64(result["Tax"])
 
 			fmt.Println(result["Tax"], Utility.StringToFloat(result["Tax"]), Export.Tax)
 			Export.CreatedAt = string(Utility.CurrentTime())

@@ -40,6 +40,10 @@ func StringToFloat(value string) float64 {
 	NewValue, _ := strconv.ParseFloat(value, 64)
 	return float64(NewValue)
 }
+func StringToInt64(value string) int64 {
+	NewValue, _ := strconv.ParseFloat(value, 64)
+	return int64(NewValue)
+}
 func StringToInt(value string) int8 {
 	newValue, _ := strconv.ParseInt(value, 10, 8)
 	return int8(newValue)
@@ -87,6 +91,9 @@ func FloatToString(value float64) string {
 		vals = string(val)
 	}
 	return vals
+}
+func IntT64ToString(value int64) string {
+	return strconv.FormatInt(value, 10)
 }
 func IntToString(value int8) string {
 	val := string(fmt.Sprint(value))

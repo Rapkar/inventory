@@ -34,7 +34,7 @@ func Init() {
 
 	if !DB().Migrator().HasTable(Inventory{}) {
 		DB().Migrator().CreateTable(Inventory{})
-		Inventory := Inventory{Name: "ایزوگام شرق", Number: "10", RolePrice: 99.250, MeterPrice: 102.500, Count: 100, InventoryNumber: 1}
+		Inventory := Inventory{Name: "ایزوگام شرق", Number: "10", RolePrice: 99250, MeterPrice: 102500, Count: 100, InventoryNumber: 1}
 		DB().Create(&Inventory)
 	} else {
 		fmt.Println("Inventory table found. #")
@@ -44,7 +44,7 @@ func Init() {
 	ExportProduct := []ExportProducts{}
 	if !DB().Migrator().HasTable(ExportProducts{}) {
 		DB().Migrator().CreateTable(ExportProducts{})
-		ExportProduct = []ExportProducts{{Name: "ایزوگام شرق", Number: "10", RolePrice: 99.250, MeterPrice: 102.500, Count: 100, InventoryNumber: 1, TotalPrice: 2000000, Meter: 10}}
+		ExportProduct = []ExportProducts{{Name: "ایزوگام شرق", Number: "10", RolePrice: 99250, MeterPrice: 102500, Count: 100, InventoryNumber: 1, TotalPrice: 2000000, Meter: 10}}
 		DB().Create(&ExportProduct)
 	} else {
 		fmt.Println("ExportProducts table found. #")

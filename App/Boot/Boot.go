@@ -15,14 +15,14 @@ type Users struct {
 }
 
 type Inventory struct {
-	ID              uint64  `gorm:"primaryKey"`
-	Name            string  `gorm:"type:varchar(100)"`
-	Number          string  `gorm:"size:255;"`
-	RolePrice       float64 `gorm:"type:float"`
-	MeterPrice      float64 `gorm:"type:float"`
-	Count           int8    `gorm:"size:255;"`
-	Meter           float64 `gorm:"size:255;"`
-	InventoryNumber int32   `gorm:"size:255;"`
+	ID              uint64 `gorm:"primaryKey"`
+	Name            string `gorm:"type:varchar(100)"`
+	Number          string `gorm:"size:255;"`
+	RolePrice       int64  `gorm:"type:float"`
+	MeterPrice      int64  `gorm:"type:float"`
+	Count           int8   `gorm:"size:255;"`
+	Meter           int64  `gorm:"size:255;"`
+	InventoryNumber int32  `gorm:"size:255;"`
 }
 
 type Export struct {
@@ -31,23 +31,23 @@ type Export struct {
 	Number          string           `gorm:"varchar(255),unique"`
 	Phonenumber     string           `gorm:"size:255;"`
 	Address         string           `gorm:"size:255;"`
-	TotalPrice      float64          `gorm:"type:decimal(10,2);"`
-	Tax             float64          `gorm:"type:float"`
+	TotalPrice      int64            `gorm:"size:255;"`
+	Tax             int64            `gorm:"size:255;"`
 	CreatedAt       string           `json:"CreatedAt"` // assign the format to a string
 	InventoryNumber int32            `gorm:"size:255;"`
 	ExportProducts  []ExportProducts `gorm:"foreignKey:ExportID"`
 }
 type ExportProducts struct {
-	ID              uint64  `gorm:"primaryKey"`
-	ExportID        uint64  `gorm:"index"`
-	Name            string  `gorm:"type:varchar(100)"`
-	Number          string  `gorm:"size:255;"`
-	RolePrice       float64 `gorm:"type:float"`
-	MeterPrice      float64 `gorm:"type:float"`
-	Count           int8    `gorm:"size:255;"`
-	Meter           int8    `gorm:"size:255;"`
-	TotalPrice      float64 `gorm:"size:255;"`
-	InventoryNumber int32   `gorm:"size:255;"`
+	ID              uint64 `gorm:"primaryKey"`
+	ExportID        uint64 `gorm:"index"`
+	Name            string `gorm:"type:varchar(100)"`
+	Number          string `gorm:"size:255;"`
+	RolePrice       int64  `gorm:"size:255;"`
+	MeterPrice      int64  `gorm:"size:255;"`
+	Count           int8   `gorm:"size:255;"`
+	Meter           int8   `gorm:"size:255;"`
+	TotalPrice      int64  `gorm:"size:255;"`
+	InventoryNumber int32  `gorm:"size:255;"`
 }
 
 type EscapeExport struct {
@@ -57,7 +57,7 @@ type EscapeExport struct {
 	Phonenumber     string           `gorm:"size:255;"`
 	Address         string           `gorm:"size:255;"`
 	TotalPrice      string           `gorm:"type:string"`
-	Tax             float64          `gorm:"type:float"`
+	Tax             int64            `gorm:"size:255;"`
 	CreatedAt       string           `json:"CreatedAt"` // assign the format to a string
 	InventoryNumber int32            `gorm:"size:255;"`
 	ExportProducts  []ExportProducts `gorm:"foreignKey:ExportID"`
@@ -67,8 +67,8 @@ type EscapeExportProducts struct {
 	ExportID        uint64 `gorm:"index"`
 	Name            string `gorm:"type:varchar(100)"`
 	Number          string `gorm:"size:255;"`
-	RolePrice       string `gorm:"type:float"`
-	MeterPrice      string `gorm:"type:float"`
+	RolePrice       string `gorm:"size:255;"`
+	MeterPrice      string `gorm:"size:255;"`
 	Count           string `gorm:"size:255;"`
 	Meter           string `gorm:"size:255;"`
 	TotalPrice      string `gorm:"size:255;"`

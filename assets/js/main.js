@@ -151,9 +151,9 @@ jQuery(".ExportPeoducts select#ProductIs").on("change", function () {
                     var product = msg.result[0];
                     jQuery(".ExportPeoducts .ProductsCount").html(product.Count + "تعداد موجود")
                     jQuery(".ExportPeoducts .ProductNumber").html(product.Number)
-                    jQuery(".ExportPeoducts input[name='RolePrice']").val(product.RolePrice)
-                    jQuery(".ExportPeoducts input[name='MeterPrice']").val(product.MeterPrice)
-                    jQuery(".ExportPeoducts input[name='TotalPrice']").val(product.MeterPrice)
+                    jQuery(".ExportPeoducts input[name='RolePrice']").attr("value",product.RolePrice)
+                    jQuery(".ExportPeoducts input[name='MeterPrice']").attr("value",product.MeterPrice)
+                    jQuery(".ExportPeoducts input[name='TotalPrice']").attr("value",product.MeterPrice)
                     jQuery(".ExportPeoducts .Content").slideDown();
                     jQuery(".ExportPeoducts  input[type='number']").each(function () {
                         var val = jQuery(this).val();

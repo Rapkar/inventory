@@ -28,7 +28,7 @@ func GetAllExports() []Boot.EscapeExport {
 		escapeExport.InventoryNumber = value.InventoryNumber
 		escapeExport.ExportProducts = value.ExportProducts
 		escapeExport.CreatedAt = value.CreatedAt
-		escapeExport.TotalPrice = Utility.FloatToString(value.TotalPrice)
+		escapeExport.TotalPrice = Utility.IntT64ToString(value.TotalPrice)
 		// Add other fields here...
 		EscapeExport[i] = escapeExport
 	}
@@ -83,7 +83,7 @@ func GetExportById(c *gin.Context) ([]Boot.EscapeExport, []Boot.EscapeExportProd
 		escapeExport.InventoryNumber = value.InventoryNumber
 		escapeExport.ExportProducts = value.ExportProducts
 		escapeExport.CreatedAt = value.CreatedAt
-		escapeExport.TotalPrice = Utility.FloatToString(value.TotalPrice)
+		escapeExport.TotalPrice = Utility.IntT64ToString(value.TotalPrice)
 		// Add other fields here...
 		EscapeExport[i] = escapeExport
 	}
@@ -100,10 +100,10 @@ func GetExportById(c *gin.Context) ([]Boot.EscapeExport, []Boot.EscapeExportProd
 		escapeExport.Name = value.Name
 		escapeExport.ExportID = value.ExportID
 		escapeExport.Number = value.Number
-		escapeExport.RolePrice = Utility.FloatToString(value.RolePrice)
-		escapeExport.MeterPrice = Utility.FloatToString(value.MeterPrice)
+		escapeExport.RolePrice = Utility.IntT64ToString(value.RolePrice)
+		escapeExport.MeterPrice = Utility.IntT64ToString(value.MeterPrice)
 		escapeExport.InventoryNumber = value.InventoryNumber
-		escapeExport.TotalPrice = Utility.FloatToString(value.TotalPrice)
+		escapeExport.TotalPrice = Utility.IntT64ToString(value.TotalPrice)
 		escapeExport.Count = Utility.IntToString(value.Count)
 		// Add other fields here...
 		EscapeExportProducts[i] = escapeExport
@@ -132,7 +132,7 @@ func GetAllExportsByPhoneAndName(searchTerm string) []Boot.EscapeExport {
 		escapeExport.InventoryNumber = value.InventoryNumber
 		escapeExport.ExportProducts = value.ExportProducts
 		escapeExport.CreatedAt = value.CreatedAt
-		escapeExport.TotalPrice = Utility.FloatToString(value.TotalPrice)
+		escapeExport.TotalPrice = Utility.IntT64ToString(value.TotalPrice)
 		// Add other fields here...
 		EscapeExport[i] = escapeExport
 	}
