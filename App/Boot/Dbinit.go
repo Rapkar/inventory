@@ -4,13 +4,41 @@ import (
 	"fmt"
 	"inventory/App/Utility"
 
+	"github.com/spf13/viper"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
 func DB() *gorm.DB {
+	viper.SetConfigFile(".env")
+	viper.SetConfigName("config")
+	viper.AddConfigPath(".")
+	viper.ReadInConfig()
+	fmt.Println("dddddddddddd")
+	MODE := viper.Get("MODE")
+	var (
+		DATABASENAME     string
+		DATABASEUSER     string
+		DATABASEUSERPASS string
+		DATABASEPORT     string
+		DATABASEHOST     string
+	)
+	if MODE == "DEVELOP" {
+		DATABASENAME = viper.GetString("MYSQL_LOCAL_DATABASE")
+		DATABASEUSER = viper.GetString("MYSQL_LOCAL_USERNAME")
+		DATABASEUSERPASS = viper.GetString("MYSQL_LOCAL_PASS")
+		DATABASEPORT = viper.GetString("MYSQL_LOCAL_PORT")
+		DATABASEHOST = viper.GetString("MYSQL_LOCAL_HOST")
+	} else {
+		DATABASENAME = viper.GetString("MYSQL_DATABASE")
+		DATABASEUSER = viper.GetString("MYSQL_USERNAME")
+		DATABASEUSERPASS = viper.GetString("MYSQL_PASS")
+		DATABASEPORT = viper.GetString("MYSQL_PORT")
+		DATABASEHOST = viper.GetString("MYSQL_HOST")
+	}
 
-	dsn := "root:0311121314@tcp(127.0.0.1:3306)/Inventory?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := DATABASEUSER + ":" + DATABASEUSERPASS + "@tcp(" + DATABASEHOST + ":" + DATABASEPORT + ")/" + DATABASENAME + "?charset=utf8mb4&parseTime=True&loc=Local"
+	fmt.Println(dsn)
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		panic("Inventory Has problem With connect to Database")
