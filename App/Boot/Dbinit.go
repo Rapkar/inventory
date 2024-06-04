@@ -14,8 +14,8 @@ func DB() *gorm.DB {
 	viper.SetConfigName("config")
 	viper.AddConfigPath(".")
 	viper.ReadInConfig()
-	fmt.Println("dddddddddddd")
 	MODE := viper.Get("MODE")
+
 	var (
 		DATABASENAME     string
 		DATABASEUSER     string

@@ -11,12 +11,21 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
 	ptime "github.com/yaa110/go-persian-calendar"
 	"golang.org/x/crypto/bcrypt"
 )
 
 func HomeUrl() string {
-	return "http://127.0.0.1:8080"
+	MODE := viper.Get("MODE")
+	var url string
+	if MODE == "DEVELOP" {
+		url = viper.GetString("LOCAL_URL")
+	} else {
+		url = viper.GetString("URL")
+
+	}
+	return url
 }
 
 // password hashing
