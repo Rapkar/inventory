@@ -3,7 +3,13 @@ package Boot
 import (
 	"fmt"
 	"inventory/App/Utility"
+	"log"
+	"os"
+	"os/exec"
+	"path/filepath"
+	"time"
 
+	"github.com/spf13/afero"
 	"github.com/spf13/viper"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -86,5 +92,101 @@ func Init() {
 		DB().Create(&Export)
 	} else {
 		fmt.Println("Export table found. #")
+	}
+
+}
+
+func TakeBackup(fs afero.Fs, is int) {
+	username := "root"
+	dbName := "Inventory"
+	password := "0311121314" // replace with your actual password
+	viper.SetConfigFile(".env")
+	viper.SetConfigName("config")
+	viper.AddConfigPath(".")
+	viper.ReadInConfig()
+	i := 1
+	t := time.Now().Add(-time.Hour * 24 * time.Duration(i))
+	backupName := fmt.Sprintf("backup-%s.sql", t.Format("2006-01-02-3-4-5"))
+	if is == 1 && viper.GetString("LAST_BS") == "" {
+		viper.Set("LAST_BS", backupName)
+	}
+	cmd := exec.Command("mysqldump", "-u", username, dbName)
+	cmd.Env = append(os.Environ(), fmt.Sprintf("MYSQL_PWD=%s", password))
+	file, err := os.Create(backupName)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+	cmd.Stdout = file
+	cmd.Stderr = os.Stderr
+	err = cmd.Run()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println("Backup saved to backup.sql", backupName, "round ", is)
+	if is == 1 {
+
+		err = fs.Remove(RemoveFileName(t, backupName, 2))
+		// fmt.Println(fs.Stat(backupName))
+		if err != nil {
+			// log.Printf(err)
+		}
+		// is = 0
+		// viper.Set("LAST_BS", "")
+	} else if is == 2 {
+
+		err = fs.Remove(RemoveFileName(t, backupName, 2))
+		if err != nil {
+			// log.Fatal(err)
+		}
+
+	} else if is == 3 {
+
+		err = fs.Remove(RemoveFileName(t, backupName, 2))
+		if err != nil {
+			// log.Fatal(err)
+		}
+		// viper.Set("LAST_BS", "")
+	} else if is == 4 {
+		err = fs.Remove(RemoveFileName(t, backupName, 2))
+		if err != nil {
+			// log.Fatal(err)
+		}
+		is = 0
+		// viper.Set("LAST_BS", "")
+	}
+
+}
+
+// return old file name
+func RemoveFileName(t time.Time, backupName string, ordertiem int) string {
+	oldBackupName := ""
+	oldBackupName = filepath.Join(filepath.Dir(backupName), "backup-"+t.Add(-time.Hour*48).Format("2006-01-02-3-4-5")+".sql")
+	fmt.Println(" so detectedfile is :", oldBackupName, "and removed")
+	return oldBackupName
+}
+
+func PeroudBackup() {
+	is := 1
+	// oldbackupName := ""
+	ticker := time.NewTicker(24 * time.Hour)
+	fs := afero.NewOsFs()
+	for range ticker.C {
+		fmt.Println("\n in parent round number is =", is)
+
+		if is == 1 {
+			TakeBackup(fs, 1)
+		} else if is == 2 {
+			TakeBackup(fs, 2)
+		} else if is == 3 {
+			TakeBackup(fs, 3)
+		} else if is == 4 {
+			TakeBackup(fs, 4)
+			is = 0
+		}
+		is++
+		// fmt.Println("number=", is, " name=", oldbackupName)
+
 	}
 }

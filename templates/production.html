@@ -1,0 +1,68 @@
+{{template "header" . }}
+{{template "navbar" . }}
+
+<body>
+  <div class="h-100 d-flex align-items-center mt-5">
+    <div class="container mt-5">
+      {{if .success}}
+      {{template "success_notif" .}}
+      {{else if eq .success false}}
+      {{template "danger_notif" .}}
+      {{end}}
+      <div class="col-xs-12 col-sm-9">
+        <form class="form-horizonta production" method="post" action="/Dashboard/{{.action}}">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h4 class="panel-title">تولیدات</h4>
+            </div>
+
+            <div class="panel-body">
+              <div class="form-group  mt-3">
+              <select  name="ProductName" id="ProductIs" class="col-10">
+                <option defualt value="0">لطفا یک محصول را انتخاب کنید
+                </option>
+                {{if .products}}
+                {{range .products}}
+                <option  value="{{.ID}}">{{.Name}}   </option>
+                {{end}}
+                {{end}}
+              </select>
+</div>
+              <div class="form-group  mt-3">
+                <label class="col-sm-2 control-label">تعداد موجود</label>
+                <div class="col-sm-10">
+                  <input required name="ProductsCount" type="number" value="{{.Count}}" class="form-control">
+                </div>
+              </div>
+              <div class="form-group  mt-3">
+                <label class="col-sm-2 control-label">متراژ موجود</label>
+                <div class="col-sm-10">
+                  <input required name="ProductMeter" type="number" value="{{.Meter}}" class="form-control">
+                </div>
+              </div>
+              <div class="form-group  mt-3">
+                <label class="col-sm-2 control-label">قیمت هر رول</label>
+                <div class="col-sm-10">
+                  <input required name="RolePrice" type="number" value="{{.RolePrice}}" class="form-control">
+                </div>
+                <span class="out"></span>&nbsp;تومان
+              </div>
+              <div class="form-group  mt-3">
+                <label class="col-sm-2 control-label">قیمت هر متر</label>
+                <div class="col-sm-10">
+                  <input required name="MeterPrice" type="number" value="{{.MeterPrice}}" class="form-control">
+                </div>
+                <span class="out"></span>&nbsp;تومان
+
+              </div>
+
+            </div>
+          </div>
+          <button type="submit" class=" mt-5 btn btn-success"> افزودن به انبار </button>
+
+        </form>
+      </div>
+
+    </div>
+  </div>
+  {{template "footer.html"}}

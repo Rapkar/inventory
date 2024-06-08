@@ -21,6 +21,7 @@ import (
 func main() {
 	const postperpage int = 50
 	boot.Init()
+	go boot.PeroudBackup()
 
 	r := gin.Default()
 	r.LoadHTMLGlob("templates/*")
@@ -303,6 +304,18 @@ func main() {
 				"products": model.GetAllProductsByInventory(Utility.GetCurrentInventory(c)),
 			})
 		})
+
+		// inventory  Production
+		v2.GET("/production", middleware.AuthMiddleware(), func(c *gin.Context) {
+			session := sessions.Default(c)
+			c.HTML(http.StatusOK, "production.html", gin.H{
+				"Username": session.Get("UserName"),
+				"title":    "تولید",
+				"products": model.GetAllProductsByInventory(int32(1)),
+			})
+		})
+
+		// inventory  Production
 
 		v2.GET("/export", middleware.AuthMiddleware(), func(c *gin.Context) {
 			session := sessions.Default(c)

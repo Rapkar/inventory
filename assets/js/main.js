@@ -134,7 +134,7 @@ jQuery(".ExportPeoducts select#InventoryIS").on("change", function () {
     }
 })
 
-// Select  Product name for fech the detail of product
+// Select  Product name for fech the detail of product in Export Page
 
 jQuery(".ExportPeoducts select#ProductIs").on("change", function () {
     var ID = this.value;
@@ -169,8 +169,39 @@ jQuery(".ExportPeoducts select#ProductIs").on("change", function () {
         jQuery(".Content").slideUp();
     }
 })
-
-
+// Select  Product name for fech the detail of product in Production Page
+jQuery(".production select#ProductIs").on("change", function () {
+    var ID = this.value;
+    CurrentProductName = jQuery(this).find("option:selected").text();
+    if (ID != 0) {
+        jQuery.ajax({
+            method: "POST",
+            url: "/Dashboard/getproductbyid",
+            data: JSON.stringify({ name: "ProductIs", "id": ID }),
+            contentType: "application/json; charset=utf-8",
+        })
+            .done(function (msg) {
+                if (msg.result.length > 0) {
+                    var product = msg.result[0];
+                    console.log(product)
+                    jQuery(".production input[name='ProductsCount']").attr("value",product.Count)
+                    jQuery(".production input[name='ProductMeter']").attr("value",product.Meter)
+                    jQuery(".production input[name='RolePrice']").attr("value",product.RolePrice)
+                    jQuery(".production input[name='MeterPrice']").attr("value",product.MeterPrice)
+                    jQuery(".production  input[type='number']").each(function () {
+                        var val = jQuery(this).val();
+                        var val = PersianTools.addCommas(val);
+                        var convertToFa = PersianTools.digitsEnToFa(val);
+                        var numberToWords = PersianTools.numberToWords(val);
+                        jQuery(this).parent().closest(".form-group").find(".out").html(convertToFa + "   " + numberToWords);
+                    });
+                }
+            });
+    } else {
+        jQuery(".modal-footer").slideUp();
+        jQuery(".Content").slideUp();
+    }
+})
 
 // Calculate TotalPrice by Count of Role 
 
