@@ -16,11 +16,16 @@ jQuery("#AddProductToExport").on("click", function () {
     //     .done(function (msg) {
     //         console.log(msg);
     //     });
+    var found=jQuery("span.ProductsCount").html();
+    var Count = jQuery("#ProductBox input[name='Count']").val()
+    calc= parseInt(Count) -  parseInt(found);
+    console.log(parseInt(Count), parseInt(found),calc >= 0)
+    if( calc >= 0){
     var ID = jQuery("#ProductIs").val();
     var ExportID = jQuery("input[name='ExportNumber']").val();
     var InventoryNumber = jQuery("#InventoryIS").val();
     // var Name=jQuery("#ProductIs").html()
-    var Count = jQuery("#ProductBox input[name='Count']").val()
+  
     var Meter = jQuery("#ProductBox input[name='Meter']").val()
     var RolePrice = jQuery("#ProductBox input[name='RolePrice']").val()
     var MeterPrice = jQuery("#ProductBox input[name='MeterPrice']").val()
@@ -75,6 +80,9 @@ jQuery("#AddProductToExport").on("click", function () {
 
         jQuery(this).html(convertToFa);
     });
+}else{
+    alert('موجودی  کافی نیست')
+}
 
 })
 function GetExportTotalPrice(ExportTotalPrice) {
@@ -149,7 +157,7 @@ jQuery(".ExportPeoducts select#ProductIs").on("change", function () {
             .done(function (msg) {
                 if (msg.result.length > 0) {
                     var product = msg.result[0];
-                    jQuery(".ExportPeoducts .ProductsCount").html(product.Count + "تعداد موجود")
+                    jQuery(".ExportPeoducts .ProductsCount").html(product.Count)
                     jQuery(".ExportPeoducts .ProductNumber").html(product.Number)
                     jQuery(".ExportPeoducts input[name='RolePrice']").attr("value",product.RolePrice)
                     jQuery(".ExportPeoducts input[name='MeterPrice']").attr("value",product.MeterPrice)
@@ -184,8 +192,8 @@ jQuery(".production select#ProductIs").on("change", function () {
                 if (msg.result.length > 0) {
                     var product = msg.result[0];
                     console.log(product)
-                    jQuery(".production input[name='ProductsCount']").attr("value",product.Count)
-                    jQuery(".production input[name='ProductMeter']").attr("value",product.Meter)
+                    jQuery(".production span.ProductsCount").html(product.Count)
+                    jQuery(".production span.ProductMeter").html(product.Meter)
                     jQuery(".production input[name='RolePrice']").attr("value",product.RolePrice)
                     jQuery(".production input[name='MeterPrice']").attr("value",product.MeterPrice)
                     jQuery(".production  input[type='number']").each(function () {

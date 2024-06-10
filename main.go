@@ -251,7 +251,7 @@ func main() {
 			product.Number = c.PostForm("Number")
 			product.RolePrice = Utility.StringToInt64(c.PostForm("RolePrice"))
 			product.MeterPrice = Utility.StringToInt64(c.PostForm("MeterPrice"))
-			product.Count = Utility.StringToInt(c.PostForm("Count"))
+			product.Count = Utility.StringToInt64(c.PostForm("Count"))
 			product.Meter = Utility.StringToInt64(c.PostForm("Meter"))
 			product.InventoryNumber = Utility.StringToInt32(c.PostForm("InventoryNumber"))
 			res := boot.DB().Create(&product)
@@ -311,10 +311,44 @@ func main() {
 			c.HTML(http.StatusOK, "production.html", gin.H{
 				"Username": session.Get("UserName"),
 				"title":    "تولید",
+				"action":   "updateproduct",
 				"products": model.GetAllProductsByInventory(int32(1)),
 			})
 		})
+		v2.POST("/updateproduct", middleware.AuthMiddleware(), func(c *gin.Context) {
+			var product boot.Inventory
+			var oldproduct boot.Inventory
+			product.ID, _ = strconv.ParseUint(c.PostForm("ProductName"), 10, 64)
+			res := boot.DB().Model(&product).Where("id = ? ", product.ID).Scan(&oldproduct)
+			if res.RowsAffected > 0 {
+				product.Name = oldproduct.Name
+				product.RolePrice = Utility.StringToInt64(c.PostForm("RolePrice"))
+				product.MeterPrice = Utility.StringToInt64(c.PostForm("MeterPrice"))
+				product.Count = oldproduct.Count + Utility.StringToInt64(c.PostForm("ProductsCount"))
+				fmt.Println(oldproduct.Count, c.PostForm("ProductsCount"), product.Count)
+				product.Meter = oldproduct.Meter + Utility.StringToInt64(c.PostForm("ProductMeter"))
+				fmt.Println(oldproduct.Name, product.Name)
+				product.InventoryNumber = 1
 
+				res := boot.DB().Model(&product).Where("id = ? ", product.ID).Updates(&product)
+				if res.RowsAffected > 0 {
+					c.HTML(http.StatusOK, "production.html", gin.H{
+						"title":   "محصول",
+						"action":  "addproduct",
+						"message": boot.Messages("product made success"),
+						"success": true,
+					})
+				} else {
+					c.HTML(http.StatusOK, "production.html", gin.H{
+						"title":   "محصول",
+						"action":  "addproduct",
+						"message": boot.Messages("product made faild"),
+						"success": false,
+					})
+				}
+			}
+
+		})
 		// inventory  Production
 
 		v2.GET("/export", middleware.AuthMiddleware(), func(c *gin.Context) {
@@ -432,7 +466,7 @@ func main() {
 				exportproducts[a].RolePrice, _ = strconv.ParseInt(data.Products[a].RolePrice, 10, 64)
 				exportproducts[a].MeterPrice, _ = strconv.ParseInt(data.Products[a].MeterPrice, 10, 64)
 				Count, _ := strconv.ParseInt(data.Products[a].Count, 10, 8)
-				exportproducts[a].Count = int8(Count)
+				exportproducts[a].Count = int64(Count)
 				InventoryNumber, _ := strconv.ParseInt(data.Products[a].InventoryNumber, 10, 32)
 				exportproducts[a].TotalPrice, _ = strconv.ParseInt(data.Products[a].TotalPrice, 10, 64)
 				fmt.Println(exportproducts[a].TotalPrice)

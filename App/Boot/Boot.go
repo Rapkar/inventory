@@ -20,7 +20,7 @@ type Inventory struct {
 	Number          string `gorm:"size:255;"`
 	RolePrice       int64  `gorm:"type:float"`
 	MeterPrice      int64  `gorm:"type:float"`
-	Count           int8   `gorm:"size:255;"`
+	Count           int64  `gorm:"size:255;"`
 	Meter           int64  `gorm:"size:255;"`
 	InventoryNumber int32  `gorm:"size:255;"`
 }
@@ -44,8 +44,8 @@ type ExportProducts struct {
 	Number          string `gorm:"size:255;"`
 	RolePrice       int64  `gorm:"size:255;"`
 	MeterPrice      int64  `gorm:"size:255;"`
-	Count           int8   `gorm:"size:255;"`
-	Meter           int8   `gorm:"size:255;"`
+	Count           int64  `gorm:"size:255;"`
+	Meter           int64  `gorm:"size:255;"`
 	TotalPrice      int64  `gorm:"size:255;"`
 	InventoryNumber int32  `gorm:"size:255;"`
 }

@@ -104,7 +104,7 @@ func GetExportById(c *gin.Context) ([]Boot.EscapeExport, []Boot.EscapeExportProd
 		escapeExport.MeterPrice = Utility.IntT64ToString(value.MeterPrice)
 		escapeExport.InventoryNumber = value.InventoryNumber
 		escapeExport.TotalPrice = Utility.IntT64ToString(value.TotalPrice)
-		escapeExport.Count = Utility.IntToString(value.Count)
+		escapeExport.Count = Utility.IntT64ToString(value.Count)
 		// Add other fields here...
 		EscapeExportProducts[i] = escapeExport
 	}
