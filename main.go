@@ -314,7 +314,7 @@ func main() {
 			product.MeterPrice = Utility.StringToInt64(c.PostForm("MeterPrice"))
 			product.Count = Utility.StringToInt64(c.PostForm("Count"))
 			product.Meter = Utility.StringToInt64(c.PostForm("Meter"))
-			product.InventoryNumber = 1
+			product.InventoryNumber = Utility.StringToInt32(c.PostForm("InventoryNumber"))
 			fmt.Println(ProductID)
 			res := boot.DB().Model(&product).Where("id = ? ", ProductID).Updates(&product)
 			fmt.Println(res, res.RowsAffected)
@@ -399,7 +399,7 @@ func main() {
 		v2.GET("/export", middleware.AuthMiddleware(), func(c *gin.Context) {
 			session := sessions.Default(c)
 
-			uniqueString := "E08240"
+			uniqueString := Utility.MakeRandValue()
 			if !model.CheckExportNumberFound(uniqueString) {
 				uniqueString = Utility.MakeRandValue()
 			} else {
@@ -539,13 +539,21 @@ func main() {
 
 			Export.ExportProducts = exportproducts
 			User.Role = "guest"
-			// c.Redirect(http.StatusMovedPermanently, Utility.HomeUrl()+"/export-list")
-			fmt.Println(Export)
-			boot.DB().Create(&User)
-			if boot.DB().Create(&exportproducts).RowsAffected > 0 && boot.DB().Create(&Export).RowsAffected > 0 {
-				controller.InventoryCalculation(Ids)
+			if !model.CheckExportNumberFound(Export.Number) {
+				Export.Number = Utility.MakeRandValue()
+			} else {
+				return
+			}
 
-				c.JSON(http.StatusOK, gin.H{"message": "sucess"})
+			boot.DB().Create(&User)
+			resexportproducts := boot.DB().Create(&exportproducts)
+			resExport := boot.DB().Create(&Export)
+			fmt.Println("ddddddddddd", resExport, resexportproducts)
+			if resexportproducts.RowsAffected > 0 && resExport.RowsAffected > 0 {
+				controller.InventoryCalculation(Ids)
+				resExport := boot.DB().Last(&User)
+				fmt.Println(resExport, User.ID)
+				c.JSON(http.StatusOK, gin.H{"message": "sucess", "id": User.ID})
 			} else {
 				c.JSON(http.StatusOK, gin.H{"message": "invalid request"})
 			}

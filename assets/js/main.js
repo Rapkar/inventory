@@ -18,8 +18,8 @@ jQuery("#AddProductToExport").on("click", function () {
     //     });
     var found=jQuery("span.ProductsCount").html();
     var Count = jQuery("#ProductBox input[name='Count']").val()
-    calc= parseInt(Count) -  parseInt(found);
-    console.log(parseInt(Count), parseInt(found),calc >= 0)
+    calc= parseInt(found) - parseInt(Count);
+    console.log(parseInt(Count), parseInt(found),calc >= 0,calc,parseInt(Count) -  parseInt(found))
     if( calc >= 0){
     var ID = jQuery("#ProductIs").val();
     var ExportID = jQuery("input[name='ExportNumber']").val();
@@ -302,7 +302,7 @@ jQuery("form[name='expotform']").submit(function (e) {
     })
         .done(function (msg) {
             if (msg.message == "sucess") {
-                window.location.replace("./export-list");
+             window.location.replace("./exportshow?ExportId="+msg.id);
             }
         });
 
