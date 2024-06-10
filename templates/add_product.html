@@ -6,28 +6,30 @@
     <div class="container mt-5">
       {{if .success}}
       {{template "success_notif" .}}
-    {{else if eq .success false}}
+      {{else if eq .success false}}
       {{template "danger_notif" .}}
-    {{end}}
+      {{end}}
       <div class="col-xs-12 col-sm-9">
         <form class="form-horizontal" method="post" action="/Dashboard/{{.action}}">
           <div class="panel panel-default">
             <div class="panel-heading">
               <h4 class="panel-title">افزودن کالا</h4>
             </div>
-            {{if .user}}
-            {{range .user}}
+            {{if .products}}
+            {{range .products}}
             <div class="panel-body">
               <div class="form-group  mt-3">
                 <label class="col-sm-2 control-label">نام کالا</label>
                 <div class="col-sm-10">
                   <input required name="Name" value="{{.Name}}" type="text" class="form-control">
+                  <input required name="Id" value="{{.ID}}" type="text" class="d-none">
+                  <input required name="InventoryNumber" value="{{.ID}}" type="text" class="d-none">
                 </div>
               </div>
               <div class="form-group  mt-3">
                 <label class="col-sm-2 control-label">تعداد موجود</label>
                 <div class="col-sm-10">
-                  <input required name="Email" type="number" value="{{.Email}}" class="form-control">
+                  <input required name="Count" type="number" value="{{.Count}}" class="form-control">
                 </div>
               </div>
               <div class="form-group  mt-3">
@@ -39,16 +41,16 @@
               <div class="form-group  mt-3">
                 <label class="col-sm-2 control-label">قیمت هر رول</label>
                 <div class="col-sm-10">
-                  <input required name="Email" type="number" value="{{.Email}}" class="form-control">
+                  <input required name="RolePrice" type="number" value="{{.RolePrice}}" class="form-control">
                 </div>
-                <span class="out"></span>&nbsp;تومان 
+                <span class="out"></span>&nbsp;تومان
               </div>
               <div class="form-group  mt-3">
                 <label class="col-sm-2 control-label">قیمت هر متر</label>
                 <div class="col-sm-10">
-                  <input required name="Email" type="number" value="{{.Email}}" class="form-control">
+                  <input required name="MeterPrice" type="number" value="{{.MeterPrice}}" class="form-control">
                 </div>
-                <span class="out"></span>&nbsp;تومان 
+                <span class="out"></span>&nbsp;تومان
 
               </div>
               {{end}}
@@ -63,7 +65,7 @@
                 <div class="form-group  mt-3">
                   <label class="col-sm-2 control-label">تعداد موجود</label>
                   <div class="col-sm-10">
-                    <input required  type="Number" name="Count" class="form-control">
+                    <input required dir="ltr" type="Number" name="Count" class="form-control">
                   </div>
                 </div>
                 <div class="form-group  mt-3">
@@ -73,23 +75,23 @@
                   </div>
                 </div>
                 <div class="form-group  mt-3">
-                    <label class="col-sm-2 control-label">قیمت هر رول</label>
-                    <div class="col-sm-10">
-                      <input required name="RolePrice" step="0.01" type="number"  class="form-control">
-                    </div>
-                <span class="out"></span>&nbsp;تومان 
-
+                  <label class="col-sm-2 control-label">قیمت هر رول</label>
+                  <div class="col-sm-10">
+                    <input required name="RolePrice" step="0.01" type="number" class="form-control">
                   </div>
-                  <div class="form-group  mt-3">
-                    <label class="col-sm-2 control-label">قیمت هر متر</label>
-                    <div class="col-sm-10">
-                      <input required name="MeterPrice" step="0.01"  type="number" class="form-control">
-                    </div>
-                    <span class="out"></span>&nbsp;تومان 
-                  </div>
-                
+                  <span class="out"></span>&nbsp;تومان
 
-                  <input value="{{.InventoryNumber}}" class="d-none" name="InventoryNumber">
+                </div>
+                <div class="form-group  mt-3">
+                  <label class="col-sm-2 control-label">قیمت هر متر</label>
+                  <div class="col-sm-10">
+                    <input required name="MeterPrice" step="0.01" type="number" class="form-control">
+                  </div>
+                  <span class="out"></span>&nbsp;تومان
+                </div>
+
+
+                <input value="{{.InventoryNumber}}" class="d-none" name="InventoryNumber">
                 {{end}}
               </div>
             </div>

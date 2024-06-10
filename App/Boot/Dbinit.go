@@ -44,7 +44,7 @@ func DB() *gorm.DB {
 	}
 
 	dsn := DATABASEUSER + ":" + DATABASEUSERPASS + "@tcp(" + DATABASEHOST + ":" + DATABASEPORT + ")/" + DATABASENAME + "?charset=utf8mb4&parseTime=True&loc=Local"
-	fmt.Println(dsn)
+	fmt.Println("linl", dsn)
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		panic("Inventory Has problem With connect to Database")

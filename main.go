@@ -273,27 +273,72 @@ func main() {
 
 		})
 		v2.GET("/deleteproduct", middleware.AuthMiddleware(), func(c *gin.Context) {
-			session := sessions.Default(c)
+			// session := sessions.Default(c)
 			inventory := c.Request.URL.Query().Get("inventory")
-			InventoryID, _ := strconv.ParseUint(inventory, 10, 64)
+			// InventoryID, _ := strconv.ParseUint(inventory, 10, 64)
 
 			if model.RemoveCurrentProduct(c) {
-				c.HTML(http.StatusOK, "users.html", gin.H{
+				c.Redirect(301, "inventory?inventory="+inventory)
+
+			} else {
+				c.Redirect(301, "inventory?inventory="+inventory)
+
+			}
+		})
+		v2.GET("/editproduct", middleware.AuthMiddleware(), func(c *gin.Context) {
+			session := sessions.Default(c)
+			Id := c.Request.URL.Query().Get("product-id")
+			ProductID, err := strconv.ParseInt(Id, 10, 8)
+			if err != nil {
+				// handle the error
+				c.Redirect(301, "inventory?inventory=1")
+				panic("product not found")
+			}
+			currentProduct := model.GetProductById(int(ProductID))
+
+			c.HTML(http.StatusOK, "add_product.html", gin.H{
+				"Username": session.Get("UserName"),
+				"title":    "ویرایش کاربر",
+				"products": currentProduct,
+				"action":   "editproduct",
+			})
+		})
+		v2.POST("/editproduct", middleware.AuthMiddleware(), func(c *gin.Context) {
+			session := sessions.Default(c)
+
+			var product boot.Inventory
+			Id := c.PostForm("Id")
+			ProductID, _ := strconv.ParseInt(Id, 10, 8)
+			product.Name = c.PostForm("Name")
+			product.RolePrice = Utility.StringToInt64(c.PostForm("RolePrice"))
+			product.MeterPrice = Utility.StringToInt64(c.PostForm("MeterPrice"))
+			product.Count = Utility.StringToInt64(c.PostForm("Count"))
+			product.Meter = Utility.StringToInt64(c.PostForm("Meter"))
+			product.InventoryNumber = 1
+			fmt.Println(ProductID)
+			res := boot.DB().Model(&product).Where("id = ? ", ProductID).Updates(&product)
+			fmt.Println(res, res.RowsAffected)
+			currentProduct := model.GetProductById(int(ProductID))
+			if res.RowsAffected > 0 {
+				c.HTML(http.StatusOK, "add_product.html", gin.H{
 					"Username": session.Get("UserName"),
-					"title":    "محصولات",
-					"message":  boot.Messages("product remove success"),
+					"title":    "ویرایش کاربر",
+					"products": currentProduct,
+					"action":   "editproduct",
+					"message":  boot.Messages("product made success"),
 					"success":  true,
-					"products": model.GetAllProductsByInventory(int32(InventoryID)),
 				})
 			} else {
-				c.HTML(http.StatusOK, "users.html", gin.H{
+				c.HTML(http.StatusOK, "add_product.html", gin.H{
 					"Username": session.Get("UserName"),
-					"title":    "محصولات",
-					"success":  false,
-					"message":  boot.Messages("product remove faild"),
-					"products": model.GetAllProductsByInventory(int32(InventoryID)),
+					"title":    "ویرایش کاربر",
+					// "products": currentProduct,
+					"action":  "editproduct",
+					"message": boot.Messages("product made faild"),
+					"success": false,
 				})
 			}
+
 		})
 		// inventory
 		v2.GET("/inventory", middleware.AuthMiddleware(), func(c *gin.Context) {
