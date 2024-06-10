@@ -80,6 +80,7 @@ func GetExportById(c *gin.Context) ([]Boot.EscapeExport, []Boot.EscapeExportProd
 		escapeExport.Number = value.Number
 		escapeExport.Phonenumber = value.Phonenumber
 		escapeExport.Tax = value.Tax
+		escapeExport.Describe = value.Describe
 		escapeExport.InventoryNumber = value.InventoryNumber
 		escapeExport.ExportProducts = value.ExportProducts
 		escapeExport.CreatedAt = value.CreatedAt

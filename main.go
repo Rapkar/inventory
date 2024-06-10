@@ -536,6 +536,7 @@ func main() {
 			fmt.Println(result["Tax"], Utility.StringToFloat(result["Tax"]), Export.Tax)
 			Export.CreatedAt = string(Utility.CurrentTime())
 			Export.InventoryNumber = Utility.StringToInt32(result["InventoryNumber"])
+			Export.Describe = result["describe"]
 
 			Export.ExportProducts = exportproducts
 			User.Role = "guest"
@@ -548,12 +549,12 @@ func main() {
 			boot.DB().Create(&User)
 			resexportproducts := boot.DB().Create(&exportproducts)
 			resExport := boot.DB().Create(&Export)
-			fmt.Println("ddddddddddd", resExport, resexportproducts)
+			// fmt.Println("ddddddddddd", resExport, resexportproducts)
 			if resexportproducts.RowsAffected > 0 && resExport.RowsAffected > 0 {
 				controller.InventoryCalculation(Ids)
-				resExport := boot.DB().Last(&User)
-				fmt.Println(resExport, User.ID)
-				c.JSON(http.StatusOK, gin.H{"message": "sucess", "id": User.ID})
+				resExport := boot.DB().Last(&Export)
+				fmt.Println(resExport, Export.ID)
+				c.JSON(http.StatusOK, gin.H{"message": "sucess", "id": Export.ID})
 			} else {
 				c.JSON(http.StatusOK, gin.H{"message": "invalid request"})
 			}
