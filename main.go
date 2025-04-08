@@ -30,8 +30,10 @@ func main() {
 	r.Use(sessions.Sessions("mysession", store))
 
 	// Defualt  Routes
-	r.GET("/", middleware.AuthMiddleware(), func(c *gin.Context) {
-		c.Redirect(http.StatusMovedPermanently, Utility.HomeUrl()+"/Dashboard")
+	r.GET("/", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "home.html", gin.H{
+			"title": "ایزوگام شرق و دلیجان",
+		})
 	})
 	r.NoRoute(func(c *gin.Context) {
 		c.HTML(http.StatusOK, "404.html", gin.H{
