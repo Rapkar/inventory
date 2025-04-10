@@ -4,15 +4,15 @@
 <body>
   <div class="h-100 d-flex align-items-center mt-5">
     <div class="container mt-5">
-     
+
       {{if .success}}
       {{template "success_notif" .}}
-    {{else if eq .success false}}
+      {{else if eq .success false}}
       {{template "danger_notif" .}}
-    {{end}}
-      
+      {{end}}
+
       <!-- {{if .Failure}} -->
- 
+
       <!-- {{end}} -->
       <div class="col-xs-12 col-sm-9">
         <form class="form-horizontal" method="post" action="/Dashboard/{{.action}}">
@@ -47,6 +47,7 @@
                 <div class="col-sm-10">
                   <select required name="Role" class="w-100">
                     <option value="Admin">ادمین</option>
+                    <option value="Author">مدیرداخلی</option>
                     <option value="guest">مشتری</option>
 
                   </select>
@@ -85,6 +86,7 @@
                   <div class="col-sm-10">
                     <select required name="Role" class="w-100">
                       <option value="Admin">ادمین</option>
+                      <option value="Author">مدیرداخلی</option>
                       <option value="guest">مشتری</option>
 
                     </select>

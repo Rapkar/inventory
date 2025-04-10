@@ -20,6 +20,19 @@ func GetAllExports() []Boot.EscapeExport {
 
 	for i, value := range Export {
 		var escapeExport Boot.EscapeExport
+		// escapeExport.Name = value.Name
+		// escapeExport.Address = value.Address
+		// escapeExport.Number = value.Number
+		// escapeExport.Phonenumber = value.Phonenumber
+		// escapeExport.Tax = value.Tax
+		// escapeExport.InventoryNumber = value.InventoryNumber
+		// escapeExport.ExportProducts = value.ExportProducts
+		// escapeExport.CreatedAt = value.CreatedAt
+		// escapeExport.TotalPrice = Utility.IntT64ToString(value.TotalPrice)
+		// // Add other fields here...
+		// EscapeExport[i] = escapeExport
+
+		escapeExport.ID = value.ID
 		escapeExport.Name = value.Name
 		escapeExport.Address = value.Address
 		escapeExport.Number = value.Number
@@ -62,6 +75,43 @@ func GetAllExportsByPaginate(offset int, limit int) []Boot.EscapeExport {
 	}
 
 	return EscapeExport
+}
+func GetAllPaymentsByPaginate(offset int, limit int) []Boot.Payments {
+	var Payments []Boot.Payments
+	Boot.DB().Model(&Boot.Payments{}).
+		Select("*").
+		Preload("Export").
+		Order("id DESC"). // Sort by creation date, newest first
+		Offset(offset).
+		Limit(limit).
+		Scan(&Payments)
+	return Payments
+}
+
+type PaymentWithExport struct {
+	Boot.Payments
+	ExportNumber string `json:"export_number"`
+}
+
+func GetAllPaymentsWithExportNumber(offset int, limit int) []PaymentWithExport {
+	var result []PaymentWithExport
+
+	Boot.DB().Table("payments").
+		Select("payments.*, exports.number as export_number").
+		Joins("LEFT JOIN exports ON exports.id = payments.export_id").
+		Order("payments.id DESC").
+		Offset(offset).
+		Limit(limit).
+		Scan(&result)
+
+	return result
+}
+func GetPaymentNumberById(c *gin.Context) []Boot.Payments {
+	Id := c.Request.URL.Query().Get("ExportId")
+	PaymentID, _ := strconv.ParseUint(Id, 10, 64)
+	var Payment []Boot.Payments
+	Boot.DB().Model(&Boot.Export{}).Select("number").Where("id = ?", PaymentID).Scan(&Payment)
+	return Payment
 }
 func GetExportById(c *gin.Context) ([]Boot.EscapeExport, []Boot.EscapeExportProducts) {
 	Id := c.Request.URL.Query().Get("ExportId")
@@ -125,6 +175,7 @@ func GetAllExportsByPhoneAndName(searchTerm string) []Boot.EscapeExport {
 
 	for i, value := range Export {
 		var escapeExport Boot.EscapeExport
+		escapeExport.ID = value.ID
 		escapeExport.Name = value.Name
 		escapeExport.Address = value.Address
 		escapeExport.Number = value.Number
@@ -154,6 +205,21 @@ func RemoveCurrentExport(c *gin.Context) bool {
 		return false
 	}
 	result := Boot.DB().Delete(&Boot.Export{}, ExportID)
+	if result.RowsAffected == 0 {
+		// if no rows were affected, the deletion failed
+		return false
+	}
+	return true
+}
+
+func RemoveCurrentPayments(c *gin.Context) bool {
+	Id := c.Request.URL.Query().Get("PaymentId")
+	PaymentID, err := strconv.ParseUint(Id, 10, 64)
+	if err != nil {
+		// handle the error
+		return false
+	}
+	result := Boot.DB().Delete(&Boot.Payments{}, PaymentID)
 	if result.RowsAffected == 0 {
 		// if no rows were affected, the deletion failed
 		return false

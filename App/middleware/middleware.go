@@ -10,26 +10,35 @@ import (
 /* Middleware */
 
 // Auth Middleware
-func AuthMiddleware() gin.HandlerFunc {
+func AuthMiddleware(role ...string) gin.HandlerFunc {
 	return func(c *gin.Context) {
-
-		// Cookie, err := c.Cookie("Auth")
 		session := sessions.Default(c)
-		session.Get("Auth")
-		if session.Get("Auth") == "logedin" {
+		auth := session.Get("Auth")
+		userRole, _ := session.Get("UserRole").(string)
 
-			c.Next()
-		} else {
-
-			c.Redirect(http.StatusMovedPermanently, "/auth/")
+		// اگر لاگین نبود، redirect کن
+		if auth != "logedin" {
+			c.Redirect(http.StatusFound, "/auth/")
+			c.Abort()
+			return
 		}
-		// if Cookie == "logedin" && err == nil {
 
-		// 	c.Next()
-		// } else {
+		// اگر role مشخص شده بود، چک کن که کاربر مجاز است
+		if len(role) > 0 {
+			allowedRoles := map[string]bool{
+				"Admin":  true,
+				"Author": true,
+			}
 
-		// 	c.Redirect(http.StatusMovedPermanently, "/auth/")
-		// }
+			// اگر نقش کاربر مجاز نبود، redirect کن
+			if !allowedRoles[userRole] || (role[0] != "" && userRole != role[0]) {
+				c.Redirect(http.StatusFound, "/auth/")
+				c.Abort()
+				return
+			}
+		}
+
+		c.Next()
 	}
 }
 

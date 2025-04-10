@@ -37,7 +37,21 @@ type Export struct {
 	CreatedAt       string           `json:"CreatedAt"` // assign the format to a string
 	InventoryNumber int32            `gorm:"size:255;"`
 	ExportProducts  []ExportProducts `gorm:"foreignKey:ExportID"`
+	Payments        []Payments       `gorm:"foreignKey:ExportID"`
 }
+type Payments struct {
+	ID         uint64 `gorm:"primaryKey"`
+	Method     string `gorm:"type:varchar(100)"`
+	Number     string `gorm:"varchar(255),unique"`
+	Name       string `gorm:"type:varchar(100)"`
+	TotalPrice int64  `gorm:"size:255;"`
+	Describe   string `gorm:"size:255;"`
+	CreatedAt  string `json:"CreatedAt"` // assign the format to a string
+	ExportID   uint64 // Add this foreign key
+	Export     Export `gorm:"foreignKey:ExportID"`
+	Status     string `gorm:"type:varchar(100)"`
+}
+
 type ExportProducts struct {
 	ID              uint64 `gorm:"primaryKey"`
 	ExportID        uint64 `gorm:"index"`

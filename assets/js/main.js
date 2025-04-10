@@ -1,7 +1,7 @@
-
 let CurrentProductName = "";
 let ProductsOfExport = [];
 let ExportTotalPrice = [];
+let Payments = [];
 let tax = parseFloat(jQuery("input[name='Tax']").val())
 jQuery('#myModal').modal('show')
 // add  New product to export list
@@ -16,73 +16,73 @@ jQuery("#AddProductToExport").on("click", function () {
     //     .done(function (msg) {
     //         console.log(msg);
     //     });
-    var found=jQuery("span.ProductsCount").html();
+    var found = jQuery("span.ProductsCount").html();
     var Count = jQuery("#ProductBox input[name='Count']").val()
-    calc= parseInt(found) - parseInt(Count);
-    console.log(parseInt(Count), parseInt(found),calc >= 0,calc,parseInt(Count) -  parseInt(found))
-    if( calc >= 0){
-    var ID = jQuery("#ProductIs").val();
-    var ExportID = jQuery("input[name='ExportNumber']").val();
-    var InventoryNumber = jQuery("#InventoryIS").val();
-    // var Name=jQuery("#ProductIs").html()
-  
-    var Meter = jQuery("#ProductBox input[name='Meter']").val()
-    var RolePrice = jQuery("#ProductBox input[name='RolePrice']").val()
-    var MeterPrice = jQuery("#ProductBox input[name='MeterPrice']").val()
-    var TotalPrice = `${CalculateItems()}`
+    calc = parseInt(found) - parseInt(Count);
+    console.log(parseInt(Count), parseInt(found), calc >= 0, calc, parseInt(Count) - parseInt(found))
+    if (calc >= 0) {
+        var ID = jQuery("#ProductIs").val();
+        var ExportID = jQuery("input[name='ExportNumber']").val();
+        var InventoryNumber = jQuery("#InventoryIS").val();
+        // var Name=jQuery("#ProductIs").html()
 
-    // var oldprice = jQuery("input[name='TotalPrice']")
-    // oldprice=parseFloat(1)
-    // TotalPrice = parseFloat(TotalPrice)
-    // ExportTotalPrice = jQuery("input[name='ExportTotalPrice']").val()
+        var Meter = jQuery("#ProductBox input[name='Meter']").val()
+        var RolePrice = jQuery("#ProductBox input[name='RolePrice']").val()
+        var MeterPrice = jQuery("#ProductBox input[name='MeterPrice']").val()
+        var TotalPrice = `${CalculateItems()}`
 
-    var edit = `<td dir="ltr" class="Edit" style="text-align:right;">
+        // var oldprice = jQuery("input[name='TotalPrice']")
+        // oldprice=parseFloat(1)
+        // TotalPrice = parseFloat(TotalPrice)
+        // ExportTotalPrice = jQuery("input[name='ExportTotalPrice']").val()
+
+        var edit = `<td dir="ltr" class="Edit" style="text-align:right;">
      <a class="me-3 remove"  href="./deleteExport?ExportId={{.ID}}"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
        <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5"/>
      </svg></a>
      </td>`;
-    var value = '<tr><td class="id" scope="row">' + ID + '</td><td>' + CurrentProductName + '</td><td class="prn">' + Count + '</td><td class="price">' + Meter + '</td><td class="price">' + MeterPrice + '</td><td class="price">' + RolePrice + '</td><td class="itemtotalprice price">' + CalculateItems() + '</td>' + edit + '</tr>';
-    var newRow = {
-        InventoryNumber: InventoryNumber,
-        ProductId: ID,
-        ExportID: ExportID,
-        Name: CurrentProductName,
-        count: Count,
-        meterPrice: MeterPrice,
-        rolePrice: RolePrice,
-        totalPrice: TotalPrice
+        var value = '<tr><td class="id" scope="row">' + ID + '</td><td>' + CurrentProductName + '</td><td class="prn">' + Count + '</td><td class="price">' + Meter + '</td><td class="price">' + MeterPrice + '</td><td class="price">' + RolePrice + '</td><td class="itemtotalprice price">' + CalculateItems() + '</td>' + edit + '</tr>';
+        var newRow = {
+            InventoryNumber: InventoryNumber,
+            ProductId: ID,
+            ExportID: ExportID,
+            Name: CurrentProductName,
+            count: Count,
+            meterPrice: MeterPrice,
+            rolePrice: RolePrice,
+            totalPrice: TotalPrice
 
-    };
-    var NewPrice = {
-        ProductId: ID,
-        price: TotalPrice
+        };
+        var NewPrice = {
+            ProductId: ID,
+            price: TotalPrice
+        }
+        ExportTotalPrice.push(NewPrice)
+        ProductsOfExport.push(newRow)
+
+        // console.log(ExportTotalPrice)
+        exporttotal_Price = "0"
+        // ExportTotalPrice.forEach(function(e,i){
+        //     exporttotal_Price = parseFloat(exporttotal_Price) +  parseFloat(e.price)
+        // })
+        res = GetExportTotalPrice(ExportTotalPrice);
+
+        jQuery("tfoot td").html(res);
+        jQuery("#ExportTotalPrice").val(res);
+        jQuery("#ExportProductsList tbody").append(value);
+        jQuery(".TotalPriceOut td").html(TotalPrice)
+        jQuery(".Notfound").slideUp();
+        jQuery(".close").click()
+        jQuery("td.TotalPrice,td.price,.price,td.prn,td.Tax").each(function () {
+            var val = jQuery(this).html();
+            var val = PersianTools.addCommas(val);
+            var convertToFa = PersianTools.digitsEnToFa(val);
+
+            jQuery(this).html(convertToFa);
+        });
+    } else {
+        alert('موجودی  کافی نیست')
     }
-    ExportTotalPrice.push(NewPrice)
-    ProductsOfExport.push(newRow)
-
-    // console.log(ExportTotalPrice)
-    exporttotal_Price = "0"
-    // ExportTotalPrice.forEach(function(e,i){
-    //     exporttotal_Price = parseFloat(exporttotal_Price) +  parseFloat(e.price)
-    // })
-    res = GetExportTotalPrice(ExportTotalPrice);
-
-    jQuery("tfoot td").html(res);
-    jQuery("#ExportTotalPrice").val(res);
-    jQuery("#ExportProductsList tbody").append(value);
-    jQuery(".TotalPriceOut td").html(TotalPrice)
-    jQuery(".Notfound").slideUp();
-    jQuery(".close").click()
-    jQuery("td.TotalPrice,td.price,.price,td.prn,td.Tax").each(function () {
-        var val = jQuery(this).html();
-        var val = PersianTools.addCommas(val);
-        var convertToFa = PersianTools.digitsEnToFa(val);
-
-        jQuery(this).html(convertToFa);
-    });
-}else{
-    alert('موجودی  کافی نیست')
-}
 
 })
 function GetExportTotalPrice(ExportTotalPrice) {
@@ -159,9 +159,9 @@ jQuery(".ExportPeoducts select#ProductIs").on("change", function () {
                     var product = msg.result[0];
                     jQuery(".ExportPeoducts .ProductsCount").html(product.Count)
                     jQuery(".ExportPeoducts .ProductNumber").html(product.Number)
-                    jQuery(".ExportPeoducts input[name='RolePrice']").attr("value",product.RolePrice)
-                    jQuery(".ExportPeoducts input[name='MeterPrice']").attr("value",product.MeterPrice)
-                    jQuery(".ExportPeoducts input[name='TotalPrice']").attr("value",product.MeterPrice)
+                    jQuery(".ExportPeoducts input[name='RolePrice']").attr("value", product.RolePrice)
+                    jQuery(".ExportPeoducts input[name='MeterPrice']").attr("value", product.MeterPrice)
+                    jQuery(".ExportPeoducts input[name='TotalPrice']").attr("value", product.MeterPrice)
                     jQuery(".ExportPeoducts .Content").slideDown();
                     jQuery(".ExportPeoducts  input[type='number']").each(function () {
                         var val = jQuery(this).val();
@@ -194,8 +194,8 @@ jQuery(".production select#ProductIs").on("change", function () {
                     console.log(product)
                     jQuery(".production span.ProductsCount").html(product.Count)
                     jQuery(".production span.ProductMeter").html(product.Meter)
-                    jQuery(".production input[name='RolePrice']").attr("value",product.RolePrice)
-                    jQuery(".production input[name='MeterPrice']").attr("value",product.MeterPrice)
+                    jQuery(".production input[name='RolePrice']").attr("value", product.RolePrice)
+                    jQuery(".production input[name='MeterPrice']").attr("value", product.MeterPrice)
                     jQuery(".production  input[type='number']").each(function () {
                         var val = jQuery(this).val();
                         var val = PersianTools.addCommas(val);
@@ -296,13 +296,13 @@ jQuery("form[name='expotform']").submit(function (e) {
     jQuery.ajax({
         method: "POST",
         url: "/Dashboard/export",
-        data: JSON.stringify({ Name: "expotform", TotalPrice: ExportTotalPrice, Content: formValues, Products: ProductsOfExport }),
+        data: JSON.stringify({ Name: "expotform", TotalPrice: ExportTotalPrice, Content: formValues, Products: ProductsOfExport, Payments: Payments }),
         // data: { Name: "expotform", Content: jQuery("form[name='expotform']").serialize(), Products: ProductsOfExport },
         // contentType: "application/json; charset=utf-8",
     })
         .done(function (msg) {
             if (msg.message == "sucess") {
-             window.location.replace("./exportshow?ExportId="+msg.id);
+                window.location.replace("./exportshow?ExportId=" + msg.id);
             }
         });
 
@@ -420,6 +420,7 @@ jQuery("#find").on("click", function (e) {
             if (lengthofres > 0) {
                 let html = "";
                 msg.message.forEach(function (index) {
+                    console.log(index);
                     html += '<tr>';
                     html += '<td class="' + index.ID + '" style="text-align:right;">' + index.ID + '</td>';
                     html += '<td class="' + index.Name + '" style="text-align:right;">' + index.Name + '</td>';
@@ -522,16 +523,16 @@ function RemoveItem(target, id) {
     console.log(ExportTotalPrice, ProductsOfExport)
 
     ExportTotalPrice.forEach((element, index) => {
-        console.log(index == id,element.ProductId,id)
-        if ( parseInt(element.ProductId) == id) {
+        console.log(index == id, element.ProductId, id)
+        if (parseInt(element.ProductId) == id) {
             ExportTotalPrice.splice(index, 1);
         }
-      });
+    });
     ProductsOfExport.forEach((element, index) => {
         if (parseInt(element.ProductId) == id) {
             ProductsOfExport.splice(index, 1);
         }
-      });
+    });
     console.log(ExportTotalPrice, ProductsOfExport)
     res = GetExportTotalPrice(ExportTotalPrice);
 
@@ -555,9 +556,9 @@ function Print() {
     // Navbar on scrolling
     $(window).scroll(function () {
         if ($(this).scrollTop() > 200) {
-            $('.navbar').fadeIn('slow').css('display', 'flex');
+            $('.home .navbar').fadeIn('slow').css('display', 'flex');
         } else {
-            $('.navbar').fadeOut('slow').css('display', 'none');
+            $('.home  .navbar').fadeOut('slow').css('display', 'none');
         }
     });
 
@@ -566,11 +567,11 @@ function Print() {
     $(".navbar-nav a, .btn-scroll").on('click', function (event) {
         if (this.hash !== "") {
             event.preventDefault();
-            
+
             $('html, body').animate({
                 scrollTop: $(this.hash).offset().top - 45
             }, 1500, 'easeInOutExpo');
-            
+
             if ($(this).parents('.navbar-nav').length) {
                 $('.navbar-nav .active').removeClass('active');
                 $(this).closest('a').addClass('active');
@@ -590,18 +591,20 @@ function Print() {
 
 
     // Portfolio isotope and filter
-    var portfolioIsotope = $('.portfolio-container').isotope({
-        itemSelector: '.portfolio-item',
-        layoutMode: 'fitRows'
-    });
-    $('#portfolio-flters li').on('click', function () {
-        $("#portfolio-flters li").removeClass('active');
-        $(this).addClass('active');
+    if ($('.portfolio-container').length > 0) {
+        var portfolioIsotope = $('.portfolio-container').isotope({
+            itemSelector: '.portfolio-item',
+            layoutMode: 'fitRows'
+        });
+        $('#portfolio-flters li').on('click', function () {
+            $("#portfolio-flters li").removeClass('active');
+            $(this).addClass('active');
 
-        portfolioIsotope.isotope({filter: $(this).data('filter')});
-    });
-    
-    
+            portfolioIsotope.isotope({ filter: $(this).data('filter') });
+        });
+    }
+
+
     // Back to top button
     $(window).scroll(function () {
         if ($(this).scrollTop() > 200) {
@@ -611,57 +614,272 @@ function Print() {
         }
     });
     $('.back-to-top').click(function () {
-        $('html, body').animate({scrollTop: 0}, 1500, 'easeInOutExpo');
+        $('html, body').animate({ scrollTop: 0 }, 1500, 'easeInOutExpo');
         return false;
     });
 
 
     // Gallery carousel
-    $(".gallery-carousel").owlCarousel({
-        autoplay: false,
-        smartSpeed: 1500,
-        dots: false,
-        loop: true,
-        nav : true,
-        navText : [
-            '<i class="fa fa-angle-left" aria-hidden="true"></i>',
-            '<i class="fa fa-angle-right" aria-hidden="true"></i>'
-        ],
-        responsive: {
-            0:{
-                items:1
-            },
-            576:{
-                items:2
-            },
-            768:{
-                items:3
-            },
-            992:{
-                items:4
-            },
-            1200:{
-                items:5
+    if ($(".gallery-carousel").length > 0) {
+        $(".gallery-carousel").owlCarousel({
+            autoplay: false,
+            smartSpeed: 1500,
+            dots: false,
+            loop: true,
+            nav: true,
+            navText: [
+                '<i class="fa fa-angle-left" aria-hidden="true"></i>',
+                '<i class="fa fa-angle-right" aria-hidden="true"></i>'
+            ],
+            responsive: {
+                0: {
+                    items: 1
+                },
+                576: {
+                    items: 2
+                },
+                768: {
+                    items: 3
+                },
+                992: {
+                    items: 4
+                },
+                1200: {
+                    items: 5
+                }
             }
-        }
-    });
+        });
 
-
+    }
     // Testimonials carousel
-    $(".testimonial-carousel").owlCarousel({
-        autoplay: true,
-        smartSpeed: 1500,
-        items: 1,
-        dots: false,
-        loop: true,
-        nav : true,
-        navText : [
-            '<i class="fa fa-angle-left" aria-hidden="true"></i>',
-            '<i class="fa fa-angle-right" aria-hidden="true"></i>'
-        ],
-    });
-    
+    if ($(".testimonial-carousel").length > 0) {
+        $(".testimonial-carousel").owlCarousel({
+            autoplay: true,
+            smartSpeed: 1500,
+            items: 1,
+            dots: false,
+            loop: true,
+            nav: true,
+            navText: [
+                '<i class="fa fa-angle-left" aria-hidden="true"></i>',
+                '<i class="fa fa-angle-right" aria-hidden="true"></i>'
+            ],
+        });
+    }
 })(jQuery);
 
 
+fetch("/Dashboard/api/allexports")
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json(); // or response.text() depending on what the API returns
+    })
+    .then(data => {
 
+        data.sort((a, b) => new Date(a.CreatedAt) - new Date(b.CreatedAt));
+        var labels = [];
+        var date = [];
+        data.forEach(function (item, index) {
+            labels.push(item.CreatedAt);
+            date.push(item.TotalPrice);
+
+        })
+        const ctx = document.getElementById('myChart');
+        if (ctx) {
+            new Chart(ctx, {
+                type: 'line',  // Changed from 'bar' to 'line'
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: '# نمودار فروش',
+                        data: date,
+                        borderWidth: 2,  // Slightly increased for better visibility in line chart
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',  // Added fill color
+                        borderColor: 'rgba(75, 192, 192, 1)',  // Added line color
+                        tension: 0.1  // Makes the line slightly curved
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+
+            });
+        }
+    })
+    .catch(error => {
+        console.error('There was a problem with the fetch operation:', error);
+    });
+document.addEventListener('DOMContentLoaded', function () {
+    const checkForm = document.getElementById('addcheck');
+    const checksTableBody = document.getElementById('checksTableBody');
+    let checks = []; // Removed localStorage dependency
+    let editIndex = null;
+    // let Payments = []; // Array to store payment data
+
+    // Load checks when page loads
+    renderChecksTable();
+
+    // Form submission
+    if (checkForm) {
+        checkForm.addEventListener('click', function (e) {
+            e.preventDefault();
+
+            const checkData = {
+                date: document.getElementById('checkDate').value,
+                bank: document.getElementById('bankName').value,
+                serial: document.getElementById('serialCode').value,
+                amount: document.getElementById('checkAmount').value,
+                status: 'pending' // Default status
+            };
+
+            if (editIndex !== null) {
+                // Update existing check
+                checks[editIndex] = checkData;
+                editIndex = null;
+            } else {
+                // Add new check
+                checks.push(checkData);
+            }
+
+            // Refresh table
+            renderChecksTable();
+
+            // Reset form
+            // checkForm.reset();
+            document.querySelector('#checkForm button[type="submit"]').textContent = 'ذخیره چک';
+        });
+    }
+
+    // Render checks table
+    function renderChecksTable() {
+        if (checksTableBody) {
+            checksTableBody.innerHTML = '';
+        }
+        checks.forEach((check, index) => {
+            const row = document.createElement('tr');
+
+            row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${check.date}</td>
+                    <td>${getBankName(check.bank)}</td>
+                    <td>${check.serial}</td>
+                    <td>${Number(check.amount).toLocaleString()}</td>
+                    <td>
+                        <select class="form-select status-select" data-index="${index}">
+                            <option value="pending" ${check.status === 'pending' ? 'selected' : ''}>در انتظار</option>
+                            <option value="collected" ${check.status === 'collected' ? 'selected' : ''}>وصول شده</option>
+                            <option value="rejected" ${check.status === 'rejected' ? 'selected' : ''}>برگشت خورده</option>
+                        </select>
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-danger delete-btn" data-index="${index}">حذف</button>
+                    </td>
+                `;
+
+            // Create Payment object for each check
+            var Payment = {
+                Method: "چک",
+                Name: getBankName(check.bank),
+                ExportID: jQuery("input[name='ExportNumber']").val(),
+                Status: check.status,
+                TotalPrice: check.amount,
+                Number: check.serial,
+                CreatedAt: check.date
+            };
+
+            Payments.push(Payment);
+            if (checksTableBody) {
+                checksTableBody.appendChild(row);
+            }
+        });
+
+
+
+        // Add event listeners to dynamically created buttons
+        document.querySelectorAll('.edit-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                editIndex = parseInt(this.getAttribute('data-index'));
+                const check = checks[editIndex];
+
+                document.getElementById('checkDate').value = check.date;
+                document.getElementById('bankName').value = check.bank;
+                document.getElementById('serialCode').value = check.serial;
+                document.getElementById('checkAmount').value = check.amount;
+
+                document.querySelector('#checkForm button[type="submit"]').textContent = 'ویرایش چک';
+            });
+        });
+
+        document.querySelectorAll('.delete-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                if (confirm('آیا از حذف این چک مطمئن هستید؟')) {
+                    const index = parseInt(this.getAttribute('data-index'));
+                    checks.splice(index, 1);
+                    renderChecksTable();
+                }
+            });
+        });
+
+        document.querySelectorAll('.status-select').forEach(select => {
+            select.addEventListener('change', function () {
+                const index = parseInt(this.getAttribute('data-index'));
+                checks[index].status = this.value;
+                renderChecksTable(); // Refresh to update Payments array
+            });
+        });
+    }
+
+    // Helper function to get bank name
+    function getBankName(bankCode) {
+        const banks = {
+            'melli': 'ملی',
+            'mellat': 'ملت',
+            'saderat': 'صادرات',
+            'tejarat': 'تجارت',
+            'saman': 'سامان',
+            'shahr': 'شهر',
+            'pasargad': 'پاسارگاد',
+            'sepah': 'سپه',
+            'keshavarzi': 'کشاورزی',
+            'parsian': 'پارسیان',
+            'eghtesad-novin': 'اقتصاد نوین',
+            'ansar': 'انصار',
+            'karafarin': 'کارآفرین',
+            'sina': 'سینا',
+            'sarmayeh': 'سرمایه',
+            'tosee': 'توسعه',
+            'tosee-saderat': 'توسعه صادرات',
+            'tosee-taavon': 'توسعه تعاون',
+            'day': 'دی',
+            'hekmat': 'حکمت ایرانیان',
+            'ayandeh': 'آینده',
+            'ghavamin': 'قوامین',
+            'khavar': 'خاورمیانه',
+            'mehr-iran': 'مهر ایران',
+            'mehr-eqtesad': 'مهر اقتصاد',
+            'post': 'پست بانک',
+            'qarzolqasaneh': 'قرض‌الحسنه مهر ایران',
+            'qarzolqasaneh-resalat': 'قرض‌الحسنه رسالت',
+            'iran-zamin': 'ایران زمین',
+            'kosar': 'کوثر',
+            'markazi': 'مرکزی',
+            'reffah': 'رفاه',
+            'tourism': 'گردشگری',
+            'industry': 'صنعت و معدن'
+        };
+        return banks[bankCode] || bankCode;
+    }
+});
+
+jQuery(document).ready(function () {
+    jQuery("#checkDate").pDatepicker({
+        format: 'YYYY/MM/DD',
+        autoClose: true
+    });
+});

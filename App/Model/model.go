@@ -15,6 +15,8 @@ func GetAllUsersByRole(role string) []Boot.Users {
 	switch role {
 	case "Admin":
 		Boot.DB().Model(&Boot.Users{}).Select("*").Where("role = ? ", "Admin").Scan(&users)
+	case "Author":
+		Boot.DB().Model(&Boot.Users{}).Select("*").Where("role = ? ", "Author").Scan(&users)
 	case "guest":
 		Boot.DB().Model(&Boot.Users{}).Select("*").Where("role = ? ", "guest").Scan(&users)
 	}
@@ -36,6 +38,11 @@ func GetUserById(userid Boot.Users) []Boot.Users {
 	Boot.DB().Model(&Boot.Users{}).Select("*").Where("ID = ?", userid.ID).Scan(&user)
 	return user
 }
+func GetUserRoleById(userid Boot.Users) string {
+	var role string
+	Boot.DB().Model(&Boot.Users{}).Select("role").Where("ID = ?", userid.ID).Scan(&role)
+	return role
+}
 func GetCurrentUser(c *gin.Context) []Boot.Users {
 	Id := c.Request.URL.Query().Get("user-id")
 	userIdUint, _ := strconv.ParseUint(Id, 10, 64)
@@ -48,11 +55,12 @@ func GetCountOfUsers() int64 {
 	Boot.DB().Model(&[]Boot.Users{}).Find(&[]Boot.Users{}).Count(&count)
 	return count
 }
-func GetAllUsersByPaginate(offset int, limit int) []Boot.Users {
+func GetAllUsersByPaginate(offset int, limit int, role string) []Boot.Users {
 	var Users []Boot.Users
-	Boot.DB().Model(&Boot.Users{}).Select("*").Offset(offset).Limit(limit).Scan(&Users)
+	Boot.DB().Model(&Boot.Users{}).Select("*").Where("role = ?", role).Offset(offset).Limit(limit).Scan(&Users)
 	return Users
 }
+
 func RemoveCurrentUser(c *gin.Context) bool {
 	Id := c.Request.URL.Query().Get("user-id")
 	fmt.Println(Id)

@@ -1,0 +1,81 @@
+{{ define "navbar" }}
+<nav class="navbar navbar-expand-lg  navbar-dark bg-dark px-5">
+  <a class="navbar-brand" href=""> <img src="../../assets/images/techrootlogo.png"> </a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText"
+    aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarText">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="/Dashboard">صفحه اصلی <span class="sr-only">(فعال)</span></a>
+      </li>
+      {{ if eq .UserRole "Admin"}}
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
+          aria-expanded="false">کاربران</a>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" href="./admin_users">کاربران ادمین</a></li>
+          <li><a class="dropdown-item" href="./authors">اپراتور</a></li>
+          <li><a class="dropdown-item" href="./users">مشتریان</a></li>
+          <li>
+            <hr class="dropdown-divider">
+          </li>
+          <li><a class="dropdown-item" href="./add_user">افزودن کاربر</a></li>
+        </ul>
+      </li>
+      {{end}}
+      {{ if eq .UserRole "Admin"}}
+
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
+          aria-expanded="false">موجودی انبار</a>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" href="./inventory?inventory=1">انبار شماره اشتهارد</a></li>
+          <li><a class="dropdown-item" href="./inventory?inventory=2">انبار شماره تبریز</a></li>
+        </ul>
+      </li>
+
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
+          aria-expanded="false">افزودن کالا</a>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" href="./addproduct?inventory=1">انبار شماره اشتهارد</a></li>
+          <li><a class="dropdown-item" href="./addproduct?inventory=2">انبار شماره تبریز</a></li>
+          <li>
+            <hr class="dropdown-divider">
+          </li>
+          <li><a class="dropdown-item" href="./production"> تولید</a></li>
+        </ul>
+      </li>
+      {{end}}
+
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
+          aria-expanded="false">فاکتور</a>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" href="./export">ثبت فاکتور</a></li>
+          <li><a class="dropdown-item" href="./export-list">لیست فاکتورها</a></li>
+        </ul>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link "   href="./payments"  
+           >پرداختها</a>
+
+      </li>
+      
+    </ul>
+    <span class=" navbar navbar-dark bg-secondary ms-auto ">
+      <li class="nav-item dropdown list-unstyled">
+        <a class="nav-link dropdown-toggle text-white" data-bs-toggle="dropdown" href="#" role="button"
+          aria-expanded="false">کاربر {{.Username}} خوش آمدید</a>
+        <ul class="dropdown-menu">
+          <li class=""><a class="dropdown-item" href="./signout">خروج</a></li>
+        </ul>
+      </li>
+
+    </span>
+
+  </div>
+</nav>
+{{ end }}

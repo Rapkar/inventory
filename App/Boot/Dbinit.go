@@ -49,6 +49,10 @@ func DB() *gorm.DB {
 	if err != nil {
 		panic("Inventory Has problem With connect to Database")
 	}
+	sqlDB, err := db.DB()
+	sqlDB.SetMaxIdleConns(10)
+	sqlDB.SetMaxOpenConns(100)
+	sqlDB.SetConnMaxLifetime(time.Hour)
 
 	return db
 
@@ -92,6 +96,52 @@ func Init() {
 		DB().Create(&Export)
 	} else {
 		fmt.Println("Export table found. #")
+	}
+
+	if !DB().Migrator().HasTable(Payments{}) {
+		DB().Migrator().CreateTable(Payments{})
+
+		// First create sample ExportProducts for the Export
+		exportProducts := []ExportProducts{
+			{
+				Name:            "ایزوگام شرق",
+				Number:          "10",
+				RolePrice:       99250,
+				MeterPrice:      102500,
+				Count:           100,
+				Meter:           10,
+				TotalPrice:      2000000,
+				InventoryNumber: 1,
+			},
+		}
+
+		// Create an Export to associate with
+		export := Export{
+			Name:            "رضا توانگر",
+			Number:          "9283422",
+			Phonenumber:     "09199656725",
+			Address:         "کرج -کرج=-ایران -سیسی",
+			TotalPrice:      10000000,
+			Tax:             10,
+			ExportProducts:  exportProducts,
+			InventoryNumber: 1,
+			CreatedAt:       Utility.CurrentTime(),
+		}
+		DB().Create(&export)
+
+		// Now create the Payment associated with this Export
+		Payment := Payments{
+			Method:     "مستقیم",
+			Number:     "9283422",
+			TotalPrice: 9000,
+			Name:       "ملی",
+			Describe:   "کرج -کرج=-ایران -سیسی",
+			CreatedAt:  Utility.CurrentTime(),
+			ExportID:   export.ID, // Associate with the export
+		}
+		DB().Create(&Payment)
+	} else {
+		fmt.Println("Payments table found. #")
 	}
 
 }

@@ -53,6 +53,7 @@ func StringToInt64(value string) int64 {
 	NewValue, _ := strconv.ParseFloat(value, 64)
 	return int64(NewValue)
 }
+
 func StringToInt(value string) int8 {
 	newValue, _ := strconv.ParseInt(value, 10, 8)
 	return int8(newValue)
@@ -129,6 +130,14 @@ func MakeRandValue() string {
 	uniqueString := fmt.Sprintf("%c%05d", letter, num)
 
 	return uniqueString
+}
+func contains(slice []string, item string) bool {
+	for _, s := range slice {
+		if s == item {
+			return true
+		}
+	}
+	return false
 }
 
 // func ExampleNewPDFGenerator() {
