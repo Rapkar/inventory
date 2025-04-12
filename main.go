@@ -136,7 +136,7 @@ func main() {
 				"UserRole": session.Get("UserRole"),
 				"title":    "کاربران",
 				"Paginate": template.HTML(Utility.MakePaginate(model.GetCountOfUsers()/int64(postperpage), "user-list")),
-				"users":    model.GetAllUsersByPaginate(0, postperpage, "author"),
+				"users":    model.GetAllUsersByPaginate(0, postperpage, "Author"),
 			})
 		})
 		v2.GET("/admin_users", middleware.AuthMiddleware("Admin"), func(c *gin.Context) {
@@ -430,6 +430,52 @@ func main() {
 			}
 
 		})
+
+		v2.POST("/updatepayment", middleware.AuthMiddleware(), func(c *gin.Context) {
+			var Payments boot.Payments
+			var oldPayments boot.Payments
+
+			Payments.ID, _ = strconv.ParseUint(c.PostForm("PaymentID"), 10, 64)
+			res := boot.DB().Model(&Payments).Where("id = ? ", Payments.ID).Scan(&oldPayments)
+			if res.RowsAffected > 0 {
+				Payments.Method = oldPayments.Method
+				Payments.Number = c.PostForm("PaymentNumber")
+				Payments.Name = c.PostForm("PaymentName")
+				Payments.TotalPrice = Utility.StringToInt64(c.PostForm("PaymentTotalPrice"))
+				Payments.Describe = c.PostForm("PaymentDescribe")
+				Payments.CreatedAt = c.PostForm("CreatedAt")
+				Payments.Status = c.PostForm("PaymentStatus")
+
+				res := boot.DB().Model(&Payments).Where("id = ? ", Payments.ID).Updates(&Payments)
+				session := sessions.Default(c)
+				status := c.Query("status")
+
+				if res.RowsAffected > 0 {
+
+					c.HTML(http.StatusOK, "payments.html", gin.H{
+						"Username": session.Get("UserName"),
+						"UserRole": session.Get("UserRole"),
+						"title":    "پرداخت ها",
+						"success":  true,
+
+						"Paginate": template.HTML(Utility.MakePaginate(model.GetCountOfExports()/1, "export-list")),
+						"Payments": model.GetAllPaymentsWithExportNumber(0, postperpage, status),
+					})
+				} else {
+
+					c.HTML(http.StatusOK, "payments.html", gin.H{
+						"Username": session.Get("UserName"),
+						"UserRole": session.Get("UserRole"),
+						"title":    "پرداخت ها",
+						"success":  false,
+
+						"Paginate": template.HTML(Utility.MakePaginate(model.GetCountOfExports()/1, "export-list")),
+						"Payments": model.GetAllPaymentsWithExportNumber(0, postperpage, status),
+					})
+				}
+			}
+
+		})
 		// inventory  Production
 
 		v2.GET("/export", middleware.AuthMiddleware(), func(c *gin.Context) {
@@ -669,6 +715,18 @@ func main() {
 			result := model.GetAllExportsByPhoneAndName(data.Term)
 			c.JSON(http.StatusOK, gin.H{"message": result})
 		})
+		v2.POST("/payment-find", middleware.AuthMiddleware(), func(c *gin.Context) {
+			var data struct {
+				Term string `json:"term"`
+			}
+			if err := c.BindJSON(&data); err != nil {
+
+				c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+				return
+			}
+			result := model.GetAllPaymentsByAttribiute(data.Term)
+			c.JSON(http.StatusOK, gin.H{"message": result})
+		})
 		v2.GET("/exportshow", middleware.AuthMiddleware(), func(c *gin.Context) {
 			session := sessions.Default(c)
 			exports, products := model.GetExportById(c)
@@ -682,17 +740,19 @@ func main() {
 		})
 		v2.GET("/payments", middleware.AuthMiddleware(), func(c *gin.Context) {
 			session := sessions.Default(c)
+			// fmt.Println(resExport, Export.ID)
+			status := c.Query("status")
+
 			c.HTML(http.StatusOK, "payments.html", gin.H{
 				"Username": session.Get("UserName"),
 				"UserRole": session.Get("UserRole"),
 				"title":    "پرداخت ها",
 				"Paginate": template.HTML(Utility.MakePaginate(model.GetCountOfExports()/1, "export-list")),
-				"Payments": model.GetAllPaymentsWithExportNumber(0, postperpage),
+				"Payments": model.GetAllPaymentsWithExportNumber(0, postperpage, status),
 			})
 		})
 		v2.GET("/deletePayments", middleware.AuthMiddleware("Admin"), func(c *gin.Context) {
 			session := sessions.Default(c)
-
 			if model.RemoveCurrentPayments(c) {
 				c.HTML(http.StatusOK, "payments.html", gin.H{
 					"Username": session.Get("UserName"),

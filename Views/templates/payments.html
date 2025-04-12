@@ -23,19 +23,31 @@
             <div class="row justify-content-center mb-5 ">
                 <div class="col-lg-3 col-6">
                     <div class="jumbotron text-center ">
-                      <a class="btn  btn-success btn-lg text-white" href="./export-list" role="button">چک های وصولی</a>
+                        <a class="btn  btn-success btn-lg text-white" href="./payments/?status=collected" role="button">چک های
+                            وصولی
+                            <img src="../../assets/images/collected.svg">
+                        
+                        </a>
                     </div>
-                  </div>
-                  <div class="col-lg-3 col-6">
+                </div>
+                <div class="col-lg-3 col-6">
                     <div class="jumbotron text-center">
-                      <a class="btn  btn-danger btn-lg text-white" href="./export-list" role="button">چک های برگشتی</a>
+                        <a class="btn  btn-danger btn-lg text-white" href="./payments/?status=rejected" role="button">چک های
+                            برگشتی
+                            <img src="../assets/images/angry.svg">
+                        
+                        </a>
                     </div>
-                  </div>
-                  <div class="col-lg-3 col-6">
+                </div>
+                <div class="col-lg-3 col-6">
                     <div class="jumbotron text-center">
-                      <a class="btn  btn-primary btn-lg text-white" href="./export-list" role="button">پرداخت های مستقیم</a>
+                        <a class="btn  btn-warning btn-lg text-white" href="./payments/?status=pending" role="button">
+                            در انتظار
+                            <img src="../assets/images/waite.svg">
+                        
+                        </a>
                     </div>
-                  </div>
+                </div>
                 <div class="col-12 col-md-10 col-lg-8 mt-4">
                     <form class="card card-sm">
                         <div class="card-body row no-gutters align-items-center">
@@ -49,7 +61,7 @@
                             </div>
                             <!--end of col-->
                             <div class="col-auto">
-                                <button class="btn btn-lg btn-success" id="find" type="submit">جستجو کنید</button>
+                                <button class="btn btn-lg btn-success" id="findpayment" type="submit">جستجو کنید</button>
                             </div>
                             <!--end of col-->
                         </div>
@@ -91,7 +103,8 @@
                         </td>
                         <td dir="" class="InventoryNumber d-none d-md-table-cell" style="text-align:right;">
 
-                            <a class="me-3" href="./exportshow?ExportId={{.ExportID}}"><svg
+                            <a class="me-3" href="./exportshow?ExportId={{.ExportID}}">
+                                <svg
                                     xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                     class="bi bi-eye" viewBox="0 0 16 16">
                                     <path
@@ -110,15 +123,15 @@
                                         </div>
                                         <div class="modal-body">
                                             <!-- Your edit form goes here -->
-                                            <form action="/update-export" method="POST">
-                                                <input type="hidden" name="exportId" value="{{.ID}}">
+                                            <form action="./updatepayment" method="POST">
+                                                <input type="hidden" name="PaymentID" value="{{.ID}}">
 
                                                 <div class="row">
                                                     <div class="mb-3 col-lg-6 ">
                                                         <label for="exportName{{.ID}}" class="form-label text-dark">نام
                                                             بانک</label>
                                                         <input type="text" class="form-control" id="exportName{{.ID}}"
-                                                            name="name" value="{{.Name}}">
+                                                            name="PaymentName" value="{{.Name}}">
                                                     </div>
 
                                                     <div class="mb-3 col-lg-6 ">
@@ -126,14 +139,14 @@
                                                             class="form-label text-dark">مبلغ
                                                         </label>
                                                         <input type="number" class="form-control"
-                                                            id="exportTotalPrice{{.ID}}" name="totalPrice"
+                                                            id="exportTotalPrice{{.ID}}" name="PaymentTotalPrice"
                                                             value="{{.TotalPrice}}">
                                                     </div>
                                                     <div class="mb-3 col-lg-6 ">
                                                         <label for="exportName{{.ID}}" class="form-label text-dark">روش
                                                             پرداخت</label>
-                                                        <input type="text" class="form-control" id="exportMethod{{.ID}}"
-                                                            name="Method" value="{{.Method}}">
+                                                        <input type="text" readonly class="form-control"
+                                                            id="exportMethod{{.ID}}" name="Method" value="{{.Method}}">
                                                     </div>
 
                                                     <div class="mb-3 col-lg-6 ">
@@ -141,25 +154,26 @@
                                                             class="form-label text-dark">شماره سریال
                                                         </label>
                                                         <input type="number" class="form-control"
-                                                            id="exportTotalPrice{{.ID}}" name="totalPrice"
+                                                            id="exportTotalPrice{{.ID}}" name="PaymentNumber"
                                                             value="{{.Number}}">
                                                     </div>
                                                     <div class="mb-3 col-lg-6 ">
                                                         <label for="exportName{{.ID}}"
                                                             class="form-label text-dark">تاریخ
-                                                            </label>
+                                                        </label>
                                                         <input type="text" class="form-control" id="CreatedAt{{.ID}}"
-                                                            name="name" value="{{.CreatedAt}}">
+                                                            name="CreatedAt" value="{{.CreatedAt}}">
                                                     </div>
 
                                                     <div class="mb-3 col-lg-6 ">
                                                         <label for="exportTotalPrice{{.ID}}"
                                                             class="form-label text-dark">وضعیت
                                                         </label>
-                                                        <select class="form-select status-select" data-index="${index}">
-                                                            <option value="pending"  >در انتظار</option>
-                                                            <option value="collected"  >وصول شده</option>
-                                                            <option value="rejected"  >برگشت خورده</option>
+                                                        <select class="form-select status-select" name="PaymentStatus"
+                                                            data-index="${index}">
+                                                            <option value="pending">در انتظار</option>
+                                                            <option value="collected">وصول شده</option>
+                                                            <option value="rejected">برگشت خورده</option>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -167,32 +181,37 @@
 
 
                                                 <!-- Add more fields as needed -->
-                                            </form>
                                         </div>
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary"
                                                 data-bs-dismiss="modal">بستن</button>
-                                            <button type="button" class="btn btn-primary"
+                                            <button type="submit" class="btn btn-primary"
                                                 onclick="document.forms[0].submit()">ذخیره</button>
                                         </div>
+                                        </form>
+
                                     </div>
                                 </div>
                             </div>
 
                         </td>
-                        {{if eq .Status "complete"}}
-                        <td dir="" class="InventoryNumber d-none d-md-table-cell bg-success" style="text-align:right;">
+                        {{if eq .Status "collected"}}
+                        <td dir="" class="InventoryNumber d-none d-md-table-cell bg-success text-center">
+                            <img src="../../assets/images/collected.svg">
                         </td>
                         {{end}}
-                        {{if eq .Status "faild"}}
-                        <td dir="" class="InventoryNumber d-none d-md-table-cell bg-danger" style="text-align:right;">
+                        {{if eq .Status "rejected"}}
+                        <td dir="" class="InventoryNumber d-none d-md-table-cell bg-danger text-center">
+                            <img src="../assets/images/angry.svg">
                         </td>
                         {{end}}
                         {{if eq .Status "pending"}}
-                        <td dir="" class="InventoryNumber d-none d-md-table-cell bg-warning" style="text-align:right;">
+                        <td dir="" class="InventoryNumber d-none d-md-table-cell bg-warning text-center">
+                            <img src="../assets/images/waite.svg">
                         </td>
                         {{end}}
-                        <td dir="ltr" class="Edit" style="text-align:right;"><a href="#" data-bs-toggle="modal"
+                        <td dir="ltr" class="Edit text-center ">
+                            <a href="#" data-bs-toggle="modal"
                                 data-bs-target="#editModal{{.ID}}">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                     class="bi bi-pen" viewBox="0 0 16 16">

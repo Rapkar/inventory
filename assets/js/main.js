@@ -450,6 +450,169 @@ jQuery("#find").on("click", function (e) {
 
         });
 })
+jQuery("#findpayment").on("click", function (e) {
+    e.preventDefault()
+    var value = jQuery("#findval").val()
+    // console.log(value)
+    // value="حسین سلطانیان"
+    jQuery.ajax({
+        method: "POST",
+        url: "/Dashboard/payment-find",
+        data: JSON.stringify({ term: value }),
+        // data: { Name: "expotform", Content: jQuery("form[name='expotform']").serialize(), Products: ProductsOfExport },
+        // contentType: "application/json; charset=utf-8",
+    })
+        .done(function (msg) {
+            var lengthofres = msg.message.length;
+            console.log(msg.message)
+            if (lengthofres > 0) {
+                let html = "";
+                msg.message.forEach(function (index) {
+                    console.log(index);
+                    html += '<tr>';
+                    html += '<td class="' + index.ID + '" style="text-align:right;">' + index.ID + '</td>';
+                    html += '<td class="' + index.Method + '" style="text-align:right;">' + index.Method + '</td>';
+                    html += '<td class="' + index.Number + '" style="text-align:right;">' + index.Number + '</td>';
+                    html += '<td class="' + index.Name + '" style="text-align:right;">' + index.Name + '</td>';
+                    html += '<td class="' + index.TotalPrice + '" style="text-align:right;">' + index.TotalPrice + '</td>';
+                    html += '<td class="' + index.Describe + '" style="text-align:right;">' + index.Describe + '</td>';
+                    html += '<td class="' + index.CreatedAt + '" style="text-align:right;">' + index.CreatedAt + '</td>';
+                    html += '<td class="' + index.export_number + '" style="text-align:right;">' + index.export_number + '</td>';
+                    html += '<td class="' + index.ExportID + '" style="text-align:right;"><a class="me-3" href="./exportshow?ExportId=' + index.ExportID + '">';
+                    html += '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">';
+                    html += '<path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z" />';
+                    html += '<path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0" />';
+                    html += '</svg></a></td>';
+
+                    if (index.Status == "collected") {
+                        html += '<td dir="" class="InventoryNumber d-none d-md-table-cell bg-success text-center">';
+                        html += '<img src="../../assets/images/collected.svg">';
+                        html += '</td>';
+                    }
+                    if (index.Status == "rejected") {
+                        html += '<td dir="" class="InventoryNumber d-none d-md-table-cell bg-danger text-center">';
+                        html += '<img src="../assets/images/angry.svg">';
+                        html += '</td>';
+                    }
+                    if (index.Status == "pending") {
+                        html += '<td dir="" class="InventoryNumber d-none d-md-table-cell bg-warning text-center">';
+                        html += '<img src="../assets/images/waite.svg">';
+                        html += '</td>';
+                    }
+                    html += '<td dir="ltr" class="Edit" style="text-align:right;">';
+                    html += `<a href="#" data-bs-toggle="modal"
+                    data-bs-target="#editModal${index.ID}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                        class="bi bi-pen" viewBox="0 0 16 16">
+                        <path
+                            d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001m-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708z" />
+                    </svg>
+                    </a>
+
+                    <a class="me-3" href="./deletePayments?PaymentId={{.ID}}"><svg
+                        xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                        class="bi bi-trash3" viewBox="0 0 16 16">
+                        <path
+                            d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5" />
+                    </svg></a>`;
+
+                 html += `
+                    <div class="modal fade" id="editModal${index.ID}" tabindex="-1"
+                    aria-labelledby="editModalLabel${index.ID}" aria-hidden="true">
+                    <div class="modal-dialog modal-xl">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="editModalLabel${index.ID}">Edit Export #${index.ID}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <!-- Your edit form goes here -->
+                                <form action="./updatepayment" method="POST">
+                                    <input type="hidden" name="PaymentID" value="${index.ID}">
+
+                                    <div class="row">
+                                        <div class="mb-3 col-lg-6 ">
+                                            <label for="exportName${index.ID}" class="form-label text-dark">نام
+                                                بانک</label>
+                                            <input type="text" class="form-control" id="exportName${index.ID}"
+                                                name="PaymentName" value="${index.Name}">
+                                        </div>
+
+                                        <div class="mb-3 col-lg-6 ">
+                                            <label for="exportTotalPrice${index.ID}"
+                                                class="form-label text-dark">مبلغ
+                                            </label>
+                                            <input type="number" class="form-control"
+                                                id="exportTotalPrice${index.ID}" name="PaymentTotalPrice"
+                                                value="${index.TotalPrice}">
+                                        </div>
+                                        <div class="mb-3 col-lg-6 ">
+                                            <label for="exportName${index.ID}" class="form-label text-dark">روش
+                                                پرداخت</label>
+                                            <input type="text" readonly class="form-control"
+                                                id="exportMethod${index.ID}" name="Method" value="${index.Method}">
+                                        </div>
+
+                                        <div class="mb-3 col-lg-6 ">
+                                            <label for="exportTotalPrice${index.ID}"
+                                                class="form-label text-dark">شماره سریال
+                                            </label>
+                                            <input type="number" class="form-control"
+                                                id="exportTotalPrice${index.ID}" name="PaymentNumber"
+                                                value="${index.Number}">
+                                        </div>
+                                        <div class="mb-3 col-lg-6 ">
+                                            <label for="exportName${index.ID}"
+                                                class="form-label text-dark">تاریخ
+                                            </label>
+                                            <input type="text" class="form-control" id="CreatedAt${index.ID}"
+                                                name="CreatedAt" value="${index.CreatedAt}">
+                                        </div>
+
+                                        <div class="mb-3 col-lg-6 ">
+                                            <label for="exportTotalPrice${index.ID}"
+                                                class="form-label text-dark">وضعیت
+                                            </label>
+                                            <select class="form-select status-select" name="PaymentStatus"
+                                                data-index="${index}">
+                                                <option value="pending">در انتظار</option>
+                                                <option value="collected">وصول شده</option>
+                                                <option value="rejected">برگشت خورده</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+
+
+                                    <!-- Add more fields as needed -->
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary"
+                                    data-bs-dismiss="modal">بستن</button>
+                                <button type="submit" class="btn btn-primary"
+                                    onclick="document.forms[0].submit()">ذخیره</button>
+                            </div>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>`;
+
+                    html += '</td>';
+                    html += '</tr>';
+                    // console.log(html)
+                });
+                // console.log(html)
+                if (html.length > 0) {
+                    jQuery("#exportlist tbody").empty()
+                    jQuery("#exportlist tbody").append(html)
+
+                }
+            }
+
+        });
+})
 jQuery("#Userfind").on("click", function (e) {
     e.preventDefault()
     var value = jQuery("#findval").val()

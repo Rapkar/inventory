@@ -93,17 +93,22 @@ type PaymentWithExport struct {
 	ExportNumber string `json:"export_number"`
 }
 
-func GetAllPaymentsWithExportNumber(offset int, limit int) []PaymentWithExport {
+func GetAllPaymentsWithExportNumber(offset int, limit int, status string) []PaymentWithExport {
 	var result []PaymentWithExport
 
-	Boot.DB().Table("payments").
+	query := Boot.DB().Table("payments").
 		Select("payments.*, exports.number as export_number").
 		Joins("LEFT JOIN exports ON exports.id = payments.export_id").
 		Order("payments.id DESC").
 		Offset(offset).
-		Limit(limit).
-		Scan(&result)
+		Limit(limit)
 
+	// Add status filter if provided and valid
+	if status != "" && (status == "pending" || status == "rejected" || status == "collected") {
+		query = query.Where("payments.status = ?", status)
+	}
+
+	query.Scan(&result)
 	return result
 }
 func GetPaymentNumberById(c *gin.Context) []Boot.Payments {
@@ -191,7 +196,17 @@ func GetAllExportsByPhoneAndName(searchTerm string) []Boot.EscapeExport {
 
 	return EscapeExport
 }
+func GetAllPaymentsByAttribiute(searchTerm string) []PaymentWithExport {
+	var result []PaymentWithExport
 
+	query := Boot.DB().Table("payments").
+		Select("payments.*, exports.number as export_number").
+		Joins("LEFT JOIN exports ON exports.id = payments.export_id").
+		Where("payments.created_at LIKE ? OR payments.number LIKE ?", "%"+searchTerm+"%", "%"+searchTerm+"%")
+
+	query.Scan(&result)
+	return result
+}
 func GetCountOfExports() int64 {
 	var count int64
 	Boot.DB().Model(&[]Boot.Export{}).Find(&[]Boot.Export{}).Count(&count)

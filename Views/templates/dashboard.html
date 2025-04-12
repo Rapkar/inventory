@@ -6,13 +6,13 @@
   {{template "success_notif" .}}
   {{end}}
   <div class="container">
-    <canvas id="myChart"></canvas>
   </div>
 
   <div class="h-100 d-flex align-items-center ">
     <div class="container mt-lg-5 mt-0">
       <h1 class="d-flex justify-content-center w-100">عایق سازان سپید گام</h1>
       <div class="row mt-5">
+
         <div class="col-lg-3 col-6">
           <div class="jumbotron ">
             <a class="btn btn-success btn-lg" href="./export" role="button">ثبت فاکتور جدید</a>
@@ -25,7 +25,7 @@
         </div>
         {{ if eq .UserRole "Admin"}}
 
-        <div class="col-lg-3 col-6">
+        <div class="col-lg-3 col-12 text-center  mt-3 mt-lg-a">
 
           <div class="jumbotron">
             <a class="btn btn-primary btn-lg" href="./addproduct?inventory=1" role="button"> ثبت محصول انبار اشتهارد</a>
@@ -33,14 +33,18 @@
         </div>
         {{end}}
 
-        <div class="col-lg-3 col-6">
+        <div class="col-lg-3 col-12 text-center mt-3 mt-lg-a mb-4">
 
           <div class="jumbotron">
             <a class="btn btn-primary btn-lg" href="./addproduct?inventory=2" role="button"> ثبت محصول انبار زنجان</a>
 
           </div>
         </div>
-        <div class="col-lg-12 mt-5">
+        <div class="col-lg-6 col-12 px-0 mt-3">
+    <canvas id="myChart"></canvas>
+
+        </div>
+        <div class="col-lg-6 col-12 mt-5">
           <h2>آخرین فاکتورها</h2>
 
           <table dir="rtl" class="table table-sm table-dark " id="exportlist">
@@ -50,12 +54,8 @@
                 <th scope="col">نام کاربر</th>
                 <th scope="col"> شماره فاکتور</th>
                 <th scope="col">تلفن تماس</th>
-                <th scope="col" class="d-none d-md-table-cell">آدرس خریدار</th>
-                <th scope="col" class="d-none d-md-table-cell">قیمت کل خرید</th>
-                <th scope="col" class="d-none d-md-table-cell">مالیات (%)</th>
+                <th scope="col" class="d-none d-md-table-cell">قیمت کل </th>
                 <th scope="col" class="d-none d-md-table-cell">تاریخ خرید</th>
-                <th scope="col" class="d-none d-md-table-cell">شماره انبار</th>
-                <th scope="col" class="d-none d-md-table-cell">ویرایش</th>
               </tr>
             </thead>
 
@@ -67,27 +67,10 @@
                 <td>{{.Name}}</td>
                 <td>{{.Number}}</td>
                 <td dir="ltr" class="Phonenumber" style="text-align:right;">{{.Phonenumber}}</td>
-                <td dir="ltr" class="Address d-none d-md-table-cell" style="text-align:right;">{{.Address}}</td>
                 <td dir="ltr" class="TotalPrice d-none d-md-table-cell" style="text-align:right;">{{.TotalPrice}}</td>
-                <td dir="ltr" class="Tax d-none d-md-table-cell" style="text-align:right;">{{.Tax}}</td>
                 <td dir="" class="CreatedAt d-none d-md-table-cell" style="text-align:right;">{{.CreatedAt}}</td>
-                <td dir="" class="InventoryNumber d-none d-md-table-cell" style="text-align:right;">{{.InventoryNumber}}
-                </td>
-                <td dir="ltr" class="Edit d-none d-md-table-cell" style="text-align:right;"><a
-                    href="./exportshow?ExportId={{.ID}}"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                      fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
-                      <path
-                        d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z" />
-                      <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0" />
-                    </svg></a>
-                  {{ if eq $.UserRole "Admin"}}
-                  <a class="me-3" href="./deleteExport?ExportId={{.ID}}"><svg xmlns="http://www.w3.org/2000/svg"
-                      width="16" height="16" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
-                      <path
-                        d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5" />
-                    </svg></a>
-                  {{end}}
-                </td>
+       
+ 
               </tr>
               {{end}}
 
