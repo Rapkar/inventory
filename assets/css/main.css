@@ -52,3 +52,22 @@
     width: 30px  !important;
     height: 30px !important;
 }
+select{
+  height: 40px;
+  border:
+1px solid #ddd;
+}
+.jumbotron a{
+  font-size: 14px;
+}
+@media (max-width: 991.98px) {
+.users_box{
+  overflow: hidden;
+}
+.users_box table{
+  white-space: nowrap;
+  display: block;
+  overflow: scroll;
+  padding: 1rem;
+}
+}

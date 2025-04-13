@@ -10,7 +10,7 @@
             {{template "danger_notif" .}}
             {{end}}
             <div class="col-xs-12 col-sm-9">
-                <form name="expotform" class="form-horizontal" method="post" action="/Dashboard/{{.action}}">
+                <form name="expotform" class="form-horizontal mb-4" method="post" action="/Dashboard/{{.action}}">
                     <div class="row ">
                         <div class="panel panel-default col-12">
                             <div class="panel-heading col-12">
@@ -76,7 +76,7 @@
                                                 aria-labelledby="headingOne" data-bs-parent="#accordionExample">
                                                 <div class="accordion-body">
                                                     <div class="">
-                                                        <input name="directpay" type='number' inputmode="numeric">
+                                                        <input name="directpay" id="directpay" type='number' inputmode="numeric">
                                                         <span class="out"></span>&nbsp;تومان
 
                                                     </div>
@@ -100,7 +100,7 @@
                                                             <div class="row g-3">
                                                                 <div class="col-md-3">
                                                                     <label for="checkDate" class="form-label">تاریخ چک</label>
-                                                                    <input type="date" class="form-control" id="checkDate" required>
+                                                                    <input type="button" class="form-control" id="checkDate" required>
                                                                 </div>
                                                                 <div class="col-md-3">
                                                                     <label for="bankName" class="form-label">بانک</label>
@@ -193,7 +193,7 @@
                                         <textarea class="w-100" name="describe"></textarea>
                                     </div>
                                 </div>
-                                <div id="ExportProductsList">
+                                <div id="ExportProductsList" class="users_box">
                                     <table class="table" dir="rtl">
                                         <thead>
                                             <tr>

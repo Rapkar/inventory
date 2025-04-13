@@ -3,6 +3,7 @@ package controller
 import (
 	"fmt"
 	"inventory/App/Boot"
+	"log"
 	"reflect"
 )
 
@@ -15,4 +16,11 @@ func InventoryCalculation(id map[int64]int64) {
 		res := count - val
 		Boot.DB().Model(&Boot.Inventory{}).Where("ID = ?", ix).Update("count", res)
 	}
+
+	db := Boot.DB()
+	sqlDB, err := db.DB()
+	if err != nil {
+		log.Println("خطا در دریافت اتصال دیتابیس:", err)
+	}
+	defer sqlDB.Close()
 }

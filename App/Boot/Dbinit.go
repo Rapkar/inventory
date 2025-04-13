@@ -1,14 +1,18 @@
 package Boot
 
 import (
+	"errors"
 	"fmt"
 	"inventory/App/Utility"
+	"io"
 	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"github.com/spf13/afero"
 	"github.com/spf13/viper"
 	"gorm.io/driver/mysql"
@@ -16,6 +20,8 @@ import (
 )
 
 func DB() *gorm.DB {
+	log.Printf("start")
+
 	viper.SetConfigFile(".env")
 	viper.SetConfigName("config")
 	viper.AddConfigPath(".")
@@ -46,19 +52,44 @@ func DB() *gorm.DB {
 	dsn := DATABASEUSER + ":" + DATABASEUSERPASS + "@tcp(" + DATABASEHOST + ":" + DATABASEPORT + ")/" + DATABASENAME + "?charset=utf8mb4&parseTime=True&loc=Local"
 	fmt.Println("linl", dsn)
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
-	if err != nil {
-		panic("Inventory Has problem With connect to Database")
-	}
 	sqlDB, err := db.DB()
-	sqlDB.SetMaxIdleConns(10)
-	sqlDB.SetMaxOpenConns(100)
-	sqlDB.SetConnMaxLifetime(time.Hour)
+
+	if err != nil {
+		log.Printf("Inventory Has problem With connect to Database")
+		// sqlDB.Close()
+
+	}
+	sqlDB.SetMaxIdleConns(5)
+	sqlDB.SetMaxOpenConns(6)
+	sqlDB.SetConnMaxLifetime(5 * time.Minute)
+	go func() {
+		ticker := time.NewTicker(5 * time.Minute)
+		defer ticker.Stop()
+
+		for range ticker.C {
+			sqlDB, err := DB().DB()
+			if err != nil {
+				log.Printf("Pool stats error: %v", err)
+				continue
+			}
+
+			stats := sqlDB.Stats()
+			log.Printf("DB Pool Stats: OpenConnections=%d InUse=%d Idle=%d",
+				stats.OpenConnections, stats.InUse, stats.Idle)
+		}
+	}()
 
 	return db
 
 }
 
 func Init() {
+
+	f, err := os.Create("gin.log")
+	if err != nil {
+		panic(err)
+	}
+	gin.DefaultWriter = io.MultiWriter(f)
 	if !DB().Migrator().HasTable(Users{}) {
 		DB().Migrator().CreateTable(Users{})
 		a, _ := Utility.HashPassword("0000")
@@ -143,7 +174,10 @@ func Init() {
 	} else {
 		fmt.Println("Payments table found. #")
 	}
-
+	if err := TakeBackup2(afero.NewOsFs(), 1); err != nil {
+		log.Printf("خطا در ایجاد بکاپ: %v", err)
+		// مدیریت خطا
+	}
 }
 
 func TakeBackup(fs afero.Fs, is int) {
@@ -207,6 +241,131 @@ func TakeBackup(fs afero.Fs, is int) {
 		// viper.Set("LAST_BS", "")
 	}
 
+}
+func TakeBackup2(fs afero.Fs, backupType int) error {
+	// خواندن تنظیمات از محیط
+	viper.SetConfigFile(".env")
+	viper.SetConfigName("config")
+	viper.AddConfigPath(".")
+	viper.ReadInConfig()
+	MODE := viper.Get("MODE")
+
+	var (
+		dbName string
+		dbUser string
+		dbPass string
+	)
+	if MODE == "DEVELOP" {
+		dbName = viper.GetString("MYSQL_LOCAL_DATABASE")
+		dbUser = viper.GetString("MYSQL_LOCAL_USERNAME")
+		dbPass = viper.GetString("MYSQL_LOCAL_PASS")
+
+	} else {
+		dbName = viper.GetString("MYSQL_DATABASE")
+		dbUser = viper.GetString("MYSQL_USERNAME")
+		dbPass = viper.GetString("MYSQL_PASS")
+
+	}
+
+	if dbUser == "" || dbName == "" || dbPass == "" {
+		return errors.New("تنظیمات دیتابیس ناقص است")
+	}
+
+	// ایجاد نام فایل بکاپ
+	backupTime := time.Now().Add(-time.Hour * 24 * time.Duration(backupType))
+	backupName := fmt.Sprintf("backup-%s.sql", backupTime.Format("2006-01-02-15-04-05"))
+
+	// اجرای دستور mysqldump
+	cmd := exec.Command("mysqldump", "-u", dbUser, dbName)
+	cmd.Env = append(os.Environ(), fmt.Sprintf("MYSQL_PWD=%s", dbPass))
+
+	file, err := fs.Create(backupName)
+	if err != nil {
+		return fmt.Errorf("خطا در ایجاد فایل بکاپ: %v", err)
+	}
+	defer file.Close()
+
+	cmd.Stdout = file
+	cmd.Stderr = os.Stderr
+
+	if err := cmd.Run(); err != nil {
+		return fmt.Errorf("خطا در اجرای mysqldump: %v", err)
+	}
+
+	// مدیریت فایل‌های قدیمی
+	if err := manageOldBackups(fs, backupType, backupTime); err != nil {
+		log.Printf("خطا در مدیریت فایل‌های قدیمی: %v", err)
+	}
+
+	log.Printf("بکاپ با موفقیت ایجاد شد: %s", backupName)
+	return nil
+}
+
+func manageOldBackups(fs afero.Fs, backupType int, backupTime time.Time) error {
+	// تعریف سیاست‌های نگهداری بکاپ‌ها
+	retentionDays := map[int]int{
+		1: 7,   // بکاپ روزانه - نگهداری 7 روز
+		2: 30,  // بکاپ هفتگی - نگهداری 30 روز
+		3: 365, // بکاپ ماهانه - نگهداری 1 سال
+	}
+
+	days, exists := retentionDays[backupType]
+	if !exists {
+		return nil
+	}
+
+	oldBackupTime := backupTime.Add(-time.Hour * 24 * time.Duration(days))
+	oldBackupName := fmt.Sprintf("backup-%s.sql", oldBackupTime.Format("2006-01-02-15-04-05"))
+
+	if err := fs.Remove(oldBackupName); err != nil && !os.IsNotExist(err) {
+		return fmt.Errorf("خطا در حذف فایل قدیمی: %v", err)
+	}
+
+	return nil
+}
+
+func GetBackupList(fs afero.Fs, baseURL string) ([]BackupFile, error) {
+	var backups []BackupFile
+
+	afero.Walk(fs, ".", func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
+		if !info.IsDir() && strings.HasPrefix(info.Name(), "backup-") && strings.HasSuffix(info.Name(), ".sql") {
+			timeStr := strings.TrimPrefix(info.Name(), "backup-")
+			timeStr = strings.TrimSuffix(timeStr, ".sql")
+
+			backupTime, err := time.Parse("2006-01-02-15-04-05", timeStr)
+			if err != nil {
+				log.Printf("خطا در تجزیه تاریخ فایل بک‌آپ %s: %v", info.Name(), err)
+				return nil
+			}
+
+			// ایجاد لینک دانلود
+			downloadURL := fmt.Sprintf("%s/%s", strings.TrimRight(baseURL, "/"), info.Name())
+
+			backups = append(backups, BackupFile{
+				Name:        info.Name(),
+				Size:        info.Size(),
+				ModTime:     info.ModTime(),
+				BackupTime:  backupTime,
+				DownloadURL: downloadURL,
+			})
+		}
+		return nil
+	})
+
+	// بقیه کد مانند قبل...
+	return backups, nil
+}
+
+type BackupFile struct {
+	Name        string    `json:"name"`        // نام فایل
+	Size        int64     `json:"size"`        // حجم فایل (بایت)
+	ModTime     time.Time `json:"modTime"`     // زمان آخرین تغییر
+	BackupTime  time.Time `json:"backupTime"`  // زمان بک‌آپ
+	DownloadURL string    `json:"downloadUrl"` // لینک دانلود
 }
 
 // return old file name

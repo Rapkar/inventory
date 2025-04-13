@@ -59,6 +59,23 @@ jQuery("#AddProductToExport").on("click", function () {
         }
         ExportTotalPrice.push(NewPrice)
         ProductsOfExport.push(newRow)
+        const directpay = document.getElementById("directpay");
+
+        if (directpay.value && directpay.value.trim().length > 0) {
+    
+
+
+            var Payment = {
+                Method: "نقدی",
+                Name: "نقدی",
+                Status: "collected",
+                TotalPrice: directpay.value,
+                Number: "PMT-" + Math.floor(Math.random() * 1000000), // شماره پیگیری تصادفی
+                CreatedAt: document.getElementById("checkDate").value 
+            };
+            
+            Payments.push(Payment);
+        }
 
         // console.log(ExportTotalPrice)
         exporttotal_Price = "0"
@@ -85,6 +102,10 @@ jQuery("#AddProductToExport").on("click", function () {
     }
 
 })
+// directpay.addEventListener("click",function(){
+// console.log(directpay.value && directpay.value.trim().length > 0)
+// })
+
 function GetExportTotalPrice(ExportTotalPrice) {
     exporttotal_Price = 0
     ExportTotalPrice.forEach(function (e, i) {
@@ -125,7 +146,7 @@ jQuery(".ExportPeoducts select#InventoryIS").on("change", function () {
                 setTimeout(function () {
                     jQuery("#ProductIs").empty();
                     jQuery("#ProductIs").append('<option value="0">لطفا یک گزینه را انتخاب کنید</option>')
-                    if (msg.result.length > 0) {
+                    if (msg.result.length > 0 && msg.result != null ) {
                         msg.result.forEach(item => {
                             jQuery("#ProductIs").append('<option value="' + item.ID + '">' + item.Name + '</option>')
                         });
@@ -191,9 +212,12 @@ jQuery(".production select#ProductIs").on("change", function () {
             .done(function (msg) {
                 if (msg.result.length > 0) {
                     var product = msg.result[0];
-                    console.log(product)
+                    console.log(product, product.Count)
                     jQuery(".production span.ProductsCount").html(product.Count)
                     jQuery(".production span.ProductMeter").html(product.Meter)
+                    jQuery(".production input[name='ProductsCount']").attr("value", product.Count)
+                    jQuery(".production input[name='ProductMeter']").attr("value", product.Meter)
+                    jQuery(".production input[name='RolePrice']").attr("value", product.RolePrice)
                     jQuery(".production input[name='RolePrice']").attr("value", product.RolePrice)
                     jQuery(".production input[name='MeterPrice']").attr("value", product.MeterPrice)
                     jQuery(".production  input[type='number']").each(function () {
@@ -516,7 +540,7 @@ jQuery("#findpayment").on("click", function (e) {
                             d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5" />
                     </svg></a>`;
 
-                 html += `
+                    html += `
                     <div class="modal fade" id="editModal${index.ID}" tabindex="-1"
                     aria-labelledby="editModalLabel${index.ID}" aria-hidden="true">
                     <div class="modal-dialog modal-xl">
@@ -662,7 +686,6 @@ jQuery("input[name='Tax']").on("keyup", function (e) {
     oldval = GetExportTotalPrice(ExportTotalPrice);
     newval = parseFloat(this.value)
     res = oldval + newval
-    console.log(newval, oldval, res)
 
 
     jQuery("tfoot td").html(res);
@@ -840,7 +863,7 @@ fetch("/Dashboard/api/allexports")
         return response.json(); // or response.text() depending on what the API returns
     })
     .then(data => {
-
+        console.log(data)
         data.sort((a, b) => new Date(a.CreatedAt) - new Date(b.CreatedAt));
         var labels = [];
         var date = [];
@@ -915,11 +938,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // Reset form
             // checkForm.reset();
-            document.querySelector('#checkForm button[type="submit"]').textContent = 'ذخیره چک';
+            document.getElementById('addcheck').textContent = 'ذخیره چک';
         });
     }
 
-    // Render checks table
+
     function renderChecksTable() {
         if (checksTableBody) {
             checksTableBody.innerHTML = '';
@@ -961,10 +984,16 @@ document.addEventListener('DOMContentLoaded', function () {
                 checksTableBody.appendChild(row);
             }
         });
+ 
+        // Check on initial load (optional)
+        // if (directpay.value && directpay.value.length > 0) {
+        //     console.log(true);
+        // }
 
+        // Add event listener to check when the input changes
+      
 
-
-        // Add event listeners to dynamically created buttons
+        // add check
         document.querySelectorAll('.edit-btn').forEach(btn => {
             btn.addEventListener('click', function () {
                 editIndex = parseInt(this.getAttribute('data-index'));
@@ -998,7 +1027,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Helper function to get bank name
+    // Bank Names
     function getBankName(bankCode) {
         const banks = {
             'melli': 'ملی',
@@ -1040,9 +1069,14 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
+
+// persian Date
+
 jQuery(document).ready(function () {
     jQuery("#checkDate").pDatepicker({
-        format: 'YYYY/MM/DD',
+        format: 'YYYY/MM/dd',
         autoClose: true
     });
 });
+ 
+

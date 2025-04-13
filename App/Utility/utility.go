@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"math/rand"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -15,6 +16,17 @@ import (
 	ptime "github.com/yaa110/go-persian-calendar"
 	"golang.org/x/crypto/bcrypt"
 )
+
+func IsValidEmail(email string) bool {
+	emailRegex := regexp.MustCompile(`^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`)
+	return emailRegex.MatchString(email)
+}
+
+func IsValidPhoneNumber(phone string) bool {
+	// الگوی ساده برای شماره تلفن (می‌توانید بر اساس نیاز تغییر دهید)
+	phoneRegex := regexp.MustCompile(`^\+?[0-9]{10,15}$`)
+	return phoneRegex.MatchString(phone)
+}
 
 func HomeUrl() string {
 	MODE := viper.Get("MODE")
@@ -131,51 +143,3 @@ func MakeRandValue() string {
 
 	return uniqueString
 }
-func contains(slice []string, item string) bool {
-	for _, s := range slice {
-		if s == item {
-			return true
-		}
-	}
-	return false
-}
-
-// func ExampleNewPDFGenerator() {
-
-// 	// Create new PDF generator
-// 	pdfg, err := NewPDFGenerator()
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-
-// 	// Set global options
-// 	pdfg.Dpi.Set(300)
-// 	pdfg.Orientation.Set(OrientationLandscape)
-// 	pdfg.Grayscale.Set(true)
-
-// 	// Create a new input page from an URL
-// 	page := NewPage("https://godoc.org/github.com/SebastiaanKlippert/go-wkhtmltopdf")
-
-// 	// Set options for this page
-// 	page.FooterRight.Set("[page]")
-// 	page.FooterFontSize.Set(10)
-// 	page.Zoom.Set(0.95)
-
-// 	// Add to document
-// 	pdfg.AddPage(page)
-
-// 	// Create PDF document in internal buffer
-// 	err = pdfg.Create()
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-
-// 	// Write buffer contents to file on disk
-// 	err = pdfg.WriteFile("./simplesample.pdf")
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-
-// 	fmt.Println("Done")
-// 	// Output: Done
-// }

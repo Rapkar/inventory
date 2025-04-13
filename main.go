@@ -10,12 +10,17 @@ import (
 	model "inventory/App/Model"
 	"inventory/App/Utility"
 	"inventory/App/middleware"
+	"io"
 	"net/http"
+	"os"
 	"strconv"
+	"strings"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/afero"
+	"github.com/spf13/viper"
 )
 
 func main() {
@@ -105,10 +110,24 @@ func main() {
 			})
 		})
 		v2.GET("/api/allexports", middleware.AuthMiddleware(), func(c *gin.Context) {
+			// c.JSON(http.StatusOK,
+			// 	model.GetAllExports(),
+			// )
 			c.JSON(http.StatusOK,
 				model.GetAllExports(),
 			)
+
 		})
+		// v2.GET("/api/mostexports", middleware.AuthMiddleware(), func(c *gin.Context) {
+		// 	// c.JSON(http.StatusOK,
+		// 	// 	model.GetAllExports(),
+		// 	// )
+		// 	c.JSON(http.StatusOK,
+		// 		model.GetMostOrderedProduct(Boot.EscapeExport, error),
+		// 	)
+
+		// })
+
 		v2.GET("/signout", middleware.AuthMiddleware(), func(c *gin.Context) {
 			session := sessions.Default(c)
 			session.Delete("Auth")
@@ -246,15 +265,163 @@ func main() {
 			})
 		})
 		v2.POST("/edituser", middleware.AuthMiddleware("Admin"), func(c *gin.Context) {
-			currentusrt := model.GetCurrentUser(c)
+			session := sessions.Default(c)
+
+			// دریافت شناسه کاربر
+			userId := c.PostForm("ID")
+			if userId == "" {
+				c.HTML(http.StatusBadRequest, "edit_user.html", gin.H{
+					"Username": session.Get("UserName"),
+					"UserRole": session.Get("UserRole"),
+					"title":    "ویرایش کاربر",
+					"action":   "edit_user",
+					"message":  "شناسه کاربر الزامی است",
+					"success":  false,
+				})
+				return
+			}
+
+			// یافتن کاربر موجود
+			var user boot.Users
+			if err := boot.DB().First(&user, userId).Error; err != nil {
+				c.HTML(http.StatusNotFound, "edit_user.html", gin.H{
+					"Username": session.Get("UserName"),
+					"UserRole": session.Get("UserRole"),
+					"title":    "ویرایش کاربر",
+					"action":   "edit_user",
+					"message":  "کاربر یافت نشد",
+					"success":  false,
+				})
+				return
+			}
+
+			// اعتبارسنجی و به‌روزرسانی فیلدها
+			if name := strings.TrimSpace(c.PostForm("Name")); name != "" {
+				if len(name) < 3 {
+					c.HTML(http.StatusBadRequest, "edit_user.html", gin.H{
+						"Username": session.Get("UserName"),
+						"UserRole": session.Get("UserRole"),
+						"title":    "ویرایش کاربر",
+						"action":   "edit_user",
+						"message":  "نام باید حداقل ۳ کاراکتر باشد",
+						"success":  false,
+					})
+					return
+				}
+				user.Name = name
+			}
+
+			if email := strings.TrimSpace(c.PostForm("Email")); email != "" {
+				if !Utility.IsValidEmail(email) {
+					c.HTML(http.StatusBadRequest, "edit_user.html", gin.H{
+						"Username": session.Get("UserName"),
+						"UserRole": session.Get("UserRole"),
+						"title":    "ویرایش کاربر",
+						"action":   "edit_user",
+						"message":  "فرمت ایمیل نامعتبر است",
+						"success":  false,
+					})
+					return
+				}
+				user.Email = email
+			}
+
+			if phone := strings.TrimSpace(c.PostForm("Phonenumber")); phone != "" {
+				if !Utility.IsValidPhoneNumber(phone) {
+					c.HTML(http.StatusBadRequest, "edit_user.html", gin.H{
+						"Username": session.Get("UserName"),
+						"UserRole": session.Get("UserRole"),
+						"title":    "ویرایش کاربر",
+						"action":   "edit_user",
+						"message":  "فرمت شماره تلفن نامعتبر است",
+						"success":  false,
+					})
+					return
+				}
+				user.Phonenumber = phone
+			}
+
+			if role := strings.TrimSpace(c.PostForm("Role")); role != "" {
+				if role != "Admin" && role != "Author" && role != "guest" {
+					c.HTML(http.StatusBadRequest, "edit_user.html", gin.H{
+						"Username": session.Get("UserName"),
+						"UserRole": session.Get("UserRole"),
+						"title":    "ویرایش کاربر",
+						"action":   "edit_user",
+						"message":  "نقش کاربر نامعتبر است",
+						"success":  false,
+					})
+					return
+				}
+				user.Role = role
+			}
+
+			if address := strings.TrimSpace(c.PostForm("Address")); address == "" {
+
+				c.HTML(http.StatusBadRequest, "edit_user.html", gin.H{
+					"Username": session.Get("UserName"),
+					"UserRole": session.Get("UserRole"),
+					"title":    "ویرایش کاربر",
+					"action":   "edit_user",
+					"message":  "آدرس نامعتبر است",
+					"success":  false,
+				})
+				return
+
+			} else {
+				user.Address = address
+			}
+
+			if password := c.PostForm("Password"); password != "" {
+				if len(password) < 8 {
+					c.HTML(http.StatusBadRequest, "edit_user.html", gin.H{
+						"Username": session.Get("UserName"),
+						"UserRole": session.Get("UserRole"),
+						"title":    "ویرایش کاربر",
+						"action":   "edit_user",
+						"message":  "رمز عبور باید حداقل ۸ کاراکتر باشد",
+						"success":  false,
+					})
+					return
+				}
+				hashedPassword, err := Utility.HashPassword(password)
+				if err != nil {
+					c.HTML(http.StatusInternalServerError, "edit_user.html", gin.H{
+						"Username": session.Get("UserName"),
+						"UserRole": session.Get("UserRole"),
+						"title":    "ویرایش کاربر",
+						"action":   "edit_user",
+						"message":  "خطا در پردازش رمز عبور",
+						"success":  false,
+					})
+					return
+				}
+				user.Password = hashedPassword
+			}
+
+			// ذخیره تغییرات
+			if err := boot.DB().Save(&user).Error; err != nil {
+				c.HTML(http.StatusInternalServerError, "edit_user.html", gin.H{
+					"Username": session.Get("UserName"),
+					"UserRole": session.Get("UserRole"),
+					"title":    "ویرایش کاربر",
+					"action":   "edit_user",
+					"message":  "خطا در به‌روزرسانی کاربر",
+					"success":  false,
+				})
+				return
+			}
+
 			c.HTML(http.StatusOK, "edit_user.html", gin.H{
-				"title":   "ویرایش کاربر",
-				"action":  "add_user",
-				"message": "کاربر با موفقیت  اصلاح شد",
-				"success": true,
-				"user":    currentusrt,
+				"Username": session.Get("UserName"),
+				"UserRole": session.Get("UserRole"),
+				"title":    "ویرایش کاربر",
+				"action":   "edit_user",
+				"message":  "تغییرات با موفقیت ذخیره شدند",
+				"success":  true,
 			})
 		})
+
 		v2.POST("/users-find", middleware.AuthMiddleware(), func(c *gin.Context) {
 			var data struct {
 				Term string `json:"term"`
@@ -400,31 +567,32 @@ func main() {
 			var product boot.Inventory
 			var oldproduct boot.Inventory
 			product.ID, _ = strconv.ParseUint(c.PostForm("ProductName"), 10, 64)
+
 			res := boot.DB().Model(&product).Where("id = ? ", product.ID).Scan(&oldproduct)
 			if res.RowsAffected > 0 {
 				product.Name = oldproduct.Name
 				product.RolePrice = Utility.StringToInt64(c.PostForm("RolePrice"))
 				product.MeterPrice = Utility.StringToInt64(c.PostForm("MeterPrice"))
 				product.Count = oldproduct.Count + Utility.StringToInt64(c.PostForm("ProductsCount"))
-				fmt.Println(oldproduct.Count, c.PostForm("ProductsCount"), product.Count)
 				product.Meter = oldproduct.Meter + Utility.StringToInt64(c.PostForm("ProductMeter"))
-				fmt.Println(oldproduct.Name, product.Name)
 				product.InventoryNumber = 1
 
 				res := boot.DB().Model(&product).Where("id = ? ", product.ID).Updates(&product)
 				if res.RowsAffected > 0 {
 					c.HTML(http.StatusOK, "production.html", gin.H{
-						"title":   "محصول",
-						"action":  "addproduct",
-						"message": boot.Messages("product made success"),
-						"success": true,
+						"title": "محصول",
+						// "action":   "addproduct",
+						"message":  boot.Messages("product made success"),
+						"success":  true,
+						"products": model.GetAllProductsByInventory(int32(1)),
 					})
 				} else {
 					c.HTML(http.StatusOK, "production.html", gin.H{
-						"title":   "محصول",
-						"action":  "addproduct",
-						"message": boot.Messages("product made faild"),
-						"success": false,
+						"title": "محصول",
+						// "action":   "addproduct",
+						"message":  boot.Messages("product made success"),
+						"success":  false,
+						"products": model.GetAllProductsByInventory(int32(1)),
 					})
 				}
 			}
@@ -443,7 +611,12 @@ func main() {
 				Payments.Name = c.PostForm("PaymentName")
 				Payments.TotalPrice = Utility.StringToInt64(c.PostForm("PaymentTotalPrice"))
 				Payments.Describe = c.PostForm("PaymentDescribe")
-				Payments.CreatedAt = c.PostForm("CreatedAt")
+				if c.PostForm("CreatedAt") != "" {
+					Payments.CreatedAt = c.PostForm("CreatedAt")
+				} else {
+					Payments.CreatedAt = Utility.CurrentTime()
+
+				}
 				Payments.Status = c.PostForm("PaymentStatus")
 
 				res := boot.DB().Model(&Payments).Where("id = ? ", Payments.ID).Updates(&Payments)
@@ -491,7 +664,7 @@ func main() {
 			c.HTML(http.StatusOK, "export.html", gin.H{
 
 				"Username":     session.Get("UserName"),
-				"UserRole":     session.Get("UserRole"),
+				"UserRole":     "admin",
 				"action":       "export",
 				"title":        "فاکتور",
 				"date":         Utility.CurrentTime(),
@@ -615,7 +788,6 @@ func main() {
 
 			// bind result " data.Content " from ajax to  Export for make row in db
 			User := boot.Users{}
-			fmt.Println("data", data)
 			Export := boot.Export{}
 
 			result := Utility.Unserialize(data.Content)
@@ -627,7 +799,6 @@ func main() {
 			Export.TotalPrice = Tprice
 			Export.Tax = Utility.StringToInt64(result["Tax"])
 
-			fmt.Println(result["Tax"], Utility.StringToFloat(result["Tax"]), Export.Tax)
 			Export.CreatedAt = string(Utility.CurrentTime())
 			Export.InventoryNumber = Utility.StringToInt32(result["InventoryNumber"])
 			Export.Describe = result["describe"]
@@ -651,6 +822,9 @@ func main() {
 				for _, payment := range data.Payments {
 					// Convert and create payment records
 					totalPrice, _ := strconv.ParseInt(payment.TotalPrice, 10, 64)
+					if payment.CreatedAt == "" {
+						payment.CreatedAt = Utility.CurrentTime()
+					}
 					dbPayment := boot.Payments{
 						Method:     payment.Method,
 						Number:     payment.Number,
@@ -749,6 +923,68 @@ func main() {
 				"title":    "پرداخت ها",
 				"Paginate": template.HTML(Utility.MakePaginate(model.GetCountOfExports()/1, "export-list")),
 				"Payments": model.GetAllPaymentsWithExportNumber(0, postperpage, status),
+			})
+		})
+		v2.GET("/backup", middleware.AuthMiddleware(), func(c *gin.Context) {
+			session := sessions.Default(c)
+			// fmt.Println(resExport, Export.ID)
+			fs := afero.NewOsFs()
+
+			baseURL := viper.GetString("LOCAL_URL")
+			backups, _ := boot.GetBackupList(fs, baseURL)
+			c.HTML(http.StatusOK, "backups.html", gin.H{
+				"Username": session.Get("UserName"),
+				"UserRole": session.Get("UserRole"),
+				"title":    "بک آپ ها",
+				"backups":  backups,
+			})
+		})
+		r.GET("/backups/:filename", func(c *gin.Context) {
+			filename := c.Param("filename")
+			fs := afero.NewOsFs()
+
+			// بررسی وجود فایل با استفاده از afero.Fs
+			fileInfo, err := fs.Stat(filename)
+			if err != nil {
+				if os.IsNotExist(err) {
+					c.JSON(http.StatusNotFound, gin.H{"error": "فایل یافت نشد"})
+					return
+				}
+				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+				return
+			}
+
+			// باز کردن فایل با استفاده از afero
+			file, err := fs.Open(filename)
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+				return
+			}
+			defer file.Close()
+
+			// تنظیم هدرهای مناسب برای دانلود
+			c.Header("Content-Description", "File Transfer")
+			c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", filename))
+			c.Header("Content-Type", "application/octet-stream")
+			c.Header("Content-Length", fmt.Sprint(fileInfo.Size()))
+
+			// ارسال فایل
+			_, err = io.Copy(c.Writer, file)
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			}
+		})
+		v2.GET("/charts", middleware.AuthMiddleware(), func(c *gin.Context) {
+			session := sessions.Default(c)
+			c.HTML(http.StatusOK, "charts.html", gin.H{
+				"title":      "صفحه اصلی",
+				"Username":   session.Get("UserName"),
+				"UserRole":   session.Get("UserRole"),
+				"message":    boot.Messages("login success"),
+				"success":    true,
+				"users":      model.GetAllUsersByRole("guest"),
+				"exports":    model.GetAllExportsByPaginate(0, 5),
+				"allexports": model.GetAllExports(),
 			})
 		})
 		v2.GET("/deletePayments", middleware.AuthMiddleware("Admin"), func(c *gin.Context) {

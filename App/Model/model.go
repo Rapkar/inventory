@@ -1,8 +1,8 @@
 package Model
 
 import (
-	"fmt"
 	"inventory/App/Boot"
+	"log"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -12,14 +12,13 @@ import (
 
 func GetAllUsersByRole(role string) []Boot.Users {
 	var users []Boot.Users
-	switch role {
-	case "Admin":
-		Boot.DB().Model(&Boot.Users{}).Select("*").Where("role = ? ", "Admin").Scan(&users)
-	case "Author":
-		Boot.DB().Model(&Boot.Users{}).Select("*").Where("role = ? ", "Author").Scan(&users)
-	case "guest":
-		Boot.DB().Model(&Boot.Users{}).Select("*").Where("role = ? ", "guest").Scan(&users)
+	db := Boot.DB()
+	sqlDB, err := db.DB()
+	if err != nil {
+		log.Println("خطا در دریافت اتصال دیتابیس:", err)
 	}
+	defer sqlDB.Close()
+	Boot.DB().Model(&Boot.Users{}).Select("*").Where("role = ? ", role).Scan(&users)
 
 	return users
 }
@@ -28,18 +27,37 @@ func GetAllUsersByRole(role string) []Boot.Users {
 
 func GetUserByEmail(login Boot.Login) []Boot.Users {
 	var users []Boot.Users
+	db := Boot.DB()
+	sqlDB, err := db.DB()
+	if err != nil {
+		log.Println("خطا در دریافت اتصال دیتابیس:", err)
+	}
+	defer sqlDB.Close()
 	Boot.DB().Model(Boot.Users{}).Select("*").Where("Email = ?", login.Email).Scan(&users)
+
 	return users
 }
 
 // get user by id
 func GetUserById(userid Boot.Users) []Boot.Users {
 	var user []Boot.Users
+	db := Boot.DB()
+	sqlDB, err := db.DB()
+	if err != nil {
+		log.Println("خطا در دریافت اتصال دیتابیس:", err)
+	}
+	defer sqlDB.Close()
 	Boot.DB().Model(&Boot.Users{}).Select("*").Where("ID = ?", userid.ID).Scan(&user)
 	return user
 }
 func GetUserRoleById(userid Boot.Users) string {
 	var role string
+	db := Boot.DB()
+	sqlDB, err := db.DB()
+	if err != nil {
+		log.Println("خطا در دریافت اتصال دیتابیس:", err)
+	}
+	defer sqlDB.Close()
 	Boot.DB().Model(&Boot.Users{}).Select("role").Where("ID = ?", userid.ID).Scan(&role)
 	return role
 }
@@ -52,18 +70,30 @@ func GetCurrentUser(c *gin.Context) []Boot.Users {
 }
 func GetCountOfUsers() int64 {
 	var count int64
+	db := Boot.DB()
+	sqlDB, err := db.DB()
+	if err != nil {
+		log.Println("خطا در دریافت اتصال دیتابیس:", err)
+		return 0
+	}
+	defer sqlDB.Close()
 	Boot.DB().Model(&[]Boot.Users{}).Find(&[]Boot.Users{}).Count(&count)
 	return count
 }
 func GetAllUsersByPaginate(offset int, limit int, role string) []Boot.Users {
 	var Users []Boot.Users
+	db := Boot.DB()
+	sqlDB, err := db.DB()
+	if err != nil {
+		log.Println("خطا در دریافت اتصال دیتابیس:", err)
+	}
+	defer sqlDB.Close()
 	Boot.DB().Model(&Boot.Users{}).Select("*").Where("role = ?", role).Offset(offset).Limit(limit).Scan(&Users)
 	return Users
 }
 
 func RemoveCurrentUser(c *gin.Context) bool {
 	Id := c.Request.URL.Query().Get("user-id")
-	fmt.Println(Id)
 	ExportID, err := strconv.ParseUint(Id, 10, 64)
 	if err != nil {
 		// handle the error
@@ -78,7 +108,12 @@ func RemoveCurrentUser(c *gin.Context) bool {
 }
 func GetAllUsersByPhoneAndName(searchTerm string) []Boot.Users {
 	var Users []Boot.Users
-
+	db := Boot.DB()
+	sqlDB, err := db.DB()
+	if err != nil {
+		log.Println("خطا در دریافت اتصال دیتابیس:", err)
+	}
+	defer sqlDB.Close()
 	Boot.DB().Model(&Boot.Users{}).Where("name LIKE ? OR phonenumber LIKE ?", "%"+searchTerm+"%", "%"+searchTerm+"%").Find(&Users)
 	return Users
 }

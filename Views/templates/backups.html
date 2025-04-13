@@ -1,0 +1,46 @@
+{{template "header" . }}
+{{template "navbar" . }}
+
+<body>
+    <div class="h-100 d-flex align-items-center mt-5">
+        <div class="container mt-5 users_box">
+            {{if .success}}
+            {{template "success_notif" .}}
+            {{else if eq .success false}}
+            {{template "danger_notif" .}}
+            {{end}}
+
+
+            <table dir="rtl" id="userlist" class="table table-sm table-dark">
+                <thead>
+                    <tr>
+                        <th scope="col">نام فایل</th>
+                        <th scope="col">حجم</th>
+                        <th scope="col">تاریخ</th>
+                        {{ if eq $.UserRole "Admin"}}
+
+                        <th scope="col">دانلود</th>
+                        {{end}}
+
+                    </tr>
+                </thead>
+                <tbody dir="rtl">
+                    {{range .backups}}
+                    <tr>
+                        <td>{{.Name}}</td>
+                        <td>{{.Size}} KB</td>
+                        <td>{{.BackupTime }}</td>
+                        {{ if eq $.UserRole "Admin"}}
+
+                        <td><a href="/backups/{{.Name}}">دریافت فایل</a></td>
+                        {{end}}
+
+                    </tr>
+                    {{end}}
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+    {{template "footer.html"}}

@@ -2,6 +2,7 @@ package Model
 
 import (
 	"inventory/App/Boot"
+	"log"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -15,13 +16,23 @@ func GetAllProductsByInventory(inventory int32) []Boot.Inventory {
 	case 2:
 		Boot.DB().Model(&Boot.Inventory{}).Select("*").Where("inventory_number = ? ", "2").Scan(&products)
 	}
-
+	db := Boot.DB()
+	sqlDB, err := db.DB()
+	if err != nil {
+		log.Println("خطا در دریافت اتصال دیتابیس:", err)
+	}
+	defer sqlDB.Close()
 	return products
 }
 func GetProductById(id int) []Boot.Inventory {
 	var products []Boot.Inventory
 	Boot.DB().Model(&Boot.Inventory{}).Select("*").Where("id= ? ", id).Scan(&products)
-
+	db := Boot.DB()
+	sqlDB, err := db.DB()
+	if err != nil {
+		log.Println("خطا در دریافت اتصال دیتابیس:", err)
+	}
+	defer sqlDB.Close()
 	return products
 }
 func RemoveCurrentProduct(c *gin.Context) bool {

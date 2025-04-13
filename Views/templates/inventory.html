@@ -2,7 +2,7 @@
 {{template "navbar" . }}
 <body>
     <div class="h-100 d-flex align-items-center mt-5">
-        <div class="container mt-5">
+        <div class="container mt-5 users_box">
 
             <table dir="rtl"  class="table table-sm table-dark">
                 <thead>
@@ -24,7 +24,7 @@
                     <td dir="ltr" style="text-align:right;" class="price" >{{.RolePrice}}</td>
                     <td dir="ltr" style="text-align:right;"  class="price" >{{.MeterPrice}}</td>
                     <td dir="ltr" style="text-align:right;" class="prn" >{{.Count}}</td>
-                    <td dir="ltr" style="text-align:right;" class="prn" > {{.Meter}}</td>
+                    <td dir="ltr" style="text-align:right;" class="prn" >{{.Meter}}</td>
                     
                     <td dir="ltr" type="password text-center"  style="text-align: center;" >
                       <a href="./deleteproduct?product-id={{.ID}}&inventory={{.InventoryNumber}}" ><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
