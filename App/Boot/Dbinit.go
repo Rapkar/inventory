@@ -20,7 +20,6 @@ import (
 )
 
 func DB() *gorm.DB {
-	log.Printf("start")
 
 	viper.SetConfigFile(".env")
 	viper.SetConfigName("config")
@@ -50,7 +49,6 @@ func DB() *gorm.DB {
 	}
 
 	dsn := DATABASEUSER + ":" + DATABASEUSERPASS + "@tcp(" + DATABASEHOST + ":" + DATABASEPORT + ")/" + DATABASENAME + "?charset=utf8mb4&parseTime=True&loc=Local"
-	fmt.Println("linl", dsn)
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	sqlDB, err := db.DB()
 
@@ -62,22 +60,22 @@ func DB() *gorm.DB {
 	sqlDB.SetMaxIdleConns(5)
 	sqlDB.SetMaxOpenConns(6)
 	sqlDB.SetConnMaxLifetime(5 * time.Minute)
-	go func() {
-		ticker := time.NewTicker(5 * time.Minute)
-		defer ticker.Stop()
+	// go func() {
+	// 	ticker := time.NewTicker(5 * time.Minute)
+	// 	defer ticker.Stop()
 
-		for range ticker.C {
-			sqlDB, err := DB().DB()
-			if err != nil {
-				log.Printf("Pool stats error: %v", err)
-				continue
-			}
+	// 	for range ticker.C {
+	// 		sqlDB, err := DB().DB()
+	// 		if err != nil {
+	// 			log.Printf("Pool stats error: %v", err)
+	// 			continue
+	// 		}
 
-			stats := sqlDB.Stats()
-			log.Printf("DB Pool Stats: OpenConnections=%d InUse=%d Idle=%d",
-				stats.OpenConnections, stats.InUse, stats.Idle)
-		}
-	}()
+	// 		stats := sqlDB.Stats()
+	// 		log.Printf("DB Pool Stats: OpenConnections=%d InUse=%d Idle=%d",
+	// 			stats.OpenConnections, stats.InUse, stats.Idle)
+	// 	}
+	// }()
 
 	return db
 
@@ -174,10 +172,7 @@ func Init() {
 	} else {
 		fmt.Println("Payments table found. #")
 	}
-	if err := TakeBackup2(afero.NewOsFs(), 1); err != nil {
-		log.Printf("خطا در ایجاد بکاپ: %v", err)
-		// مدیریت خطا
-	}
+
 }
 
 func TakeBackup(fs afero.Fs, is int) {
@@ -281,7 +276,7 @@ func TakeBackup2(fs afero.Fs, backupType int) error {
 
 	file, err := fs.Create(backupName)
 	if err != nil {
-		return fmt.Errorf("خطا در ایجاد فایل بکاپ: %v", err)
+		return fmt.Errorf("error in make backup file: %v", err)
 	}
 	defer file.Close()
 
@@ -289,15 +284,15 @@ func TakeBackup2(fs afero.Fs, backupType int) error {
 	cmd.Stderr = os.Stderr
 
 	if err := cmd.Run(); err != nil {
-		return fmt.Errorf("خطا در اجرای mysqldump: %v", err)
+		return fmt.Errorf("eror in  mysqldump: %v", err)
 	}
 
 	// مدیریت فایل‌های قدیمی
 	if err := manageOldBackups(fs, backupType, backupTime); err != nil {
-		log.Printf("خطا در مدیریت فایل‌های قدیمی: %v", err)
+		log.Printf("error in manage old backup files: %v", err)
 	}
 
-	log.Printf("بکاپ با موفقیت ایجاد شد: %s", backupName)
+	log.Printf("✅ created backup success %s", backupName)
 	return nil
 }
 
@@ -318,12 +313,28 @@ func manageOldBackups(fs afero.Fs, backupType int, backupTime time.Time) error {
 	oldBackupName := fmt.Sprintf("backup-%s.sql", oldBackupTime.Format("2006-01-02-15-04-05"))
 
 	if err := fs.Remove(oldBackupName); err != nil && !os.IsNotExist(err) {
-		return fmt.Errorf("خطا در حذف فایل قدیمی: %v", err)
+		return fmt.Errorf("error in remove old backup files: %v", err)
 	}
 
 	return nil
 }
+func ScheduleBackups() {
+	// بک‌آپ روزانه
+	go func() {
+		for {
+			TakeBackup2(afero.NewOsFs(), 1)
+			time.Sleep(24 * time.Hour)
+		}
+	}()
 
+	// بک‌آپ هفتگی
+	go func() {
+		for {
+			TakeBackup2(afero.NewOsFs(), 2)
+			time.Sleep(7 * 24 * time.Hour)
+		}
+	}()
+}
 func GetBackupList(fs afero.Fs, baseURL string) ([]BackupFile, error) {
 	var backups []BackupFile
 
@@ -385,13 +396,13 @@ func PeroudBackup() {
 		fmt.Println("\n in parent round number is =", is)
 
 		if is == 1 {
-			TakeBackup(fs, 1)
+			TakeBackup2(fs, 1)
 		} else if is == 2 {
-			TakeBackup(fs, 2)
+			TakeBackup2(fs, 2)
 		} else if is == 3 {
-			TakeBackup(fs, 3)
+			TakeBackup2(fs, 3)
 		} else if is == 4 {
-			TakeBackup(fs, 4)
+			TakeBackup2(fs, 4)
 			is = 0
 		}
 		is++

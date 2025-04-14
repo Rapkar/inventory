@@ -10,12 +10,23 @@ import (
 
 func GetAllProductsByInventory(inventory int32) []Boot.Inventory {
 	var products []Boot.Inventory
-	switch inventory {
-	case 1:
-		Boot.DB().Model(&Boot.Inventory{}).Select("*").Where("inventory_number= ? ", "1").Scan(&products)
-	case 2:
-		Boot.DB().Model(&Boot.Inventory{}).Select("*").Where("inventory_number = ? ", "2").Scan(&products)
+
+	Boot.DB().Model(&Boot.Inventory{}).Select("*").Where("inventory_number= ? ", inventory).Scan(&products)
+
+	db := Boot.DB()
+	sqlDB, err := db.DB()
+	if err != nil {
+		log.Println("خطا در دریافت اتصال دیتابیس:", err)
 	}
+	defer sqlDB.Close()
+	return products
+}
+func GetAllProductsByInventoryAndPaginate(offset int, limit int, inventory int32) []Boot.Inventory {
+	var products []Boot.Inventory
+
+	Boot.DB().Model(&Boot.Inventory{}).Select("*").Where("inventory_number= ? ", inventory).Offset(offset).
+		Limit(limit).Scan(&products)
+
 	db := Boot.DB()
 	sqlDB, err := db.DB()
 	if err != nil {

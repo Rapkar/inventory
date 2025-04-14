@@ -1,0 +1,21 @@
+{{template "header" . }}
+
+<body>
+    <div class="h-100 d-flex align-items-center justify-content-center  mt-5">
+        <div class="container mt-5"> 
+            <div class="row">
+                <div class="col-lg-6 d-md-none d-block">
+                    <img class="w-100" src="../assets/images/login.jpg">
+                </div>
+                <div class="col-lg-6 d-flex flex-column align-items-center  justify-content-center">
+                    <h2>{{.message}}</h2><br>
+                    <a href="/auth/">تلاش مجدد</a>
+                </div>
+
+                <div class="col-lg-6 d-md-block d-none">
+                    <img class="w-100" src="../assets/images/login.jpg">
+                </div>
+            </div>
+        </div>
+    </div>
+    {{template "footer.html"}}

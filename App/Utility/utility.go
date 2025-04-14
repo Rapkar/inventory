@@ -122,17 +122,136 @@ func IntToString(value int8) string {
 	return val
 }
 
-func MakePaginate(value int64, url string) string {
-	var paginate string
-	for i := 1; i < int(value); i++ {
-		if i == 1 {
-			paginate += "<li class='page-item active'><a class='page-link' attr-page='" + fmt.Sprintf("%d", i) + "' href='./" + url + "/?page=" + fmt.Sprintf("%d", i) + "'> " + fmt.Sprintf("%d", i) + "</a></li> "
-		} else {
-			paginate += "<li class='page-item'><a class='page-link' attr-page='" + fmt.Sprintf("%d", i) + "' href='./" + url + "/?page=" + fmt.Sprintf("%d", i) + "'> " + fmt.Sprintf("%d", i) + "</a></li> "
+func MakePaginate(totalItems int64, itemsPerPage int64, currentPage int64, url string) string {
+	totalPages := totalItems / itemsPerPage
+	if totalItems%itemsPerPage != 0 {
+		totalPages++
+	}
 
+	var paginate strings.Builder
+
+	// Always show first page
+	if currentPage != 1 {
+		paginate.WriteString(fmt.Sprintf(
+			`<li class='page-item'><a class='page-link' data-page='1' href='./%s/?page=1'>1</a></li>`,
+			url,
+		))
+	}
+
+	// Calculate range to show (current page ±1)
+	startPage := currentPage - 1
+	if startPage < 2 {
+		startPage = 2
+	}
+
+	endPage := currentPage + 1
+	if endPage > totalPages-1 {
+		endPage = totalPages - 1
+	}
+
+	// Add ellipsis if needed
+	if startPage > 2 {
+		paginate.WriteString(`<li class='page-item disabled'><span class='page-link'>...</span></li>`)
+	}
+
+	// Show pages in range
+	for i := startPage; i <= endPage; i++ {
+		if i == currentPage {
+			paginate.WriteString(fmt.Sprintf(
+				`<li class='page-item active'><a class='page-link' data-page='%d' href='./%s/?page=%d'>%d</a></li>`,
+				i, url, i, i,
+			))
+		} else {
+			paginate.WriteString(fmt.Sprintf(
+				`<li class='page-item'><a class='page-link' data-page='%d' href='./%s/?page=%d'>%d</a></li>`,
+				i, url, i, i,
+			))
 		}
 	}
-	return paginate
+
+	// Add ellipsis if needed
+	if endPage < totalPages-1 {
+		paginate.WriteString(`<li class='page-item disabled'><span class='page-link'>...</span></li>`)
+	}
+
+	// Always show last page if different from first
+	if totalPages > 1 {
+		if currentPage != totalPages {
+			paginate.WriteString(fmt.Sprintf(
+				`<li class='page-item'><a class='page-link' data-page='%d' href='./%s/?page=%d'>%d</a></li>`,
+				totalPages, url, totalPages, totalPages,
+			))
+		}
+	}
+
+	return paginate.String()
+}
+func MakeinventoryPaginate(totalItems int64, itemsPerPage int64, currentPage int64, url string, inventoryID int32) string {
+	totalPages := totalItems / itemsPerPage
+	if totalItems%itemsPerPage != 0 {
+		totalPages++
+	}
+
+	var paginate strings.Builder
+
+	// Helper function to build consistent URLs
+	buildURL := func(page int64) string {
+		return fmt.Sprintf("./%s/?page=%d&inventory=%d", url, page, inventoryID)
+	}
+
+	// Always show first page if not current
+	if currentPage != 1 {
+		paginate.WriteString(fmt.Sprintf(
+			`<li class='page-item'><a class='page-link' data-page='1' href='%s'>1</a></li>`,
+			buildURL(1),
+		))
+	}
+
+	// Calculate range to show (current page ±1)
+	startPage := currentPage - 1
+	if startPage < 2 {
+		startPage = 2
+	}
+
+	endPage := currentPage + 1
+	if endPage > totalPages-1 {
+		endPage = totalPages - 1
+	}
+
+	// Add ellipsis if needed
+	if startPage > 2 {
+		paginate.WriteString(`<li class='page-item disabled'><span class='page-link'>...</span></li>`)
+	}
+
+	// Show pages in range
+	for i := startPage; i <= endPage; i++ {
+		if i == currentPage {
+			paginate.WriteString(fmt.Sprintf(
+				`<li class='page-item active'><a class='page-link' data-page='%d' href='%s'>%d</a></li>`,
+				i, buildURL(i), i,
+			))
+		} else {
+			paginate.WriteString(fmt.Sprintf(
+				`<li class='page-item'><a class='page-link' data-page='%d' href='%s'>%d</a></li>`,
+				i, buildURL(i), i,
+			))
+		}
+	}
+
+	// Add ellipsis if needed
+	if endPage < totalPages-1 {
+		paginate.WriteString(`<li class='page-item disabled'><span class='page-link'>...</span></li>`)
+	}
+
+	// Always show last page if different from first
+	if totalPages > 1 && currentPage != totalPages {
+		paginate.WriteString(fmt.Sprintf(
+			`<li class='page-item'><a class='page-link' data-page='%d' href='%s'>%d</a></li>`,
+			totalPages, buildURL(totalPages), totalPages,
+		))
+	}
+
+	return paginate.String()
 }
 func MakeRandValue() string {
 	rand.Seed(time.Now().UnixNano())

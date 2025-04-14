@@ -54,7 +54,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group col-lg-6  mt-3">
-                                    <label class="col-sm-12 control-label">مالیات</label>
+                                    <label class="col-sm-12 control-label">مالیات و ارزش افزوده</label>
                                     <div class="col-sm-12">
                                         <input required name="Tax" value="0" type="number" inputmode="numeric"
                                             pattern="[0-9]*" placeholder="10" class="form-control">
@@ -275,7 +275,7 @@
                                                                     رول</label>
                                                                 <div class="col-sm-12">
                                                                     <input style="text-align:right;" min="0"
-                                                                        name="Count" type="number" class="form-control">
+                                                                        name="Count"  pattern="[0-9]*"  type="number" class="form-control">
                                                                     <p><span class="ProductsCount"> </span>موجودی</p>
                                                                 </div>
                                                             </div>
@@ -283,8 +283,9 @@
                                                                 <label class="col-sm-12 control-label"
                                                                     min="0">متراژ</label>
                                                                 <div class="col-sm-12">
-                                                                    <input name="Meter" min="0" type="number"
+                                                                    <input name="Meter"  pattern="[0-9]*"  min="0" type="number"
                                                                         class="form-control ">
+                                                                        <p><span class="ProductsMeter"> </span>موجودی</p>
                                                                 </div>
                                                             </div>
                                                             <div class="form-group col-lg-6  mt-3">

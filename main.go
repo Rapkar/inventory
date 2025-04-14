@@ -11,6 +11,7 @@ import (
 	"inventory/App/Utility"
 	"inventory/App/middleware"
 	"io"
+	"log"
 	"net/http"
 	"os"
 	"strconv"
@@ -24,9 +25,28 @@ import (
 )
 
 func main() {
-	const postperpage int = 50
+
+	logFile, err := os.OpenFile("app.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	if err != nil {
+		log.Fatalf("❌ Failed to open log file: %v", err)
+	}
+	multiWriter := io.MultiWriter(os.Stdout, logFile)
+	log.SetOutput(multiWriter)
+	log.Println("🚀 Logger initialized")
+
+	log.Println("🔧 Booting application...")
+	const postperpage int = 20
 	boot.Init()
-	go boot.PeroudBackup()
+
+	go func() {
+		defer func() {
+			if r := recover(); r != nil {
+				log.Println("🔥 Panic in ScheduleBackups:", r)
+			}
+		}()
+		boot.ScheduleBackups()
+		log.Println("📦 ScheduleBackups started")
+	}()
 
 	r := gin.Default()
 	r.LoadHTMLGlob("Views/templates/*")
@@ -65,10 +85,20 @@ func main() {
 			var login boot.Login
 			login.Email = c.PostForm("email")
 			login.Password = c.PostForm("pass")
-			authorized, name, role := auth.CheckAuth(login)
 
-			// fmt.Print(authorized, c.PostForm("email"), c.b, authorized)
+			authorized, name, role, err := auth.CheckAuth(login)
+
+			if err != nil || !authorized {
+				// اگر خطایی رخ داد، کاربر را به صفحه لاگین با پیام خطا هدایت کنیم
+				log.Println("❌ Error in CheckAuth:", err)
+				c.HTML(http.StatusBadRequest, "error.html", gin.H{
+					"message": "ایمیل یا رمز عبور اشتباه است",
+				})
+				return
+			}
+
 			if authorized {
+				// اگر لاگین موفقیت‌آمیز بود
 				session := sessions.Default(c)
 				if session.Get("Auth") != "logedin" {
 					session.Clear()
@@ -78,17 +108,11 @@ func main() {
 					session.Save()
 				}
 
-				c.SetCookie("email", login.Email, 3600, "/Dashboard/", Utility.HomeUrl(), false, true)
-				c.SetCookie("pass", login.Password, 3600, "/Dashboard/", Utility.HomeUrl(), false, true)
-
-				// c.JSON(http.StatusOK, gin.H{"message": "success"})
+				// ریدایرکت به داشبورد پس از ورود موفق
 				c.Redirect(http.StatusMovedPermanently, Utility.HomeUrl()+"/Dashboard")
-			} else {
-
-				c.Redirect(http.StatusMovedPermanently, Utility.HomeUrl()+"/auth")
 			}
-
 		})
+
 	}
 	// logins Route
 
@@ -110,62 +134,110 @@ func main() {
 			})
 		})
 		v2.GET("/api/allexports", middleware.AuthMiddleware(), func(c *gin.Context) {
-			// c.JSON(http.StatusOK,
-			// 	model.GetAllExports(),
-			// )
 			c.JSON(http.StatusOK,
 				model.GetAllExports(),
 			)
 
 		})
-		// v2.GET("/api/mostexports", middleware.AuthMiddleware(), func(c *gin.Context) {
-		// 	// c.JSON(http.StatusOK,
-		// 	// 	model.GetAllExports(),
-		// 	// )
-		// 	c.JSON(http.StatusOK,
-		// 		model.GetMostOrderedProduct(Boot.EscapeExport, error),
-		// 	)
-
-		// })
 
 		v2.GET("/signout", middleware.AuthMiddleware(), func(c *gin.Context) {
 			session := sessions.Default(c)
-			session.Delete("Auth")
-			c.Redirect(http.StatusMovedPermanently, Utility.HomeUrl()+"/auth")
 
+			session.Delete("mysession")
+			session.Delete("Auth")
+			session.Delete("UserRole")
+			session.Delete("UserName")
+			session.Clear()
+
+			c.SetCookie("mysession", "", -1, "/", Utility.HomeUrl(), false, true)
+
+			c.Redirect(http.StatusMovedPermanently, Utility.HomeUrl()+"/auth")
 		})
+
 		v2.GET("/users", middleware.AuthMiddleware(), func(c *gin.Context) {
 			session := sessions.Default(c)
 			// result := "a"
+			pageStr := c.DefaultQuery("page", "1")
+			page, _ := strconv.Atoi(pageStr)
+			if page < 1 {
+				page = 1
+			}
+			offset := (page - 1) * postperpage
+
+			totalItems, err := model.GetCountOfUsers()
+			if err != nil {
+				log.Println("❌ Error fetching GetCountOfUsers:", err)
+				c.HTML(http.StatusBadRequest, "error.html", gin.H{
+					"message": "خطا در دریافت اطلاعات کاربر. لطفاً دوباره تلاش کنید.",
+				})
+				return
+			}
+
 			c.HTML(http.StatusOK, "users.html", gin.H{
 
 				"Username": session.Get("UserName"),
 				"UserRole": session.Get("UserRole"),
 				"title":    "کاربران",
-				"Paginate": template.HTML(Utility.MakePaginate(model.GetCountOfUsers()/int64(postperpage), "user-list")),
-				"users":    model.GetAllUsersByPaginate(0, postperpage, "guest"),
+				// "Paginate": template.HTML(Utility.MakePaginate(model.GetCountOfUsers()/int64(postperpage), "user-list")),
+				"Paginate":    template.HTML(Utility.MakePaginate(int64(totalItems), int64(postperpage), int64(page), "users")),
+				"users":       model.GetAllUsersByPaginate(offset, postperpage, "guest"),
+				"CurrentPage": page,
 			})
 		})
 		v2.GET("/authors", middleware.AuthMiddleware(), func(c *gin.Context) {
 			session := sessions.Default(c)
 			// result := "a"
+
+			pageStr := c.DefaultQuery("page", "1")
+			page, _ := strconv.Atoi(pageStr)
+			if page < 1 {
+				page = 1
+			}
+			offset := (page - 1) * postperpage
+
+			totalItems, err := model.GetCountOfUsers()
+			if err != nil {
+				log.Println("❌ Error fetching GetCountOfUsers:", err)
+				c.HTML(http.StatusBadRequest, "error.html", gin.H{
+					"message": "خطا در دریافت اطلاعات کاربر. لطفاً دوباره تلاش کنید.",
+				})
+				return
+			}
 			c.HTML(http.StatusOK, "users.html", gin.H{
 
-				"Username": session.Get("UserName"),
-				"UserRole": session.Get("UserRole"),
-				"title":    "کاربران",
-				"Paginate": template.HTML(Utility.MakePaginate(model.GetCountOfUsers()/int64(postperpage), "user-list")),
-				"users":    model.GetAllUsersByPaginate(0, postperpage, "Author"),
+				"Username":    session.Get("UserName"),
+				"UserRole":    session.Get("UserRole"),
+				"title":       "کاربران",
+				"Paginate":    template.HTML(Utility.MakePaginate(int64(totalItems), int64(postperpage), int64(page), "Author")),
+				"users":       model.GetAllUsersByPaginate(offset, postperpage, "Author"),
+				"CurrentPage": page,
 			})
 		})
 		v2.GET("/admin_users", middleware.AuthMiddleware("Admin"), func(c *gin.Context) {
 			session := sessions.Default(c)
+			pageStr := c.DefaultQuery("page", "1")
+			page, _ := strconv.Atoi(pageStr)
+			if page < 1 {
+				page = 1
+			}
+			offset := (page - 1) * postperpage
+
+			totalItems, err := model.GetCountOfUsers()
+			if err != nil {
+				log.Println("❌ Error fetching GetCountOfUsers:", err)
+				c.HTML(http.StatusBadRequest, "error.html", gin.H{
+					"message": "خطا در دریافت اطلاعات کاربر. لطفاً دوباره تلاش کنید.",
+				})
+				return
+			}
+
 			c.HTML(http.StatusOK, "admins.html", gin.H{
-				"Username": session.Get("UserName"),
-				"UserRole": session.Get("UserRole"),
-				"title":    "کاربران ادمین",
-				"Paginate": template.HTML(Utility.MakePaginate(model.GetCountOfUsers()/int64(postperpage), "user-list")),
-				"users":    model.GetAllUsersByPaginate(0, postperpage, "Admin"),
+				"Username":    session.Get("UserName"),
+				"UserRole":    session.Get("UserRole"),
+				"title":       "کاربران ادمین",
+				"Paginate":    template.HTML(Utility.MakePaginate(int64(totalItems), int64(postperpage), int64(page), "admin_users")),
+				"users":       model.GetAllUsersByPaginate(offset, postperpage, "Admin"),
+				"CurrentPage": page,
 			})
 		})
 		v2.GET("/add_user", middleware.AuthMiddleware("Admin"), func(c *gin.Context) {
@@ -230,6 +302,22 @@ func main() {
 		})
 		v2.GET("/deleteuser", middleware.AuthMiddleware("Admin"), func(c *gin.Context) {
 			session := sessions.Default(c)
+			pageStr := c.DefaultQuery("page", "1")
+			category := c.DefaultQuery("user", "users")
+			page, _ := strconv.Atoi(pageStr)
+			if page < 1 {
+				page = 1
+			}
+			offset := (page - 1) * postperpage
+
+			totalItems, err := model.GetCountOfUsers()
+			if err != nil {
+				log.Println("❌ Error fetching GetCountOfUsers:", err)
+				c.HTML(http.StatusBadRequest, "error.html", gin.H{
+					"message": "خطا در دریافت اطلاعات کاربر. لطفاً دوباره تلاش کنید.",
+				})
+				return
+			}
 
 			if model.RemoveCurrentUser(c) {
 				c.HTML(http.StatusOK, "users.html", gin.H{
@@ -238,31 +326,43 @@ func main() {
 					"title":    "کاربران",
 					"message":  boot.Messages("user remove success"),
 					"success":  true,
-					"Paginate": template.HTML(Utility.MakePaginate(model.GetCountOfUsers()/1, "user-list")),
-					"users":    model.GetAllUsersByPaginate(0, postperpage, "Admin"),
+					// "Paginate": template.HTML(Utility.MakePaginate(model.GetCountOfUsers()/1, "user-list")),
+					"Paginate":    template.HTML(Utility.MakePaginate(int64(totalItems), int64(postperpage), int64(page), "users")),
+					"users":       model.GetAllUsersByPaginate(offset, postperpage, category),
+					"CurrentPage": page,
 				})
 			} else {
 				c.HTML(http.StatusOK, "users.html", gin.H{
-					"Username": session.Get("UserName"),
-					"UserRole": session.Get("UserRole"),
-					"title":    "فاکتورها",
-					"success":  false,
-					"message":  boot.Messages("user remove faild"),
-					"Paginate": template.HTML(Utility.MakePaginate(model.GetCountOfUsers()/1, "user-list")),
-					"users":    model.GetAllExportsByPaginate(0, postperpage),
+					"Username":    session.Get("UserName"),
+					"UserRole":    session.Get("UserRole"),
+					"title":       "فاکتورها",
+					"success":     false,
+					"message":     boot.Messages("user remove faild"),
+					"Paginate":    template.HTML(Utility.MakePaginate(int64(totalItems), int64(postperpage), int64(page), "users")),
+					"users":       model.GetAllUsersByPaginate(offset, postperpage, category),
+					"CurrentPage": page,
 				})
 			}
 		})
 		v2.GET("/edituser", middleware.AuthMiddleware("Admin"), func(c *gin.Context) {
 			session := sessions.Default(c)
-			currentusrt := model.GetCurrentUser(c)
+			user, err := model.GetCurrentUser(c)
+			fmt.Println(user)
+			if err != nil {
+				log.Println("❌ Error fetching current user:", err)
+				c.HTML(http.StatusBadRequest, "error.html", gin.H{
+					"message": "خطا در دریافت اطلاعات کاربر. لطفاً دوباره تلاش کنید.",
+				})
+				return
+			}
 			c.HTML(http.StatusOK, "edit_user.html", gin.H{
 				"Username": session.Get("UserName"),
 				"UserRole": session.Get("UserRole"),
 				"title":    "ویرایش کاربر",
-				"user":     currentusrt,
+				"user":     user,
 				"action":   "edituser",
 			})
+
 		})
 		v2.POST("/edituser", middleware.AuthMiddleware("Admin"), func(c *gin.Context) {
 			session := sessions.Default(c)
@@ -544,11 +644,33 @@ func main() {
 		// inventory
 		v2.GET("/inventory", middleware.AuthMiddleware(), func(c *gin.Context) {
 			session := sessions.Default(c)
+			pageStr := c.DefaultQuery("page", "1")
+			inventoryStr := c.DefaultQuery("inventory", "1")
+
+			page, _ := strconv.Atoi(pageStr)
+			if page < 1 {
+				page = 1
+			}
+
+			inventoryID, _ := strconv.Atoi(inventoryStr)
+			offset := (page - 1) * postperpage
+
+			totalItems := model.GetCountOfProduct(1)
+
 			c.HTML(http.StatusOK, "inventory.html", gin.H{
 				"Username": session.Get("UserName"),
 				"UserRole": session.Get("UserRole"),
 				"title":    "انبار",
-				"products": model.GetAllProductsByInventory(Utility.GetCurrentInventory(c)),
+				"Paginate": template.HTML(Utility.MakeinventoryPaginate(
+					int64(totalItems),
+					int64(postperpage),
+					int64(page),
+					"inventory",
+					int32(inventoryID),
+				)),
+				"products":    model.GetAllProductsByInventoryAndPaginate(offset, postperpage, int32(inventoryID)),
+				"CurrentPage": page,
+				"InventoryID": inventoryID, // Pass to template if needed
 			})
 		})
 
@@ -624,15 +746,15 @@ func main() {
 				status := c.Query("status")
 
 				if res.RowsAffected > 0 {
-
+					res, _ := model.GetAllPaymentsWithExportNumber(0, postperpage, status)
 					c.HTML(http.StatusOK, "payments.html", gin.H{
 						"Username": session.Get("UserName"),
 						"UserRole": session.Get("UserRole"),
 						"title":    "پرداخت ها",
 						"success":  true,
 
-						"Paginate": template.HTML(Utility.MakePaginate(model.GetCountOfExports()/1, "export-list")),
-						"Payments": model.GetAllPaymentsWithExportNumber(0, postperpage, status),
+						// "Paginate": template.HTML(Utility.MakePaginate(model.GetCountOfExports()/1, "export-list")),
+						"Payments": res,
 					})
 				} else {
 
@@ -642,8 +764,8 @@ func main() {
 						"title":    "پرداخت ها",
 						"success":  false,
 
-						"Paginate": template.HTML(Utility.MakePaginate(model.GetCountOfExports()/1, "export-list")),
-						"Payments": model.GetAllPaymentsWithExportNumber(0, postperpage, status),
+						// "Paginate": template.HTML(Utility.MakePaginate(model.GetCountOfExports()/1, "export-list")),
+						"Payments": res,
 					})
 				}
 			}
@@ -652,19 +774,19 @@ func main() {
 		// inventory  Production
 
 		v2.GET("/export", middleware.AuthMiddleware(), func(c *gin.Context) {
-			session := sessions.Default(c)
 
-			uniqueString := Utility.MakeRandValue()
-			if !model.CheckExportNumberFound(uniqueString) {
-				uniqueString = Utility.MakeRandValue()
-			} else {
-				return
-			}
+			uniqueString, _ := model.GenerateUniqueExportID()
+			// if !model.CheckExportNumberFound(uniqueString) {
+			// 	uniqueString = Utility.MakeRandValue()
+			// } else {
+			// 	return
+			// }
+			session := sessions.Default(c)
 
 			c.HTML(http.StatusOK, "export.html", gin.H{
 
 				"Username":     session.Get("UserName"),
-				"UserRole":     "admin",
+				"UserRole":     session.Get("UserRole"),
 				"action":       "export",
 				"title":        "فاکتور",
 				"date":         Utility.CurrentTime(),
@@ -675,24 +797,36 @@ func main() {
 		})
 		v2.GET("/deleteExport", middleware.AuthMiddleware("Admin"), func(c *gin.Context) {
 			session := sessions.Default(c)
+			pageStr := c.DefaultQuery("page", "1")
+			page, _ := strconv.Atoi(pageStr)
+			if page < 1 {
+				page = 1
+			}
+			offset := (page - 1) * postperpage
+
+			totalItems := model.GetCountOfExports()
 
 			if model.RemoveCurrentExport(c) {
 				c.HTML(http.StatusOK, "export_list.html", gin.H{
-					"Username": session.Get("UserName"),
-					"UserRole": session.Get("UserRole"),
-					"title":    "فاکتورها",
-					"message":  boot.Messages("Export removed success"),
-					"success":  true,
-					"Paginate": template.HTML(Utility.MakePaginate(model.GetCountOfExports()/1, "export-list")),
-					"exports":  model.GetAllExportsByPaginate(0, postperpage),
+					"Username":    session.Get("UserName"),
+					"UserRole":    session.Get("UserRole"),
+					"title":       "فاکتورها",
+					"message":     boot.Messages("Export removed success"),
+					"success":     true,
+					"Paginate":    template.HTML(Utility.MakePaginate(int64(totalItems), int64(postperpage), int64(page), "export-list")),
+					"exports":     model.GetAllExportsByPaginate(offset, postperpage),
+					"CurrentPage": page,
 				})
 			} else {
 				c.HTML(http.StatusOK, "export_list.html", gin.H{
-					"Username": session.Get("UserName"),
-					"UserRole": session.Get("UserRole"),
-					"title":    "فاکتورها",
-					"Paginate": template.HTML(Utility.MakePaginate(model.GetCountOfExports()/1, "export-list")),
-					"exports":  model.GetAllExportsByPaginate(0, postperpage),
+					"Username":    session.Get("UserName"),
+					"UserRole":    session.Get("UserRole"),
+					"title":       "فاکتورها",
+					"message":     boot.Messages("Export removed success"),
+					"success":     false,
+					"Paginate":    template.HTML(Utility.MakePaginate(int64(totalItems), int64(postperpage), int64(page), "export-list")),
+					"exports":     model.GetAllExportsByPaginate(offset, postperpage),
+					"CurrentPage": page,
 				})
 			}
 		})
@@ -806,11 +940,11 @@ func main() {
 			Export.ExportProducts = exportproducts
 			User.Role = "guest"
 			if !model.CheckExportNumberFound(Export.Number) {
-				Export.Number = Utility.MakeRandValue()
+				Export.Number, _ = model.GenerateUniqueExportID()
 			} else {
 				return
 			}
-
+			// Export.Number , _ := model.GenerateUniqueExportID()
 			boot.DB().Create(&User)
 			resexportproducts := boot.DB().Create(&exportproducts)
 			resExport := boot.DB().Create(&Export)
@@ -846,12 +980,22 @@ func main() {
 		})
 		v2.GET("/export-list", middleware.AuthMiddleware(), func(c *gin.Context) {
 			session := sessions.Default(c)
+			pageStr := c.DefaultQuery("page", "1")
+			page, _ := strconv.Atoi(pageStr)
+			if page < 1 {
+				page = 1
+			}
+			offset := (page - 1) * postperpage
+
+			totalItems := model.GetCountOfExports()
+
 			c.HTML(http.StatusOK, "export_list.html", gin.H{
-				"Username": session.Get("UserName"),
-				"UserRole": session.Get("UserRole"),
-				"title":    "فاکتورها",
-				"Paginate": template.HTML(Utility.MakePaginate(model.GetCountOfExports()/1, "export-list")),
-				"exports":  model.GetAllExportsByPaginate(0, postperpage),
+				"Username":    session.Get("UserName"),
+				"UserRole":    session.Get("UserRole"),
+				"title":       "فاکتورها",
+				"Paginate":    template.HTML(Utility.MakePaginate(int64(totalItems), int64(postperpage), int64(page), "export-list")),
+				"exports":     model.GetAllExportsByPaginate(offset, postperpage),
+				"CurrentPage": page,
 			})
 		})
 
@@ -860,13 +1004,14 @@ func main() {
 				Page   string `json:"page"`
 				Offset string `json:"offset"`
 			}
+
 			if err := c.BindJSON(&data); err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 				return
 			}
 			page, _ := strconv.ParseInt(data.Page, 10, 8)
 			offset := int(page) * int(postperpage)
-			fmt.Println(offset, page)
+			// fmt.Println(offset, page)
 			result := []Boot.EscapeExport{}
 			if page == 1 {
 				result = model.GetAllExportsByPaginate(0, postperpage)
@@ -914,15 +1059,22 @@ func main() {
 		})
 		v2.GET("/payments", middleware.AuthMiddleware(), func(c *gin.Context) {
 			session := sessions.Default(c)
-			// fmt.Println(resExport, Export.ID)
 			status := c.Query("status")
-
+			pageStr := c.DefaultQuery("page", "1")
+			page, _ := strconv.Atoi(pageStr)
+			if page < 1 {
+				page = 1
+			}
+			offset := (page - 1) * postperpage
+			res, _ := model.GetAllPaymentsWithExportNumber(offset, postperpage, status)
+			totalItems := model.GetCountOfPayments()
 			c.HTML(http.StatusOK, "payments.html", gin.H{
-				"Username": session.Get("UserName"),
-				"UserRole": session.Get("UserRole"),
-				"title":    "پرداخت ها",
-				"Paginate": template.HTML(Utility.MakePaginate(model.GetCountOfExports()/1, "export-list")),
-				"Payments": model.GetAllPaymentsWithExportNumber(0, postperpage, status),
+				"Username":    session.Get("UserName"),
+				"UserRole":    session.Get("UserRole"),
+				"title":       "پرداخت ها",
+				"Paginate":    template.HTML(Utility.MakePaginate(int64(totalItems), int64(postperpage), int64(page), "payments")),
+				"Payments":    res,
+				"CurrentPage": page,
 			})
 		})
 		v2.GET("/backup", middleware.AuthMiddleware(), func(c *gin.Context) {
@@ -989,23 +1141,39 @@ func main() {
 		})
 		v2.GET("/deletePayments", middleware.AuthMiddleware("Admin"), func(c *gin.Context) {
 			session := sessions.Default(c)
+			status := c.Query("status")
+
+			pageStr := c.DefaultQuery("page", "1")
+			page, _ := strconv.Atoi(pageStr)
+			if page < 1 {
+				page = 1
+			}
+			offset := (page - 1) * postperpage
+
+			totalItems := model.GetCountOfPayments()
+			res, _ := model.GetAllPaymentsWithExportNumber(offset, postperpage, status)
+
 			if model.RemoveCurrentPayments(c) {
 				c.HTML(http.StatusOK, "payments.html", gin.H{
-					"Username": session.Get("UserName"),
-					"UserRole": session.Get("UserRole"),
-					"title":    "فاکتورها",
-					"message":  boot.Messages("payments removed success"),
-					"success":  true,
-					"Paginate": template.HTML(Utility.MakePaginate(model.GetCountOfExports()/1, "export-list")),
-					"Payments": model.GetAllPaymentsByPaginate(0, postperpage),
+					"Username":    session.Get("UserName"),
+					"UserRole":    session.Get("UserRole"),
+					"title":       "پرداختی ها",
+					"message":     boot.Messages("payments removed success"),
+					"success":     true,
+					"Paginate":    template.HTML(Utility.MakePaginate(int64(totalItems), int64(postperpage), int64(page), "payments")),
+					"Payments":    res,
+					"CurrentPage": page,
 				})
 			} else {
 				c.HTML(http.StatusOK, "payments.html", gin.H{
-					"Username": session.Get("UserName"),
-					"UserRole": session.Get("UserRole"),
-					"title":    "فاکتورها",
-					"Paginate": template.HTML(Utility.MakePaginate(model.GetCountOfExports()/1, "export-list")),
-					"Payments": model.GetAllPaymentsByPaginate(0, postperpage),
+					"Username":    session.Get("UserName"),
+					"UserRole":    session.Get("UserRole"),
+					"title":       "پرداختی ها",
+					"message":     boot.Messages("payments removed faild"),
+					"success":     false,
+					"Paginate":    template.HTML(Utility.MakePaginate(int64(totalItems), int64(postperpage), int64(page), "payments")),
+					"Payments":    res,
+					"CurrentPage": page,
 				})
 			}
 		})

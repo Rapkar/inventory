@@ -11,8 +11,9 @@
       {{template "danger_notif" .}}
       {{end}}
 
+     
       <!-- {{if .Failure}} -->
-
+     
       <!-- {{end}} -->
       <div class="col-xs-12 col-sm-9">
         <form class="form-horizontal" method="post" action="/Dashboard/{{.action}}">
@@ -21,33 +22,33 @@
               <h4 class="panel-title">اطلاعات کاربر</h4>
             </div>
             {{if .user}}
-            {{range .user}}
+             
             <div class="panel-body">
               <div class="form-group  mt-3">
                 <label class="col-sm-2 control-label">نام و نام خانوادگی</label>
                 <div class="col-sm-10">
-                  <input required name="Name" value="{{.Name}}" type="text" class="form-control">
-                  <input required name="ID" value="{{.ID}}" type="hidden" class="form-control">
+                  <input required name="Name" value="{{.user.Name}}" type="text" class="form-control">
+                  <input required name="ID" value="{{.user.ID}}" type="hidden" class="form-control">
                 </div>
               </div>
               <div class="form-group  mt-3">
                 <label class="col-sm-2 control-label">شماره تماس</label>
                 <div class="col-sm-10">
-                  <input style="text-align:right;" name="Phonenumber" value="{{.Phonenumber}}" type="tel"
+                  <input style="text-align:right;" name="Phonenumber" value="{{.user.Phonenumber}}" type="tel"
                     class="form-control">
                 </div>
               </div>
               <div class="form-group  mt-3">
                 <label class="col-sm-2 control-label">آدرس </label>
                 <div class="col-sm-10">
-                  <input required name="Address" value="{{.Address}}" class="form-control">
+                  <input required name="Address" value="{{.user.Address}}" class="form-control">
                 </div>
               </div>
-              {{if and (ne .Role "guest") (ne .Role "banned")}}
+              {{if and (ne .user.Role "guest") (ne .user.Role "banned")}}
               <div class="form-group  mt-3">
                 <label class="col-sm-2 control-label">آدرس ایمیل (نام کاربری)</label>
                 <div class="col-sm-10">
-                  <input required name="Email" value="{{.Email}}" class="form-control">
+                  <input required name="Email" value="{{.user.Email}}" class="form-control">
                 </div>
               </div>
           
@@ -55,9 +56,9 @@
                 <label class="col-sm-2 control-label">نوع کاربر</label>
                 <div class="col-sm-10">
                   <select required name="Role" class="w-100">
-                    <option value="Admin" {{if eq .Role "Admin"}}selected{{end}}>ادمین</option>
-                    <option value="Author" {{if eq .Role "Author"}}selected{{end}}>مدیر داخلی</option>
-                    <option value="guest" {{if eq .Role "guest"}}selected{{end}}>مشتری</option>
+                    <option value="Admin" {{if eq .user.Role "Admin"}}selected{{end}}>ادمین</option>
+                    <option value="Author" {{if eq .user.Role "Author"}}selected{{end}}>مدیر داخلی</option>
+                    <option value="guest" {{if eq .user.Role "guest"}}selected{{end}}>مشتری</option>
                   </select>
                 </div>
               </div>
@@ -67,7 +68,6 @@
                   <input required name="Password" placeholder="****" type="password" class="form-control">
                 </div>
               </div>
-              {{end}}
               {{end}}
               {{else}}
               <div class="panel-body">

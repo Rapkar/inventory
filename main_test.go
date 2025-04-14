@@ -5,6 +5,8 @@ import (
 	"fmt"
 	auth "inventory/App/Auth"
 	boot "inventory/App/Boot"
+	model "inventory/App/Model"
+	"inventory/App/Utility"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -23,7 +25,14 @@ func (m *MockPaymentModel) GetAllPaymentsByAttribiute(term string) []string {
 	args := m.Called(term)
 	return args.Get(0).([]string)
 }
-
+func TestUniqueId() {
+	uniqueString := Utility.MakeRandValue()
+	if !model.CheckExportNumberFound(uniqueString) {
+		uniqueString = Utility.MakeRandValue()
+	} else {
+		return
+	}
+}
 func TestLoginEndpoint(t *testing.T) {
 	// Setup router
 	r := gin.Default()

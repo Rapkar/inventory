@@ -16,11 +16,17 @@ jQuery("#AddProductToExport").on("click", function () {
     //     .done(function (msg) {
     //         console.log(msg);
     //     });
-    var found = jQuery("span.ProductsCount").html();
+    var existproductcount = jQuery("span.ProductsCount").html();
+    var existproductMeter = jQuery("span.ProductsMeter").html();
     var Count = jQuery("#ProductBox input[name='Count']").val()
-    calc = parseInt(found) - parseInt(Count);
-    console.log(parseInt(Count), parseInt(found), calc >= 0, calc, parseInt(Count) - parseInt(found))
-    if (calc >= 0) {
+    var Meter = jQuery("#ProductBox input[name='Meter']").val()
+    productcount = parseInt(Count) - parseInt(existproductcount);
+    productMeter = parseInt(Meter) - parseInt(existproductMeter);
+    if ((productcount == 0) && (productMeter == 0)) {
+        alert('مقدار را مشخص کنید')
+    } else if(productcount <=0|| productMeter <=0) {
+        alert('موجودی  کافی نیست')
+    }else{
         var ID = jQuery("#ProductIs").val();
         var ExportID = jQuery("input[name='ExportNumber']").val();
         var InventoryNumber = jQuery("#InventoryIS").val();
@@ -62,7 +68,7 @@ jQuery("#AddProductToExport").on("click", function () {
         const directpay = document.getElementById("directpay");
 
         if (directpay.value && directpay.value.trim().length > 0) {
-    
+
 
 
             var Payment = {
@@ -71,9 +77,9 @@ jQuery("#AddProductToExport").on("click", function () {
                 Status: "collected",
                 TotalPrice: directpay.value,
                 Number: "PMT-" + Math.floor(Math.random() * 1000000), // شماره پیگیری تصادفی
-                CreatedAt: document.getElementById("checkDate").value 
+                CreatedAt: document.getElementById("checkDate").value
             };
-            
+
             Payments.push(Payment);
         }
 
@@ -84,21 +90,20 @@ jQuery("#AddProductToExport").on("click", function () {
         // })
         res = GetExportTotalPrice(ExportTotalPrice);
 
+
         jQuery("tfoot td").html(res);
         jQuery("#ExportTotalPrice").val(res);
         jQuery("#ExportProductsList tbody").append(value);
         jQuery(".TotalPriceOut td").html(TotalPrice)
         jQuery(".Notfound").slideUp();
         jQuery(".close").click()
-        jQuery("td.TotalPrice,td.price,.price,td.prn,td.Tax").each(function () {
+        jQuery("td.TotalPrice,td.price,.price,td.prn,td.Tax,span.price").each(function () {
             var val = jQuery(this).html();
             var val = PersianTools.addCommas(val);
             var convertToFa = PersianTools.digitsEnToFa(val);
 
             jQuery(this).html(convertToFa);
         });
-    } else {
-        alert('موجودی  کافی نیست')
     }
 
 })
@@ -108,12 +113,23 @@ jQuery("#AddProductToExport").on("click", function () {
 
 function GetExportTotalPrice(ExportTotalPrice) {
     exporttotal_Price = 0
+    tax = parseFloat(jQuery("input[name='Tax']").val())
+
     ExportTotalPrice.forEach(function (e, i) {
+
         exporttotal_Price = parseFloat(exporttotal_Price) + parseFloat(e.price) + tax
     })
     return exporttotal_Price
 
 }
+jQuery("input[name='Tax']").on("keyup", function () {
+    res = GetExportTotalPrice(ExportTotalPrice);
+
+    res = res - parseFloat(jQuery(this).val);
+    if (res > 0) {
+        jQuery("tfoot td").html(res);
+    }
+})
 function CalculateItems() {
     jQuery(".Content input[type='number']").each(function (item) {
         if (jQuery(this).val() == "" || jQuery(this).val() == null) {
@@ -146,7 +162,7 @@ jQuery(".ExportPeoducts select#InventoryIS").on("change", function () {
                 setTimeout(function () {
                     jQuery("#ProductIs").empty();
                     jQuery("#ProductIs").append('<option value="0">لطفا یک گزینه را انتخاب کنید</option>')
-                    if (msg.result.length > 0 && msg.result != null ) {
+                    if (msg.result.length > 0 && msg.result != null) {
                         msg.result.forEach(item => {
                             jQuery("#ProductIs").append('<option value="' + item.ID + '">' + item.Name + '</option>')
                         });
@@ -179,6 +195,9 @@ jQuery(".ExportPeoducts select#ProductIs").on("change", function () {
                 if (msg.result.length > 0) {
                     var product = msg.result[0];
                     jQuery(".ExportPeoducts .ProductsCount").html(product.Count)
+                    jQuery(".ExportPeoducts input[name='Count']").attr("max", product.Count)
+                    jQuery(".ExportPeoducts .ProductsMeter").html(product.Meter)
+                    jQuery(".ExportPeoducts input[name='Meter']").attr("max", product.Meter)
                     jQuery(".ExportPeoducts .ProductNumber").html(product.Number)
                     jQuery(".ExportPeoducts input[name='RolePrice']").attr("value", product.RolePrice)
                     jQuery(".ExportPeoducts input[name='MeterPrice']").attr("value", product.MeterPrice)
@@ -198,6 +217,30 @@ jQuery(".ExportPeoducts select#ProductIs").on("change", function () {
         jQuery(".Content").slideUp();
     }
 })
+jQuery("span.price").each(function () {
+    var priceText = jQuery(this).text().trim(); // "۱,۱۹۷,۹۶۰"
+
+    // تبدیل اعداد فارسی به انگلیسی
+    var englishDigits = priceText.replace(/[۰-۹]/g, function (d) {
+        return "۰۱۲۳۴۵۶۷۸۹".indexOf(d);
+    });
+
+    // حذف کاما و تبدیل به عدد
+    var priceNumber = parseInt(englishDigits.replace(/,/g, ''));
+
+    // اگر عدد معتبر بود، تبدیلش کن به حروف
+    if (!isNaN(priceNumber)) {
+        var numberToWords = PersianTools.numberToWords(priceNumber);
+
+        // console.log(numberToWords);
+        jQuery(".wordprice ").html(numberToWords)
+        // jQuery(this).after(" (" + numberToWords + ")");
+    } else {
+        console.log("❌ عدد نامعتبر:", priceText);
+    }
+});
+
+
 // Select  Product name for fech the detail of product in Production Page
 jQuery(".production select#ProductIs").on("change", function () {
     var ID = this.value;
@@ -317,10 +360,12 @@ jQuery("form[name='expotform']").submit(function (e) {
     var formValues = jQuery("form[name='expotform']").find("input, select, textarea").map(function () {
         return $(this).attr("name") + "=" + $(this).val();
     }).get().join("&");
+    ExportPrice = GetExportTotalPrice(ExportTotalPrice);
+
     jQuery.ajax({
         method: "POST",
         url: "/Dashboard/export",
-        data: JSON.stringify({ Name: "expotform", TotalPrice: ExportTotalPrice, Content: formValues, Products: ProductsOfExport, Payments: Payments }),
+        data: JSON.stringify({ Name: "expotform", TotalPrice: ExportPrice, Content: formValues, Products: ProductsOfExport, Payments: Payments }),
         // data: { Name: "expotform", Content: jQuery("form[name='expotform']").serialize(), Products: ProductsOfExport },
         // contentType: "application/json; charset=utf-8",
     })
@@ -333,99 +378,94 @@ jQuery("form[name='expotform']").submit(function (e) {
 })
 
 
+// jQuery(document).on("click", "#exportspaginate a.page-link", function(e) {
+//     e.preventDefault();
 
-jQuery("#exportspaginate a").on("click", function (e) {
+//     var page = jQuery(this).data("page");
+//     var url = "/export-list?page=" + page;
 
-    e.preventDefault();
-    jQuery("#exportspaginate .page-item").removeClass("active")
-    jQuery("#exportspaginate .page-item").removeClass("inpending")
-    var page = jQuery(this).attr("attr-page")
-    jQuery.ajax({
-        method: "POST",
-        url: "/Dashboard/export-list",
-        data: JSON.stringify({ page: page, offset: "1" }),
-        // data: { Name: "expotform", Content: jQuery("form[name='expotform']").serialize(), Products: ProductsOfExport },
-        // contentType: "application/json; charset=utf-8",
-    })
-        .done(function (msg) {
-            var lengthofres = msg.message.length;
-            if (lengthofres > 0) {
-                let html = "";
-                msg.message.forEach(function (index) {
-                    html += '<tr>';
-                    html += '<td class="' + index.ID + '" style="text-align:right;">' + index.ID + '</td>';
-                    html += '<td class="' + index.Name + '" style="text-align:right;">' + index.Name + '</td>';
-                    html += '<td class="' + index.Number + '" style="text-align:right;">' + index.Number + '</td>';
-                    html += '<td class="' + index.Phonenumber + '" style="text-align:right;">' + index.Phonenumber + '</td>';
-                    html += '<td class="' + index.Address + '" style="text-align:right;">' + index.Address + '</td>';
-                    html += '<td class="' + index.TotalPrice + '" style="text-align:right;">' + index.TotalPrice + '</td>';
-                    html += '<td class="' + index.Tax + '" style="text-align:right;">' + index.Tax + '</td>';
-                    html += '<td class="' + index.CreatedAt + '" style="text-align:right;">' + index.CreatedAt + '</td>';
-                    html += '<td class="' + index.InventoryNumber + '" style="text-align:right;">' + index.inventory_number + '</td>';
-                    html += '<td dir="ltr" class="Edit" style="text-align:right;"><a href="./edituser?user-id=' + index.ID + '"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pen" viewBox="0 0 16 16">';
-                    html += '<path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44 .854A1.5 1.5 0 0 1 11.5 .796a1.5 1.5 0 0 1 1.998-.001m-.644 .766a.5 .5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a .5 .5 0 0 0 0-.708z"/></svg></a></td>';
-                    html += '</tr>';
-                    jQuery(e.target).parent().closest("li").addClass("active")
-                    jQuery(e.target).parent().closest("li").next("li").addClass("inpending");
-                    jQuery(e.target).parent().closest("li").prev("li").addClass("inpending");
-                    jQuery(this).addClass("active");
-                    // jQuery(this).parent("li").addClass("active");
-                    // jQuery(this).closest("li").addClass("active")
-                    jQuery(this).addClass("active")
-                });
-                if (html.length > 0) {
-                    jQuery("#exportlist tbody").empty()
-                    jQuery("#exportlist tbody").append(html)
+//     jQuery.ajax({
+//         method: "GET",
+//         url: url,
+//         success: function(response) {
+//             // Update the table content
+//             if (response.exports && response.exports.length > 0) {
+//                 let html = "";
+//                 response.exports.forEach(function(item) {
+//                     html += '<tr>';
+//                     html += '<td style="text-align:right;">' + item.ID + '</td>';
+//                     html += '<td style="text-align:right;">' + item.Name + '</td>';
+//                     html += '<td style="text-align:right;">' + item.Number + '</td>';
+//                     html += '<td style="text-align:right;">' + item.Phonenumber + '</td>';
+//                     html += '<td style="text-align:right;">' + item.Address + '</td>';
+//                     html += '<td style="text-align:right;">' + item.TotalPrice + '</td>';
+//                     html += '<td style="text-align:right;">' + item.Tax + '</td>';
+//                     html += '<td style="text-align:right;">' + item.CreatedAt + '</td>';
+//                     html += '<td style="text-align:right;">' + item.inventory_number + '</td>';
+//                     html += '<td dir="ltr" style="text-align:right;"><a href="./edituser?user-id=' + item.ID + '"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pen" viewBox="0 0 16 16">';
+//                     html += '<path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44 .854A1.5 1.5 0 0 1 11.5 .796a1.5 1.5 0 0 1 1.998-.001m-.644 .766a.5 .5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a .5 .5 0 0 0 0-.708z"/></svg></a></td>';
+//                     html += '</tr>';
+//                 });
 
-                }
-            }
+//                 jQuery("#exportlist tbody").html(html);
 
-        });
-})
+//                 // Update pagination active state
+//                 jQuery("#exportspaginate .page-item").removeClass("active");
+//                 jQuery(this).closest(".page-item").addClass("active");
 
-jQuery("#userspaginate a").on("click", function (e) {
+//                 // Update browser history
+//                 history.pushState(null, "", url);
+//             }
+//         },
+//         error: function(xhr, status, error) {
+//             console.error("Error loading page:", error);
+//         }
+//     });
+// });
 
-    e.preventDefault();
-    jQuery("#userspaginate .page-item").removeClass("active")
-    jQuery("#userspaginate .page-item").removeClass("inpending")
-    var page = jQuery(this).attr("attr-page")
-    jQuery.ajax({
-        method: "POST",
-        url: "/Dashboard/user-list",
-        data: JSON.stringify({ page: page, offset: "1" }),
-        // data: { Name: "expotform", Content: jQuery("form[name='expotform']").serialize(), Products: ProductsOfExport },
-        // contentType: "application/json; charset=utf-8",
-    })
-        .done(function (msg) {
-            var lengthofres = msg.message.length;
-            if (lengthofres > 0) {
-                let html = "";
-                msg.message.forEach(function (index) {
-                    html += '<tr>';
-                    html += '<td class="' + index.ID + '" style="text-align:right;">' + index.ID + '</td>';
-                    html += '<td class="' + index.Name + '" style="text-align:right;">' + index.Name + '</td>';
-                    html += '<td class="' + index.Phonenumber + '" style="text-align:right;">' + index.Phonenumber + '</td>';
-                    html += '<td class="' + index.Address + '" style="text-align:right;">' + index.Address + '</td>';
-                    html += '<td dir="ltr" class="Edit" style="text-align:right;"><a href="./edituser?user-id=' + index.ID + '"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pen" viewBox="0 0 16 16">';
-                    html += '<path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44 .854A1.5 1.5 0 0 1 11.5 .796a1.5 1.5 0 0 1 1.998-.001m-.644 .766a.5 .5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a .5 .5 0 0 0 0-.708z"/></svg></a></td>';
-                    html += '</tr>';
-                    jQuery(e.target).parent().closest("li").addClass("active")
-                    jQuery(e.target).parent().closest("li").next("li").addClass("inpending");
-                    jQuery(e.target).parent().closest("li").prev("li").addClass("inpending");
-                    jQuery(this).addClass("active");
-                    // jQuery(this).parent("li").addClass("active");
-                    // jQuery(this).closest("li").addClass("active")
-                    jQuery(this).addClass("active")
-                });
-                if (html.length > 0) {
-                    jQuery("#userlist tbody").empty()
-                    jQuery("#userlist tbody").append(html)
+// jQuery("#userspaginate a").on("click", function (e) {
 
-                }
-            }
+//     e.preventDefault();
+//     jQuery("#userspaginate .page-item").removeClass("active")
+//     jQuery("#userspaginate .page-item").removeClass("inpending")
+//     var page = jQuery(this).attr("attr-page")
+//     jQuery.ajax({
+//         method: "POST",
+//         url: "/Dashboard/user-list",
+//         data: JSON.stringify({ page: page, offset: "1" }),
+//         // data: { Name: "expotform", Content: jQuery("form[name='expotform']").serialize(), Products: ProductsOfExport },
+//         // contentType: "application/json; charset=utf-8",
+//     })
+//         .done(function (msg) {
+//             var lengthofres = msg.message.length;
+//             if (lengthofres > 0) {
+//                 let html = "";
+//                 msg.message.forEach(function (index) {
+//                     html += '<tr>';
+//                     html += '<td class="' + index.ID + '" style="text-align:right;">' + index.ID + '</td>';
+//                     html += '<td class="' + index.Name + '" style="text-align:right;">' + index.Name + '</td>';
+//                     html += '<td class="' + index.Phonenumber + '" style="text-align:right;">' + index.Phonenumber + '</td>';
+//                     html += '<td class="' + index.Address + '" style="text-align:right;">' + index.Address + '</td>';
+//                     html += '<td dir="ltr" class="Edit" style="text-align:right;"><a href="./edituser?user-id=' + index.ID + '"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pen" viewBox="0 0 16 16">';
+//                     html += '<path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44 .854A1.5 1.5 0 0 1 11.5 .796a1.5 1.5 0 0 1 1.998-.001m-.644 .766a.5 .5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a .5 .5 0 0 0 0-.708z"/></svg></a></td>';
+//                     html += '</tr>';
+//                     jQuery(e.target).parent().closest("li").addClass("active")
+//                     jQuery(e.target).parent().closest("li").next("li").addClass("inpending");
+//                     jQuery(e.target).parent().closest("li").prev("li").addClass("inpending");
+//                     jQuery(this).addClass("active");
+//                     // jQuery(this).parent("li").addClass("active");
+//                     // jQuery(this).closest("li").addClass("active")
+//                     jQuery(this).addClass("active")
+//                 });
+//                 if (html.length > 0) {
+//                     jQuery("#userlist tbody").empty()
+//                     jQuery("#userlist tbody").append(html)
 
-        });
-})
+//                 }
+//             }
+
+//         });
+// })
 jQuery("#find").on("click", function (e) {
     e.preventDefault()
     var value = jQuery("#findval").val()
@@ -984,14 +1024,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 checksTableBody.appendChild(row);
             }
         });
- 
+
         // Check on initial load (optional)
         // if (directpay.value && directpay.value.length > 0) {
         //     console.log(true);
         // }
 
         // Add event listener to check when the input changes
-      
+
 
         // add check
         document.querySelectorAll('.edit-btn').forEach(btn => {
@@ -1078,5 +1118,5 @@ jQuery(document).ready(function () {
         autoClose: true
     });
 });
- 
+
 
