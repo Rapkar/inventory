@@ -20,11 +20,11 @@ jQuery("#AddProductToExport").on("click", function () {
     var existproductMeter = jQuery("span.ProductsMeter").html();
     var Count = jQuery("#ProductBox input[name='Count']").val()
     var Meter = jQuery("#ProductBox input[name='Meter']").val()
-    productcount = parseInt(Count) - parseInt(existproductcount);
-    productMeter = parseInt(Meter) - parseInt(existproductMeter);
+    productcount =  parseInt(existproductcount)- parseInt(Count);
+    productMeter = parseInt(existproductMeter) -parseInt(Meter) ;
     if ((productcount == 0) && (productMeter == 0)) {
         alert('مقدار را مشخص کنید')
-    } else if(productcount <=0|| productMeter <=0) {
+    } else if(productcount < 0 || productMeter <0) {
         alert('موجودی  کافی نیست')
     }else{
         var ID = jQuery("#ProductIs").val();
