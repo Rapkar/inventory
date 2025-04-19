@@ -1,6 +1,7 @@
 package Model
 
 import (
+	"fmt"
 	"inventory/App/Boot"
 	"log"
 	"strconv"
@@ -8,10 +9,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func GetAllProductsByInventory(inventory int32) []Boot.Inventory {
-	var products []Boot.Inventory
+func GetAllProductsByInventory(inventory int32) []Boot.Product {
+	var products []Boot.Product
 
-	Boot.DB().Model(&Boot.Inventory{}).Select("*").Where("inventory_number= ? ", inventory).Scan(&products)
+	Boot.DB().Model(&Boot.Product{}).Select("*").Where("inventory_id= ? ", inventory).Scan(&products)
 
 	db := Boot.DB()
 	sqlDB, err := db.DB()
@@ -21,10 +22,10 @@ func GetAllProductsByInventory(inventory int32) []Boot.Inventory {
 	defer sqlDB.Close()
 	return products
 }
-func GetAllProductsByInventoryAndPaginate(offset int, limit int, inventory int32) []Boot.Inventory {
-	var products []Boot.Inventory
+func GetAllProductsByInventoryAndPaginate(offset int, limit int, inventory int32) []Boot.Product {
+	var products []Boot.Product
 
-	Boot.DB().Model(&Boot.Inventory{}).Select("*").Where("inventory_number= ? ", inventory).Offset(offset).
+	Boot.DB().Model(&Boot.Product{}).Select("*").Where("inventory_id= ? ", inventory).Offset(offset).
 		Limit(limit).Scan(&products)
 
 	db := Boot.DB()
@@ -35,9 +36,9 @@ func GetAllProductsByInventoryAndPaginate(offset int, limit int, inventory int32
 	defer sqlDB.Close()
 	return products
 }
-func GetProductById(id int) []Boot.Inventory {
-	var products []Boot.Inventory
-	Boot.DB().Model(&Boot.Inventory{}).Select("*").Where("id= ? ", id).Scan(&products)
+func GetProductById(id int) []Boot.Product {
+	var products []Boot.Product
+	Boot.DB().Model(&Boot.Product{}).Select("*").Where("id= ? ", id).Scan(&products)
 	db := Boot.DB()
 	sqlDB, err := db.DB()
 	if err != nil {
@@ -53,10 +54,13 @@ func RemoveCurrentProduct(c *gin.Context) bool {
 		// handle the error
 		return false
 	}
-	result := Boot.DB().Delete(&Boot.Inventory{}, ProductID)
+	fmt.Println("remove", ProductID)
+	result := Boot.DB().Delete(&Boot.Product{}, ProductID)
 	if result.RowsAffected == 0 {
 		// if no rows were affected, the deletion failed
-		return false
+		return true
 	}
+	fmt.Println("remove", result.RowsAffected)
+
 	return true
 }

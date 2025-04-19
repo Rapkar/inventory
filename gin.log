@@ -4,34 +4,35 @@
  - using env:	export GIN_MODE=release
  - using code:	gin.SetMode(gin.ReleaseMode)
 
-[GIN-debug] Loaded HTML Templates (27): 
-	- home.html
-	- 
-	- add_product.html
-	- footer.html
-	- admins.html
-	- dashboard.html
+[GIN-debug] Loaded HTML Templates (28): 
 	- export_list.html
-	- exportshow.html
-	- navbar
-	- production.html
-	- header.html
-	- success.html
 	- backups.html
-	- login.html
-	- users.html
-	- header
-	- danger.html
-	- danger_notif
-	- export.html
-	- error.html
-	- inventory.html
-	- success_notif
-	- 404.html
-	- navbar.html
 	- charts.html
 	- edit_user.html
+	- success.html
+	- details_user.html
+	- production.html
+	- danger_notif
+	- inventory.html
+	- users.html
+	- exportshow.html
+	- header.html
+	- login.html
+	- footer.html
+	- home.html
+	- success_notif
+	- 
+	- admins.html
+	- export.html
+	- header
+	- add_product.html
+	- danger.html
+	- dashboard.html
+	- navbar
 	- payments.html
+	- 404.html
+	- error.html
+	- navbar.html
 
 [GIN-debug] GET    /assets/*filepath         --> github.com/gin-gonic/gin.(*RouterGroup).createStaticHandler.func1 (3 handlers)
 [GIN-debug] HEAD   /assets/*filepath         --> github.com/gin-gonic/gin.(*RouterGroup).createStaticHandler.func1 (3 handlers)
@@ -50,8 +51,8 @@
 [GIN-debug] POST   /Dashboard/user-list      --> main.main.func15 (5 handlers)
 [GIN-debug] GET    /Dashboard/deleteuser     --> main.main.func16 (5 handlers)
 [GIN-debug] GET    /Dashboard/edituser       --> main.main.func17 (5 handlers)
-[GIN-debug] POST   /Dashboard/edituser       --> main.main.func18 (5 handlers)
-[GIN-debug] POST   /Dashboard/users-find     --> main.main.func19 (5 handlers)
+[GIN-debug] GET    /Dashboard/user/details   --> main.main.func18 (5 handlers)
+[GIN-debug] POST   /Dashboard/edituser       --> main.main.func19 (5 handlers)
 [GIN-debug] GET    /Dashboard/addproduct     --> main.main.func20 (5 handlers)
 [GIN-debug] POST   /Dashboard/addproduct     --> main.main.func21 (5 handlers)
 [GIN-debug] GET    /Dashboard/deleteproduct  --> main.main.func22 (5 handlers)
@@ -80,126 +81,5 @@
 Please check https://pkg.go.dev/github.com/gin-gonic/gin#readme-don-t-trust-all-proxies for details.
 [GIN-debug] Environment variable PORT is undefined. Using port :8080 by default
 [GIN-debug] Listening and serving HTTP on :8080
-[GIN] 2025/04/15 - 12:03:50 | 200 |    6.091823ms |             ::1 | GET      "/"
-[GIN] 2025/04/15 - 12:03:50 | 304 |      95.188µs |             ::1 | GET      "/assets/lib/owlcarousel/assets/owl.carousel.min.css"
-[GIN] 2025/04/15 - 12:03:50 | 304 |      75.933µs |             ::1 | GET      "/assets/lib/lightbox/css/lightbox.min.css"
-[GIN] 2025/04/15 - 12:03:50 | 304 |     105.211µs |             ::1 | GET      "/assets/css/style.css"
-[GIN] 2025/04/15 - 12:03:50 | 304 |      73.281µs |             ::1 | GET      "/assets/images/ss.jpg"
-[GIN] 2025/04/15 - 12:03:50 | 304 |      66.382µs |             ::1 | GET      "/assets/images/bb.webp"
-[GIN] 2025/04/15 - 12:03:50 | 304 |      65.057µs |             ::1 | GET      "/assets/images/dd.webp"
-[GIN] 2025/04/15 - 12:03:50 | 304 |      73.921µs |             ::1 | GET      "/assets/images/product-1.jpg"
-[GIN] 2025/04/15 - 12:03:50 | 304 |      90.846µs |             ::1 | GET      "/assets/images/sample1.jpg"
-[GIN] 2025/04/15 - 12:03:50 | 304 |      66.644µs |             ::1 | GET      "/assets/lib/easing/easing.min.js"
-[GIN] 2025/04/15 - 12:03:50 | 304 |      78.425µs |             ::1 | GET      "/assets/lib/isotope/isotope.pkgd.min.js"
-[GIN] 2025/04/15 - 12:03:50 | 304 |      47.144µs |             ::1 | GET      "/assets/lib/waypoints/waypoints.min.js"
-[GIN] 2025/04/15 - 12:03:50 | 304 |      42.132µs |             ::1 | GET      "/assets/lib/owlcarousel/owl.carousel.min.js"
-[GIN] 2025/04/15 - 12:03:50 | 304 |       76.95µs |             ::1 | GET      "/assets/lib/lightbox/js/lightbox.min.js"
-[GIN] 2025/04/15 - 12:03:50 | 304 |      52.142µs |             ::1 | GET      "/assets/images/sample3.jpg"
-[GIN] 2025/04/15 - 12:03:50 | 304 |      45.515µs |             ::1 | GET      "/assets/images/sample2.jpg"
-[GIN] 2025/04/15 - 12:03:50 | 304 |      77.316µs |             ::1 | GET      "/assets/images/sample4.jpg"
-[GIN] 2025/04/15 - 12:03:50 | 304 |      74.154µs |             ::1 | GET      "/assets/lib/easing/easing.min.js"
-[GIN] 2025/04/15 - 12:03:50 | 200 |    9.516634ms |             ::1 | GET      "/assets/js/main.js"
-[GIN] 2025/04/15 - 12:03:50 | 304 |      78.521µs |             ::1 | GET      "/assets/images/team-1.jpg"
-[GIN] 2025/04/15 - 12:03:50 | 304 |      61.854µs |             ::1 | GET      "/assets/images/team-2.jpg"
-[GIN] 2025/04/15 - 12:03:50 | 304 |      63.707µs |             ::1 | GET      "/assets/images/team-3.jpg"
-[GIN] 2025/04/15 - 12:03:50 | 304 |     181.507µs |             ::1 | GET      "/assets/images/testimonial-1.jpg"
-[GIN] 2025/04/15 - 12:03:50 | 304 |      84.733µs |             ::1 | GET      "/assets/images/team-4.jpg"
-[GIN] 2025/04/15 - 12:03:50 | 304 |      74.178µs |             ::1 | GET      "/assets/images/gallery.jpg"
-[GIN] 2025/04/15 - 12:03:50 | 304 |       41.19µs |             ::1 | GET      "/assets/images/carousel-1.jpg"
-[GIN] 2025/04/15 - 12:03:50 | 304 |      56.857µs |             ::1 | GET      "/assets/images/testimonial-2.jpg"
-[GIN] 2025/04/15 - 12:03:50 | 200 |    8.023184ms |             ::1 | GET      "/auth/"
-[GIN] 2025/04/15 - 12:03:50 | 304 |      72.529µs |             ::1 | GET      "/assets/lib/lightbox/images/prev.png"
-[GIN] 2025/04/15 - 12:03:50 | 304 |      74.973µs |             ::1 | GET      "/assets/lib/lightbox/images/next.png"
-[GIN] 2025/04/15 - 12:03:50 | 304 |      48.044µs |             ::1 | GET      "/assets/lib/lightbox/images/close.png"
-[GIN] 2025/04/15 - 12:03:50 | 304 |      39.954µs |             ::1 | GET      "/assets/lib/lightbox/images/loading.gif"
-[GIN] 2025/04/15 - 12:03:50 | 200 |    1.710357ms |             ::1 | GET      "/img/favicon.ico"
-[GIN] 2025/04/15 - 12:03:51 | 304 |      59.013µs |             ::1 | GET      "/assets/lib/waypoints/waypoints.min.js"
-[GIN] 2025/04/15 - 12:03:51 | 304 |      69.752µs |             ::1 | GET      "/assets/lib/isotope/isotope.pkgd.min.js"
-[GIN] 2025/04/15 - 12:03:51 | 304 |      60.656µs |             ::1 | GET      "/assets/lib/owlcarousel/owl.carousel.min.js"
-[GIN] 2025/04/15 - 12:03:51 | 304 |      75.687µs |             ::1 | GET      "/assets/lib/lightbox/js/lightbox.min.js"
-[GIN] 2025/04/15 - 12:03:51 | 200 |     207.448µs |             ::1 | GET      "/assets/js/main.js"
-[GIN] 2025/04/15 - 12:03:53 | 200 |    2.094172ms |             ::1 | GET      "/auth/"
-[GIN] 2025/04/15 - 12:03:53 | 304 |      87.057µs |             ::1 | GET      "/assets/css/bootstrap.rtl.min.css"
-[GIN] 2025/04/15 - 12:03:53 | 200 |     673.184µs |             ::1 | GET      "/assets/css/main.css"
-[GIN] 2025/04/15 - 12:03:53 | 304 |      74.838µs |             ::1 | GET      "/assets/images/login.jpg"
-[GIN] 2025/04/15 - 12:03:53 | 304 |      52.183µs |             ::1 | GET      "/assets/js/jquery-3.7.1.min.js"
-[GIN] 2025/04/15 - 12:03:53 | 304 |      84.381µs |             ::1 | GET      "/assets/js/bootstrap.min.js"
-[GIN] 2025/04/15 - 12:03:53 | 304 |      70.358µs |             ::1 | GET      "/assets/js/persian-tools.umd.js"
-[GIN] 2025/04/15 - 12:03:53 | 304 |      68.329µs |             ::1 | GET      "/assets/js/chart.js"
-[GIN] 2025/04/15 - 12:03:53 | 304 |     299.456µs |             ::1 | GET      "/assets/js/jspdf.umd.min.js"
-[GIN] 2025/04/15 - 12:03:53 | 304 |     114.831µs |             ::1 | GET      "/assets/js/bootstrap.min.js"
-[GIN] 2025/04/15 - 12:03:53 | 304 |      58.599µs |             ::1 | GET      "/assets/js/jquery-3.7.1.min.js"
-[GIN] 2025/04/15 - 12:03:53 | 304 |      72.181µs |             ::1 | GET      "/assets/js/chart.js"
-[GIN] 2025/04/15 - 12:03:54 | 200 |    1.915028ms |             ::1 | GET      "/auth/"
-[GIN] 2025/04/15 - 12:03:54 | 200 |     2.11512ms |             ::1 | GET      "/favicon.ico"
-[GIN] 2025/04/15 - 12:03:55 | 304 |       79.93µs |             ::1 | GET      "/assets/js/persian-tools.umd.js"
-[GIN] 2025/04/15 - 12:03:56 | 304 |     108.648µs |             ::1 | GET      "/assets/js/jspdf.umd.min.js"
-[GIN] 2025/04/15 - 12:03:57 | 301 |  967.665168ms |             ::1 | POST     "/auth/login"
-[GIN-debug] redirecting request 301: /Dashboard/ --> /Dashboard/
-[GIN] 2025/04/15 - 12:03:57 | 200 |    6.977838ms |       127.0.0.1 | GET      "/Dashboard/"
-[GIN] 2025/04/15 - 12:03:57 | 304 |      76.226µs |       127.0.0.1 | GET      "/assets/css/bootstrap.rtl.min.css"
-[GIN] 2025/04/15 - 12:03:57 | 304 |      74.734µs |       127.0.0.1 | GET      "/assets/css/main.css"
-[GIN] 2025/04/15 - 12:03:57 | 304 |        77.2µs |       127.0.0.1 | GET      "/assets/images/techrootlogo.png"
-[GIN] 2025/04/15 - 12:03:57 | 304 |      57.887µs |       127.0.0.1 | GET      "/assets/images/user.png"
-[GIN] 2025/04/15 - 12:03:57 | 304 |      61.122µs |       127.0.0.1 | GET      "/assets/js/jquery-3.7.1.min.js"
-[GIN] 2025/04/15 - 12:03:57 | 304 |      85.774µs |       127.0.0.1 | GET      "/assets/js/bootstrap.min.js"
-[GIN] 2025/04/15 - 12:03:57 | 304 |      63.629µs |       127.0.0.1 | GET      "/assets/js/persian-tools.umd.js"
-[GIN] 2025/04/15 - 12:03:57 | 304 |      70.117µs |       127.0.0.1 | GET      "/assets/js/jspdf.umd.min.js"
-[GIN] 2025/04/15 - 12:03:57 | 304 |     256.331µs |       127.0.0.1 | GET      "/assets/js/chart.js"
-[GIN] 2025/04/15 - 12:03:57 | 200 |     162.459µs |       127.0.0.1 | GET      "/assets/js/main.js"
-[GIN] 2025/04/15 - 12:03:57 | 304 |     116.406µs |       127.0.0.1 | GET      "/assets/js/jquery-3.7.1.min.js"
-[GIN] 2025/04/15 - 12:03:57 | 304 |      78.887µs |       127.0.0.1 | GET      "/assets/js/bootstrap.min.js"
-[GIN] 2025/04/15 - 12:03:57 | 304 |     267.755µs |       127.0.0.1 | GET      "/assets/js/persian-tools.umd.js"
-[GIN] 2025/04/15 - 12:03:57 | 304 |       102.6µs |       127.0.0.1 | GET      "/assets/js/jspdf.umd.min.js"
-[GIN] 2025/04/15 - 12:03:57 | 304 |      58.761µs |       127.0.0.1 | GET      "/assets/js/chart.js"
-[GIN] 2025/04/15 - 12:03:57 | 200 |     230.505µs |       127.0.0.1 | GET      "/assets/js/main.js"
-[GIN] 2025/04/15 - 12:03:58 | 200 |    7.511991ms |       127.0.0.1 | GET      "/Dashboard/api/allexports"
-[GIN] 2025/04/15 - 12:03:58 | 200 |    1.452083ms |       127.0.0.1 | GET      "/favicon.ico"
-[GIN] 2025/04/15 - 12:04:00 | 200 |   14.735268ms |       127.0.0.1 | GET      "/Dashboard/payments"
-[GIN] 2025/04/15 - 12:04:00 | 304 |     103.775µs |       127.0.0.1 | GET      "/assets/images/waite.svg"
-[GIN] 2025/04/15 - 12:04:00 | 304 |      49.851µs |       127.0.0.1 | GET      "/assets/images/angry.svg"
-[GIN] 2025/04/15 - 12:04:00 | 304 |      42.817µs |       127.0.0.1 | GET      "/assets/images/collected.svg"
-[GIN] 2025/04/15 - 12:04:00 | 200 |    4.074452ms |       127.0.0.1 | GET      "/favicon.ico"
-[GIN] 2025/04/15 - 12:04:00 | 200 |   65.611739ms |       127.0.0.1 | GET      "/Dashboard/api/allexports"
-[GIN] 2025/04/15 - 12:04:02 | 200 |   16.495908ms |       127.0.0.1 | GET      "/Dashboard/export"
-[GIN] 2025/04/15 - 12:04:02 | 200 |    2.809646ms |       127.0.0.1 | GET      "/Dashboard/api/allexports"
-[GIN] 2025/04/15 - 12:04:02 | 200 |    2.056618ms |       127.0.0.1 | GET      "/favicon.ico"
-[GIN] 2025/04/15 - 12:04:49 | 200 |    3.518323ms |       127.0.0.1 | POST     "/Dashboard/getproductbyinventory"
-[GIN] 2025/04/15 - 12:04:50 | 200 |    3.788561ms |       127.0.0.1 | POST     "/Dashboard/getproductbyid"
-[GIN] 2025/04/15 - 12:05:33 | 200 |    6.777299ms |       127.0.0.1 | GET      "/Dashboard/export"
-[GIN] 2025/04/15 - 12:05:34 | 200 |    3.493861ms |       127.0.0.1 | GET      "/Dashboard/api/allexports"
-[GIN] 2025/04/15 - 12:05:34 | 200 |    2.304808ms |       127.0.0.1 | GET      "/favicon.ico"
-[GIN] 2025/04/15 - 12:05:38 | 200 |    3.204707ms |       127.0.0.1 | POST     "/Dashboard/getproductbyinventory"
-[GIN] 2025/04/15 - 12:05:39 | 200 |    4.057671ms |       127.0.0.1 | POST     "/Dashboard/getproductbyid"
-[GIN] 2025/04/15 - 12:06:34 | 200 |    7.449939ms |       127.0.0.1 | GET      "/Dashboard/export"
-[GIN] 2025/04/15 - 12:06:34 | 200 |     101.257µs |       127.0.0.1 | GET      "/assets/css/main.css"
-[GIN] 2025/04/15 - 12:06:34 | 200 |    2.918004ms |       127.0.0.1 | GET      "/assets/css/bootstrap.rtl.min.css"
-[GIN] 2025/04/15 - 12:06:34 | 200 |    1.569213ms |       127.0.0.1 | GET      "/assets/js/bootstrap.min.js"
-[GIN] 2025/04/15 - 12:06:34 | 200 |    1.283065ms |       127.0.0.1 | GET      "/assets/images/user.png"
-[GIN] 2025/04/15 - 12:06:34 | 200 |     4.97403ms |       127.0.0.1 | GET      "/assets/js/jquery-3.7.1.min.js"
-[GIN] 2025/04/15 - 12:06:34 | 200 |    8.260016ms |       127.0.0.1 | GET      "/assets/images/techrootlogo.png"
-[GIN] 2025/04/15 - 12:06:34 | 200 |    7.608179ms |       127.0.0.1 | GET      "/assets/js/persian-tools.umd.js"
-[GIN] 2025/04/15 - 12:06:34 | 200 |    2.777263ms |       127.0.0.1 | GET      "/assets/js/chart.js"
-[GIN] 2025/04/15 - 12:06:34 | 200 |    3.955436ms |       127.0.0.1 | GET      "/assets/js/jspdf.umd.min.js"
-[GIN] 2025/04/15 - 12:06:34 | 200 |     320.713µs |       127.0.0.1 | GET      "/assets/js/main.js"
-[GIN] 2025/04/15 - 12:06:34 | 200 |     776.047µs |       127.0.0.1 | GET      "/assets/fonts/Vazir-Medium.woff2"
-[GIN] 2025/04/15 - 12:06:34 | 200 |    3.651116ms |       127.0.0.1 | GET      "/Dashboard/api/allexports"
-[GIN] 2025/04/15 - 12:06:34 | 200 |    1.412348ms |       127.0.0.1 | GET      "/favicon.ico"
-[GIN] 2025/04/15 - 12:06:37 | 200 |    3.120332ms |       127.0.0.1 | POST     "/Dashboard/getproductbyinventory"
-[GIN] 2025/04/15 - 12:06:38 | 200 |    2.921509ms |       127.0.0.1 | POST     "/Dashboard/getproductbyid"
-[GIN] 2025/04/15 - 12:08:10 | 200 |    8.394071ms |       127.0.0.1 | GET      "/Dashboard/export"
-[GIN] 2025/04/15 - 12:08:10 | 200 |      89.748µs |       127.0.0.1 | GET      "/assets/css/main.css"
-[GIN] 2025/04/15 - 12:08:10 | 200 |     136.879µs |       127.0.0.1 | GET      "/assets/js/bootstrap.min.js"
-[GIN] 2025/04/15 - 12:08:10 | 200 |      68.116µs |       127.0.0.1 | GET      "/assets/images/user.png"
-[GIN] 2025/04/15 - 12:08:10 | 200 |      150.45µs |       127.0.0.1 | GET      "/assets/js/jquery-3.7.1.min.js"
-[GIN] 2025/04/15 - 12:08:10 | 200 |     921.627µs |       127.0.0.1 | GET      "/assets/css/bootstrap.rtl.min.css"
-[GIN] 2025/04/15 - 12:08:10 | 200 |     905.383µs |       127.0.0.1 | GET      "/assets/images/techrootlogo.png"
-[GIN] 2025/04/15 - 12:08:10 | 200 |     195.685µs |       127.0.0.1 | GET      "/assets/js/main.js"
-[GIN] 2025/04/15 - 12:08:10 | 200 |     261.471µs |       127.0.0.1 | GET      "/assets/js/chart.js"
-[GIN] 2025/04/15 - 12:08:10 | 200 |     336.434µs |       127.0.0.1 | GET      "/assets/js/jspdf.umd.min.js"
-[GIN] 2025/04/15 - 12:08:10 | 200 |     355.472µs |       127.0.0.1 | GET      "/assets/js/persian-tools.umd.js"
-[GIN] 2025/04/15 - 12:08:11 | 200 |     184.409µs |       127.0.0.1 | GET      "/assets/fonts/Vazir-Medium.woff2"
-[GIN] 2025/04/15 - 12:08:11 | 200 |    4.288342ms |       127.0.0.1 | GET      "/Dashboard/api/allexports"
-[GIN] 2025/04/15 - 12:08:11 | 200 |    2.543739ms |       127.0.0.1 | GET      "/favicon.ico"
-[GIN] 2025/04/15 - 12:08:14 | 200 |     3.60542ms |       127.0.0.1 | POST     "/Dashboard/getproductbyinventory"
-[GIN] 2025/04/15 - 12:08:15 | 200 |     3.04203ms |       127.0.0.1 | POST     "/Dashboard/getproductbyid"
+[GIN] 2025/04/20 - 00:14:36 | 200 |   16.093511ms |       127.0.0.1 | GET      "/Dashboard/user/details?user-id=16"
+[GIN] 2025/04/20 - 00:14:36 | 200 |    3.497384ms |       127.0.0.1 | GET      "/Dashboard/api/allexports"

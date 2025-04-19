@@ -49,14 +49,14 @@ jQuery("#AddProductToExport").on("click", function () {
      </td>`;
         var value = '<tr><td class="id" scope="row">' + ID + '</td><td>' + CurrentProductName + '</td><td class="prn">' + Count + '</td><td class="price">' + Meter + '</td><td class="price">' + MeterPrice + '</td><td class="price">' + RolePrice + '</td><td class="itemtotalprice price">' + CalculateItems() + '</td>' + edit + '</tr>';
         var newRow = {
-            InventoryNumber: InventoryNumber,
+            InventoryID: InventoryNumber,
             ProductId: ID,
             ExportID: ExportID,
             Name: CurrentProductName,
-            count: Count,
-            meterPrice: MeterPrice,
-            rolePrice: RolePrice,
-            totalPrice: TotalPrice
+            Count: Count,
+            MeterPrice: MeterPrice,
+            RolePrice: RolePrice,
+            TotalPrice: TotalPrice
 
         };
         var NewPrice = {
@@ -373,7 +373,10 @@ jQuery("form[name='expotform']").submit(function (e) {
             if (msg.message == "sucess") {
                 window.location.replace("./exportshow?ExportId=" + msg.id);
             }
-        });
+        })
+        .error(function(msg){
+            alert("خطلا",msg)
+        })
 
 })
 

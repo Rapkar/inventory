@@ -18,7 +18,6 @@ func GetAllExports() []Boot.EscapeExport {
 	if err := db.Model(&Boot.Export{}).Select("*").Scan(&Export).Error; err != nil {
 		log.Println("❌ err in GetAllExports", err)
 	}
-
 	EscapeExport = make([]Boot.EscapeExport, len(Export))
 
 	for i, value := range Export {
@@ -30,10 +29,10 @@ func GetAllExports() []Boot.EscapeExport {
 		escapeExport.Number = value.Number
 		escapeExport.Phonenumber = value.Phonenumber
 		escapeExport.Tax = value.Tax
-		escapeExport.InventoryNumber = value.InventoryNumber
+		escapeExport.InventoryNumber = int32(value.ProductID)
 		escapeExport.ExportProducts = value.ExportProducts
 		escapeExport.CreatedAt = value.CreatedAt
-		escapeExport.TotalPrice = Utility.IntT64ToString(value.TotalPrice)
+		escapeExport.TotalPrice = value.TotalPrice
 		// Add other fields here...
 		EscapeExport[i] = escapeExport
 	}
@@ -89,13 +88,8 @@ func GetAllPaymentsByPaginate(offset int, limit int) []Boot.Payments {
 	return Payments
 }
 
-type PaymentWithExport struct {
-	Boot.Payments
-	ExportNumber string `json:"export_number"`
-}
-
-func GetAllPaymentsWithExportNumber(offset int, limit int, status string) ([]PaymentWithExport, error) {
-	var result []PaymentWithExport
+func GetAllPaymentsWithExportNumber(offset int, limit int, status string) ([]Boot.PaymentWithExport, error) {
+	var result []Boot.PaymentWithExport
 
 	query := Boot.DB().Table("payments").
 		Select("payments.*, exports.number as export_number").
@@ -116,7 +110,94 @@ func GetAllPaymentsWithExportNumber(offset int, limit int, status string) ([]Pay
 
 	return result, nil
 }
+func GetAllPaymentsWithExportNumberByUserId(offset int, limit int, status string, user_id uint64) ([]Boot.PaymentWithExport, error) {
+	var result []Boot.PaymentWithExport
 
+	query := Boot.DB().Table("payments").
+		Where("payments.user_id = ?", user_id).
+		Select("payments.*, exports.number as export_number").
+		Joins("LEFT JOIN exports ON exports.id = payments.export_id").
+		Order("payments.id DESC").
+		Offset(offset).
+		Limit(limit)
+
+	if status != "" && (status == "pending" || status == "rejected" || status == "collected") {
+		query = query.Where("payments.status = ?", status)
+	}
+
+	err := query.Find(&result).Error
+	if err != nil {
+		log.Println("❌ Error fetching payments:", err)
+		return nil, fmt.Errorf("Error fetching payments: %v", err)
+	}
+	fmt.Println(result)
+	return result, nil
+}
+
+func GetTotalprice(userid uint64) (float64, error) {
+	var result float64
+
+	// Execute the query and scan the result
+	err := Boot.DB().Table("payments").
+		Where("user_id = ?", userid). // Fixed variable name from user_id to userid
+		Select("SUM(total_price)").   // Assuming you want to sum all payments, otherwise you might need a different approach
+		Scan(&result).                // Need to actually execute the query and scan the result
+		Error
+
+	if err != nil {
+		return 0, err // Return the error to handle it properly
+	}
+
+	return result, nil
+}
+func GetCountOfUserExports(userid uint64) (int64, error) {
+	var result int64
+
+	// Execute the query and scan the result
+	err := Boot.DB().Table("exports").
+		Where("user_id = ?", userid). // Fixed variable name from user_id to userid
+		Select("COUNT(total_price)"). // Assuming you want to sum all payments, otherwise you might need a different approach
+		Scan(&result).                // Need to actually execute the query and scan the result
+		Error
+
+	if err != nil {
+		return 0, err // Return the error to handle it properly
+	}
+
+	return result, nil
+}
+func GetUserTotalPrice(userid uint64) (float64, error) {
+	var result float64
+
+	// Execute the query and scan the result
+	err := Boot.DB().Table("exports").
+		Where("user_id = ?", userid). // Fixed variable name from user_id to userid
+		Select("SUM(total_price)").   // Assuming you want to sum all payments, otherwise you might need a different approach
+		Scan(&result).                // Need to actually execute the query and scan the result
+		Error
+
+	if err != nil {
+		return 0, err // Return the error to handle it properly
+	}
+
+	return result, nil
+}
+func GetUserTotalPaid(userid uint64) (float64, error) {
+	var result float64
+
+	// Execute the query and scan the result
+	err := Boot.DB().Table("payments").
+		Where("user_id = ?", userid). // Fixed variable name from user_id to userid
+		Select("SUM(total_price)").   // Assuming you want to sum all payments, otherwise you might need a different approach
+		Scan(&result).                // Need to actually execute the query and scan the result
+		Error
+
+	if err != nil {
+		return 0, err // Return the error to handle it properly
+	}
+
+	return result, nil
+}
 func GetPaymentNumberById(c *gin.Context) ([]Boot.Payments, error) {
 	// دریافت PaymentId از Query Param
 	Id := c.DefaultQuery("PaymentId", "")
@@ -163,10 +244,10 @@ func GetExportById(c *gin.Context) ([]Boot.EscapeExport, []Boot.EscapeExportProd
 			Phonenumber:     export.Phonenumber,
 			Tax:             export.Tax,
 			Describe:        export.Describe,
-			InventoryNumber: export.InventoryNumber,
+			InventoryNumber: int32(export.ProductID),
 			ExportProducts:  export.ExportProducts,
 			CreatedAt:       export.CreatedAt,
-			TotalPrice:      Utility.IntT64ToString(export.TotalPrice),
+			TotalPrice:      export.TotalPrice,
 		}
 		escapeExports = append(escapeExports, escapeExport)
 	}
@@ -186,12 +267,12 @@ func GetExportById(c *gin.Context) ([]Boot.EscapeExport, []Boot.EscapeExportProd
 			Name:            exportProduct.Name,
 			ExportID:        exportProduct.ExportID,
 			Number:          exportProduct.Number,
-			RolePrice:       Utility.IntT64ToString(exportProduct.RolePrice),
-			MeterPrice:      Utility.IntT64ToString(exportProduct.MeterPrice),
-			InventoryNumber: exportProduct.InventoryNumber,
-			TotalPrice:      Utility.IntT64ToString(exportProduct.TotalPrice),
+			RolePrice:       exportProduct.RolePrice,
+			MeterPrice:      exportProduct.MeterPrice,
+			InventoryNumber: int32(exportProduct.ID),
+			TotalPrice:      exportProduct.TotalPrice,
 			Count:           Utility.IntT64ToString(exportProduct.Count),
-			Meter:           Utility.IntT64ToString(exportProduct.Meter),
+			Meter:           exportProduct.Meter,
 		}
 		escapeExportProducts = append(escapeExportProducts, escapeExportProduct)
 	}
@@ -223,10 +304,10 @@ func GetAllExportsByPhoneAndName(searchTerm string) []Boot.EscapeExport {
 			Number:          value.Number,
 			Phonenumber:     value.Phonenumber,
 			Tax:             value.Tax,
-			InventoryNumber: value.InventoryNumber,
+			InventoryNumber: int32(value.ProductID),
 			ExportProducts:  value.ExportProducts,
 			CreatedAt:       value.CreatedAt,
-			TotalPrice:      Utility.IntT64ToString(value.TotalPrice),
+			TotalPrice:      value.TotalPrice,
 			// اگر فیلد دیگه‌ای هست اضافه کن
 		}
 	}
@@ -234,8 +315,8 @@ func GetAllExportsByPhoneAndName(searchTerm string) []Boot.EscapeExport {
 	return result
 }
 
-func GetAllPaymentsByAttribiute(searchTerm string) []PaymentWithExport {
-	var result []PaymentWithExport
+func GetAllPaymentsByAttribiute(searchTerm string) []Boot.PaymentWithExport {
+	var result []Boot.PaymentWithExport
 
 	db := Boot.DB()
 	err := db.Table("payments").

@@ -54,28 +54,11 @@ func DB() *gorm.DB {
 
 	if err != nil {
 		log.Printf("Inventory Has problem With connect to Database")
-		// sqlDB.Close()
 
 	}
 	sqlDB.SetMaxIdleConns(5)
 	sqlDB.SetMaxOpenConns(6)
 	sqlDB.SetConnMaxLifetime(5 * time.Minute)
-	// go func() {
-	// 	ticker := time.NewTicker(5 * time.Minute)
-	// 	defer ticker.Stop()
-
-	// 	for range ticker.C {
-	// 		sqlDB, err := DB().DB()
-	// 		if err != nil {
-	// 			log.Printf("Pool stats error: %v", err)
-	// 			continue
-	// 		}
-
-	// 		stats := sqlDB.Stats()
-	// 		log.Printf("DB Pool Stats: OpenConnections=%d InUse=%d Idle=%d",
-	// 			stats.OpenConnections, stats.InUse, stats.Idle)
-	// 	}
-	// }()
 
 	return db
 
@@ -88,155 +71,206 @@ func Init() {
 		panic(err)
 	}
 	gin.DefaultWriter = io.MultiWriter(f)
-	if !DB().Migrator().HasTable(Users{}) {
-		DB().Migrator().CreateTable(Users{})
+
+	// Auto Make Faker Data With Transaction
+	experror := DB().Transaction(func(tx *gorm.DB) error {
+
+		if err := tx.AutoMigrate(&Users{}, &Inventory{}, &Product{}, &Export{}, &ExportProducts{}, &Payments{}); err != nil {
+			log.Fatal("❌ Erro in Create Base Tables . #")
+			return err
+		}
+
+		var existingUser Users
 		a, _ := Utility.HashPassword("0000")
-		User := Users{Name: "hossein Soltanian", Email: "hosseinbidar7@gmail.com", Password: a, Role: "Admin", Phonenumber: "09125174854"}
-		DB().Create(&User)
-	} else {
-		fmt.Println("users table found.# ")
-	}
 
-	//Migrate Inventory DB and Smaple row
+		if err := tx.Where("email = ?", "hosseinbidar7@gmail.com").First(&existingUser).Error; err != nil {
+			existingUser = Users{
+				Name:        "hossein Soltanian",
+				Email:       "hosseinbidar7@gmail.com",
+				Password:    a,
+				Role:        "Admin",
+				Phonenumber: "09125174854"}
+			if err := tx.Create(&existingUser).Error; err != nil {
+				log.Fatal("❌ Erro in insert data to Users Table . #")
+				return err
+			}
+		} else {
+			fmt.Println("base user Found")
+		}
+		var existingInventory Inventory
+		if err := tx.Where("id = ?", 1).First(&existingInventory).Error; err != nil {
 
-	if !DB().Migrator().HasTable(Inventory{}) {
-		DB().Migrator().CreateTable(Inventory{})
-		Inventory := Inventory{Name: "ایزوگام شرق", Number: "10", RolePrice: 99250, MeterPrice: 102500, Count: 100, InventoryNumber: 1}
-		DB().Create(&Inventory)
-	} else {
-		fmt.Println("Inventory table found. #")
-	}
+			existingInventory = Inventory{
+				Name: "انبار اشتهارد"}
 
-	//Migrate Inventory DB and Smaple row
-	ExportProduct := []ExportProducts{}
-	if !DB().Migrator().HasTable(ExportProducts{}) {
-		DB().Migrator().CreateTable(ExportProducts{})
-		ExportProduct = []ExportProducts{{Name: "ایزوگام شرق", Number: "10", RolePrice: 99250, MeterPrice: 102500, Count: 100, InventoryNumber: 1, TotalPrice: 2000000, Meter: 10}}
-		DB().Create(&ExportProduct)
-	} else {
-		fmt.Println("ExportProducts table found. #")
-	}
+			if err := tx.Create(&existingInventory).Error; err != nil {
+				log.Fatal("❌ Error in batch insert to Inventory Table. #", err)
+				return err
+			}
+		} else {
+			fmt.Println("base Inventory Found")
+		}
+		var existinProduct Product
+		if err := tx.Where("id =?", 1).First(&existinProduct).Error; err != nil {
+			existinProduct = Product{
+				Name:        "ایزوگام شرق",
+				Number:      "10",
+				RolePrice:   99250,
+				MeterPrice:  102500,
+				Count:       100,
+				Meter:       100,
+				InventoryID: existingInventory.ID}
+			if err := tx.Create(&existinProduct).Error; err != nil {
+				log.Fatal("❌ Erro in insert data to Inventory Table . #")
+				return err
+			}
+		} else {
+			fmt.Println("base Inventory Found")
+		}
+		var existinExport Export
+		if err := tx.Where("id =?", 1).First(&existinExport).Error; err != nil {
+			existinExport = Export{
+				Name:        "حسین سلطانیان",
+				Number:      "9283422",
+				Phonenumber: "09125174854",
+				UserID:      existingUser.ID,
+				Address:     "کرج -کرج=-ایران -سیسی",
+				TotalPrice:  10000000,
+				Tax:         10,
+				ProductID:   existinProduct.ID,
+				CreatedAt:   Utility.CurrentTime(),
+			}
 
-	//Migrate Inventory DB and Smaple row
-
-	if !DB().Migrator().HasTable(Export{}) {
-		DB().Migrator().CreateTable(Export{})
-		Export := Export{Name: "رضا توانگر", Number: "9283422", Phonenumber: "09199656725", Address: "کرج -کرج=-ایران -سیسی", TotalPrice: 10000000, Tax: 10, ExportProducts: ExportProduct, InventoryNumber: 1, CreatedAt: Utility.CurrentTime()}
-		DB().Create(&Export)
-	} else {
-		fmt.Println("Export table found. #")
-	}
-
-	if !DB().Migrator().HasTable(Payments{}) {
-		DB().Migrator().CreateTable(Payments{})
-
-		// First create sample ExportProducts for the Export
-		exportProducts := []ExportProducts{
-			{
-				Name:            "ایزوگام شرق",
-				Number:          "10",
-				RolePrice:       99250,
-				MeterPrice:      102500,
-				Count:           100,
-				Meter:           10,
-				TotalPrice:      2000000,
-				InventoryNumber: 1,
-			},
+			if err := tx.Create(&existinExport).Error; err != nil {
+				log.Fatal("❌ Erro in insert data to newExport Table . #")
+				return err
+			}
+		} else {
+			fmt.Println("base Inventory Found")
 		}
 
-		// Create an Export to associate with
-		export := Export{
-			Name:            "رضا توانگر",
-			Number:          "9283422",
-			Phonenumber:     "09199656725",
-			Address:         "کرج -کرج=-ایران -سیسی",
-			TotalPrice:      10000000,
-			Tax:             10,
-			ExportProducts:  exportProducts,
-			InventoryNumber: 1,
-			CreatedAt:       Utility.CurrentTime(),
-		}
-		DB().Create(&export)
+		var existinExportProducts ExportProducts
+		if err := tx.Where("id = ?", 1).First(&existinExportProducts).Error; err != nil {
+			existinExportProducts = ExportProducts{
+				ExportID:    existinExport.ID, // اینجا از ID ایجاد شده استفاده می‌کنیم
+				Name:        "ایزوگام شرق",
+				Number:      "10",
+				RolePrice:   99250,
+				MeterPrice:  102500,
+				Count:       100,
+				InventoryID: existingInventory.ID,
+				TotalPrice:  2000000,
+				Meter:       10,
+			}
 
-		// Now create the Payment associated with this Export
-		Payment := Payments{
-			Method:     "مستقیم",
-			Number:     "9283422",
-			TotalPrice: 9000,
-			Name:       "ملی",
-			Describe:   "کرج -کرج=-ایران -سیسی",
-			CreatedAt:  Utility.CurrentTime(),
-			ExportID:   export.ID, // Associate with the export
+			if err := tx.Create(&existinExportProducts).Error; err != nil {
+				log.Fatal("❌ Erro in insert data to exportProducts Table . #")
+
+				return err
+			}
+		} else {
+			fmt.Println("base Inventory Found")
 		}
-		DB().Create(&Payment)
-	} else {
-		fmt.Println("Payments table found. #")
+
+		var existinPayments Payments
+		if err := tx.Where("id = ?", 1).First(&existinExport).Error; err != nil {
+			existinPayments = Payments{
+				Method:      "مستقیم",
+				Number:      "9283422",
+				TotalPrice:  9000,
+				Name:        "ملی",
+				Describe:    "کرج -کرج=-ایران -سیسی",
+				CreatedAt:   Utility.CurrentTime(),
+				ExportID:    existinExport.ID,
+				UserID:      1,
+				InventoryID: existingInventory.ID,
+				Status:      "collected",
+			}
+
+			if err := tx.Create(&existinPayments).Error; err != nil {
+				log.Fatal("❌ Erro in insert data to existinPayments Table . #")
+
+				return err
+			}
+		} else {
+			fmt.Println("base Inventory Found")
+		}
+
+		return err
+
+	})
+
+	if experror != nil {
+		fmt.Println("❌ خطا در تراکنش:", err)
+		return
 	}
+
+	fmt.Println("✅ Create  base tables sucess . #")
 
 }
 
-func TakeBackup(fs afero.Fs, is int) {
-	username := "root"
-	dbName := "Inventory"
-	password := "0311121314" // replace with your actual password
-	viper.SetConfigFile(".env")
-	viper.SetConfigName("config")
-	viper.AddConfigPath(".")
-	viper.ReadInConfig()
-	i := 1
-	t := time.Now().Add(-time.Hour * 24 * time.Duration(i))
-	backupName := fmt.Sprintf("backup-%s.sql", t.Format("2006-01-02-3-4-5"))
-	if is == 1 && viper.GetString("LAST_BS") == "" {
-		viper.Set("LAST_BS", backupName)
-	}
-	cmd := exec.Command("mysqldump", "-u", username, dbName)
-	cmd.Env = append(os.Environ(), fmt.Sprintf("MYSQL_PWD=%s", password))
-	file, err := os.Create(backupName)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer file.Close()
-	cmd.Stdout = file
-	cmd.Stderr = os.Stderr
-	err = cmd.Run()
-	if err != nil {
-		log.Fatal(err)
-	}
+// func TakeBackup(fs afero.Fs, is int) {
+// 	username := "root"
+// 	dbName := "Inventory"
+// 	password := "0311121314" // replace with your actual password
+// 	viper.SetConfigFile(".env")
+// 	viper.SetConfigName("config")
+// 	viper.AddConfigPath(".")
+// 	viper.ReadInConfig()
+// 	i := 1
+// 	t := time.Now().Add(-time.Hour * 24 * time.Duration(i))
+// 	backupName := fmt.Sprintf("backup-%s.sql", t.Format("2006-01-02-3-4-5"))
+// 	if is == 1 && viper.GetString("LAST_BS") == "" {
+// 		viper.Set("LAST_BS", backupName)
+// 	}
+// 	cmd := exec.Command("mysqldump", "-u", username, dbName)
+// 	cmd.Env = append(os.Environ(), fmt.Sprintf("MYSQL_PWD=%s", password))
+// 	file, err := os.Create(backupName)
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+// 	defer file.Close()
+// 	cmd.Stdout = file
+// 	cmd.Stderr = os.Stderr
+// 	err = cmd.Run()
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
 
-	fmt.Println("Backup saved to backup.sql", backupName, "round ", is)
-	if is == 1 {
+// 	fmt.Println("Backup saved to backup.sql", backupName, "round ", is)
+// 	if is == 1 {
 
-		err = fs.Remove(RemoveFileName(t, backupName, 2))
-		// fmt.Println(fs.Stat(backupName))
-		if err != nil {
-			// log.Printf(err)
-		}
-		// is = 0
-		// viper.Set("LAST_BS", "")
-	} else if is == 2 {
+// 		err = fs.Remove(RemoveFileName(t, backupName, 2))
+// 		// fmt.Println(fs.Stat(backupName))
+// 		if err != nil {
+// 			// log.Printf(err)
+// 		}
+// 		// is = 0
+// 		// viper.Set("LAST_BS", "")
+// 	} else if is == 2 {
 
-		err = fs.Remove(RemoveFileName(t, backupName, 2))
-		if err != nil {
-			// log.Fatal(err)
-		}
+// 		err = fs.Remove(RemoveFileName(t, backupName, 2))
+// 		if err != nil {
+// 			// log.Fatal(err)
+// 		}
 
-	} else if is == 3 {
+// 	} else if is == 3 {
 
-		err = fs.Remove(RemoveFileName(t, backupName, 2))
-		if err != nil {
-			// log.Fatal(err)
-		}
-		// viper.Set("LAST_BS", "")
-	} else if is == 4 {
-		err = fs.Remove(RemoveFileName(t, backupName, 2))
-		if err != nil {
-			// log.Fatal(err)
-		}
-		is = 0
-		// viper.Set("LAST_BS", "")
-	}
+// 		err = fs.Remove(RemoveFileName(t, backupName, 2))
+// 		if err != nil {
+// 			// log.Fatal(err)
+// 		}
+// 		// viper.Set("LAST_BS", "")
+// 	} else if is == 4 {
+// 		err = fs.Remove(RemoveFileName(t, backupName, 2))
+// 		if err != nil {
+// 			// log.Fatal(err)
+// 		}
+// 		is = 0
+// 		// viper.Set("LAST_BS", "")
+// 	}
 
-}
+// }
 func TakeBackup2(fs afero.Fs, backupType int) error {
 	// خواندن تنظیمات از محیط
 	viper.SetConfigFile(".env")

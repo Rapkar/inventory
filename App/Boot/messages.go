@@ -11,6 +11,7 @@ func Messages(value string) string {
 		"product remove success":   "محصول با موفقیت حذف شد",
 		"product remove faild":     "حذف محصول با مشکل مواجه شد",
 		"product made success":     "محصول با موفقیت افزوده شد",
+		"product_edit_success":     "محصول با موفقیت ویرایش شد",
 		"product made faild":       "افزودن محصول با مشکل مواجه شد",
 		"Export removed success":   "فاکتور با موفقیت حذف شد ",
 		"Export removed faild":     "حذف فاکتور با خطا مواچه شد ",

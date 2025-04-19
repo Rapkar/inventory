@@ -22,6 +22,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/afero"
 	"github.com/spf13/viper"
+	"gorm.io/gorm"
 )
 
 func main() {
@@ -364,6 +365,65 @@ func main() {
 			})
 
 		})
+		v2.GET("/user/details", middleware.AuthMiddleware("Admin"), func(c *gin.Context) {
+			session := sessions.Default(c)
+			user, err := model.GetCurrentUser(c)
+			if err != nil {
+				log.Println("❌ Error fetching current user:", err)
+				c.HTML(http.StatusBadRequest, "error.html", gin.H{
+					"message": "خطا در دریافت اطلاعات کاربر. لطفاً دوباره تلاش کنید.",
+				})
+				return
+			}
+			UserFullDetails, err := model.GetUserFullDetailsByID(user.ID)
+
+			if err != nil {
+				log.Println("❌ Error fetching current user detail faild:", err)
+			}
+
+			type UserCalculations struct {
+				ExportTotalprice float64
+				TotalPaid        float64
+				ExportsCount     int64
+				DebtAmount       float64 // بهتر است با حرف بزرگ شروع شود (قابلیت export)
+				CreditAmount     float64 // بهتر است با حرف بزرگ شروع شود
+			}
+			Totalprice, _ := model.GetUserTotalPrice(user.ID)
+			TotalPaid, _ := model.GetUserTotalPaid(user.ID)
+			var CreditAmount float64
+			var DebtAmount float64
+
+			difference := Totalprice - TotalPaid
+
+			if difference > 0 {
+				// مشتری بدهکار است (باید بیشتر پرداخت کند)
+				CreditAmount = difference
+				DebtAmount = 0
+			} else if difference < 0 {
+				// مشتری بستانکار است (پرداخت بیش از حد انجام داده)
+				DebtAmount = -difference // استفاده از مقدار مطلق
+				CreditAmount = 0
+			} else {
+				// تسویه کامل شده
+				CreditAmount = 0
+				DebtAmount = 0
+			}
+			var userCalc UserCalculations
+			userCalc.ExportTotalprice, _ = model.GetUserTotalPrice(user.ID)
+			userCalc.TotalPaid, _ = model.GetUserTotalPaid(user.ID)
+			userCalc.ExportsCount, _ = model.GetCountOfUserExports(user.ID)
+			userCalc.DebtAmount = DebtAmount
+			userCalc.CreditAmount = CreditAmount
+			c.HTML(http.StatusOK, "details_user.html", gin.H{
+				"Username":         session.Get("UserName"),
+				"UserRole":         session.Get("UserRole"),
+				"title":            "ویرایش کاربر",
+				"details":          UserFullDetails,
+				"UserCalculations": userCalc,
+				"action":           "edituser",
+			})
+
+		})
 		v2.POST("/edituser", middleware.AuthMiddleware("Admin"), func(c *gin.Context) {
 			session := sessions.Default(c)
 
@@ -522,18 +582,18 @@ func main() {
 			})
 		})
 
-		v2.POST("/users-find", middleware.AuthMiddleware(), func(c *gin.Context) {
-			var data struct {
-				Term string `json:"term"`
-			}
-			if err := c.BindJSON(&data); err != nil {
+		// v2.POST("/users-find", middleware.AuthMiddleware(), func(c *gin.Context) {
+		// 	var data struct {
+		// 		Term string `json:"term"`
+		// 	}
+		// 	if err := c.BindJSON(&data); err != nil {
 
-				c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-				return
-			}
-			result := model.GetAllUsersByPhoneAndName(data.Term)
-			c.JSON(http.StatusOK, gin.H{"message": result})
-		})
+		// 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		// 		return
+		// 	}
+		// 	result := model.GetAllUsersByPhoneAndName(data.Term)
+		// 	c.JSON(http.StatusOK, gin.H{"message": result})
+		// })
 		// Product
 		v2.GET("/addproduct", middleware.AuthMiddleware("Admin"), func(c *gin.Context) {
 			session := sessions.Default(c)
@@ -546,37 +606,38 @@ func main() {
 			})
 		})
 		v2.POST("/addproduct", middleware.AuthMiddleware("Admin"), func(c *gin.Context) {
-			var product boot.Inventory
+			var product boot.Product
 			product.Name = c.PostForm("Name")
 			product.Number = c.PostForm("Number")
-			product.RolePrice = Utility.StringToInt64(c.PostForm("RolePrice"))
-			product.MeterPrice = Utility.StringToInt64(c.PostForm("MeterPrice"))
-			product.Count = Utility.StringToInt64(c.PostForm("Count"))
-			product.Meter = Utility.StringToInt64(c.PostForm("Meter"))
-			product.InventoryNumber = Utility.StringToInt32(c.PostForm("InventoryNumber"))
+			product.RolePrice, _ = Utility.StringToFloat64(c.PostForm("RolePrice"))
+			product.MeterPrice, _ = Utility.StringToFloat64(c.PostForm("MeterPrice"))
+			product.Count, _ = Utility.StringToInt64(c.PostForm("Count"))
+			product.Meter, _ = Utility.StringToFloat64(c.PostForm("Meter"))
+			product.Weight, _ = Utility.StringToFloat64(c.PostForm("Weight")) // دریافت وزن
+			product.InventoryID, _ = Utility.StringToUnit64(c.PostForm("InventoryNumber"))
+
 			res := boot.DB().Create(&product)
+
 			if res.RowsAffected > 0 {
 				c.HTML(http.StatusOK, "add_product.html", gin.H{
 					"title":   "محصول",
 					"action":  "addproduct",
-					"message": boot.Messages("product made success"),
+					"message": boot.Messages("product_add_success"),
 					"success": true,
 				})
 			} else {
 				c.HTML(http.StatusOK, "add_product.html", gin.H{
 					"title":   "محصول",
 					"action":  "addproduct",
-					"message": boot.Messages("product made faild"),
+					"message": boot.Messages("product_add_failed"),
 					"success": false,
 				})
 			}
-
 		})
 		v2.GET("/deleteproduct", middleware.AuthMiddleware("Admin"), func(c *gin.Context) {
 			// session := sessions.Default(c)
 			inventory := c.Request.URL.Query().Get("inventory")
 			// InventoryID, _ := strconv.ParseUint(inventory, 10, 64)
-
 			if model.RemoveCurrentProduct(c) {
 				c.Redirect(301, "inventory?inventory="+inventory)
 
@@ -607,39 +668,89 @@ func main() {
 		v2.POST("/editproduct", middleware.AuthMiddleware("Admin"), func(c *gin.Context) {
 			session := sessions.Default(c)
 
-			var product boot.Inventory
+			// دریافت مقادیر از فرم
 			Id := c.PostForm("Id")
-			ProductID, _ := strconv.ParseInt(Id, 10, 8)
-			product.Name = c.PostForm("Name")
-			product.RolePrice = Utility.StringToInt64(c.PostForm("RolePrice"))
-			product.MeterPrice = Utility.StringToInt64(c.PostForm("MeterPrice"))
-			product.Count = Utility.StringToInt64(c.PostForm("Count"))
-			product.Meter = Utility.StringToInt64(c.PostForm("Meter"))
-			product.InventoryNumber = Utility.StringToInt32(c.PostForm("InventoryNumber"))
-			res := boot.DB().Model(&product).Where("id = ? ", ProductID).Updates(&product)
+			ProductID, err := strconv.ParseInt(Id, 10, 8)
+			if err != nil {
+				c.HTML(http.StatusBadRequest, "add_product.html", gin.H{
+					"Username": session.Get("UserName"),
+					"UserRole": session.Get("UserRole"),
+					"title":    "ویرایش محصول",
+					"error":    "شناسه محصول نامعتبر است",
+					"formData": c.Request.PostForm,
+				})
+				return
+			}
+
+			// دریافت و تبدیل مقادیر
+			rolePrice, _ := Utility.StringToFloat64(c.PostForm("RolePrice"))
+			meterPrice, _ := Utility.StringToFloat64(c.PostForm("MeterPrice"))
+			count, _ := Utility.StringToInt64(c.PostForm("Count"))
+			meter, _ := Utility.StringToFloat64(c.PostForm("Meter"))
+			inventoryID, _ := Utility.StringToUnit64(c.PostForm("InventoryNumber"))
+
+			// اعتبارسنجی: حداقل دو فیلد باید مقدار مثبت داشته باشند
+			validFields := 0
+			if rolePrice > 0 {
+				validFields++
+			}
+			if meterPrice > 0 {
+				validFields++
+			}
+			if count > 0 {
+				validFields++
+			}
+			if meter > 0 {
+				validFields++
+			}
+
+			if validFields < 2 {
+				c.HTML(http.StatusBadRequest, "add_product.html", gin.H{
+					"Username": session.Get("UserName"),
+					"UserRole": session.Get("UserRole"),
+					"title":    "ویرایش محصول",
+					"error":    "حداقل دو مورد از مقادیر (قیمت رول، قیمت متر، تعداد، متراژ) باید پر شوند",
+					"formData": c.Request.PostForm,
+					"products": model.GetProductById(int(ProductID)),
+				})
+				return
+			}
+
+			// آماده‌سازی محصول برای آپدیت
+			product := boot.Product{
+				Name:        c.PostForm("Name"),
+				RolePrice:   rolePrice,
+				MeterPrice:  meterPrice,
+				Count:       count,
+				Meter:       meter,
+				InventoryID: inventoryID,
+			}
+
+			// انجام عملیات آپدیت
+			res := boot.DB().Model(&boot.Product{}).Where("id = ?", ProductID).Updates(&product)
 			currentProduct := model.GetProductById(int(ProductID))
+
 			if res.RowsAffected > 0 {
 				c.HTML(http.StatusOK, "add_product.html", gin.H{
 					"Username": session.Get("UserName"),
 					"UserRole": session.Get("UserRole"),
-					"title":    "ویرایش کاربر",
+					"title":    "ویرایش محصول",
 					"products": currentProduct,
 					"action":   "editproduct",
-					"message":  boot.Messages("product made success"),
+					"message":  "محصول با موفقیت ویرایش شد",
 					"success":  true,
 				})
 			} else {
 				c.HTML(http.StatusOK, "add_product.html", gin.H{
 					"Username": session.Get("UserName"),
 					"UserRole": session.Get("UserRole"),
-					"title":    "ویرایش کاربر",
-					// "products": currentProduct,
-					"action":  "editproduct",
-					"message": boot.Messages("product made faild"),
-					"success": false,
+					"title":    "ویرایش محصول",
+					"products": currentProduct,
+					"action":   "editproduct",
+					"error":    "خطا در ویرایش محصول",
+					"formData": c.Request.PostForm,
 				})
 			}
-
 		})
 		// inventory
 		v2.GET("/inventory", middleware.AuthMiddleware(), func(c *gin.Context) {
@@ -686,18 +797,20 @@ func main() {
 			})
 		})
 		v2.POST("/updateproduct", middleware.AuthMiddleware(), func(c *gin.Context) {
-			var product boot.Inventory
-			var oldproduct boot.Inventory
+			var product boot.Product
+			var oldproduct boot.Product
 			product.ID, _ = strconv.ParseUint(c.PostForm("ProductName"), 10, 64)
 
 			res := boot.DB().Model(&product).Where("id = ? ", product.ID).Scan(&oldproduct)
 			if res.RowsAffected > 0 {
 				product.Name = oldproduct.Name
-				product.RolePrice = Utility.StringToInt64(c.PostForm("RolePrice"))
-				product.MeterPrice = Utility.StringToInt64(c.PostForm("MeterPrice"))
-				product.Count = oldproduct.Count + Utility.StringToInt64(c.PostForm("ProductsCount"))
-				product.Meter = oldproduct.Meter + Utility.StringToInt64(c.PostForm("ProductMeter"))
-				product.InventoryNumber = 1
+				product.RolePrice, _ = Utility.StringToFloat64(c.PostForm("RolePrice"))
+				product.MeterPrice, _ = Utility.StringToFloat64(c.PostForm("MeterPrice"))
+				pCount, _ := Utility.StringToInt64(c.PostForm("ProductsCount"))
+				product.Count = oldproduct.Count + pCount
+				pMeter, _ := Utility.StringToFloat64(c.PostForm("ProductMeter"))
+				product.Meter = oldproduct.Meter + pMeter
+				product.InventoryID = 1
 
 				res := boot.DB().Model(&product).Where("id = ? ", product.ID).Updates(&product)
 				if res.RowsAffected > 0 {
@@ -731,7 +844,7 @@ func main() {
 				Payments.Method = oldPayments.Method
 				Payments.Number = c.PostForm("PaymentNumber")
 				Payments.Name = c.PostForm("PaymentName")
-				Payments.TotalPrice = Utility.StringToInt64(c.PostForm("PaymentTotalPrice"))
+				Payments.TotalPrice, _ = Utility.StringToFloat64(c.PostForm("PaymentTotalPrice"))
 				Payments.Describe = c.PostForm("PaymentDescribe")
 				if c.PostForm("CreatedAt") != "" {
 					Payments.CreatedAt = c.PostForm("CreatedAt")
@@ -859,124 +972,217 @@ func main() {
 			c.JSON(http.StatusOK, gin.H{"result": product})
 		})
 		v2.POST("/export", func(c *gin.Context) {
-
-			// make  product  struct  for bind and for data struct
-
-			type Product struct {
-				ID              string `gorm:"primaryKey"`
-				ProductId       string `gorm:"size:255;"`
-				ExportID        string `gorm:"size:255;"`
-				Name            string `gorm:"type:varchar(100)" json:"name"`
-				Number          string `gorm:"size:255;"`
-				RolePrice       string `gorm:"type:float"`
-				MeterPrice      string `gorm:"type:float"`
-				Count           string `gorm:"size:255;"`
-				Meter           string `gorm:"size:255;"`
-				TotalPrice      string `gorm:"size:255;"`
-				InventoryNumber string `gorm:"size:255;"`
+			// Product struct for binding and data handling
+			// type Product struct {
+			// 	ID          string `gorm:"primaryKey"`
+			// 	ProductId   string `gorm:"size:255;"`
+			// 	ExportID    string `gorm:"size:255;"`
+			// 	Name        string `gorm:"type:varchar(100)" json:"name"`
+			// 	Number      string `gorm:"size:255;"`
+			// 	RolePrice   string `gorm:"type:float"`
+			// 	MeterPrice  string `gorm:"type:float"`
+			// 	Count       string `gorm:"size:255;"`
+			// 	Meter       string `gorm:"size:255;"`
+			// 	TotalPrice  string `gorm:"index"`
+			// 	InventoryID uint64 `gorm:"size:255;"`
+			// }
+			type ExportProducts struct {
+				ID          uint64         `gorm:"primaryKey"`
+				ExportID    uint64         `gorm:"index"`
+				Name        string         `gorm:"type:varchar(100)"`
+				Number      string         `gorm:"size:255;"`
+				RolePrice   float64        `gorm:"type:float" json:",string"`
+				MeterPrice  float64        `gorm:"type:float" json:",string"`
+				Count       int64          `gorm:"size:255;" json:",string"`
+				Meter       float64        `gorm:"type:float"`
+				TotalPrice  float64        `gorm:"type:float" json:",string"`
+				InventoryID uint64         `gorm:"index" json:",string"`
+				Export      Boot.Export    `gorm:"foreignKey:ExportID;references:ID"`
+				Inventory   Boot.Inventory `gorm:"foreignKey:InventoryID;references:ID"`
 			}
-			type PaymentRequest struct {
-				Method     string `json:"Method"`
-				Number     string `json:"Number"`
-				Name       string `json:"Name"`
-				TotalPrice string `json:"TotalPrice"`
-				CreatedAt  string `json:"CreatedAt"`
-				Status     string `json:"Status"`
+			// type Product struct {
+			// 	ID          uint64    `gorm:"primaryKey"`
+			// 	Name        string    `gorm:"type:varchar(100)"`
+			// 	Number      string    `gorm:"size:255;"`
+			// 	RolePrice   float64   `gorm:"type:float"`
+			// 	MeterPrice  float64   `gorm:"type:float"`
+			// 	Count       int64     `gorm:"size:255;"`
+			// 	Meter       float64   `gorm:"type:float"`
+			// 	Weight      float64   `gorm:"type:float"`
+			// 	InventoryID uint64    `gorm:"index"`
+			// 	Inventory   Inventory `gorm:"foreignKey:InventoryID;references:ID"`
+			// }
+			// type PaymentRequest struct {
+			// 	Method     string  `gorm:"size:255;"`
+			// 	Number     string  `gorm:"size:255;"`
+			// 	Name       string  `json:"Name"`
+			// 	TotalPrice float64 `gorm:"type:float" json:",string"`
+			// 	CreatedAt  string  `gorm:"size:255;"`
+			// 	Status     string  `gorm:"size:255;"`
+			// }
+			type Payments struct {
+				ID          uint64         `gorm:"primaryKey"`
+				Method      string         `gorm:"type:varchar(100)"`
+				Number      string         `gorm:"varchar(255),unique"`
+				Name        string         `gorm:"type:varchar(100)"`
+				TotalPrice  float64        `gorm:"type:float" json:",string"`
+				Describe    string         `gorm:"size:255;"`
+				CreatedAt   string         `json:"CreatedAt"` // assign the format to a string
+				ExportID    uint64         `gorm:"index"`
+				UserID      uint64         `gorm:"index"`
+				InventoryID uint64         `gorm:"index"`
+				Export      Boot.Export    `gorm:"foreignKey:ExportID"`
+				Status      string         `gorm:"type:varchar(100)"`
+				User        Boot.Users     `gorm:"foreignKey:UserID"`
+				Inventory   Boot.Inventory `gorm:"foreignKey:InventoryID;references:ID"`
 			}
-			// make  Data  struct  for bind
+			// Data struct for binding
 			var data struct {
-				Name     string           `json:"Name"`
-				Content  string           `json:"Content"`
-				Products []Product        `json:"Products"`
-				Payments []PaymentRequest `json:"Payments"`
+				Name       string           `json:"Name"`
+				TotalPrice float64          `json:"TotalPrice"`
+				Content    string           `json:"Content"`
+				Products   []ExportProducts `json:"Products"`
+				Payments   []Payments       `json:"Payments"`
 			}
-			// bind data from ajax to Data
-
+			// Bind data from request
 			if err := c.BindJSON(&data); err != nil {
+				fmt.Println(err)
+
 				c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 				return
 			}
 
-			// fmt.Println("serialize", "serialize")
-			// // bind data struct to  ExportProducts for make row in db
+			// Convert products to ExportProducts
 			exportproducts := make([]boot.ExportProducts, len(data.Products))
 			Ids := make(map[int64]int64)
-			for a, _ := range data.Products {
-				ids, _ := strconv.ParseInt(data.Products[a].ProductId, 10, 64)
 
-				exportproducts[a].ExportID, _ = strconv.ParseUint(data.Products[a].ExportID, 10, 64)
-				fmt.Println(data.Products[a].ExportID)
+			for a := range data.Products {
+				// ids, _ := strconv.ParseInt(data.Products[a].ProductId, 10, 64)
+				exportproducts[a].ExportID = data.Products[a].ExportID
 				exportproducts[a].Name = data.Products[a].Name
-				exportproducts[a].Number = data.Products[a].ExportID
-				exportproducts[a].RolePrice, _ = strconv.ParseInt(data.Products[a].RolePrice, 10, 64)
-				exportproducts[a].MeterPrice, _ = strconv.ParseInt(data.Products[a].MeterPrice, 10, 64)
-				Count, _ := strconv.ParseInt(data.Products[a].Count, 10, 8)
-				exportproducts[a].Count = int64(Count)
-				InventoryNumber, _ := strconv.ParseInt(data.Products[a].InventoryNumber, 10, 32)
-				exportproducts[a].TotalPrice, _ = strconv.ParseInt(data.Products[a].TotalPrice, 10, 64)
-				fmt.Println(exportproducts[a].TotalPrice)
-				exportproducts[a].InventoryNumber = int32(InventoryNumber)
-				Ids[int64(ids)] = int64(Count)
-
+				exportproducts[a].Number = data.Products[a].Number
+				exportproducts[a].RolePrice = data.Products[a].RolePrice
+				exportproducts[a].MeterPrice = data.Products[a].MeterPrice
+				exportproducts[a].Count = data.Products[a].Count
+				exportproducts[a].Meter = data.Products[a].Meter
+				exportproducts[a].TotalPrice = data.TotalPrice
+				exportproducts[a].InventoryID = data.Products[a].InventoryID
+				exportproducts[a].TotalPrice = data.Products[a].TotalPrice
 			}
-
-			// bind result " data.Content " from ajax to  Export for make row in db
-			User := boot.Users{}
-			Export := boot.Export{}
-
+			PaymentRequest := make([]boot.Payments, len(data.Payments))
 			result := Utility.Unserialize(data.Content)
-			User.Name, Export.Name = result["Name"], result["Name"]
-			Export.Number = result["ExportID"]
-			User.Phonenumber, Export.Phonenumber = result["Phonenumber"], result["Phonenumber"]
-			User.Address, Export.Address = result["Address"], result["Address"]
-			Tprice := Utility.StringToInt64(result["ExportTotalPrice"])
-			Export.TotalPrice = Tprice
-			Export.Tax = Utility.StringToInt64(result["Tax"])
+			// Phonenumber := result["Phonenumber"]
 
-			Export.CreatedAt = string(Utility.CurrentTime())
-			Export.InventoryNumber = Utility.StringToInt32(result["InventoryNumber"])
-			Export.Describe = result["describe"]
+			invNum, err := Utility.StringToUnit64(result["InventoryNumber"])
+			for a, payment := range data.Payments {
+				totalPrice := payment.TotalPrice
 
-			Export.ExportProducts = exportproducts
-			User.Role = "guest"
-			if !model.CheckExportNumberFound(Export.Number) {
-				Export.Number, _ = model.GenerateUniqueExportID()
-			} else {
-				return
-			}
-			// Export.Number , _ := model.GenerateUniqueExportID()
-			boot.DB().Create(&User)
-			resexportproducts := boot.DB().Create(&exportproducts)
-			resExport := boot.DB().Create(&Export)
-			// fmt.Println("ddddddddddd", resExport, resexportproducts)
-			if resexportproducts.RowsAffected > 0 && resExport.RowsAffected > 0 {
-				controller.InventoryCalculation(Ids)
-				resExport := boot.DB().Last(&Export)
-				fmt.Println(resExport, Export.ID)
-				for _, payment := range data.Payments {
-					// Convert and create payment records
-					totalPrice, _ := strconv.ParseInt(payment.TotalPrice, 10, 64)
-					if payment.CreatedAt == "" {
-						payment.CreatedAt = Utility.CurrentTime()
-					}
-					dbPayment := boot.Payments{
-						Method:     payment.Method,
-						Number:     payment.Number,
-						Name:       payment.Name,
-						TotalPrice: totalPrice,
-						CreatedAt:  payment.CreatedAt,
-						Status:     payment.Status,
-						ExportID:   Export.ID,
-					}
-					boot.DB().Create(&dbPayment)
-
+				createdAt := payment.CreatedAt
+				if createdAt == "" {
+					createdAt = Utility.CurrentTime()
 				}
 
-				c.JSON(http.StatusOK, gin.H{"message": "sucess", "id": Export.ID})
-			} else {
-				c.JSON(http.StatusOK, gin.H{"message": "invalid request"})
-			}
+				PaymentRequest[a].Method = payment.Method
+				PaymentRequest[a].Number = payment.Number
+				PaymentRequest[a].Name = payment.Name
+				PaymentRequest[a].TotalPrice = totalPrice
+				PaymentRequest[a].CreatedAt = createdAt
+				PaymentRequest[a].Status = payment.Status
+				PaymentRequest[a].InventoryID = invNum
 
+			}
+			// Process user and export data
+
+			// if err != nil {
+			// 	c.JSON(http.StatusBadRequest, gin.H{"error": "invalid total price"})
+			// 	return
+			// }
+			tprice, _ := Utility.StringToFloat64(result["ExportTotalPrice"])
+			tax, _ := Utility.StringToInt64(result["Tax"])
+
+			Export := boot.Export{}
+			// Database transaction
+			err = boot.DB().Transaction(func(tx *gorm.DB) error {
+
+				User := boot.Users{
+					Name:        result["Name"],
+					Phonenumber: result["Phonenumber"],
+					Address:     result["Address"],
+					Role:        "guest"}
+				if err := tx.Where("id = ?", User.ID).First(&User).Error; err != nil {
+					if err := tx.Create(&User).Error; err != nil {
+						return err
+					}
+				}
+
+				Export.UserID = User.ID
+				Export.Name = result["Name"]
+				Export.Number = result["ExportID"]
+				Export.Phonenumber = result["Phonenumber"]
+				Export.Address = result["Address"]
+				Export.TotalPrice = tprice
+				Export.Tax = tax
+				Export.CreatedAt = string(Utility.CurrentTime())
+				Export.ProductID = invNum
+				Export.Describe = result["describe"]
+				Export.ExportProducts = exportproducts
+
+				if !model.CheckExportNumberFound(Export.Number) {
+					newID, err := model.GenerateUniqueExportID()
+					if err != nil {
+						c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to generate export ID"})
+						return err
+					}
+					Export.Number = newID
+				}
+
+				if err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{"error": "invalid inventory number"})
+					return err
+				}
+
+				// Create user
+
+				// Create export
+				if err := tx.Create(&Export).Error; err != nil {
+					return err
+				}
+				fmt.Println("Export.ID", Export.ID)
+				// Update export products with the correct ExportID
+				for i := range exportproducts {
+					exportproducts[i].ExportID = Export.ID
+				}
+				if err := tx.Where("id = ?", Export.ID).First(&exportproducts).Error; err != nil {
+					// Create export products
+					if err := tx.Create(&exportproducts).Error; err != nil {
+						return err
+					}
+				}
+
+				// Process inventory
+				controller.InventoryCalculation(Ids)
+
+				// Create payments
+				for i := range PaymentRequest {
+					PaymentRequest[i].ExportID = Export.ID
+					PaymentRequest[i].UserID = User.ID
+				}
+				if err := tx.Create(&PaymentRequest).Error; err != nil {
+					return err
+				}
+
+				return nil
+			})
+
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{
+					"message": "transaction failed",
+					"error":   err.Error(),
+				})
+				return
+			}
+			log.Print("new Export submited")
+			c.JSON(http.StatusOK, gin.H{"message": "sucess", "id": Export.ID})
 		})
 		v2.GET("/export-list", middleware.AuthMiddleware(), func(c *gin.Context) {
 			session := sessions.Default(c)
@@ -1066,7 +1272,18 @@ func main() {
 				page = 1
 			}
 			offset := (page - 1) * postperpage
-			res, _ := model.GetAllPaymentsWithExportNumber(offset, postperpage, status)
+			var res []boot.PaymentWithExport
+			userid, err := Utility.StringToUnit64(c.Query("user_id"))
+			if err == nil {
+				res, err = model.GetAllPaymentsWithExportNumberByUserId(offset, postperpage, status, userid)
+			} else {
+				res, err = model.GetAllPaymentsWithExportNumber(offset, postperpage, status)
+			}
+
+			if err != nil {
+				c.HTML(http.StatusInternalServerError, "error.html", gin.H{"error": "خطا در دریافت پرداخت‌ها"})
+				return
+			}
 			totalItems := model.GetCountOfPayments()
 			c.HTML(http.StatusOK, "payments.html", gin.H{
 				"Username":    session.Get("UserName"),
@@ -1076,6 +1293,7 @@ func main() {
 				"Payments":    res,
 				"CurrentPage": page,
 			})
+
 		})
 		v2.GET("/backup", middleware.AuthMiddleware(), func(c *gin.Context) {
 			session := sessions.Default(c)

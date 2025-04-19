@@ -34,6 +34,7 @@
             <th scope="col">نام کاربر</th>
             <th scope="col">شماره تماس</th>
             <th scope="col">آدرس</th>
+            <th scope="col">جزییات حساب</th>
             <th scope="col">ویرایش</th>
           </tr>
         </thead>
@@ -44,6 +45,54 @@
             <td>{{.Name}}</td>
             <td dir="ltr" style="text-align:right;">{{.Phonenumber}}</td>
             <td dir="ltr" type="password" style="text-align:right;">{{.Address}}</td>
+            <td dir="ltr" type="password" style="text-align:right;">
+              <div class="modal fade" id="editModal{{.ID}}" tabindex="-1"
+              aria-labelledby="editModalLabel{{.ID}}" aria-hidden="true">
+              <div class="modal-dialog modal-xl">
+                  <div class="modal-content">
+                      <div class="modal-header">
+                          <h5 class="modal-title" id="editModalLabel{{.ID}}">Edit Export #{{.ID}}
+                          </h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal"
+                              aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                          <!-- Your edit form goes here -->
+                          <form action="./updatepayment" method="POST">
+                              <input type="hidden" name="PaymentID" value="{{.ID}}">
+
+                              <div class="row">
+  
+                              </div>
+
+
+
+                              <!-- Add more fields as needed -->
+                      </div>
+                      <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary"
+                              data-bs-dismiss="modal">بستن</button>
+                          <button type="submit" class="btn btn-primary"
+                              onclick="document.forms[0].submit()">ذخیره</button>
+                      </div>
+                      </form>
+
+                  </div>
+              </div>
+          </div>
+          <a href="./user/details/?user-id={{.ID}}"  >
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+          class="bi bi-eye" viewBox="0 0 16 16">
+          <path
+              d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z" />
+          <path
+              d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0" />
+      </svg>
+      </a>
+                </td>
+
+
+            </td>
             <td dir="ltr" type="password" style="text-align:right;"><a
                 href="./deleteuser?user-id={{.ID}}&user={{.Role}}"><svg xmlns="http://www.w3.org/2000/svg" width="16"
                   height="16" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">

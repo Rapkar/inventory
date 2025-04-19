@@ -1,5 +1,128 @@
-2025/04/15 12:03:44 🚀 Logger initialized
-2025/04/15 12:03:44 🔧 Booting application...
-2025/04/15 12:03:44 📦 ScheduleBackups started
-2025/04/15 12:03:44 ✅ created backup success backup-2025-04-14-12-03-44.sql
-2025/04/15 12:03:44 ✅ created backup success backup-2025-04-13-12-03-44.sql
+2025/04/19 00:18:20 🚀 Logger initialized
+2025/04/19 00:18:20 🔧 Booting application...
+2025/04/19 00:18:21 📦 ScheduleBackups started
+2025/04/19 00:18:21 ✅ created backup success backup-2025-04-18-00-18-21.sql
+2025/04/19 00:18:21 ✅ created backup success backup-2025-04-17-00-18-21.sql
+2025/04/19 07:23:33 🚀 Logger initialized
+2025/04/19 07:23:33 🔧 Booting application...
+2025/04/19 07:23:34 📦 ScheduleBackups started
+2025/04/19 07:23:34 ✅ created backup success backup-2025-04-18-07-23-34.sql
+2025/04/19 07:23:34 ✅ created backup success backup-2025-04-17-07-23-34.sql
+2025/04/19 07:34:35 🚀 Logger initialized
+2025/04/19 07:34:35 🔧 Booting application...
+2025/04/19 07:34:36 📦 ScheduleBackups started
+2025/04/19 07:34:36 ✅ created backup success backup-2025-04-18-07-34-36.sql
+2025/04/19 07:34:36 ✅ created backup success backup-2025-04-17-07-34-36.sql
+2025/04/19 12:08:40 🚀 Logger initialized
+2025/04/19 12:08:40 🔧 Booting application...
+2025/04/19 12:08:41 📦 ScheduleBackups started
+2025/04/19 12:08:41 ✅ created backup success backup-2025-04-18-12-08-41.sql
+2025/04/19 12:08:41 ✅ created backup success backup-2025-04-17-12-08-41.sql
+2025/04/19 12:10:11 ❌ Error fetching payments: Error 1052 (23000): Column 'user_id' in where clause is ambiguous
+2025/04/19 12:18:51 🚀 Logger initialized
+2025/04/19 12:18:51 🔧 Booting application...
+2025/04/19 12:18:52 📦 ScheduleBackups started
+2025/04/19 12:18:52 ✅ created backup success backup-2025-04-18-12-18-52.sql
+2025/04/19 12:18:52 ✅ created backup success backup-2025-04-17-12-18-52.sql
+2025/04/19 12:27:08 🚀 Logger initialized
+2025/04/19 12:27:08 🔧 Booting application...
+2025/04/19 12:27:09 📦 ScheduleBackups started
+2025/04/19 12:27:09 ✅ created backup success backup-2025-04-18-12-27-09.sql
+2025/04/19 12:27:09 ✅ created backup success backup-2025-04-17-12-27-09.sql
+2025/04/19 12:27:29 🚀 Logger initialized
+2025/04/19 12:27:29 🔧 Booting application...
+2025/04/19 12:27:30 📦 ScheduleBackups started
+2025/04/19 12:27:30 ✅ created backup success backup-2025-04-18-12-27-30.sql
+2025/04/19 12:27:30 ✅ created backup success backup-2025-04-17-12-27-30.sql
+2025/04/19 12:27:46 🚀 Logger initialized
+2025/04/19 12:27:46 🔧 Booting application...
+2025/04/19 12:27:47 📦 ScheduleBackups started
+2025/04/19 12:27:47 ✅ created backup success backup-2025-04-17-12-27-47.sql
+2025/04/19 12:27:47 ✅ created backup success backup-2025-04-18-12-27-47.sql
+2025/04/19 12:28:21 🚀 Logger initialized
+2025/04/19 12:28:21 🔧 Booting application...
+2025/04/19 12:28:22 📦 ScheduleBackups started
+2025/04/19 12:28:22 ✅ created backup success backup-2025-04-17-12-28-22.sql
+2025/04/19 12:28:22 ✅ created backup success backup-2025-04-18-12-28-22.sql
+2025/04/19 12:29:04 🚀 Logger initialized
+2025/04/19 12:29:04 🔧 Booting application...
+2025/04/19 12:29:05 📦 ScheduleBackups started
+2025/04/19 12:29:06 ✅ created backup success backup-2025-04-17-12-29-05.sql
+2025/04/19 12:29:06 ✅ created backup success backup-2025-04-18-12-29-05.sql
+2025/04/19 13:13:37 🚀 Logger initialized
+2025/04/19 13:13:37 🔧 Booting application...
+2025/04/19 13:13:38 📦 ScheduleBackups started
+2025/04/19 13:13:39 ✅ created backup success backup-2025-04-18-13-13-38.sql
+2025/04/19 13:13:39 ✅ created backup success backup-2025-04-17-13-13-38.sql
+2025/04/19 13:13:47 ❌ Error fetching payments: Error 1054 (42S22): Unknown column 'exports.number' in 'field list'
+2025/04/19 13:15:46 🚀 Logger initialized
+2025/04/19 13:15:46 🔧 Booting application...
+2025/04/19 13:15:47 📦 ScheduleBackups started
+2025/04/19 13:15:47 ✅ created backup success backup-2025-04-18-13-15-47.sql
+2025/04/19 13:15:47 ✅ created backup success backup-2025-04-17-13-15-47.sql
+2025/04/19 16:11:30 🚀 Logger initialized
+2025/04/19 16:11:30 🔧 Booting application...
+2025/04/19 16:11:31 📦 ScheduleBackups started
+2025/04/19 16:11:31 ✅ created backup success backup-2025-04-18-16-11-31.sql
+2025/04/19 16:11:31 ✅ created backup success backup-2025-04-17-16-11-31.sql
+2025/04/19 16:13:44 🚀 Logger initialized
+2025/04/19 16:13:44 🔧 Booting application...
+2025/04/19 16:13:45 📦 ScheduleBackups started
+2025/04/19 16:13:45 ✅ created backup success backup-2025-04-18-16-13-45.sql
+2025/04/19 16:13:45 ✅ created backup success backup-2025-04-17-16-13-45.sql
+2025/04/19 16:13:51 new Export submited
+2025/04/19 16:45:05 🚀 Logger initialized
+2025/04/19 16:45:05 🔧 Booting application...
+2025/04/19 16:45:06 📦 ScheduleBackups started
+2025/04/19 16:45:06 ✅ created backup success backup-2025-04-17-16-45-06.sql
+2025/04/19 16:45:06 ✅ created backup success backup-2025-04-18-16-45-06.sql
+2025/04/19 22:25:23 🚀 Logger initialized
+2025/04/19 22:25:23 🔧 Booting application...
+2025/04/19 22:25:24 📦 ScheduleBackups started
+2025/04/19 22:25:24 ✅ created backup success backup-2025-04-17-22-25-24.sql
+2025/04/19 22:25:24 ✅ created backup success backup-2025-04-18-22-25-24.sql
+2025/04/19 22:28:01 🚀 Logger initialized
+2025/04/19 22:28:01 🔧 Booting application...
+2025/04/19 22:28:02 📦 ScheduleBackups started
+2025/04/19 22:28:02 ✅ created backup success backup-2025-04-18-22-28-02.sql
+2025/04/19 22:28:02 ✅ created backup success backup-2025-04-17-22-28-02.sql
+2025/04/19 23:49:14 🚀 Logger initialized
+2025/04/19 23:49:14 🔧 Booting application...
+2025/04/19 23:49:15 📦 ScheduleBackups started
+2025/04/19 23:49:15 ✅ created backup success backup-2025-04-17-23-49-15.sql
+2025/04/19 23:49:15 ✅ created backup success backup-2025-04-18-23-49-15.sql
+2025/04/19 23:50:42 🚀 Logger initialized
+2025/04/19 23:50:42 🔧 Booting application...
+2025/04/19 23:50:43 📦 ScheduleBackups started
+2025/04/19 23:50:44 ✅ created backup success backup-2025-04-17-23-50-43.sql
+2025/04/19 23:50:44 ✅ created backup success backup-2025-04-18-23-50-43.sql
+2025/04/19 23:56:39 🚀 Logger initialized
+2025/04/19 23:56:39 🔧 Booting application...
+2025/04/19 23:56:40 📦 ScheduleBackups started
+2025/04/19 23:56:40 ✅ created backup success backup-2025-04-18-23-56-40.sql
+2025/04/19 23:56:40 ✅ created backup success backup-2025-04-17-23-56-40.sql
+2025/04/20 00:00:24 🚀 Logger initialized
+2025/04/20 00:00:24 🔧 Booting application...
+2025/04/20 00:00:25 📦 ScheduleBackups started
+2025/04/20 00:00:25 ✅ created backup success backup-2025-04-19-00-00-25.sql
+2025/04/20 00:00:25 ✅ created backup success backup-2025-04-18-00-00-25.sql
+2025/04/20 00:05:38 🚀 Logger initialized
+2025/04/20 00:05:38 🔧 Booting application...
+2025/04/20 00:05:39 📦 ScheduleBackups started
+2025/04/20 00:05:39 ✅ created backup success backup-2025-04-19-00-05-39.sql
+2025/04/20 00:05:39 ✅ created backup success backup-2025-04-18-00-05-39.sql
+2025/04/20 00:12:21 🚀 Logger initialized
+2025/04/20 00:12:21 🔧 Booting application...
+2025/04/20 00:12:22 📦 ScheduleBackups started
+2025/04/20 00:12:22 ✅ created backup success backup-2025-04-19-00-12-22.sql
+2025/04/20 00:12:22 ✅ created backup success backup-2025-04-18-00-12-22.sql
+2025/04/20 00:13:24 🚀 Logger initialized
+2025/04/20 00:13:24 🔧 Booting application...
+2025/04/20 00:13:25 📦 ScheduleBackups started
+2025/04/20 00:13:25 ✅ created backup success backup-2025-04-18-00-13-25.sql
+2025/04/20 00:13:25 ✅ created backup success backup-2025-04-19-00-13-25.sql
+2025/04/20 00:14:32 🚀 Logger initialized
+2025/04/20 00:14:32 🔧 Booting application...
+2025/04/20 00:14:33 📦 ScheduleBackups started
+2025/04/20 00:14:33 ✅ created backup success backup-2025-04-18-00-14-33.sql
+2025/04/20 00:14:33 ✅ created backup success backup-2025-04-19-00-14-33.sql

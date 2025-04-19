@@ -29,37 +29,94 @@
                 <div class="col-sm-10">
                   <input required name="Name" value="{{.Name}}" type="text" class="form-control">
                   <input required name="Id" value="{{.ID}}" type="text" class="d-none">
-                  <input required name="InventoryNumber" value="{{.InventoryNumber}}" type="text" class="d-none">
+                  <input required name="InventoryNumber" value="{{.InventoryID}}" type="text" class="d-none">
                 </div>
               </div>
-              <div class="form-group  mt-3">
-                <label class="col-sm-2 control-label">تعداد موجود</label>
-                <div class="col-sm-10">
-                  <input required name="Count" type="number" value="{{.Count}}" class="form-control">
+              <div class="col-md-6 ">
+                <div class="form-group mt-3">
+                  <h5 class="text-primary"><i class="fas fa-boxes"></i> محاسبه بر اساس تعداد رول</h5>
                 </div>
-                <span class="out"></span>  
-              </div>
-              <div class="form-group  mt-3">
-                <label class="col-sm-2 control-label">متراژ موجود</label>
-                <div class="col-sm-10">
-                  <input required name="Meter" type="number" value="{{.Meter}}" class="form-control">
-                </div>
-                <span class="out"></span> 
-              </div>
-              <div class="form-group  mt-3">
-                <label class="col-sm-2 control-label">قیمت هر رول</label>
-                <div class="col-sm-10">
-                  <input required name="RolePrice" type="number" value="{{.RolePrice}}" class="form-control">
-                </div>
-                <span class="out"></span>&nbsp;تومان
-              </div>
-              <div class="form-group  mt-3">
-                <label class="col-sm-2 control-label">قیمت هر متر</label>
-                <div class="col-sm-10">
-                  <input required name="MeterPrice" type="number" value="{{.MeterPrice}}" class="form-control">
-                </div>
-                <span class="out"></span>&nbsp;تومان
 
+                <div class="form-group mt-3">
+                  <label class="col-sm-4 control-label">تعداد موجود (رول)</label>
+                  <div class="col-sm-8">
+                    <input name="Count" type="number" value="{{.Count}}" class="form-control"
+                      placeholder="تعداد رول های موجود">
+                    <span class="out"></span>
+                  </div>
+                </div>
+
+                <div class="form-group mt-3">
+                  <label class="col-sm-4 control-label">قیمت هر رول</label>
+                  <div class="col-sm-8 input-group">
+                    <input name="RolePrice" type="number" value="{{.RolePrice}}" class="form-control"
+                      placeholder="قیمت به ازای هر رول">
+                    <span class="input-group-text">تومان</span>
+                  </div>
+                  <span class="out"></span>
+
+                </div>
+              </div>
+
+              <!-- بخش مربوط به محاسبات بر اساس متراژ -->
+              <div class="col-md-6">
+                <div class="form-group mt-3">
+                  <h5 class="text-success"><i class="fas fa-ruler-combined"></i> محاسبه بر اساس متراژ</h5>
+                </div>
+
+                <div class="form-group mt-3">
+                  <label class="col-sm-4 control-label">متراژ موجود</label>
+                  <div class="col-sm-8">
+                    <input name="Meter" type="number" value="{{.Meter}}" class="form-control"
+                      placeholder="متراژ کل موجود">
+                    <span class="out"></span>
+
+                  </div>
+                </div>
+
+                <div class="form-group mt-3">
+                  <label class="col-sm-4 control-label">قیمت هر متر</label>
+                  <div class="col-sm-8 input-group">
+                    <input name="MeterPrice" type="number" value="{{.MeterPrice}}" class="form-control"
+                      placeholder="قیمت به ازای هر متر">
+                    <span class="input-group-text">تومان</span>
+                  </div>
+                  <span class="out"></span>
+
+                </div>
+              </div>
+              <!-- بخش مربوط به محاسبات بر اساس وزن -->
+              <div class="col-md-6">
+                <div class="form-group mt-3">
+                  <h5 class="text-danger"><i class="fas fa-ruler-combined"></i> محاسبه بر اساس وزن</h5>
+                </div>
+
+                <div class="form-group mt-3">
+                  <label class="col-sm-4 control-label">وزن موجود</label>
+                  <div class="col-sm-8">
+                    <input name="Meter" type="number" value="{{.Meter}}" class="form-control"
+                      placeholder="وزن کل موجود">
+                    <span class="out"></span>
+
+                  </div>
+                </div>
+
+                <div class="form-group mt-3">
+                  <label class="col-sm-4 control-label">قیمت هر کیلو</label>
+                  <div class="col-sm-8 input-group">
+                    <input name="MeterPrice" type="number" value="{{.MeterPrice}}" class="form-control"
+                      placeholder="قیمت به ازای هر کیلو">
+                    <span class="input-group-text">تومان</span>
+                  </div>
+                  <span class="out"></span>
+
+                </div>
+              </div>
+
+              <!-- توضیحات راهنما -->
+              <div class="alert alert-info mt-3">
+                <i class="fas fa-info-circle"></i> توجه: لطفا فقط یکی از روش‌های محاسبه (رول یا متراژ) را کامل پر کنید
+                یا حداقل دو فیلد از هر بخش را وارد نمایید.
               </div>
               {{end}}
               {{else}}
@@ -75,14 +132,14 @@
                   <div class="col-sm-10">
                     <input required dir="ltr" type="Number" name="Count" value="{{.Count}}" class="form-control">
                   </div>
-                  <span class="out"></span> 
+                  <span class="out"></span>
                 </div>
                 <div class="form-group  mt-3">
                   <label class="col-sm-2 control-label">متراژ موجود</label>
                   <div class="col-sm-10">
                     <input required name="Meter" type="number" value="{{.Meter}}" class="form-control">
                   </div>
-                  <span class="out"></span> 
+                  <span class="out"></span>
                 </div>
                 <div class="form-group  mt-3">
                   <label class="col-sm-2 control-label">قیمت هر رول</label>

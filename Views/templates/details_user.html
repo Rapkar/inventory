@@ -1,0 +1,114 @@
+{{template "header" . }}
+{{template "navbar" . }}
+
+<body>
+    <div class="h-100 d-flex align-items-center mt-5">
+        <div class="container mt-5 users_box">
+            {{if .success}}
+            {{template "success_notif" .}}
+            {{else if eq .success false}}
+            {{template "danger_notif" .}}
+            {{end}}
+
+            <h2 class="text-dark ">سوابق کاربر</h2>
+            <table dir="rtl" id="userlist" class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">نام</th>
+                        <th scope="col">شماره تماس</th>
+                        <th scope="col">آدرس</th>
+                        <th scope="col">بستانکار</th>
+                        <th scope="col">بدهکار</th>
+                        <th scope="col">کل مبلغ خرید</th>
+                        <th scope="col">تعداد خرید </th>
+                        <th scope="col">کل مبلغ پرداختی</th>
+                        <!-- سایر فیلدهای کاربر -->
+                    </tr>
+                </thead>
+                <tbody dir="rtl">
+                    <tr>
+                        <td>{{.details.User.ID}}</td>
+                        <td>{{.details.User.Name}}</td>
+                        <td>{{.details.User.Phonenumber}}</td>
+                        <td>{{.details.User.Address}}</td>
+                        <td>{{.UserCalculations.DebtAmount}}</td>
+                        <td>{{.UserCalculations.CreditAmount}}</td>
+                        <td>{{.UserCalculations.ExportTotalprice}}</td>
+                        <td>{{.UserCalculations.ExportsCount}}</td>
+                        <td>{{.UserCalculations.TotalPaid}}</td>
+                        <!-- سایر فیلدهای کاربر -->
+                    </tr>
+                </tbody>
+            </table>
+            <hr>
+
+
+            <h3 class="text-dark">لیست سفارشات</h3>
+            <table dir="rtl" id="userlist" class="table table-sm table-dark">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">تاریخ</th>
+                        <th scope="col">قیمت کل</th>
+                        <th scope="col">پرداختی</th>
+                        <th scope="col">ارزش افزوده</th>
+                        <th scope="col">مشاهده فاکتور</th>
+                        <th scope="col">پرداخت ها</th>
+
+                        <!-- سایر فیلدهای کاربر -->
+                    </tr>
+                </thead>
+                <tbody dir="rtl">
+                    {{range .details.Exports}}
+                    <tr>
+                        <td>{{.ID}}</td>
+                        <td>{{.CreatedAt}}</td>
+                        <td>{{.TotalPrice}}</td>
+                        <td>{{.TotalPrice}}</td>
+                        <td>{{.Tax}}</td>
+                        <td>
+                            <a href="/Dashboard/exportshow?ExportId={{.ID}}"><svg xmlns="http://www.w3.org/2000/svg"
+                                    width="16" height="16" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
+                                    <path
+                                        d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z" />
+                                    <path
+                                        d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0" />
+                                </svg></a>
+
+
+                        </td>
+                        <td>
+
+                            <a href="/Dashboard/payments?user_id={{.UserID}}"> <svg xmlns="http://www.w3.org/2000/svg"
+                                    width="16" height="16" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
+                                    <path
+                                        d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z" />
+                                    <path
+                                        d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0" />
+                                </svg>
+                            </a>
+
+
+                        </td>
+                        <!-- سایر فیلدهای فاکتور -->
+                    </tr>
+                    {{end}}
+
+                </tbody>
+            </table>
+
+
+
+        </div>
+    </div>
+    <div class="container ">
+        <nav aria-label="Page navigation example" class="justify-content-center d-flex" id="userspaginate">
+            <ul class="pagination">
+
+                {{.Paginate }}
+
+            </ul>
+        </nav>
+    </div>
+    {{template "footer.html"}}

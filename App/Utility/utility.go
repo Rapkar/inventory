@@ -61,18 +61,26 @@ func StringToFloat(value string) float64 {
 	NewValue, _ := strconv.ParseFloat(value, 64)
 	return float64(NewValue)
 }
-func StringToInt64(value string) int64 {
-	NewValue, _ := strconv.ParseFloat(value, 64)
-	return int64(NewValue)
+func StringToFloat64(value string) (float64, error) {
+	NewValue, err := strconv.ParseFloat(value, 64)
+	return float64(NewValue), err
+}
+func StringToInt64(value string) (int64, error) {
+	NewValue, err := strconv.ParseFloat(value, 64)
+	return int64(NewValue), err
+}
+func StringToUnit64(value string) (uint64, error) {
+	NewValue, err := strconv.ParseFloat(value, 64)
+	return uint64(NewValue), err
 }
 
 func StringToInt(value string) int8 {
 	newValue, _ := strconv.ParseInt(value, 10, 8)
 	return int8(newValue)
 }
-func StringToInt32(value string) int32 {
-	newValue, _ := strconv.ParseInt(value, 10, 32)
-	return int32(newValue)
+func StringToInt32(value string) (int32, error) {
+	newValue, err := strconv.ParseInt(value, 10, 32)
+	return int32(newValue), err
 }
 
 // get the Persian Current Time

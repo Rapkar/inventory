@@ -11,8 +11,6 @@
             {{template "danger_notif" .}}
             {{end}}
             <style>
-            
-
                 .pagination li.active,
                 .pagination li.inpending {
                     display: block;
@@ -79,13 +77,13 @@
                             <th scope="col"> شماره سریال</th>
                             <th scope="col">نام بانک</th>
                             <th class="  d-md-table-cell" scope="col">مبلغ</th>
-                            <th class="  d-md-table-cell" scope="col">توضیحات</th>
+                            <th class="  d-md-table-cell" scope="col">پرداخت کننده</th>
                             <th class="  d-md-table-cell" scope="col">تاریخ خرید</th>
                             <th class="  d-md-table-cell" scope="col">شماره فاکتور</th>
                             <th class="  d-md-table-cell" scope="col">نمایش فاکتور</th>
                             <th class="  d-md-table-cell" scope="col">وضعیت</th>
 
- {{ if eq $.UserRole "Admin" }}
+                            {{ if eq $.UserRole "Admin" }}
 
                             <th class="" scope="col">ویرایش</th>
                             {{end}}
@@ -107,7 +105,7 @@
                             </td>
                             <td dir="" class="   d-md-table-cell" style="text-align:right;">{{.ExportNumber}}
                             </td>
-                            <td dir="" class="InventoryNumber   d-md-table-cell" style="text-align:right;">
+                            <td class="InventoryNumber   d-md-table-cell" style="text-align:right;">
 
                                 <a class="me-3" href="./exportshow?ExportId={{.ExportID}}">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
@@ -221,7 +219,7 @@
                                 <img src="../assets/images/waite.svg">
                             </td>
                             {{end}}
- {{ if eq $.UserRole "Admin" }}
+                            {{ if eq $.UserRole "Admin" }}
 
                             <td dir="ltr" class="Edit text-center "><a href="#" data-bs-toggle="modal"
                                     data-bs-target="#editModal{{.ID}}">

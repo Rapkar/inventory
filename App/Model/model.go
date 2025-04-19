@@ -126,7 +126,7 @@ func GetCountOfUsers() (int64, error) {
 func GetCountOfProduct(id int32) int64 {
 	var count int64
 	db := Boot.DB()
-	if err := db.Model(&[]Boot.Inventory{}).Where("inventory_number= ? ", id).Count(&count).Error; err != nil {
+	if err := db.Model(&[]Boot.Product{}).Where("inventory_id= ? ", id).Count(&count).Error; err != nil {
 		log.Println("❌  err in  GetCountOfProduct ", err)
 		return 0
 	}
@@ -183,17 +183,47 @@ func RemoveCurrentUser(c *gin.Context) bool {
 	// if success
 	return true
 }
-func GetAllUsersByPhoneAndName(searchTerm string) []Boot.Users {
-	var users []Boot.Users
+
+type UserFullDetails struct {
+	User           Boot.Users
+	Exports        []Boot.Export
+	ExportProducts []Boot.ExportProducts
+	Payments       []Boot.Payments
+}
+
+func GetUserFullDetailsByID(userID uint64) (UserFullDetails, error) {
+	var result UserFullDetails
 	db := Boot.DB()
 
-	err := db.Model(&Boot.Users{}).
-		Where("name LIKE ? OR phonenumber LIKE ?", "%"+searchTerm+"%", "%"+searchTerm+"%").
-		Find(&users).Error
-
-	if err != nil {
-		log.Printf("❌ خطا در جستجوی کاربران با searchTerm=%s : %v", searchTerm, err)
+	// دریافت اطلاعات کاربر
+	if err := db.Where("id = ?", userID).First(&result.User).Error; err != nil {
+		log.Printf("❌ خطا در یافتن کاربر با ID=%d : %v", userID, err)
+		return result, err
 	}
 
-	return users
+	// دریافت فاکتورهای کاربر
+	if err := db.Where("user_id = ?", userID).Find(&result.Exports).Error; err != nil {
+		log.Printf("❌ خطا در دریافت فاکتورهای کاربر با ID=%d : %v", userID, err)
+		return result, err
+	}
+
+	// دریافت محصولات و پرداخت‌ها
+	var exportIDs []uint64
+	for _, export := range result.Exports {
+		exportIDs = append(exportIDs, export.ID)
+	}
+
+	if len(exportIDs) > 0 {
+		if err := db.Where("export_id IN ?", exportIDs).Find(&result.ExportProducts).Error; err != nil {
+			log.Printf("❌ خطا در دریافت محصولات فاکتورهای کاربر با ID=%d : %v", userID, err)
+			return result, err
+		}
+
+		if err := db.Where("export_id IN ?", exportIDs).Find(&result.Payments).Error; err != nil {
+			log.Printf("❌ خطا در دریافت پرداخت‌های کاربر با ID=%d : %v", userID, err)
+			return result, err
+		}
+	}
+
+	return result, nil
 }
