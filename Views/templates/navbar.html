@@ -16,15 +16,15 @@
           aria-expanded="false">کاربران</a>
         <ul class="dropdown-menu">
           {{ if eq .UserRole "Admin"}}
-          <li><a class="dropdown-item" href="./admin_users">کاربران ادمین</a></li>
-          <li><a class="dropdown-item" href="./authors">اپراتور</a></li>
+          <li><a class="dropdown-item" href="/Dashboard/admin_users">کاربران ادمین</a></li>
+          <li><a class="dropdown-item" href="/Dashboard//authors">اپراتور</a></li>
           {{end}}
-          <li><a class="dropdown-item" href="./users">مشتریان</a></li>
+          <li><a class="dropdown-item" href="/Dashboard/users">مشتریان</a></li>
           <li>
             <hr class="dropdown-divider">
           </li>
           {{ if eq .UserRole "Admin"}}
-          <li><a class="dropdown-item" href="./add_user">افزودن کاربر</a></li>
+          <li><a class="dropdown-item" href="/Dashboard/add_user">افزودن کاربر</a></li>
           {{end}}
 
         </ul>
@@ -37,10 +37,10 @@
         <ul class="dropdown-menu">
       {{ if eq .UserRole "Admin"}}
 
-          <li><a class="dropdown-item" href="./inventory?inventory=1">انبار شماره اشتهارد</a></li>
+          <li><a class="dropdown-item" href="/Dashboard/inventory?inventory=1">انبار شماره اشتهارد</a></li>
           {{end}}
 
-          <li><a class="dropdown-item" href="./inventory?inventory=2">انبار شماره تبریز</a></li>
+          <li><a class="dropdown-item" href="/Dashboard/inventory?inventory=2">انبار شماره تبریز</a></li>
         </ul>
       </li>
       {{ if eq $.UserRole "Admin" }}
@@ -50,13 +50,13 @@
           aria-expanded="false">افزودن کالا</a>
         <ul class="dropdown-menu">
 
-          <li><a class="dropdown-item" href="./addproduct?inventory=1">انبار شماره اشتهارد</a></li>
+          <li><a class="dropdown-item" href="/Dashboard/addproduct?inventory=1">انبار شماره اشتهارد</a></li>
 
-          <li><a class="dropdown-item" href="./addproduct?inventory=2">انبار شماره تبریز</a></li>
+          <li><a class="dropdown-item" href="/Dashboard/addproduct?inventory=2">انبار شماره تبریز</a></li>
           <li>
             <hr class="dropdown-divider">
           </li>
-          <li><a class="dropdown-item" href="./production"> تولید</a></li>
+          <li><a class="dropdown-item" href="/Dashboard/production"> تولید</a></li>
           <!-- <li><a class="dropdown-item" href="./addproduct"> کالای جدید</a></li> -->
         </ul>
       </li>
@@ -66,20 +66,20 @@
         <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
           aria-expanded="false">فاکتور</a>
         <ul class="dropdown-menu">
-          <li><a class="dropdown-item" href="./export">ثبت فاکتور</a></li>
-          <li><a class="dropdown-item" href="./export-list">لیست فاکتورها</a></li>
+          <li><a class="dropdown-item" href="/Dashboard/export">ثبت فاکتور</a></li>
+          <li><a class="dropdown-item" href="/Dashboard/export-list">لیست فاکتورها</a></li>
         </ul>
       </li>
       <li class="nav-item dropdown">
-        <a class="nav-link " href="./payments">پرداختها</a>
+        <a class="nav-link " href="/Dashboard/payments">پرداختها</a>
 
       </li>
       <li class="nav-item dropdown">
-        <a class="nav-link " href="./charts">نمودار</a>
+        <a class="nav-link " href="/Dashboard/charts">نمودار</a>
 
       </li>
       <li class="nav-item dropdown">
-        <a class="nav-link " href="./backup">آخرین بک آپ ها</a>
+        <a class="nav-link " href="/Dashboard/backup">آخرین بک آپ ها</a>
 
       </li>
     </ul>
@@ -89,7 +89,7 @@
           aria-expanded="false">کاربر {{.Username}} خوش آمدید<img class="mb-2 ms-2"
             src="../../assets/images/user.png"></a>
         <ul class="dropdown-menu">
-          <li class=""><a class="dropdown-item" href="./signout">خروج</a></li>
+          <li class=""><a class="dropdown-item" href="/Dashboard/signout">خروج</a></li>
         </ul>
       </li>
 

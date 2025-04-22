@@ -1,0 +1,227 @@
+-- MySQL dump 10.13  Distrib 8.0.41, for Linux (x86_64)
+--
+-- Host: localhost    Database: Inventory
+-- ------------------------------------------------------
+-- Server version	8.0.41-0ubuntu0.24.04.1
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!50503 SET NAMES utf8mb4 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `export_products`
+--
+
+DROP TABLE IF EXISTS `export_products`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `export_products` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `export_id` bigint unsigned DEFAULT NULL,
+  `name` varchar(100) DEFAULT NULL,
+  `number` varchar(255) DEFAULT NULL,
+  `role_price` double DEFAULT NULL,
+  `meter_price` double DEFAULT NULL,
+  `count` bigint DEFAULT NULL,
+  `meter` double DEFAULT NULL,
+  `total_price` double DEFAULT NULL,
+  `inventory_id` bigint unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_export_products_export_id` (`export_id`),
+  KEY `idx_export_products_inventory_id` (`inventory_id`),
+  CONSTRAINT `fk_export_products_inventory` FOREIGN KEY (`inventory_id`) REFERENCES `inventories` (`id`),
+  CONSTRAINT `fk_exports_export_products` FOREIGN KEY (`export_id`) REFERENCES `exports` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=73 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `export_products`
+--
+
+LOCK TABLES `export_products` WRITE;
+/*!40000 ALTER TABLE `export_products` DISABLE KEYS */;
+INSERT INTO `export_products` VALUES (12,1,'ایزوگام شرق','10',99250,102500,100,10,2000000,1),(13,1,'ایزوگام شرق','10',99250,102500,100,10,2000000,1),(14,12,'ایزوگام شرق','',99250,102500,1,0,201750,1),(15,1,'ایزوگام شرق','10',99250,102500,100,10,2000000,1),(16,1,'ایزوگام شرق','10',99250,102500,100,10,2000000,1),(17,1,'ایزوگام شرق','10',99250,102500,100,10,2000000,1),(18,1,'ایزوگام شرق','10',99250,102500,100,10,2000000,1),(19,1,'ایزوگام شرق','10',99250,102500,100,10,2000000,1),(20,1,'ایزوگام شرق','10',99250,102500,100,10,2000000,1),(21,1,'ایزوگام شرق','10',99250,102500,100,10,2000000,1),(22,1,'ایزوگام شرق','10',99250,102500,100,10,2000000,1),(23,1,'ایزوگام شرق','10',99250,102500,100,10,2000000,1),(24,1,'ایزوگام شرق','10',99250,102500,100,10,2000000,1),(25,1,'ایزوگام شرق','10',99250,102500,100,10,2000000,1),(26,1,'ایزوگام شرق','10',99250,102500,100,10,2000000,1),(27,1,'ایزوگام شرق','10',99250,102500,100,10,2000000,1),(28,1,'ایزوگام شرق','10',99250,102500,100,10,2000000,1),(29,13,'ایزوگام شرق','',99250,102500,10,0,992500,1),(30,1,'ایزوگام شرق','10',99250,102500,100,10,2000000,1),(31,1,'ایزوگام شرق','10',99250,102500,100,10,2000000,1),(32,1,'ایزوگام شرق','10',99250,102500,100,10,2000000,1),(33,1,'ایزوگام شرق','10',99250,102500,100,10,2000000,1),(34,1,'ایزوگام شرق','10',99250,102500,100,10,2000000,1),(35,1,'ایزوگام شرق','10',99250,102500,100,10,2000000,1),(36,1,'ایزوگام شرق','10',99250,102500,100,10,2000000,1),(37,1,'ایزوگام شرق','10',99250,102500,100,10,2000000,1),(38,1,'ایزوگام شرق','10',99250,102500,100,10,2000000,1),(39,1,'ایزوگام شرق','10',99250,102500,100,10,2000000,1),(40,1,'ایزوگام شرق','10',99250,102500,100,10,2000000,1),(41,1,'ایزوگام شرق','10',99250,102500,100,10,2000000,1),(42,1,'ایزوگام شرق','10',99250,102500,100,10,2000000,1),(43,1,'ایزوگام شرق','10',99250,102500,100,10,2000000,1),(44,1,'ایزوگام شرق','10',99250,102500,100,10,2000000,1),(45,1,'ایزوگام شرق','10',99250,102500,100,10,2000000,1),(46,1,'ایزوگام شرق','10',99250,102500,100,10,2000000,1),(47,1,'ایزوگام شرق','10',99250,102500,100,10,2000000,1),(48,1,'ایزوگام شرق','10',99250,102500,100,10,2000000,1),(49,1,'ایزوگام شرق','10',99250,102500,100,10,2000000,1),(50,1,'ایزوگام شرق','10',99250,102500,100,10,2000000,1),(51,1,'ایزوگام شرق','10',99250,102500,100,10,2000000,1),(52,1,'ایزوگام شرق','10',99250,102500,100,10,2000000,1),(53,1,'ایزوگام شرق','10',99250,102500,100,10,2000000,1),(54,1,'ایزوگام شرق','10',99250,102500,100,10,2000000,1),(55,1,'ایزوگام شرق','10',99250,102500,100,10,2000000,1),(56,1,'ایزوگام شرق','10',99250,102500,100,10,2000000,1),(57,1,'ایزوگام شرق','10',99250,102500,100,10,2000000,1),(58,1,'ایزوگام شرق','10',99250,102500,100,10,2000000,1),(59,1,'ایزوگام شرق','10',99250,102500,100,10,2000000,1),(60,1,'ایزوگام شرق','10',99250,102500,100,10,2000000,1),(61,1,'ایزوگام شرق','10',99250,102500,100,10,2000000,1),(62,1,'ایزوگام شرق','10',99250,102500,100,10,2000000,1),(63,16,'ایزوگام شرق','',99250,102500,10,0,992500,1),(64,1,'ایزوگام شرق','10',99250,102500,100,10,2000000,1),(65,17,'ایزوگام شرق','',99250,102500,1,0,99250,1),(66,18,'ایزوگام شرق','',99250,102500,2,0,198500,1),(67,1,'ایزوگام شرق','10',99250,102500,100,10,2000000,1),(68,19,'ایزوگام شرق','',99250,102500,2,0,198500,1),(69,1,'ایزوگام شرق','10',99250,102500,100,10,2000000,1),(70,1,'ایزوگام شرق','10',99250,102500,100,10,2000000,1),(71,1,'ایزوگام شرق','10',99250,102500,100,10,2000000,1),(72,1,'ایزوگام شرق','10',99250,102500,100,10,2000000,1);
+/*!40000 ALTER TABLE `export_products` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `exports`
+--
+
+DROP TABLE IF EXISTS `exports`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `exports` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) DEFAULT NULL,
+  `number` longtext,
+  `phonenumber` varchar(255) DEFAULT NULL,
+  `user_id` bigint unsigned DEFAULT NULL,
+  `address` varchar(255) DEFAULT NULL,
+  `total_price` double DEFAULT NULL,
+  `tax` bigint DEFAULT NULL,
+  `describe` varchar(255) DEFAULT NULL,
+  `created_at` longtext,
+  `product_id` bigint unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_exports_user_id` (`user_id`),
+  KEY `idx_exports_product_id` (`product_id`),
+  CONSTRAINT `fk_exports_product` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`),
+  CONSTRAINT `fk_exports_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `exports`
+--
+
+LOCK TABLES `exports` WRITE;
+/*!40000 ALTER TABLE `exports` DISABLE KEYS */;
+INSERT INTO `exports` VALUES (1,'حسین سلطانیان','9283422','09125174854',1,'کرج -کرج=-ایران -سیسی',10000000,10,'','1404/01/30 جمعه 11:40:42 ب.ظ',1),(12,'تست','W05391','۰۲۵۳۴۱۶۱۶۱۶',13,'البرز',202950,1200,'متن توضیح','1404/01/31 شنبه 12:15:55 ق.ظ',1),(13,'کاربر دوم ','V09641','02134249350',16,'sfsdfds',992500,0,'سیبسی','1404/01/31 شنبه 04:13:51 ب.ظ',1),(16,'رضا رضایی','N09859','۰۲۱۳۴۲۴۹۳۸۲',19,'علی ممدی',1004500,12000,'توضیحات محصول','1404/02/03 سه‌شنبه 03:54:30 ب.ظ',1),(17,'ممد طلایی','M09450','02134249351',20,'البرز کرج شهر یاس',299250,200000,'توضیح فاکتور','1404/02/03 سه‌شنبه 04:25:06 ب.ظ',1),(18,' احمد موستوفی','M00661','02134249387',21,'تست علیرضا',223500,25000,'توضیح','1404/02/03 سه‌شنبه 04:39:10 ب.ظ',1),(19,'hossein soltanian','Y00156','09125174854',1,'hjkhj',198500,0,'','1404/02/03 سه‌شنبه 08:58:26 ب.ظ',1);
+/*!40000 ALTER TABLE `exports` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `inventories`
+--
+
+DROP TABLE IF EXISTS `inventories`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `inventories` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `inventories`
+--
+
+LOCK TABLES `inventories` WRITE;
+/*!40000 ALTER TABLE `inventories` DISABLE KEYS */;
+INSERT INTO `inventories` VALUES (1,'انبار اشتهارد');
+/*!40000 ALTER TABLE `inventories` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `payments`
+--
+
+DROP TABLE IF EXISTS `payments`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `payments` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `method` varchar(100) DEFAULT NULL,
+  `number` longtext,
+  `name` varchar(100) DEFAULT NULL,
+  `total_price` double DEFAULT NULL,
+  `describe` varchar(255) DEFAULT NULL,
+  `created_at` longtext,
+  `export_id` bigint unsigned DEFAULT NULL,
+  `user_id` bigint unsigned DEFAULT NULL,
+  `inventory_id` bigint unsigned DEFAULT NULL,
+  `status` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_payments_export_id` (`export_id`),
+  KEY `idx_payments_user_id` (`user_id`),
+  KEY `idx_payments_inventory_id` (`inventory_id`),
+  CONSTRAINT `fk_exports_payments` FOREIGN KEY (`export_id`) REFERENCES `exports` (`id`),
+  CONSTRAINT `fk_payments_inventory` FOREIGN KEY (`inventory_id`) REFERENCES `inventories` (`id`),
+  CONSTRAINT `fk_payments_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `payments`
+--
+
+LOCK TABLES `payments` WRITE;
+/*!40000 ALTER TABLE `payments` DISABLE KEYS */;
+INSERT INTO `payments` VALUES (17,'چک','۱۳۱۲۳۲','ملی',100,'','۱۴۰۴/۰۱/۷۷',12,13,1,'pending'),(18,'نقدی','PMT-934822','نقدی',12500,'','۱۴۰۴/۰۱/۷۷',12,13,1,'collected'),(19,'نقدی','PMT-707024','نقدی',250000,'','۱۴۰۴/۰۱/۱۱',13,16,1,'collected'),(20,'چک','456435','ملت',10000,'','۱۴۰۴/۰۱/۱۱',13,16,1,'pending'),(21,'چک','۱۲۴۲۱۳۲۱','ملی',20000,'','۱۴۰۴/۰۲/۴۴',16,19,1,'pending'),(22,'نقدی','PMT-568850','نقدی',250000,'','۱۴۰۴/۰۲/۴۴',16,19,1,'collected'),(23,'چک','۲۳۴۲۳','ملی',220000,'','۱۴۰۴/۰۲/۲۲',17,20,1,'pending'),(24,'نقدی','PMT-25160','نقدی',250000,'','۱۴۰۴/۰۲/۲۲',17,20,1,'collected'),(25,'چک','4353422','ملی',200000,'','۱۴۰۴/۰۲/۵۵',18,21,1,'pending'),(26,'چک','4353422','ملی',10000,'','۱۴۰۴/۰۲/۵۵',18,21,1,'pending'),(27,'نقدی','PMT-339293','نقدی',25000,'','۱۴۰۴/۰۲/۵۵',18,21,1,'collected'),(28,'نقدی','PMT-98113','نقدی',500,'','۱۴۰۴/۰۲/۴۴',19,1,1,'collected'),(29,'چک','24254','صادرات',198000,'','۱۴۰۴/۰۲/۴۴',19,1,1,'pending');
+/*!40000 ALTER TABLE `payments` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `products`
+--
+
+DROP TABLE IF EXISTS `products`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `products` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) DEFAULT NULL,
+  `number` varchar(255) DEFAULT NULL,
+  `role_price` double DEFAULT NULL,
+  `meter_price` double DEFAULT NULL,
+  `count` bigint DEFAULT NULL,
+  `meter` double DEFAULT NULL,
+  `weight` double DEFAULT NULL,
+  `inventory_id` bigint unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_products_inventory_id` (`inventory_id`),
+  CONSTRAINT `fk_products_inventory` FOREIGN KEY (`inventory_id`) REFERENCES `inventories` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `products`
+--
+
+LOCK TABLES `products` WRITE;
+/*!40000 ALTER TABLE `products` DISABLE KEYS */;
+INSERT INTO `products` VALUES (1,'ایزوگام شرق','10',99250,102500,100,100,0,1);
+/*!40000 ALTER TABLE `products` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `users`
+--
+
+DROP TABLE IF EXISTS `users`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `users` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `password` varchar(255) DEFAULT NULL,
+  `phonenumber` varchar(255) DEFAULT NULL,
+  `address` varchar(255) DEFAULT NULL,
+  `role` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uni_users_phonenumber` (`phonenumber`),
+  KEY `unique` (`email`)
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `users`
+--
+
+LOCK TABLES `users` WRITE;
+/*!40000 ALTER TABLE `users` DISABLE KEYS */;
+INSERT INTO `users` VALUES (1,'hossein Soltanian','hosseinbidar7@gmail.com','$2a$14$bbPQImEhkO7SvU3cdZLiO.40rTtq5Q6EmFH7MDSMooppZER1bp.Q2','09125174854','','Admin'),(13,'تست','','','۰۲۵۳۴۱۶۱۶۱۶','البرز','guest'),(16,'کاربر دوم ','','','02134249350','sfsdfds','guest'),(19,'رضا رضایی','','','۰۲۱۳۴۲۴۹۳۸۲','علی ممدی','guest'),(20,'ممد طلایی','','','02134249351','البرز کرج شهر یاس','guest'),(21,' احمد موستوفی','','','02134249387','تست علیرضا','guest');
+/*!40000 ALTER TABLE `users` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2025-04-22 21:26:16

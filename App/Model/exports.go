@@ -6,6 +6,7 @@ import (
 	"inventory/App/Utility"
 	"log"
 	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -88,12 +89,13 @@ func GetAllPaymentsByPaginate(offset int, limit int) []Boot.Payments {
 	return Payments
 }
 
-func GetAllPaymentsWithExportNumber(offset int, limit int, status string) ([]Boot.PaymentWithExport, error) {
-	var result []Boot.PaymentWithExport
+func GetAllPaymentsWithExportNumberAndUser(offset int, limit int, status string) ([]Boot.PaymentWithExportAndUser, error) {
+	var result []Boot.PaymentWithExportAndUser
 
 	query := Boot.DB().Table("payments").
-		Select("payments.*, exports.number as export_number").
+		Select("payments.*, exports.number as export_number, users.name as user_name").
 		Joins("LEFT JOIN exports ON exports.id = payments.export_id").
+		Joins("LEFT JOIN users ON users.id = payments.user_id"). // Assuming there's a user_id foreign key in payments
 		Order("payments.id DESC").
 		Offset(offset).
 		Limit(limit)
@@ -110,13 +112,14 @@ func GetAllPaymentsWithExportNumber(offset int, limit int, status string) ([]Boo
 
 	return result, nil
 }
-func GetAllPaymentsWithExportNumberByUserId(offset int, limit int, status string, user_id uint64) ([]Boot.PaymentWithExport, error) {
-	var result []Boot.PaymentWithExport
+func GetAllPaymentsWithExportNumberByUserId(offset int, limit int, status string, user_id uint64) ([]Boot.PaymentWithExportAndUser, error) {
+	var result []Boot.PaymentWithExportAndUser
 
 	query := Boot.DB().Table("payments").
 		Where("payments.user_id = ?", user_id).
-		Select("payments.*, exports.number as export_number").
+		Select("payments.*, exports.number as export_number, users.name as user_name").
 		Joins("LEFT JOIN exports ON exports.id = payments.export_id").
+		Joins("LEFT JOIN users ON users.id = payments.user_id").
 		Order("payments.id DESC").
 		Offset(offset).
 		Limit(limit)
@@ -183,20 +186,25 @@ func GetUserTotalPrice(userid uint64) (float64, error) {
 	return result, nil
 }
 func GetUserTotalPaid(userid uint64) (float64, error) {
-	var result float64
+	var result *float64 // Use a pointer to handle NULL values
 
 	// Execute the query and scan the result
 	err := Boot.DB().Table("payments").
-		Where("user_id = ?", userid). // Fixed variable name from user_id to userid
-		Select("SUM(total_price)").   // Assuming you want to sum all payments, otherwise you might need a different approach
-		Scan(&result).                // Need to actually execute the query and scan the result
+		Where("user_id = ?", userid).
+		Select("SUM(total_price) as total").
+		Scan(&result). // Scan into a pointer
 		Error
 
 	if err != nil {
-		return 0, err // Return the error to handle it properly
+		return 0, err
 	}
 
-	return result, nil
+	// If result is nil (NULL in database), return 0
+	if result == nil {
+		return 0, nil
+	}
+
+	return *result, nil
 }
 func GetPaymentNumberById(c *gin.Context) ([]Boot.Payments, error) {
 	// دریافت PaymentId از Query Param
@@ -315,13 +323,14 @@ func GetAllExportsByPhoneAndName(searchTerm string) []Boot.EscapeExport {
 	return result
 }
 
-func GetAllPaymentsByAttribiute(searchTerm string) []Boot.PaymentWithExport {
-	var result []Boot.PaymentWithExport
+func GetAllPaymentsByAttribiute(searchTerm string) []Boot.PaymentWithExportAndUser {
+	var result []Boot.PaymentWithExportAndUser
 
 	db := Boot.DB()
 	err := db.Table("payments").
 		Select("payments.*, exports.number as export_number").
 		Joins("LEFT JOIN exports ON exports.id = payments.export_id").
+		Joins("LEFT JOIN users ON users.id = payments.user_id").
 		Where("payments.created_at LIKE ? OR payments.number LIKE ?", "%"+searchTerm+"%", "%"+searchTerm+"%").
 		Scan(&result).Error
 
@@ -421,4 +430,58 @@ func GenerateUniqueExportID() (string, error) {
 		}
 	}
 	return "", fmt.Errorf("failed to generate unique export ID after %d attempts", maxAttempts)
+}
+func GetUsersByNameAndPhone(nameTerm string, phoneTerm string) ([]Boot.ResponseUsers, string) {
+	var result []Boot.ResponseUsers
+	message := ""
+	db := Boot.DB()
+
+	// پاکسازی ورودی‌ها
+	nameTerm = strings.TrimSpace(nameTerm)
+	phoneTerm = strings.TrimSpace(phoneTerm)
+
+	// بررسی وجود شماره تلفن (بدون در نظر گرفتن نام)
+	var phoneExists bool
+	if len(phoneTerm) >= 10 {
+		var count int64
+		db.Model(&Boot.Users{}).Where("phonenumber = ?", phoneTerm).Count(&count)
+		phoneExists = count > 0
+	}
+
+	// بررسی وجود نام (بدون در نظر گرفتن شماره)
+	var nameExists bool
+	if len(nameTerm) >= 2 {
+		var count int64
+		db.Model(&Boot.Users{}).Where("name LIKE ?", "%"+nameTerm+"%").Count(&count)
+		nameExists = count > 0
+	}
+
+	// ساخت کوئری اصلی بر اساس ورودی‌ها
+	query := db.Model(&Boot.Users{})
+	if len(nameTerm) >= 2 {
+		query = query.Where("name LIKE ?", "%"+nameTerm+"%")
+	}
+	if len(phoneTerm) >= 10 {
+		query = query.Where("phonenumber = ?", phoneTerm)
+	}
+
+	// اجرای کوئری
+	err := query.Select("id, name, phonenumber, address").Find(&result).Error
+	if err != nil {
+		log.Println("❌ Error fetching users:", err)
+		return nil, "خطا در دریافت اطلاعات"
+	}
+
+	// تعیین پیام مناسب
+	if len(phoneTerm) >= 10 && phoneExists {
+		message = "این شماره تلفن قبلاً ثبت شده است"
+	} else if len(nameTerm) >= 2 && nameExists || phoneExists {
+		message = "کاربری با این نام قبلاً ثبت شده است"
+	} else if len(result) > 0 {
+		message = "نتایج جستجو:"
+	} else {
+		message = "موردی یافت نشد"
+	}
+
+	return result, message
 }

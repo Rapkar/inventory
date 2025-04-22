@@ -582,18 +582,22 @@ func main() {
 			})
 		})
 
-		// v2.POST("/users-find", middleware.AuthMiddleware(), func(c *gin.Context) {
-		// 	var data struct {
-		// 		Term string `json:"term"`
-		// 	}
-		// 	if err := c.BindJSON(&data); err != nil {
+		v2.POST("/users-find", middleware.AuthMiddleware(), func(c *gin.Context) {
+			var data struct {
+				Name  string `json:"name"`
+				Phone string `json:"phone"`
+			}
+			if err := c.BindJSON(&data); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+				return
+			}
 
-		// 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		// 		return
-		// 	}
-		// 	result := model.GetAllUsersByPhoneAndName(data.Term)
-		// 	c.JSON(http.StatusOK, gin.H{"message": result})
-		// })
+			result, message := model.GetUsersByNameAndPhone(data.Name, data.Phone)
+			c.JSON(http.StatusOK, gin.H{
+				"message": message,
+				"users":   result,
+			})
+		})
 		// Product
 		v2.GET("/addproduct", middleware.AuthMiddleware("Admin"), func(c *gin.Context) {
 			session := sessions.Default(c)
@@ -608,12 +612,12 @@ func main() {
 		v2.POST("/addproduct", middleware.AuthMiddleware("Admin"), func(c *gin.Context) {
 			var product boot.Product
 			product.Name = c.PostForm("Name")
-			product.Number = c.PostForm("Number")
 			product.RolePrice, _ = Utility.StringToFloat64(c.PostForm("RolePrice"))
 			product.MeterPrice, _ = Utility.StringToFloat64(c.PostForm("MeterPrice"))
 			product.Count, _ = Utility.StringToInt64(c.PostForm("Count"))
 			product.Meter, _ = Utility.StringToFloat64(c.PostForm("Meter"))
-			product.Weight, _ = Utility.StringToFloat64(c.PostForm("Weight")) // دریافت وزن
+			product.Weight, _ = Utility.StringToFloat64(c.PostForm("Weight"))
+			product.WeightPrice, _ = Utility.StringToFloat64(c.PostForm("WeightPrice"))
 			product.InventoryID, _ = Utility.StringToUnit64(c.PostForm("InventoryNumber"))
 
 			res := boot.DB().Create(&product)
@@ -687,6 +691,8 @@ func main() {
 			meterPrice, _ := Utility.StringToFloat64(c.PostForm("MeterPrice"))
 			count, _ := Utility.StringToInt64(c.PostForm("Count"))
 			meter, _ := Utility.StringToFloat64(c.PostForm("Meter"))
+			Weight, _ := Utility.StringToFloat64(c.PostForm("Weight"))
+			WeightPrice, _ := Utility.StringToFloat64(c.PostForm("WeightPrice"))
 			inventoryID, _ := Utility.StringToUnit64(c.PostForm("InventoryNumber"))
 
 			// اعتبارسنجی: حداقل دو فیلد باید مقدار مثبت داشته باشند
@@ -701,6 +707,12 @@ func main() {
 				validFields++
 			}
 			if meter > 0 {
+				validFields++
+			}
+			if Weight > 0 {
+				validFields++
+			}
+			if WeightPrice > 0 {
 				validFields++
 			}
 
@@ -723,6 +735,8 @@ func main() {
 				MeterPrice:  meterPrice,
 				Count:       count,
 				Meter:       meter,
+				Weight:      Weight,
+				WeightPrice: WeightPrice,
 				InventoryID: inventoryID,
 			}
 
@@ -808,7 +822,9 @@ func main() {
 				product.MeterPrice, _ = Utility.StringToFloat64(c.PostForm("MeterPrice"))
 				pCount, _ := Utility.StringToInt64(c.PostForm("ProductsCount"))
 				product.Count = oldproduct.Count + pCount
-				pMeter, _ := Utility.StringToFloat64(c.PostForm("ProductMeter"))
+				pMeter, _ := Utility.StringToFloat64(c.PostForm("Weight"))
+				product.Weight, _ = Utility.StringToFloat64(c.PostForm("WeightPrice"))
+				product.WeightPrice, _ = Utility.StringToFloat64(c.PostForm("ProductMeter"))
 				product.Meter = oldproduct.Meter + pMeter
 				product.InventoryID = 1
 
@@ -859,7 +875,7 @@ func main() {
 				status := c.Query("status")
 
 				if res.RowsAffected > 0 {
-					res, _ := model.GetAllPaymentsWithExportNumber(0, postperpage, status)
+					res, _ := model.GetAllPaymentsWithExportNumberAndUser(0, postperpage, status)
 					c.HTML(http.StatusOK, "payments.html", gin.H{
 						"Username": session.Get("UserName"),
 						"UserRole": session.Get("UserRole"),
@@ -1109,7 +1125,7 @@ func main() {
 					Phonenumber: result["Phonenumber"],
 					Address:     result["Address"],
 					Role:        "guest"}
-				if err := tx.Where("id = ?", User.ID).First(&User).Error; err != nil {
+				if err := tx.Where("phonenumber = ?", User.Phonenumber).First(&User).Error; err != nil {
 					if err := tx.Create(&User).Error; err != nil {
 						return err
 					}
@@ -1144,10 +1160,11 @@ func main() {
 				// Create user
 
 				// Create export
-				if err := tx.Create(&Export).Error; err != nil {
-					return err
+				if err := tx.Where("id = ?", Export.ID).First(&Export).Error; err != nil {
+					if err := tx.Create(&Export).Error; err != nil {
+						return err
+					}
 				}
-				fmt.Println("Export.ID", Export.ID)
 				// Update export products with the correct ExportID
 				for i := range exportproducts {
 					exportproducts[i].ExportID = Export.ID
@@ -1272,12 +1289,12 @@ func main() {
 				page = 1
 			}
 			offset := (page - 1) * postperpage
-			var res []boot.PaymentWithExport
+			var res []boot.PaymentWithExportAndUser
 			userid, err := Utility.StringToUnit64(c.Query("user_id"))
 			if err == nil {
 				res, err = model.GetAllPaymentsWithExportNumberByUserId(offset, postperpage, status, userid)
 			} else {
-				res, err = model.GetAllPaymentsWithExportNumber(offset, postperpage, status)
+				res, err = model.GetAllPaymentsWithExportNumberAndUser(offset, postperpage, status)
 			}
 
 			if err != nil {
@@ -1369,7 +1386,7 @@ func main() {
 			offset := (page - 1) * postperpage
 
 			totalItems := model.GetCountOfPayments()
-			res, _ := model.GetAllPaymentsWithExportNumber(offset, postperpage, status)
+			res, _ := model.GetAllPaymentsWithExportNumberAndUser(offset, postperpage, status)
 
 			if model.RemoveCurrentPayments(c) {
 				c.HTML(http.StatusOK, "payments.html", gin.H{

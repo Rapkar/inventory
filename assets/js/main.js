@@ -3,6 +3,7 @@ let ProductsOfExport = [];
 let ExportTotalPrice = [];
 let Payments = [];
 let tax = parseFloat(jQuery("input[name='Tax']").val())
+const directpaynumber = "PMT-" + Math.floor(Math.random() * 1000000)
 jQuery('#myModal').modal('show')
 // add  New product to export list
 
@@ -20,13 +21,13 @@ jQuery("#AddProductToExport").on("click", function () {
     var existproductMeter = jQuery("span.ProductsMeter").html();
     var Count = jQuery("#ProductBox input[name='Count']").val()
     var Meter = jQuery("#ProductBox input[name='Meter']").val()
-    productcount =  parseInt(existproductcount)- parseInt(Count);
-    productMeter = parseInt(existproductMeter) -parseInt(Meter) ;
+    productcount = parseInt(existproductcount) - parseInt(Count);
+    productMeter = parseInt(existproductMeter) - parseInt(Meter);
     if ((productcount == 0) && (productMeter == 0)) {
         alert('مقدار را مشخص کنید')
-    } else if(productcount < 0 || productMeter <0) {
+    } else if (productcount < 0 || productMeter < 0) {
         alert('موجودی  کافی نیست')
-    }else{
+    } else {
         var ID = jQuery("#ProductIs").val();
         var ExportID = jQuery("input[name='ExportNumber']").val();
         var InventoryNumber = jQuery("#InventoryIS").val();
@@ -65,23 +66,7 @@ jQuery("#AddProductToExport").on("click", function () {
         }
         ExportTotalPrice.push(NewPrice)
         ProductsOfExport.push(newRow)
-        const directpay = document.getElementById("directpay");
 
-        if (directpay.value && directpay.value.trim().length > 0) {
-
-
-
-            var Payment = {
-                Method: "نقدی",
-                Name: "نقدی",
-                Status: "collected",
-                TotalPrice: directpay.value,
-                Number: "PMT-" + Math.floor(Math.random() * 1000000), // شماره پیگیری تصادفی
-                CreatedAt: document.getElementById("checkDate").value
-            };
-
-            Payments.push(Payment);
-        }
 
         // console.log(ExportTotalPrice)
         exporttotal_Price = "0"
@@ -354,121 +339,85 @@ jQuery("input[name='Meter']").on("keyup", function () {
 
 //     return indexed_array;
 // }
+function calculateTotalPayments(payments) {
+    let total = 0;
+    const directpay = document.getElementById("directpay");
 
+    if (directpay.value && directpay.value.trim().length > 0) {
+        console.log("not found ", typeof (Payment))
+
+        var Payment = {
+            Method: "نقدی",
+            Name: "نقدی",
+            Status: "collected",
+            TotalPrice: directpay.value,
+            Number: directpaynumber, // شماره پیگیری تصادفی
+            CreatedAt: document.getElementById("checkDate").value
+        };
+
+        var existingPaymentIndex = Payments.findIndex(p => p.Number === directpaynumber);
+
+        if (existingPaymentIndex !== -1) {
+            Payments[existingPaymentIndex] = Payment;
+        } else {
+            Payments.push(Payment);
+        }
+    }
+
+    for (let payment of payments) {
+        total += parseFloat(payment.TotalPrice);
+    }
+    jQuery("#TotalPayments").html(total)
+    return total;
+}
+jQuery("#directpay").on("keyup", function () {
+     calculateTotalPayments(Payments)
+})
 jQuery("form[name='expotform']").submit(function (e) {
     e.preventDefault();
+
     var formValues = jQuery("form[name='expotform']").find("input, select, textarea").map(function () {
         return $(this).attr("name") + "=" + $(this).val();
     }).get().join("&");
     ExportPrice = GetExportTotalPrice(ExportTotalPrice);
 
-    jQuery.ajax({
-        method: "POST",
-        url: "/Dashboard/export",
-        data: JSON.stringify({ Name: "expotform", TotalPrice: ExportPrice, Content: formValues, Products: ProductsOfExport, Payments: Payments }),
-        // data: { Name: "expotform", Content: jQuery("form[name='expotform']").serialize(), Products: ProductsOfExport },
-        // contentType: "application/json; charset=utf-8",
-    })
-        .done(function (msg) {
-            if (msg.message == "sucess") {
-                window.location.replace("./exportshow?ExportId=" + msg.id);
+    if (Array.isArray(ProductsOfExport) && ProductsOfExport.length > 0) {
+        calculateTotalPayments(Payments)
+        console.log(parseFloat(calculateTotalPayments(Payments)), parseFloat(ExportPrice))
+        if (parseFloat(calculateTotalPayments(Payments)) < parseFloat(ExportPrice)) {
+            const isConfirmed = confirm("مبلغ پرداختی کمتر از قیمت فاکتور میباشد آیا از ادامه مطمین هستید؟");
+            if (!isConfirmed) {
+                return;
             }
+        }
+
+        jQuery.ajax({
+            method: "POST",
+            url: "/Dashboard/export",
+            data: JSON.stringify({
+                Name: "expotform",
+                TotalPrice: ExportPrice,
+                Content: formValues,
+                Products: ProductsOfExport,
+                Payments: Payments
+            }),
+            contentType: "application/json; charset=utf-8",
         })
-        .error(function(msg){
-            alert("خطلا",msg)
-        })
+            .done(function (msg) {
+                if (msg.message == "sucess") {
+                    window.location.replace("./exportshow?ExportId=" + msg.id);
+                }
+            })
+            .error(function (msg) {
+                alert("خطا در ارسال اطلاعات");
+            });
+    } else {
+        alert("لطفا محصولی را اضافه کنید !")
+    }
 
 })
 
 
-// jQuery(document).on("click", "#exportspaginate a.page-link", function(e) {
-//     e.preventDefault();
-
-//     var page = jQuery(this).data("page");
-//     var url = "/export-list?page=" + page;
-
-//     jQuery.ajax({
-//         method: "GET",
-//         url: url,
-//         success: function(response) {
-//             // Update the table content
-//             if (response.exports && response.exports.length > 0) {
-//                 let html = "";
-//                 response.exports.forEach(function(item) {
-//                     html += '<tr>';
-//                     html += '<td style="text-align:right;">' + item.ID + '</td>';
-//                     html += '<td style="text-align:right;">' + item.Name + '</td>';
-//                     html += '<td style="text-align:right;">' + item.Number + '</td>';
-//                     html += '<td style="text-align:right;">' + item.Phonenumber + '</td>';
-//                     html += '<td style="text-align:right;">' + item.Address + '</td>';
-//                     html += '<td style="text-align:right;">' + item.TotalPrice + '</td>';
-//                     html += '<td style="text-align:right;">' + item.Tax + '</td>';
-//                     html += '<td style="text-align:right;">' + item.CreatedAt + '</td>';
-//                     html += '<td style="text-align:right;">' + item.inventory_number + '</td>';
-//                     html += '<td dir="ltr" style="text-align:right;"><a href="./edituser?user-id=' + item.ID + '"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pen" viewBox="0 0 16 16">';
-//                     html += '<path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44 .854A1.5 1.5 0 0 1 11.5 .796a1.5 1.5 0 0 1 1.998-.001m-.644 .766a.5 .5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a .5 .5 0 0 0 0-.708z"/></svg></a></td>';
-//                     html += '</tr>';
-//                 });
-
-//                 jQuery("#exportlist tbody").html(html);
-
-//                 // Update pagination active state
-//                 jQuery("#exportspaginate .page-item").removeClass("active");
-//                 jQuery(this).closest(".page-item").addClass("active");
-
-//                 // Update browser history
-//                 history.pushState(null, "", url);
-//             }
-//         },
-//         error: function(xhr, status, error) {
-//             console.error("Error loading page:", error);
-//         }
-//     });
-// });
-
-// jQuery("#userspaginate a").on("click", function (e) {
-
-//     e.preventDefault();
-//     jQuery("#userspaginate .page-item").removeClass("active")
-//     jQuery("#userspaginate .page-item").removeClass("inpending")
-//     var page = jQuery(this).attr("attr-page")
-//     jQuery.ajax({
-//         method: "POST",
-//         url: "/Dashboard/user-list",
-//         data: JSON.stringify({ page: page, offset: "1" }),
-//         // data: { Name: "expotform", Content: jQuery("form[name='expotform']").serialize(), Products: ProductsOfExport },
-//         // contentType: "application/json; charset=utf-8",
-//     })
-//         .done(function (msg) {
-//             var lengthofres = msg.message.length;
-//             if (lengthofres > 0) {
-//                 let html = "";
-//                 msg.message.forEach(function (index) {
-//                     html += '<tr>';
-//                     html += '<td class="' + index.ID + '" style="text-align:right;">' + index.ID + '</td>';
-//                     html += '<td class="' + index.Name + '" style="text-align:right;">' + index.Name + '</td>';
-//                     html += '<td class="' + index.Phonenumber + '" style="text-align:right;">' + index.Phonenumber + '</td>';
-//                     html += '<td class="' + index.Address + '" style="text-align:right;">' + index.Address + '</td>';
-//                     html += '<td dir="ltr" class="Edit" style="text-align:right;"><a href="./edituser?user-id=' + index.ID + '"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pen" viewBox="0 0 16 16">';
-//                     html += '<path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44 .854A1.5 1.5 0 0 1 11.5 .796a1.5 1.5 0 0 1 1.998-.001m-.644 .766a.5 .5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a .5 .5 0 0 0 0-.708z"/></svg></a></td>';
-//                     html += '</tr>';
-//                     jQuery(e.target).parent().closest("li").addClass("active")
-//                     jQuery(e.target).parent().closest("li").next("li").addClass("inpending");
-//                     jQuery(e.target).parent().closest("li").prev("li").addClass("inpending");
-//                     jQuery(this).addClass("active");
-//                     // jQuery(this).parent("li").addClass("active");
-//                     // jQuery(this).closest("li").addClass("active")
-//                     jQuery(this).addClass("active")
-//                 });
-//                 if (html.length > 0) {
-//                     jQuery("#userlist tbody").empty()
-//                     jQuery("#userlist tbody").append(html)
-
-//                 }
-//             }
-
-//         });
-// })
 jQuery("#find").on("click", function (e) {
     e.preventDefault()
     var value = jQuery("#findval").val()
@@ -748,6 +697,9 @@ jQuery(document).on('click', '.remove', function (e) {
     RemoveItem(this, id);
 })
 
+
+
+
 function RemoveItem(target, id) {
     console.log(ExportTotalPrice, ProductsOfExport)
 
@@ -906,7 +858,6 @@ fetch("/Dashboard/api/allexports")
         return response.json(); // or response.text() depending on what the API returns
     })
     .then(data => {
-        console.log(data)
         data.sort((a, b) => new Date(a.CreatedAt) - new Date(b.CreatedAt));
         var labels = [];
         var date = [];
@@ -997,7 +948,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     <td>${index + 1}</td>
                     <td>${check.date}</td>
                     <td>${getBankName(check.bank)}</td>
-                    <td>${check.serial}</td>
+                    <td class="serial">${check.serial}</td>
                     <td>${Number(check.amount).toLocaleString()}</td>
                     <td>
                         <select class="form-select status-select" data-index="${index}">
@@ -1053,9 +1004,22 @@ document.addEventListener('DOMContentLoaded', function () {
 
         document.querySelectorAll('.delete-btn').forEach(btn => {
             btn.addEventListener('click', function () {
+                // دریافت مقدار شماره چک از ستون مربوطه
+                var numberElement = jQuery(this).closest("tr").find(".serial");
+                var checkNumber = numberElement.text().trim(); // یا .val() اگر input باشد
+
                 if (confirm('آیا از حذف این چک مطمئن هستید؟')) {
                     const index = parseInt(this.getAttribute('data-index'));
                     checks.splice(index, 1);
+
+                    // حذف از آرایه Payments با مقایسه صحیح
+                    Payments.forEach((element, i) => {
+                        if (element.Number.toString() === checkNumber) {
+                            Payments.splice(i, 1);
+                            return; // برای توقف حلقه بعد از حذف
+                        }
+                    });
+
                     renderChecksTable();
                 }
             });
@@ -1068,6 +1032,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 renderChecksTable(); // Refresh to update Payments array
             });
         });
+        calculateTotalPayments(Payments)
     }
 
     // Bank Names
@@ -1121,5 +1086,84 @@ jQuery(document).ready(function () {
         autoClose: true
     });
 });
+// تابع Debounce برای محدود کردن فراخوانی تابع
+function debounce(func, timeout = 500) {
+    let timer;
+    return (...args) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => { func.apply(this, args); }, timeout);
+    };
+}
 
+function sendSearchRequest() {
+    var nameValue = jQuery("input[name='Name']").val().trim();
+    var phoneValue = jQuery("input[name='Phonenumber']").val().trim();
+    var nameTerm = "";
+    var PhoneTerm = "";
 
+    var isNameValid = nameValue.length > 2;
+    var isPhoneValid = phoneValue.length > 10;
+
+    if (isNameValid || isPhoneValid) {
+        if (isNameValid) {
+            nameTerm = nameValue;
+        }
+        if (isPhoneValid) {
+            PhoneTerm = phoneValue;
+        }
+
+        jQuery.ajax({
+            method: "POST",
+            url: "/Dashboard/users-find",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({ name: nameTerm, phone: PhoneTerm })
+        })
+            .done(function (msg) {
+                var messageElement = jQuery("small[for='Phonenumber']");
+                messageElement.removeClass('text-danger text-muted text-success');
+
+                if (msg.message.includes("ثبت شده")) {
+                    messageElement.html(msg.message).addClass('text-danger');
+                    jQuery("button[name='inquiry']").prop("disabled", false);
+                    msg.users.forEach(function (item) {
+                        html += `<tr>
+                        <td>${item.ID}</td>
+                        <td>${item.Name}</td>
+                        <td>${item.Phonenumber}</td>
+                        <td><a target="_blank" href="/Dashboard/user/details?user-id=${item.ID}">مشاهده جزییات</a></td>
+                    </tr>`;
+                    });
+                    jQuery("#inquirybox").html(html);
+
+                } else if (Array.isArray(msg.users) && msg.users.length > 0) {
+                    messageElement.html(msg.message).addClass('text-success');
+                    jQuery("button[name='inquiry']").prop("disabled", false);
+
+                    var html = "";
+                    msg.users.forEach(function (item) {
+                        html += `<tr>
+                        <td>${item.ID}</td>
+                        <td>${item.Name}</td>
+                        <td>${item.Phonenumber}</td>
+                        <td><a target="_blank" href="/Dashboard/user/details?user-id=${item.ID}">مشاهده جزییات</a></td>
+                    </tr>`;
+                    });
+                    jQuery("#inquirybox").html(html);
+                } else {
+                    messageElement.html(msg.message).addClass('text-muted');
+                    jQuery("button[name='inquiry']").prop("disabled", true);
+                    jQuery("#inquirybox").html("");
+                }
+            })
+            .fail(function (jqXHR, textStatus, errorThrown) {
+                console.error("AJAX request failed: " + textStatus, errorThrown);
+                jQuery("button[name='inquiry']").prop("disabled", true);
+                jQuery("small[for='Phonenumber']").html('خطا در ارتباط با سرور').addClass('text-danger');
+            });
+    } else {
+        jQuery("button[name='inquiry']").prop("disabled", true);
+        jQuery("small[for='Phonenumber']").html('مثال: 09123456789').addClass('text-muted');
+    }
+}
+
+jQuery("input[name='Name'], input[name='Phonenumber']").on("keyup", debounce(sendSearchRequest, 500));

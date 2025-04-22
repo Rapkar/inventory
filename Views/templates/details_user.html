@@ -32,11 +32,11 @@
                         <td>{{.details.User.Name}}</td>
                         <td>{{.details.User.Phonenumber}}</td>
                         <td>{{.details.User.Address}}</td>
-                        <td>{{.UserCalculations.DebtAmount}}</td>
-                        <td>{{.UserCalculations.CreditAmount}}</td>
-                        <td>{{.UserCalculations.ExportTotalprice}}</td>
-                        <td>{{.UserCalculations.ExportsCount}}</td>
-                        <td>{{.UserCalculations.TotalPaid}}</td>
+                        <td class="price">{{.UserCalculations.DebtAmount}}</td>
+                        <td class="price">{{.UserCalculations.CreditAmount}}</td>
+                        <td class="price">{{.UserCalculations.ExportTotalprice}}</td>
+                        <td class="price">{{.UserCalculations.ExportsCount}}</td>
+                        <td class="price">{{.UserCalculations.TotalPaid}}</td>
                         <!-- سایر فیلدهای کاربر -->
                     </tr>
                 </tbody>
@@ -64,8 +64,8 @@
                     <tr>
                         <td>{{.ID}}</td>
                         <td>{{.CreatedAt}}</td>
-                        <td>{{.TotalPrice}}</td>
-                        <td>{{.TotalPrice}}</td>
+                        <td class="price" >{{.TotalPrice}}</td>
+                        <td class="price" >{{.TotalPrice}}</td>
                         <td>{{.Tax}}</td>
                         <td>
                             <a href="/Dashboard/exportshow?ExportId={{.ID}}"><svg xmlns="http://www.w3.org/2000/svg"

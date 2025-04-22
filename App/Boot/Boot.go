@@ -13,6 +13,13 @@ type Users struct {
 	Address     string `gorm:"size:255;"`
 	Role        string `gorm:"size:255;"`
 }
+type ResponseUsers struct {
+	ID          uint64 `gorm:"primaryKey"`
+	Name        string `gorm:"size:255;"`
+	Email       string `gorm:"size:255;index:unique"`
+	Phonenumber string `gorm:"size:255;unique"`
+	Address     string `gorm:"size:255;"`
+}
 
 //	type Inventory struct {
 //		ID              uint64 `gorm:"primaryKey"`
@@ -31,9 +38,9 @@ type Inventory struct {
 type Product struct {
 	ID          uint64    `gorm:"primaryKey"`
 	Name        string    `gorm:"type:varchar(100)"`
-	Number      string    `gorm:"size:255;"`
 	RolePrice   float64   `gorm:"type:float"`
 	MeterPrice  float64   `gorm:"type:float"`
+	WeightPrice float64   `gorm:"type:float"`
 	Count       int64     `gorm:"size:255;"`
 	Meter       float64   `gorm:"type:float"`
 	Weight      float64   `gorm:"type:float"`
@@ -80,12 +87,13 @@ type ExportProducts struct {
 	ID          uint64    `gorm:"primaryKey"`
 	ExportID    uint64    `gorm:"index"`
 	Name        string    `gorm:"type:varchar(100)"`
-	Number      string    `gorm:"size:255;"`
 	RolePrice   float64   `gorm:"type:float"`
 	MeterPrice  float64   `gorm:"type:float"`
 	Count       int64     `gorm:"size:255;"`
 	Meter       float64   `gorm:"type:float"`
 	TotalPrice  float64   `gorm:"type:float"`
+	Weight      float64   `gorm:"type:float"`
+	WeightPrice float64   `gorm:"type:float"`
 	InventoryID uint64    `gorm:"index"`
 	Export      Export    `gorm:"foreignKey:ExportID;references:ID"`
 	Inventory   Inventory `gorm:"foreignKey:InventoryID;references:ID"`
@@ -109,16 +117,18 @@ type EscapeExportProducts struct {
 	ID              uint64  `gorm:"primaryKey"`
 	ExportID        uint64  `gorm:"index"`
 	Name            string  `gorm:"type:varchar(100)"`
-	Number          string  `gorm:"size:255;"`
 	RolePrice       float64 `gorm:"type:float"`
 	MeterPrice      float64 `gorm:"type:float"`
+	WeightPrice     float64 `gorm:"type:float"`
 	Count           string  `gorm:"size:255;"`
 	Meter           float64 `gorm:"type:float"`
+	Weight          float64 `gorm:"type:float"`
 	TotalPrice      float64 `gorm:"type:float"`
 	InventoryNumber int32   `gorm:"size:255;"`
 	// Inventory       Inventory `gorm:"foreignKey:InventoryNumber"`
 }
-type PaymentWithExport struct {
+type PaymentWithExportAndUser struct {
 	Payments
 	ExportNumber string `json:"export_number"`
+	UserName     string `json:"UserName"`
 }
