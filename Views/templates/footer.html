@@ -28,7 +28,7 @@
         // because of the script tag above.
 
         // Takes a string made of English digits only, and returns a string that represents the same number but with Persian digits
-        jQuery("input[type='number']").on("keyup", function () {
+        jQuery("input[type='number'],input.price").on("keyup", function () {
             var val = jQuery(this).val()
             convertToFa = PersianTools.addCommas(val)
             var convertToFa = PersianTools.digitsEnToFa(convertToFa);

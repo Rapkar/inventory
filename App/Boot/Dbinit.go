@@ -114,7 +114,6 @@ func Init() {
 		if err := tx.Where("id =?", 1).First(&existinProduct).Error; err != nil {
 			existinProduct = Product{
 				Name:        "ایزوگام شرق",
-				Number:      "10",
 				RolePrice:   99250,
 				MeterPrice:  102500,
 				Count:       100,
@@ -137,7 +136,7 @@ func Init() {
 				Address:     "کرج -کرج=-ایران -سیسی",
 				TotalPrice:  10000000,
 				Tax:         10,
-				ProductID:   existinProduct.ID,
+				InventoryID: existingInventory.ID,
 				CreatedAt:   Utility.CurrentTime(),
 			}
 
@@ -154,11 +153,11 @@ func Init() {
 			existinExportProducts = ExportProducts{
 				ExportID:    existinExport.ID, // اینجا از ID ایجاد شده استفاده می‌کنیم
 				Name:        "ایزوگام شرق",
-				Number:      "10",
 				RolePrice:   99250,
 				MeterPrice:  102500,
 				Count:       100,
 				InventoryID: existingInventory.ID,
+				ProductID:   existinProduct.ID,
 				TotalPrice:  2000000,
 				Meter:       10,
 			}

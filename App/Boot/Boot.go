@@ -48,23 +48,23 @@ type Product struct {
 	Inventory   Inventory `gorm:"foreignKey:InventoryID;references:ID"`
 }
 type Export struct {
-	ID          uint64  `gorm:"primaryKey"`
-	Name        string  `gorm:"type:varchar(100)"`
-	Number      string  `gorm:"varchar(255),unique"`
-	Phonenumber string  `gorm:"size:255;"`
-	UserID      uint64  `gorm:"index;"`
-	Address     string  `gorm:"size:255;"`
-	TotalPrice  float64 `gorm:"type:float"`
-	Tax         int64   `gorm:"size:255;"`
-	Describe    string  `gorm:"size:255;"`
-	CreatedAt   string  `json:"CreatedAt"` // assign the format to a string
-	// InventoryNumber int32            `gorm:"index;"`
-	ProductID      uint64           `gorm:"index;"`
+	ID             uint64           `gorm:"primaryKey"`
+	Name           string           `gorm:"type:varchar(100)"`
+	Number         string           `gorm:"varchar(255),unique"`
+	Phonenumber    string           `gorm:"size:255;"`
+	UserID         uint64           `gorm:"index;"`
+	Address        string           `gorm:"size:255;"`
+	TotalPrice     float64          `gorm:"type:float"`
+	Tax            int64            `gorm:"size:255;"`
+	Describe       string           `gorm:"size:255;"`
+	CreatedAt      string           `json:"CreatedAt"` // assign the format to a string
+	Draft          bool             `gorm:"type:boolean"`
+	InventoryID    uint64           `gorm:"index;"`
 	ExportProducts []ExportProducts `gorm:"foreignKey:ExportID;references:ID"`
 	Payments       []Payments       `gorm:"foreignKey:ExportID"`
 	User           Users            `gorm:"foreignKey:UserID;references:ID"`
 	// Inventory      Inventory        `gorm:"foreignKey:InventoryNumber"`
-	Product Product `gorm:"foreignKey:ProductID;references:ID"`
+	Inventory Inventory `gorm:"foreignKey:InventoryID;references:ID"`
 }
 type Payments struct {
 	ID          uint64    `gorm:"primaryKey"`
@@ -95,8 +95,10 @@ type ExportProducts struct {
 	Weight      float64   `gorm:"type:float"`
 	WeightPrice float64   `gorm:"type:float"`
 	InventoryID uint64    `gorm:"index"`
+	ProductID   uint64    `gorm:"index"`
 	Export      Export    `gorm:"foreignKey:ExportID;references:ID"`
 	Inventory   Inventory `gorm:"foreignKey:InventoryID;references:ID"`
+	Product     Product   `gorm:"foreignKey:ProductID;references:ID"`
 }
 
 type EscapeExport struct {
@@ -107,6 +109,7 @@ type EscapeExport struct {
 	Address         string           `gorm:"size:255;"`
 	TotalPrice      float64          `gorm:"type:float"`
 	Tax             int64            `gorm:"size:255;"`
+	Draft           bool             `gorm:"type:boolean"`
 	Describe        string           `gorm:"size:255;"`
 	CreatedAt       string           `json:"CreatedAt"` // assign the format to a string
 	InventoryNumber int32            `gorm:"size:255;"`
@@ -131,4 +134,9 @@ type PaymentWithExportAndUser struct {
 	Payments
 	ExportNumber string `json:"export_number"`
 	UserName     string `json:"UserName"`
+}
+
+type ProductWithInventory struct {
+	Product
+	Inventory
 }

@@ -4,34 +4,36 @@
  - using env:	export GIN_MODE=release
  - using code:	gin.SetMode(gin.ReleaseMode)
 
-[GIN-debug] Loaded HTML Templates (28): 
-	- admins.html
-	- edit_user.html
-	- inventory.html
-	- charts.html
+[GIN-debug] Loaded HTML Templates (30): 
 	- danger_notif
-	- exportshow.html
+	- inventories.html
+	- users.html
 	- footer.html
-	- header.html
-	- header
-	- home.html
 	- navbar
-	- payments.html
-	- 404.html
-	- backups.html
-	- danger.html
+	- admins.html
+	- dashboard.html
 	- details_user.html
-	- login.html
-	- production.html
-	- add_product.html
-	- navbar.html
-	- success.html
-	- 
+	- edit_user.html
 	- error.html
 	- export_list.html
-	- users.html
-	- dashboard.html
+	- exportshow.html
+	- header.html
+	- 
+	- backups.html
+	- danger.html
+	- header
+	- inventory.html
 	- export.html
+	- inventory_edit.html
+	- login.html
+	- home.html
+	- success.html
+	- navbar.html
+	- production.html
+	- 404.html
+	- add_product.html
+	- charts.html
+	- payments.html
 	- success_notif
 
 [GIN-debug] GET    /assets/*filepath         --> github.com/gin-gonic/gin.(*RouterGroup).createStaticHandler.func1 (3 handlers)
@@ -72,102 +74,68 @@
 [GIN-debug] POST   /Dashboard/export-list    --> main.main.func36 (5 handlers)
 [GIN-debug] POST   /Dashboard/export-find    --> main.main.func37 (5 handlers)
 [GIN-debug] POST   /Dashboard/payment-find   --> main.main.func38 (5 handlers)
-[GIN-debug] GET    /Dashboard/exportshow     --> main.main.func39 (5 handlers)
-[GIN-debug] GET    /Dashboard/payments       --> main.main.func40 (5 handlers)
-[GIN-debug] GET    /Dashboard/backup         --> main.main.func41 (5 handlers)
-[GIN-debug] GET    /backups/:filename        --> main.main.func42 (4 handlers)
-[GIN-debug] GET    /Dashboard/charts         --> main.main.func43 (5 handlers)
-[GIN-debug] GET    /Dashboard/deletePayments --> main.main.func44 (5 handlers)
+[GIN-debug] POST   /Dashboard/draft          --> main.main.func39 (5 handlers)
+[GIN-debug] GET    /Dashboard/exportshow     --> main.main.func40 (5 handlers)
+[GIN-debug] GET    /Dashboard/payments       --> main.main.func41 (5 handlers)
+[GIN-debug] GET    /Dashboard/backup         --> main.main.func42 (5 handlers)
+[GIN-debug] GET    /Dashboard/inventories    --> main.main.func43 (5 handlers)
+[GIN-debug] GET    /Dashboard/deleteinventories --> main.main.func44 (5 handlers)
+[GIN-debug] GET    /Dashboard/editinventory  --> main.main.func45 (5 handlers)
+[GIN-debug] POST   /Dashboard/updateinventory --> main.main.func46 (5 handlers)
+[GIN-debug] POST   /Dashboard/createinventory --> main.main.func47 (5 handlers)
+[GIN-debug] GET    /Dashboard/createinventory --> main.main.func48 (5 handlers)
+[GIN-debug] GET    /backups/:filename        --> main.main.func49 (4 handlers)
+[GIN-debug] GET    /Dashboard/charts         --> main.main.func50 (5 handlers)
+[GIN-debug] GET    /Dashboard/deletePayments --> main.main.func51 (5 handlers)
 [GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
 Please check https://pkg.go.dev/github.com/gin-gonic/gin#readme-don-t-trust-all-proxies for details.
 [GIN-debug] Environment variable PORT is undefined. Using port :8080 by default
 [GIN-debug] Listening and serving HTTP on :8080
-[GIN] 2025/04/22 - 23:18:54 | 200 |    1.945469ms |       127.0.0.1 | GET      "/Dashboard/addproduct?inventory=1"
-[GIN] 2025/04/22 - 23:18:55 | 200 |    2.743339ms |       127.0.0.1 | GET      "/Dashboard/api/allexports"
-[GIN] 2025/04/22 - 23:21:32 | 200 |    6.254752ms |       127.0.0.1 | POST     "/Dashboard/addproduct"
-[GIN] 2025/04/22 - 23:21:32 | 304 |     162.811µs |       127.0.0.1 | GET      "/assets/js/main.js"
-[GIN] 2025/04/22 - 23:21:32 | 200 |    5.148994ms |       127.0.0.1 | GET      "/Dashboard/api/allexports"
-[GIN] 2025/04/22 - 23:23:58 | 200 |    6.011552ms |       127.0.0.1 | GET      "/Dashboard/inventory?inventory=2"
-[GIN] 2025/04/22 - 23:23:58 | 200 |    2.947246ms |       127.0.0.1 | GET      "/Dashboard/api/allexports"
-[GIN] 2025/04/22 - 23:23:59 | 200 |   11.519472ms |       127.0.0.1 | GET      "/Dashboard/"
-[GIN] 2025/04/22 - 23:23:59 | 200 |    2.273073ms |       127.0.0.1 | GET      "/Dashboard/api/allexports"
-[GIN] 2025/04/22 - 23:24:00 | 200 |    6.046966ms |       127.0.0.1 | GET      "/Dashboard/inventory?inventory=1"
-[GIN] 2025/04/22 - 23:24:00 | 200 |    2.694788ms |       127.0.0.1 | GET      "/Dashboard/api/allexports"
-[GIN] 2025/04/22 - 23:24:18 | 200 |    6.777922ms |       127.0.0.1 | GET      "/Dashboard/editproduct?product-id=2"
-[GIN] 2025/04/22 - 23:24:19 | 200 |    3.569258ms |       127.0.0.1 | GET      "/Dashboard/api/allexports"
-[GIN] 2025/04/22 - 23:24:24 | 200 |    2.203141ms |       127.0.0.1 | GET      "/assets/css/bootstrap.rtl.min.css.map"
-[GIN] 2025/04/22 - 23:24:45 | 200 |   10.932033ms |       127.0.0.1 | POST     "/Dashboard/editproduct"
-[GIN] 2025/04/22 - 23:24:46 | 200 |    2.296402ms |       127.0.0.1 | GET      "/Dashboard/api/allexports"
-[GIN] 2025/04/22 - 23:25:08 | 200 |    1.847406ms |       127.0.0.1 | GET      "/Dashboard/addproduct?inventory=1"
-[GIN] 2025/04/22 - 23:25:08 | 200 |    4.429196ms |       127.0.0.1 | GET      "/Dashboard/api/allexports"
-[GIN] 2025/04/22 - 23:29:07 | 200 |    7.500584ms |       127.0.0.1 | GET      "/Dashboard/inventory?inventory=1"
-[GIN] 2025/04/22 - 23:29:14 | 200 |   10.605604ms |       127.0.0.1 | GET      "/Dashboard/"
-[GIN] 2025/04/22 - 23:29:15 | 200 |    3.664289ms |       127.0.0.1 | GET      "/Dashboard/api/allexports"
-[GIN] 2025/04/22 - 23:29:16 | 200 |    5.871767ms |       127.0.0.1 | GET      "/Dashboard/inventory?inventory=1"
-[GIN] 2025/04/22 - 23:29:16 | 200 |    3.733562ms |       127.0.0.1 | GET      "/Dashboard/api/allexports"
-[GIN] 2025/04/22 - 23:29:18 | 200 |    4.143822ms |       127.0.0.1 | GET      "/Dashboard/editproduct?product-id=1"
-[GIN] 2025/04/22 - 23:29:18 | 200 |    8.690171ms |       127.0.0.1 | GET      "/Dashboard/api/allexports"
-[GIN] 2025/04/22 - 23:29:21 | 200 |    5.291244ms |       127.0.0.1 | GET      "/Dashboard/editproduct?product-id=1"
-[GIN] 2025/04/22 - 23:29:21 | 200 |    2.916606ms |       127.0.0.1 | GET      "/Dashboard/api/allexports"
-[GIN] 2025/04/22 - 23:29:22 | 200 |    5.648666ms |       127.0.0.1 | GET      "/Dashboard/editproduct?product-id=1"
-[GIN] 2025/04/22 - 23:29:22 | 200 |    5.860925ms |       127.0.0.1 | GET      "/assets/css/main.css"
-[GIN] 2025/04/22 - 23:29:22 | 200 |    2.415207ms |       127.0.0.1 | GET      "/assets/js/bootstrap.min.js"
-[GIN] 2025/04/22 - 23:29:22 | 200 |    1.103227ms |       127.0.0.1 | GET      "/assets/js/jspdf.umd.min.js"
-[GIN] 2025/04/22 - 23:29:22 | 200 |    5.755021ms |       127.0.0.1 | GET      "/assets/css/bootstrap.rtl.min.css"
-[GIN] 2025/04/22 - 23:29:22 | 200 |    3.219979ms |       127.0.0.1 | GET      "/assets/js/jquery-3.7.1.min.js"
-[GIN] 2025/04/22 - 23:29:22 | 200 |     733.416µs |       127.0.0.1 | GET      "/assets/js/chart.js"
-[GIN] 2025/04/22 - 23:29:22 | 200 |    3.013582ms |       127.0.0.1 | GET      "/assets/js/persian-tools.umd.js"
-[GIN] 2025/04/22 - 23:29:22 | 200 |     406.575µs |       127.0.0.1 | GET      "/assets/js/main.js"
-[GIN] 2025/04/22 - 23:29:26 | 200 |      93.172µs |       127.0.0.1 | GET      "/assets/images/user.png"
-[GIN] 2025/04/22 - 23:29:26 | 200 |      826.21µs |       127.0.0.1 | GET      "/assets/images/techrootlogo.png"
-[GIN] 2025/04/22 - 23:29:26 | 200 |     236.095µs |       127.0.0.1 | GET      "/assets/fonts/Vazir-Medium.woff2"
-[GIN] 2025/04/22 - 23:29:29 | 200 |    2.209124ms |       127.0.0.1 | GET      "/Dashboard/api/allexports"
-[GIN] 2025/04/22 - 23:29:29 | 200 |    2.478961ms |       127.0.0.1 | GET      "/favicon.ico"
-[GIN] 2025/04/22 - 23:29:31 | 200 |   11.214812ms |       127.0.0.1 | POST     "/Dashboard/editproduct"
-[GIN] 2025/04/22 - 23:29:31 | 200 |    2.266119ms |       127.0.0.1 | GET      "/Dashboard/api/allexports"
-[GIN] 2025/04/22 - 23:30:02 | 200 |    6.075336ms |       127.0.0.1 | GET      "/Dashboard/inventory?inventory=1"
-[GIN] 2025/04/22 - 23:30:02 | 200 |    2.772952ms |       127.0.0.1 | GET      "/Dashboard/api/allexports"
-[GIN] 2025/04/22 - 23:30:04 | 200 |    4.787459ms |       127.0.0.1 | GET      "/Dashboard/editproduct?product-id=1"
-[GIN] 2025/04/22 - 23:30:04 | 200 |    2.635966ms |       127.0.0.1 | GET      "/Dashboard/api/allexports"
-[GIN] 2025/04/22 - 23:30:13 | 200 |     6.56799ms |       127.0.0.1 | POST     "/Dashboard/editproduct"
-[GIN] 2025/04/22 - 23:30:13 | 200 |    2.942102ms |       127.0.0.1 | GET      "/Dashboard/api/allexports"
-[GIN] 2025/04/22 - 23:30:25 | 200 |   10.633526ms |       127.0.0.1 | POST     "/Dashboard/editproduct"
-[GIN] 2025/04/22 - 23:30:26 | 200 |    2.662035ms |       127.0.0.1 | GET      "/Dashboard/api/allexports"
-[GIN] 2025/04/22 - 23:34:43 | 200 |    2.527198ms |       127.0.0.1 | GET      "/Dashboard/addproduct?inventory=1"
-[GIN] 2025/04/22 - 23:34:44 | 200 |    2.380694ms |       127.0.0.1 | GET      "/Dashboard/api/allexports"
-[GIN] 2025/04/22 - 23:34:47 | 200 |    4.341226ms |       127.0.0.1 | GET      "/assets/css/bootstrap.rtl.min.css.map"
-[GIN] 2025/04/22 - 23:35:40 | 200 |    3.252736ms |       127.0.0.1 | GET      "/Dashboard/addproduct?inventory=1"
-[GIN] 2025/04/22 - 23:35:40 | 200 |     250.145µs |       127.0.0.1 | GET      "/assets/css/bootstrap.rtl.min.css"
-[GIN] 2025/04/22 - 23:35:40 | 200 |     102.641µs |       127.0.0.1 | GET      "/assets/css/main.css"
-[GIN] 2025/04/22 - 23:35:40 | 200 |    1.100252ms |       127.0.0.1 | GET      "/assets/images/techrootlogo.png"
-[GIN] 2025/04/22 - 23:35:40 | 200 |     102.244µs |       127.0.0.1 | GET      "/assets/images/user.png"
-[GIN] 2025/04/22 - 23:35:40 | 200 |     198.023µs |       127.0.0.1 | GET      "/assets/js/jquery-3.7.1.min.js"
-[GIN] 2025/04/22 - 23:35:40 | 200 |     174.432µs |       127.0.0.1 | GET      "/assets/js/bootstrap.min.js"
-[GIN] 2025/04/22 - 23:35:40 | 200 |       538.8µs |       127.0.0.1 | GET      "/assets/js/persian-tools.umd.js"
-[GIN] 2025/04/22 - 23:35:40 | 200 |     347.485µs |       127.0.0.1 | GET      "/assets/js/jspdf.umd.min.js"
-[GIN] 2025/04/22 - 23:35:40 | 200 |     385.671µs |       127.0.0.1 | GET      "/assets/js/chart.js"
-[GIN] 2025/04/22 - 23:35:40 | 200 |     195.976µs |       127.0.0.1 | GET      "/assets/js/main.js"
-[GIN] 2025/04/22 - 23:35:40 | 200 |     235.062µs |       127.0.0.1 | GET      "/assets/fonts/Vazir-Medium.woff2"
-[GIN] 2025/04/22 - 23:35:40 | 200 |    2.657161ms |       127.0.0.1 | GET      "/Dashboard/api/allexports"
-[GIN] 2025/04/22 - 23:35:40 | 200 |    3.312538ms |       127.0.0.1 | GET      "/favicon.ico"
-[GIN] 2025/04/22 - 23:35:41 | 200 |    2.100565ms |       127.0.0.1 | GET      "/assets/css/bootstrap.rtl.min.css.map"
-[GIN] 2025/04/22 - 23:35:59 | 200 |    2.252637ms |       127.0.0.1 | GET      "/Dashboard/addproduct?inventory=1"
-[GIN] 2025/04/22 - 23:35:59 | 200 |    2.607295ms |       127.0.0.1 | GET      "/Dashboard/api/allexports"
-[GIN] 2025/04/22 - 23:36:17 | 200 |    8.009564ms |       127.0.0.1 | GET      "/Dashboard/"
-[GIN] 2025/04/22 - 23:36:17 | 200 |      66.079µs |       127.0.0.1 | GET      "/assets/images/user.png"
-[GIN] 2025/04/22 - 23:36:17 | 200 |    1.103155ms |       127.0.0.1 | GET      "/assets/images/techrootlogo.png"
-[GIN] 2025/04/22 - 23:36:17 | 200 |    3.791548ms |       127.0.0.1 | GET      "/Dashboard/api/allexports"
-[GIN] 2025/04/22 - 23:43:57 | 200 |    6.635394ms |       127.0.0.1 | POST     "/Dashboard/addproduct"
-[GIN] 2025/04/22 - 23:43:57 | 200 |    2.543999ms |       127.0.0.1 | GET      "/Dashboard/api/allexports"
-[GIN] 2025/04/22 - 23:47:45 | 200 |    4.184117ms |       127.0.0.1 | GET      "/Dashboard/production"
-Error #01: template: production.html:26:78: executing "production.html" at <.InventoryNumber>: can't evaluate field InventoryNumber in type Boot.Product
-[GIN] 2025/04/22 - 23:47:49 | 200 |   10.461088ms |       127.0.0.1 | GET      "/Dashboard/"
-[GIN] 2025/04/22 - 23:47:50 | 200 |    3.659433ms |       127.0.0.1 | GET      "/Dashboard/api/allexports"
-[GIN] 2025/04/22 - 23:47:51 | 200 |    6.073367ms |       127.0.0.1 | GET      "/Dashboard/inventory?inventory=1"
-[GIN] 2025/04/22 - 23:47:51 | 200 |    2.076364ms |       127.0.0.1 | GET      "/Dashboard/api/allexports"
-[GIN] 2025/04/22 - 23:47:56 | 200 |    4.380211ms |       127.0.0.1 | GET      "/Dashboard/editproduct?product-id=3"
-[GIN] 2025/04/22 - 23:47:56 | 200 |    2.878856ms |       127.0.0.1 | GET      "/Dashboard/api/allexports"
-[GIN] 2025/04/22 - 23:48:04 | 200 |    5.949048ms |       127.0.0.1 | GET      "/Dashboard/editproduct?product-id=3"
-[GIN] 2025/04/22 - 23:48:04 | 200 |    2.270266ms |       127.0.0.1 | GET      "/Dashboard/api/allexports"
-[GIN] 2025/04/22 - 23:48:15 | 200 |     9.13654ms |       127.0.0.1 | POST     "/Dashboard/editproduct"
-[GIN] 2025/04/22 - 23:48:15 | 200 |    2.726951ms |       127.0.0.1 | GET      "/Dashboard/api/allexports"
+[GIN] 2025/04/28 - 21:25:09 | 200 |    8.078563ms |       127.0.0.1 | GET      "/Dashboard/production"
+[GIN] 2025/04/28 - 21:25:09 | 200 |    5.882562ms |       127.0.0.1 | GET      "/assets/css/main.css"
+[GIN] 2025/04/28 - 21:25:09 | 200 |   10.147026ms |       127.0.0.1 | GET      "/assets/css/bootstrap.rtl.min.css"
+[GIN] 2025/04/28 - 21:25:09 | 200 |    2.834192ms |       127.0.0.1 | GET      "/assets/js/jquery-3.7.1.min.js"
+[GIN] 2025/04/28 - 21:25:09 | 200 |     733.091µs |       127.0.0.1 | GET      "/assets/js/bootstrap.min.js"
+[GIN] 2025/04/28 - 21:25:09 | 200 |      76.597µs |       127.0.0.1 | GET      "/assets/images/user.png"
+[GIN] 2025/04/28 - 21:25:09 | 200 |    1.148488ms |       127.0.0.1 | GET      "/assets/images/techrootlogo.png"
+[GIN] 2025/04/28 - 21:25:09 | 200 |     804.978µs |       127.0.0.1 | GET      "/assets/js/persian-tools.umd.js"
+[GIN] 2025/04/28 - 21:25:09 | 200 |     354.906µs |       127.0.0.1 | GET      "/assets/js/jspdf.umd.min.js"
+[GIN] 2025/04/28 - 21:25:09 | 200 |     281.682µs |       127.0.0.1 | GET      "/assets/js/chart.js"
+[GIN] 2025/04/28 - 21:25:09 | 200 |     171.768µs |       127.0.0.1 | GET      "/assets/js/main.js"
+[GIN] 2025/04/28 - 21:25:10 | 200 |     308.498µs |       127.0.0.1 | GET      "/assets/fonts/Vazir-Medium.woff2"
+[GIN] 2025/04/28 - 21:25:10 | 200 |    3.213665ms |       127.0.0.1 | GET      "/Dashboard/api/allexports"
+[GIN] 2025/04/28 - 21:25:10 | 200 |    2.130066ms |       127.0.0.1 | GET      "/assets/css/bootstrap.rtl.min.css.map"
+[GIN] 2025/04/28 - 21:25:10 | 200 |    2.953231ms |       127.0.0.1 | GET      "/favicon.ico"
+[GIN] 2025/04/28 - 21:25:25 | 200 |    6.302849ms |       127.0.0.1 | GET      "/Dashboard/production"
+[GIN] 2025/04/28 - 21:25:25 | 200 |     270.452µs |       127.0.0.1 | GET      "/assets/css/bootstrap.rtl.min.css"
+[GIN] 2025/04/28 - 21:25:25 | 200 |      416.74µs |       127.0.0.1 | GET      "/assets/css/main.css"
+[GIN] 2025/04/28 - 21:25:25 | 200 |     910.749µs |       127.0.0.1 | GET      "/assets/images/techrootlogo.png"
+[GIN] 2025/04/28 - 21:25:25 | 200 |      94.602µs |       127.0.0.1 | GET      "/assets/images/user.png"
+[GIN] 2025/04/28 - 21:25:25 | 200 |     214.357µs |       127.0.0.1 | GET      "/assets/js/jquery-3.7.1.min.js"
+[GIN] 2025/04/28 - 21:25:25 | 200 |     248.119µs |       127.0.0.1 | GET      "/assets/js/bootstrap.min.js"
+[GIN] 2025/04/28 - 21:25:25 | 200 |     481.005µs |       127.0.0.1 | GET      "/assets/js/persian-tools.umd.js"
+[GIN] 2025/04/28 - 21:25:25 | 200 |     311.826µs |       127.0.0.1 | GET      "/assets/js/jspdf.umd.min.js"
+[GIN] 2025/04/28 - 21:25:25 | 200 |     264.788µs |       127.0.0.1 | GET      "/assets/js/chart.js"
+[GIN] 2025/04/28 - 21:25:25 | 200 |     177.619µs |       127.0.0.1 | GET      "/assets/js/main.js"
+[GIN] 2025/04/28 - 21:25:26 | 200 |     356.427µs |       127.0.0.1 | GET      "/assets/fonts/Vazir-Medium.woff2"
+[GIN] 2025/04/28 - 21:25:26 | 200 |    4.566541ms |       127.0.0.1 | GET      "/assets/css/bootstrap.rtl.min.css.map"
+[GIN] 2025/04/28 - 21:25:26 | 200 |     2.92848ms |       127.0.0.1 | GET      "/Dashboard/api/allexports"
+[GIN] 2025/04/28 - 21:25:26 | 200 |     2.11118ms |       127.0.0.1 | GET      "/favicon.ico"
+[GIN] 2025/04/28 - 21:25:28 | 200 |    2.386636ms |       127.0.0.1 | POST     "/Dashboard/getproductbyid"
+[GIN] 2025/04/28 - 21:25:30 | 200 |    2.697559ms |       127.0.0.1 | POST     "/Dashboard/getproductbyid"
+[GIN] 2025/04/28 - 21:25:39 | 200 |    7.466667ms |       127.0.0.1 | GET      "/Dashboard/inventory?inventory=4"
+[GIN] 2025/04/28 - 21:25:39 | 200 |    2.395715ms |       127.0.0.1 | GET      "/Dashboard/api/allexports"
+[GIN] 2025/04/28 - 21:25:41 | 200 |    7.248135ms |       127.0.0.1 | GET      "/Dashboard/editproduct?product-id=2"
+[GIN] 2025/04/28 - 21:25:41 | 200 |    2.549143ms |       127.0.0.1 | GET      "/Dashboard/api/allexports"
+[GIN] 2025/04/28 - 21:25:46 | 200 |   17.729999ms |       127.0.0.1 | POST     "/Dashboard/editproduct"
+[GIN] 2025/04/28 - 21:25:46 | 200 |    3.103492ms |       127.0.0.1 | GET      "/Dashboard/api/allexports"
+[GIN] 2025/04/28 - 21:25:50 | 200 |    7.626593ms |       127.0.0.1 | GET      "/Dashboard/inventory?inventory=4"
+[GIN] 2025/04/28 - 21:25:50 | 200 |     2.53156ms |       127.0.0.1 | GET      "/Dashboard/api/allexports"
+[GIN] 2025/04/28 - 21:25:54 | 200 |    4.490358ms |       127.0.0.1 | GET      "/Dashboard/addproduct?inventory=4"
+[GIN] 2025/04/28 - 21:25:54 | 200 |    3.220873ms |       127.0.0.1 | GET      "/Dashboard/api/allexports"
+[GIN] 2025/04/28 - 21:25:56 | 200 |   11.348969ms |       127.0.0.1 | GET      "/Dashboard/"
+[GIN] 2025/04/28 - 21:25:56 | 200 |    4.252537ms |       127.0.0.1 | GET      "/Dashboard/api/allexports"
+[GIN] 2025/04/28 - 21:25:58 | 200 |    6.718875ms |       127.0.0.1 | GET      "/Dashboard/export-list?draft=true"
+[GIN] 2025/04/28 - 21:25:58 | 200 |    2.634998ms |       127.0.0.1 | GET      "/Dashboard/api/allexports"
+[GIN] 2025/04/28 - 21:26:00 | 200 |    8.690432ms |       127.0.0.1 | GET      "/Dashboard/export-list"
+[GIN] 2025/04/28 - 21:26:00 | 200 |    2.523816ms |       127.0.0.1 | GET      "/Dashboard/api/allexports"

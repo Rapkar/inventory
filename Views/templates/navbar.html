@@ -1,4 +1,6 @@
 {{ define "navbar" }}
+ 
+
 <nav class="navbar navbar-expand-lg  navbar-dark bg-dark px-5">
   <a class="navbar-brand" href=""> <img src="../../assets/images/techrootlogo.png"> </a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText"
@@ -10,14 +12,14 @@
       <li class="nav-item active">
         <a class="nav-link" href="/Dashboard">صفحه اصلی <span class="sr-only">(فعال)</span></a>
       </li>
-   
+
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
           aria-expanded="false">کاربران</a>
         <ul class="dropdown-menu">
           {{ if eq .UserRole "Admin"}}
           <li><a class="dropdown-item" href="/Dashboard/admin_users">کاربران ادمین</a></li>
-          <li><a class="dropdown-item" href="/Dashboard//authors">اپراتور</a></li>
+          <li><a class="dropdown-item" href="/Dashboard/authors">اپراتور</a></li>
           {{end}}
           <li><a class="dropdown-item" href="/Dashboard/users">مشتریان</a></li>
           <li>
@@ -29,18 +31,30 @@
 
         </ul>
       </li>
- 
 
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
-          aria-expanded="false">موجودی انبار</a>
-        <ul class="dropdown-menu">
       {{ if eq .UserRole "Admin"}}
 
-          <li><a class="dropdown-item" href="/Dashboard/inventory?inventory=1">انبار شماره اشتهارد</a></li>
-          {{end}}
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">انبار
+          ها</a>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" href="/Dashboard/createinventory">افزودن انبار</a></li>
 
-          <li><a class="dropdown-item" href="/Dashboard/inventory?inventory=2">انبار شماره تبریز</a></li>
+          <li><a class="dropdown-item" href="/Dashboard/inventories">لیست انبار ها</a></li>
+
+
+        </ul>
+      </li>
+      {{end}}
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
+          aria-expanded="false">موجودی </a>
+        <ul class="dropdown-menu">
+
+          {{range $.inventories}}
+          <li><a class="dropdown-item" href="/Dashboard/inventory?inventory={{.ID}}">{{.Name}}</a></li>
+          {{end}}
+          <!-- <li><a class="dropdown-item" href="/Dashboard/inventory?inventory=2">انبار شماره تبریز</a></li> -->
         </ul>
       </li>
       {{ if eq $.UserRole "Admin" }}
@@ -49,10 +63,9 @@
         <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
           aria-expanded="false">افزودن کالا</a>
         <ul class="dropdown-menu">
-
-          <li><a class="dropdown-item" href="/Dashboard/addproduct?inventory=1">انبار شماره اشتهارد</a></li>
-
-          <li><a class="dropdown-item" href="/Dashboard/addproduct?inventory=2">انبار شماره تبریز</a></li>
+          {{range $.inventories}}
+          <li><a class="dropdown-item" href="/Dashboard/addproduct?inventory={{.ID}}">{{.Name}}</a></li>
+          {{end}}
           <li>
             <hr class="dropdown-divider">
           </li>
@@ -67,6 +80,11 @@
           aria-expanded="false">فاکتور</a>
         <ul class="dropdown-menu">
           <li><a class="dropdown-item" href="/Dashboard/export">ثبت فاکتور</a></li>
+          <li><a class="dropdown-item" href="/Dashboard/export?draft=true">ثبت پیش فاکتور</a></li>
+          <li>
+            <hr class="dropdown-divider">
+          </li>
+          <li><a class="dropdown-item" href="/Dashboard/export-list?draft=true">لیست پیش فاکتور</a></li>
           <li><a class="dropdown-item" href="/Dashboard/export-list">لیست فاکتورها</a></li>
         </ul>
       </li>
@@ -99,7 +117,7 @@
 </nav>
 {{if .error}}
 <div class="alert alert-danger">
-    {{.error}}
+  {{.error}}
 </div>
 {{end}}
 {{ end }}

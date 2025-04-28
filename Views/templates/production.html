@@ -15,19 +15,16 @@
             <div class="panel-heading">
               <h4 class="panel-title">تولیدات</h4>
             </div>
-
             <div class="panel-body">
               <div class="form-group  mt-3">
                 <select name="ProductName" id="ProductIs" class="col-10">
-                  <option defualt value="0">لطفا یک محصول را انتخاب کنید
-                  </option>
-                  {{if .products}}
+                  <option value="0">لطفا یک محصول را انتخاب کنید</option>
                   {{range .products}}
-                  <option value="{{.ID}}">{{.Name}} [ انبار »» {{if eq .InventoryNumber 1}}اشتهارد{{end}}{{if eq
-                    .InventoryNumber 1}}زنجان{{end}}] </option>
+                  <option value="{{.ID}}">
+                      {{.Name}} [انبار: {{.Inventory.Name}} - ID: {{.Inventory.ID}}]
+                  </option>
                   {{end}}
-                  {{end}}
-                </select>
+              </select>
               </div>
               <div class="form-group  mt-3">
                 <label class="col-sm-2 control-label">تعداد تولید شده</label>

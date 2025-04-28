@@ -82,7 +82,6 @@
                             <th class="  d-md-table-cell" scope="col">شماره فاکتور</th>
                             <th class="  d-md-table-cell" scope="col">نمایش فاکتور</th>
                             <th class="  d-md-table-cell" scope="col">وضعیت</th>
-
                             {{ if eq $.UserRole "Admin" }}
 
                             <th class="" scope="col">ویرایش</th>
@@ -97,8 +96,7 @@
                             <td>{{.Method}}</td>
                             <td>{{.Number}}</td>
                             <td dir="ltr" class="Phonenumber" style="text-align:right;">{{.Name}}</td>
-                            <td dir="ltr" class="Address  d-md-table-cell" style="text-align:right;">{{.TotalPrice}}
-                            </td>
+                            <td   class="TotalPrice d-md-table-cell"   dir="ltr"  style="text-align:right;">{{printf "%.0f" .TotalPrice}}</td>
                             <td dir="ltr" class="Address  d-md-table-cell" style="text-align:right;">{{.UserName}}
                             </td>
                       

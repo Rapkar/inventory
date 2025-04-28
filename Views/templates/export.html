@@ -16,7 +16,11 @@
                             <div class="panel-heading col-12">
                                 <div class="row">
                                     <div class="col-3 col-lg-6 date">
+                                        {{if eq .HasDraft true}}
+                                        <h2 class="date">ثبت پیش فاکتور</h2>
+                                        {{else}}
                                         <h2 class="date">ثبت فاکتور</h2>
+                                        {{end}}
                                     </div>
                                     <div class="col-9 col-lg-6 ">
                                         <h4 class="date">تاریخ :{{.date}}</h4>
@@ -25,15 +29,24 @@
                             </div>
 
                             <div class="panel-body row">
+                                <div class="form-group col-lg-6  mt-3 col-lg-12">
+                                    {{if eq .HasDraft true}}
+                                    <div class="alert alert-secondary" role="alert">
+                                        سند پیش‌نویس - فاکتور قطعی پس از تایید صادر می‌شود
+                                    </div>
+
+                                    <input id="draft" name="draft" type="checkbox" class="d-none" checked>
+                                    {{end}}
+                                </div>
 
                                 <div class="form-group col-lg-6  mt-3">
                                     <label class="col-sm-12 control-label"> شماره تماس</label>
                                     <div class="col-sm-12">
                                         <input required name="Phonenumber" type="tel" placeholder="0912 517 4854"
                                             class="form-control">
-                                            <small for="Phonenumber"  class="form-text">
-                                                مثال: 09123456789
-                                            </small>
+                                        <small for="Phonenumber" class="form-text">
+                                            مثال: 09123456789
+                                        </small>
                                     </div>
                                 </div>
                                 <div class="form-group col-lg-6  mt-3">
@@ -41,9 +54,9 @@
                                     <div class="col-sm-12">
                                         <input required name="Name" type="text" placeholder="سالار کمیلی"
                                             class="form-control">
-                                            <small for="Name"  class="form-text">
-                                                مثال: 09123456789
-                                            </small>
+                                        <small for="Name" class="form-text">
+                                            مثال: 09123456789
+                                        </small>
                                     </div>
                                 </div>
                                 <div class="alert alert-info mt-3">
@@ -67,15 +80,15 @@
                                                 </div>
                                                 <div class="modal-body">
                                                     <div class="row">
-                                                        <table dir="rtl" class="table table-sm table-dark " >
+                                                        <table dir="rtl" class="table table-sm table-dark ">
                                                             <thead>
                                                                 <th>#</th>
                                                                 <th>نام و نام خانوادگی</th>
                                                                 <th>شماره تماس</th>
                                                                 <th>مشاهده جزییات</th>
                                                             </thead>
-                                                            <tbody  id="inquirybox"  >
-                                                               
+                                                            <tbody id="inquirybox">
+
                                                             </tbody>
                                                         </table>
                                                     </div>
@@ -108,8 +121,8 @@
                                 <div class="form-group col-lg-6  mt-3">
                                     <label class="col-sm-12 control-label">مالیات و ارزش افزوده</label>
                                     <div class="col-sm-12">
-                                        <input required name="Tax" value="0" type="number" inputmode="numeric"
-                                            pattern="[0-9]*" placeholder="10" class="form-control">
+                                        <input required name="Tax" value="0" type="text" inputmode="numeric"
+                                            pattern="[0-9]*" placeholder="10" class="form-control price">
                                     </div>
                                     <span class="out"></span>&nbsp;تومان
                                 </div>
@@ -128,7 +141,7 @@
                                                 aria-labelledby="headingOne" data-bs-parent="#accordionExample">
                                                 <div class="accordion-body">
                                                     <div class="">
-                                                        <input name="directpay" id="directpay" type='number'
+                                                        <input name="directpay" class="price" id="directpay" type='text'
                                                             inputmode="numeric">
                                                         <span class="out"></span>&nbsp;تومان
 
@@ -154,12 +167,12 @@
                                                             <div class="col-md-3">
                                                                 <label for="checkDate" class="form-label">تاریخ
                                                                     چک</label>
-                                                                <input type="button" class="form-control" id="checkDate"
-                                                                    required>
+                                                                <input type="button" class="form-control"
+                                                                    id="checkDate">
                                                             </div>
                                                             <div class="col-md-3">
                                                                 <label for="bankName" class="form-label">بانک</label>
-                                                                <select class="form-select" id="bankName" required>
+                                                                <select class="form-select" id="bankName">
                                                                     <option value="" selected disabled>انتخاب کنید...
                                                                     </option>
                                                                     <option value="melli">ملی</option>
@@ -200,17 +213,17 @@
                                                                     <option value="industry">صنعت و معدن</option>
                                                                 </select>
                                                             </div>
-                                                            <div class="col-md-3">
+                                                            <div class="col-md-3 form-group">
                                                                 <label for="serialCode" class="form-label">کد
                                                                     سریال</label>
-                                                                <input type="text" class="form-control" id="serialCode"
-                                                                    placeholder="123-456-789" required>
+                                                                <input type="text" class="form-control price"
+                                                                    id="serialCode" placeholder="123-456-789">
                                                             </div>
-                                                            <div class="col-md-3">
+                                                            <div class="col-md-3 form-group">
                                                                 <label for="checkAmount" class="form-label">مبلغ
                                                                     (تومان)</label>
-                                                                <input type="number" class="form-control"
-                                                                    id="checkAmount" placeholder="1,000,000" required>
+                                                                <input type="text" class="form-control price"
+                                                                    id="checkAmount" placeholder="1,000,000">
                                                                 <span class="out"></span>&nbsp;تومان
 
                                                             </div>
@@ -283,11 +296,12 @@
                                     </table>
 
                                 </div>
-                                <div class="form-group col-lg-6  mt-3 text-success text-right d-flex justify-content-start">
-                                  <p>مجموع دریافتی از مشتری:
-                                    <span id="TotalPayments"  >0</span>
-                                    تومان
-                                  </p>   
+                                <div
+                                    class="form-group col-lg-6  mt-3 text-success text-right d-flex justify-content-start">
+                                    <p>مجموع دریافتی از مشتری:
+                                        <span id="TotalPayments">0</span>
+                                        تومان
+                                    </p>
                                 </div>
                                 <div class="form-group col-lg-6  mt-3 text-left d-flex justify-content-end">
                                     <button type="button" id="modal" class="btn btn-primary ms-auto "
@@ -339,7 +353,7 @@
 
                                                     <div class=" Content" style="display: none;">
                                                         <div class="row">
-                                                            <div class="form-group col-lg-6  mt-3">
+                                                            <div class="form-group col-lg-4  mt-3">
                                                                 <label class="col-sm-12 control-label" min="0">تعداد
                                                                     رول</label>
                                                                 <div class="col-sm-12">
@@ -349,13 +363,22 @@
                                                                     <p><span class="ProductsCount"> </span>موجودی</p>
                                                                 </div>
                                                             </div>
-                                                            <div class="form-group col-lg-6  mt-3">
+                                                            <div class="form-group col-lg-4  mt-3">
                                                                 <label class="col-sm-12 control-label"
                                                                     min="0">متراژ</label>
                                                                 <div class="col-sm-12">
                                                                     <input name="Meter" pattern="[0-9]*" min="0"
                                                                         type="number" class="form-control ">
                                                                     <p><span class="ProductsMeter"> </span>موجودی</p>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group col-lg-4  mt-3">
+                                                                <label class="col-sm-12 control-label"
+                                                                    min="0">وزن</label>
+                                                                <div class="col-sm-12">
+                                                                    <input name="Weight" pattern="[0-9]*" min="0"
+                                                                        type="number" class="form-control ">
+                                                                    <p><span class="ProductsWeight"> </span>موجودی</p>
                                                                 </div>
                                                             </div>
                                                             <div class="form-group col-lg-6  mt-3">

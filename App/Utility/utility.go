@@ -69,6 +69,9 @@ func StringToInt64(value string) (int64, error) {
 	NewValue, err := strconv.ParseFloat(value, 64)
 	return int64(NewValue), err
 }
+func StringToBool(value string) (bool, error) {
+	return strconv.ParseBool(value)
+}
 func StringToUnit64(value string) (uint64, error) {
 	NewValue, err := strconv.ParseFloat(value, 64)
 	return uint64(NewValue), err

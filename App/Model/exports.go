@@ -30,7 +30,7 @@ func GetAllExports() []Boot.EscapeExport {
 		escapeExport.Number = value.Number
 		escapeExport.Phonenumber = value.Phonenumber
 		escapeExport.Tax = value.Tax
-		escapeExport.InventoryNumber = int32(value.ProductID)
+		escapeExport.InventoryNumber = int32(value.InventoryID)
 		escapeExport.ExportProducts = value.ExportProducts
 		escapeExport.CreatedAt = value.CreatedAt
 		escapeExport.TotalPrice = value.TotalPrice
@@ -41,13 +41,18 @@ func GetAllExports() []Boot.EscapeExport {
 	return EscapeExport
 }
 
-func GetAllExportsByPaginate(offset int, limit int) []Boot.EscapeExport {
+func GetAllExportsByPaginate(offset int, limit int, draft bool) []Boot.EscapeExport {
 	var Export []Boot.EscapeExport
 	var EscapeExport []Boot.EscapeExport
 	db := Boot.DB()
-
-	if err := db.Model(&Boot.Export{}).Select("*").Offset(offset).Limit(limit).Scan(&Export).Error; err != nil {
-		log.Println("❌ err in GetAllExportsByPaginate", err)
+	if draft {
+		if err := db.Model(&Boot.Export{}).Select("*").Where("draft", true).Offset(offset).Limit(limit).Order("id DESC").Scan(&Export).Error; err != nil {
+			log.Println("❌ err in GetAllExportsByPaginate", err)
+		}
+	} else {
+		if err := db.Model(&Boot.Export{}).Select("*").Where("draft", false).Offset(offset).Limit(limit).Order("id DESC").Scan(&Export).Error; err != nil {
+			log.Println("❌ err in GetAllExportsByPaginate", err)
+		}
 	}
 
 	EscapeExport = make([]Boot.EscapeExport, len(Export))
@@ -133,7 +138,6 @@ func GetAllPaymentsWithExportNumberByUserId(offset int, limit int, status string
 		log.Println("❌ Error fetching payments:", err)
 		return nil, fmt.Errorf("Error fetching payments: %v", err)
 	}
-	fmt.Println(result)
 	return result, nil
 }
 
@@ -252,7 +256,7 @@ func GetExportById(c *gin.Context) ([]Boot.EscapeExport, []Boot.EscapeExportProd
 			Phonenumber:     export.Phonenumber,
 			Tax:             export.Tax,
 			Describe:        export.Describe,
-			InventoryNumber: int32(export.ProductID),
+			InventoryNumber: int32(export.InventoryID),
 			ExportProducts:  export.ExportProducts,
 			CreatedAt:       export.CreatedAt,
 			TotalPrice:      export.TotalPrice,
@@ -274,7 +278,6 @@ func GetExportById(c *gin.Context) ([]Boot.EscapeExport, []Boot.EscapeExportProd
 			ID:              exportProduct.ID,
 			Name:            exportProduct.Name,
 			ExportID:        exportProduct.ExportID,
-			Number:          exportProduct.Number,
 			RolePrice:       exportProduct.RolePrice,
 			MeterPrice:      exportProduct.MeterPrice,
 			InventoryNumber: int32(exportProduct.ID),
@@ -312,7 +315,7 @@ func GetAllExportsByPhoneAndName(searchTerm string) []Boot.EscapeExport {
 			Number:          value.Number,
 			Phonenumber:     value.Phonenumber,
 			Tax:             value.Tax,
-			InventoryNumber: int32(value.ProductID),
+			InventoryNumber: int32(value.InventoryID),
 			ExportProducts:  value.ExportProducts,
 			CreatedAt:       value.CreatedAt,
 			TotalPrice:      value.TotalPrice,
@@ -328,10 +331,10 @@ func GetAllPaymentsByAttribiute(searchTerm string) []Boot.PaymentWithExportAndUs
 
 	db := Boot.DB()
 	err := db.Table("payments").
-		Select("payments.*, exports.number as export_number").
+		Select("payments.*, exports.number as export_number, users.name as user_name").
 		Joins("LEFT JOIN exports ON exports.id = payments.export_id").
 		Joins("LEFT JOIN users ON users.id = payments.user_id").
-		Where("payments.created_at LIKE ? OR payments.number LIKE ?", "%"+searchTerm+"%", "%"+searchTerm+"%").
+		Where("payments.created_at LIKE ? OR payments.number LIKE ?  OR users.name LIKE ?", "%"+searchTerm+"%", "%"+searchTerm+"%", "%"+searchTerm+"%").
 		Scan(&result).Error
 
 	if err != nil {

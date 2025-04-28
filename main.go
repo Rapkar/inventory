@@ -50,8 +50,11 @@ func main() {
 	}()
 
 	r := gin.Default()
+
 	r.LoadHTMLGlob("Views/templates/*")
 	r.Static("assets", "./assets")
+	inventories := model.GetAllInventories()
+
 	store := cookie.NewStore([]byte("secret"))
 	r.Use(sessions.Sessions("mysession", store))
 
@@ -124,14 +127,15 @@ func main() {
 		v2.GET("/", middleware.AuthMiddleware(), func(c *gin.Context) {
 			session := sessions.Default(c)
 			c.HTML(http.StatusOK, "dashboard.html", gin.H{
-				"title":      "صفحه اصلی",
-				"Username":   session.Get("UserName"),
-				"UserRole":   session.Get("UserRole"),
-				"message":    boot.Messages("login success"),
-				"success":    true,
-				"users":      model.GetAllUsersByRole("guest"),
-				"exports":    model.GetAllExportsByPaginate(0, 5),
-				"allexports": model.GetAllExports(),
+				"title":       "صفحه اصلی",
+				"Username":    session.Get("UserName"),
+				"UserRole":    session.Get("UserRole"),
+				"inventories": model.GetAllInventories(),
+				"message":     boot.Messages("login success"),
+				"success":     true,
+				"users":       model.GetAllUsersByRole("guest"),
+				"exports":     model.GetAllExportsByPaginate(0, 5, false),
+				"allexports":  model.GetAllExports(),
 			})
 		})
 		v2.GET("/api/allexports", middleware.AuthMiddleware(), func(c *gin.Context) {
@@ -176,9 +180,10 @@ func main() {
 
 			c.HTML(http.StatusOK, "users.html", gin.H{
 
-				"Username": session.Get("UserName"),
-				"UserRole": session.Get("UserRole"),
-				"title":    "کاربران",
+				"Username":    session.Get("UserName"),
+				"UserRole":    session.Get("UserRole"),
+				"inventories": model.GetAllInventories(),
+				"title":       "کاربران",
 				// "Paginate": template.HTML(Utility.MakePaginate(model.GetCountOfUsers()/int64(postperpage), "user-list")),
 				"Paginate":    template.HTML(Utility.MakePaginate(int64(totalItems), int64(postperpage), int64(page), "users")),
 				"users":       model.GetAllUsersByPaginate(offset, postperpage, "guest"),
@@ -208,6 +213,7 @@ func main() {
 
 				"Username":    session.Get("UserName"),
 				"UserRole":    session.Get("UserRole"),
+				"inventories": model.GetAllInventories(),
 				"title":       "کاربران",
 				"Paginate":    template.HTML(Utility.MakePaginate(int64(totalItems), int64(postperpage), int64(page), "Author")),
 				"users":       model.GetAllUsersByPaginate(offset, postperpage, "Author"),
@@ -235,6 +241,7 @@ func main() {
 			c.HTML(http.StatusOK, "admins.html", gin.H{
 				"Username":    session.Get("UserName"),
 				"UserRole":    session.Get("UserRole"),
+				"inventories": model.GetAllInventories(),
 				"title":       "کاربران ادمین",
 				"Paginate":    template.HTML(Utility.MakePaginate(int64(totalItems), int64(postperpage), int64(page), "admin_users")),
 				"users":       model.GetAllUsersByPaginate(offset, postperpage, "Admin"),
@@ -244,10 +251,11 @@ func main() {
 		v2.GET("/add_user", middleware.AuthMiddleware("Admin"), func(c *gin.Context) {
 			session := sessions.Default(c)
 			c.HTML(http.StatusOK, "edit_user.html", gin.H{
-				"Username": session.Get("UserName"),
-				"UserRole": session.Get("UserRole"),
-				"title":    "کاربران",
-				"action":   "add_user",
+				"Username":    session.Get("UserName"),
+				"UserRole":    session.Get("UserRole"),
+				"inventories": model.GetAllInventories(),
+				"title":       "کاربران",
+				"action":      "add_user",
 			})
 		})
 		v2.POST("/add_user", middleware.AuthMiddleware("Admin"), func(c *gin.Context) {
@@ -262,12 +270,13 @@ func main() {
 			res := boot.DB().Create(&user)
 			if res.RowsAffected > 0 {
 				c.HTML(http.StatusOK, "edit_user.html", gin.H{
-					"Username": session.Get("UserName"),
-					"UserRole": session.Get("UserRole"),
-					"title":    "کاربران",
-					"action":   "add_user",
-					"message":  boot.Messages("user made success"),
-					"success":  true,
+					"Username":    session.Get("UserName"),
+					"UserRole":    session.Get("UserRole"),
+					"inventories": model.GetAllInventories(),
+					"title":       "کاربران",
+					"action":      "add_user",
+					"message":     boot.Messages("user made success"),
+					"success":     true,
 				})
 			} else {
 				c.HTML(http.StatusOK, "edit_user.html", gin.H{
@@ -322,11 +331,12 @@ func main() {
 
 			if model.RemoveCurrentUser(c) {
 				c.HTML(http.StatusOK, "users.html", gin.H{
-					"Username": session.Get("UserName"),
-					"UserRole": session.Get("UserRole"),
-					"title":    "کاربران",
-					"message":  boot.Messages("user remove success"),
-					"success":  true,
+					"Username":    session.Get("UserName"),
+					"UserRole":    session.Get("UserRole"),
+					"inventories": model.GetAllInventories(),
+					"title":       "کاربران",
+					"message":     boot.Messages("user remove success"),
+					"success":     true,
 					// "Paginate": template.HTML(Utility.MakePaginate(model.GetCountOfUsers()/1, "user-list")),
 					"Paginate":    template.HTML(Utility.MakePaginate(int64(totalItems), int64(postperpage), int64(page), "users")),
 					"users":       model.GetAllUsersByPaginate(offset, postperpage, category),
@@ -336,6 +346,7 @@ func main() {
 				c.HTML(http.StatusOK, "users.html", gin.H{
 					"Username":    session.Get("UserName"),
 					"UserRole":    session.Get("UserRole"),
+					"inventories": model.GetAllInventories(),
 					"title":       "فاکتورها",
 					"success":     false,
 					"message":     boot.Messages("user remove faild"),
@@ -348,7 +359,6 @@ func main() {
 		v2.GET("/edituser", middleware.AuthMiddleware("Admin"), func(c *gin.Context) {
 			session := sessions.Default(c)
 			user, err := model.GetCurrentUser(c)
-			fmt.Println(user)
 			if err != nil {
 				log.Println("❌ Error fetching current user:", err)
 				c.HTML(http.StatusBadRequest, "error.html", gin.H{
@@ -357,11 +367,12 @@ func main() {
 				return
 			}
 			c.HTML(http.StatusOK, "edit_user.html", gin.H{
-				"Username": session.Get("UserName"),
-				"UserRole": session.Get("UserRole"),
-				"title":    "ویرایش کاربر",
-				"user":     user,
-				"action":   "edituser",
+				"Username":    session.Get("UserName"),
+				"UserRole":    session.Get("UserRole"),
+				"inventories": model.GetAllInventories(),
+				"title":       "ویرایش کاربر",
+				"user":        user,
+				"action":      "edituser",
 			})
 
 		})
@@ -417,6 +428,7 @@ func main() {
 			c.HTML(http.StatusOK, "details_user.html", gin.H{
 				"Username":         session.Get("UserName"),
 				"UserRole":         session.Get("UserRole"),
+				"inventories":      inventories,
 				"title":            "ویرایش کاربر",
 				"details":          UserFullDetails,
 				"UserCalculations": userCalc,
@@ -431,12 +443,13 @@ func main() {
 			userId := c.PostForm("ID")
 			if userId == "" {
 				c.HTML(http.StatusBadRequest, "edit_user.html", gin.H{
-					"Username": session.Get("UserName"),
-					"UserRole": session.Get("UserRole"),
-					"title":    "ویرایش کاربر",
-					"action":   "edit_user",
-					"message":  "شناسه کاربر الزامی است",
-					"success":  false,
+					"Username":    session.Get("UserName"),
+					"UserRole":    session.Get("UserRole"),
+					"inventories": model.GetAllInventories(),
+					"title":       "ویرایش کاربر",
+					"action":      "edit_user",
+					"message":     "شناسه کاربر الزامی است",
+					"success":     false,
 				})
 				return
 			}
@@ -445,12 +458,13 @@ func main() {
 			var user boot.Users
 			if err := boot.DB().First(&user, userId).Error; err != nil {
 				c.HTML(http.StatusNotFound, "edit_user.html", gin.H{
-					"Username": session.Get("UserName"),
-					"UserRole": session.Get("UserRole"),
-					"title":    "ویرایش کاربر",
-					"action":   "edit_user",
-					"message":  "کاربر یافت نشد",
-					"success":  false,
+					"Username":    session.Get("UserName"),
+					"UserRole":    session.Get("UserRole"),
+					"inventories": model.GetAllInventories(),
+					"title":       "ویرایش کاربر",
+					"action":      "edit_user",
+					"message":     "کاربر یافت نشد",
+					"success":     false,
 				})
 				return
 			}
@@ -459,12 +473,13 @@ func main() {
 			if name := strings.TrimSpace(c.PostForm("Name")); name != "" {
 				if len(name) < 3 {
 					c.HTML(http.StatusBadRequest, "edit_user.html", gin.H{
-						"Username": session.Get("UserName"),
-						"UserRole": session.Get("UserRole"),
-						"title":    "ویرایش کاربر",
-						"action":   "edit_user",
-						"message":  "نام باید حداقل ۳ کاراکتر باشد",
-						"success":  false,
+						"Username":    session.Get("UserName"),
+						"UserRole":    session.Get("UserRole"),
+						"inventories": model.GetAllInventories(),
+						"title":       "ویرایش کاربر",
+						"action":      "edit_user",
+						"message":     "نام باید حداقل ۳ کاراکتر باشد",
+						"success":     false,
 					})
 					return
 				}
@@ -474,12 +489,13 @@ func main() {
 			if email := strings.TrimSpace(c.PostForm("Email")); email != "" {
 				if !Utility.IsValidEmail(email) {
 					c.HTML(http.StatusBadRequest, "edit_user.html", gin.H{
-						"Username": session.Get("UserName"),
-						"UserRole": session.Get("UserRole"),
-						"title":    "ویرایش کاربر",
-						"action":   "edit_user",
-						"message":  "فرمت ایمیل نامعتبر است",
-						"success":  false,
+						"Username":    session.Get("UserName"),
+						"UserRole":    session.Get("UserRole"),
+						"inventories": model.GetAllInventories(),
+						"title":       "ویرایش کاربر",
+						"action":      "edit_user",
+						"message":     "فرمت ایمیل نامعتبر است",
+						"success":     false,
 					})
 					return
 				}
@@ -489,12 +505,13 @@ func main() {
 			if phone := strings.TrimSpace(c.PostForm("Phonenumber")); phone != "" {
 				if !Utility.IsValidPhoneNumber(phone) {
 					c.HTML(http.StatusBadRequest, "edit_user.html", gin.H{
-						"Username": session.Get("UserName"),
-						"UserRole": session.Get("UserRole"),
-						"title":    "ویرایش کاربر",
-						"action":   "edit_user",
-						"message":  "فرمت شماره تلفن نامعتبر است",
-						"success":  false,
+						"Username":    session.Get("UserName"),
+						"UserRole":    session.Get("UserRole"),
+						"inventories": model.GetAllInventories(),
+						"title":       "ویرایش کاربر",
+						"action":      "edit_user",
+						"message":     "فرمت شماره تلفن نامعتبر است",
+						"success":     false,
 					})
 					return
 				}
@@ -504,12 +521,13 @@ func main() {
 			if role := strings.TrimSpace(c.PostForm("Role")); role != "" {
 				if role != "Admin" && role != "Author" && role != "guest" {
 					c.HTML(http.StatusBadRequest, "edit_user.html", gin.H{
-						"Username": session.Get("UserName"),
-						"UserRole": session.Get("UserRole"),
-						"title":    "ویرایش کاربر",
-						"action":   "edit_user",
-						"message":  "نقش کاربر نامعتبر است",
-						"success":  false,
+						"Username":    session.Get("UserName"),
+						"UserRole":    session.Get("UserRole"),
+						"inventories": model.GetAllInventories(),
+						"title":       "ویرایش کاربر",
+						"action":      "edit_user",
+						"message":     "نقش کاربر نامعتبر است",
+						"success":     false,
 					})
 					return
 				}
@@ -519,12 +537,13 @@ func main() {
 			if address := strings.TrimSpace(c.PostForm("Address")); address == "" {
 
 				c.HTML(http.StatusBadRequest, "edit_user.html", gin.H{
-					"Username": session.Get("UserName"),
-					"UserRole": session.Get("UserRole"),
-					"title":    "ویرایش کاربر",
-					"action":   "edit_user",
-					"message":  "آدرس نامعتبر است",
-					"success":  false,
+					"Username":    session.Get("UserName"),
+					"UserRole":    session.Get("UserRole"),
+					"inventories": model.GetAllInventories(),
+					"title":       "ویرایش کاربر",
+					"action":      "edit_user",
+					"message":     "آدرس نامعتبر است",
+					"success":     false,
 				})
 				return
 
@@ -535,24 +554,26 @@ func main() {
 			if password := c.PostForm("Password"); password != "" {
 				if len(password) < 8 {
 					c.HTML(http.StatusBadRequest, "edit_user.html", gin.H{
-						"Username": session.Get("UserName"),
-						"UserRole": session.Get("UserRole"),
-						"title":    "ویرایش کاربر",
-						"action":   "edit_user",
-						"message":  "رمز عبور باید حداقل ۸ کاراکتر باشد",
-						"success":  false,
+						"Username":    session.Get("UserName"),
+						"UserRole":    session.Get("UserRole"),
+						"inventories": model.GetAllInventories(),
+						"title":       "ویرایش کاربر",
+						"action":      "edit_user",
+						"message":     "رمز عبور باید حداقل ۸ کاراکتر باشد",
+						"success":     false,
 					})
 					return
 				}
 				hashedPassword, err := Utility.HashPassword(password)
 				if err != nil {
 					c.HTML(http.StatusInternalServerError, "edit_user.html", gin.H{
-						"Username": session.Get("UserName"),
-						"UserRole": session.Get("UserRole"),
-						"title":    "ویرایش کاربر",
-						"action":   "edit_user",
-						"message":  "خطا در پردازش رمز عبور",
-						"success":  false,
+						"Username":    session.Get("UserName"),
+						"UserRole":    session.Get("UserRole"),
+						"inventories": model.GetAllInventories(),
+						"title":       "ویرایش کاربر",
+						"action":      "edit_user",
+						"message":     "خطا در پردازش رمز عبور",
+						"success":     false,
 					})
 					return
 				}
@@ -562,23 +583,25 @@ func main() {
 			// ذخیره تغییرات
 			if err := boot.DB().Save(&user).Error; err != nil {
 				c.HTML(http.StatusInternalServerError, "edit_user.html", gin.H{
-					"Username": session.Get("UserName"),
-					"UserRole": session.Get("UserRole"),
-					"title":    "ویرایش کاربر",
-					"action":   "edit_user",
-					"message":  "خطا در به‌روزرسانی کاربر",
-					"success":  false,
+					"Username":    session.Get("UserName"),
+					"UserRole":    session.Get("UserRole"),
+					"inventories": model.GetAllInventories(),
+					"title":       "ویرایش کاربر",
+					"action":      "edit_user",
+					"message":     "خطا در به‌روزرسانی کاربر",
+					"success":     false,
 				})
 				return
 			}
 
 			c.HTML(http.StatusOK, "edit_user.html", gin.H{
-				"Username": session.Get("UserName"),
-				"UserRole": session.Get("UserRole"),
-				"title":    "ویرایش کاربر",
-				"action":   "edit_user",
-				"message":  "تغییرات با موفقیت ذخیره شدند",
-				"success":  true,
+				"Username":    session.Get("UserName"),
+				"UserRole":    session.Get("UserRole"),
+				"inventories": model.GetAllInventories(),
+				"title":       "ویرایش کاربر",
+				"action":      "edit_user",
+				"message":     "تغییرات با موفقیت ذخیره شدند",
+				"success":     true,
 			})
 		})
 
@@ -604,6 +627,7 @@ func main() {
 			c.HTML(http.StatusOK, "add_product.html", gin.H{
 				"Username":        session.Get("UserName"),
 				"UserRole":        session.Get("UserRole"),
+				"inventories":     model.GetAllInventories(),
 				"title":           "محصول",
 				"action":          "addproduct",
 				"InventoryNumber": Utility.GetCurrentInventory(c),
@@ -662,11 +686,12 @@ func main() {
 			currentProduct := model.GetProductById(int(ProductID))
 
 			c.HTML(http.StatusOK, "add_product.html", gin.H{
-				"Username": session.Get("UserName"),
-				"UserRole": session.Get("UserRole"),
-				"title":    "ویرایش کاربر",
-				"products": currentProduct,
-				"action":   "editproduct",
+				"Username":    session.Get("UserName"),
+				"UserRole":    session.Get("UserRole"),
+				"inventories": model.GetAllInventories(),
+				"title":       "ویرایش کاربر",
+				"products":    currentProduct,
+				"action":      "editproduct",
 			})
 		})
 		v2.POST("/editproduct", middleware.AuthMiddleware("Admin"), func(c *gin.Context) {
@@ -677,11 +702,12 @@ func main() {
 			ProductID, err := strconv.ParseInt(Id, 10, 8)
 			if err != nil {
 				c.HTML(http.StatusBadRequest, "add_product.html", gin.H{
-					"Username": session.Get("UserName"),
-					"UserRole": session.Get("UserRole"),
-					"title":    "ویرایش محصول",
-					"error":    "شناسه محصول نامعتبر است",
-					"formData": c.Request.PostForm,
+					"Username":    session.Get("UserName"),
+					"UserRole":    session.Get("UserRole"),
+					"inventories": model.GetAllInventories(),
+					"title":       "ویرایش محصول",
+					"error":       "شناسه محصول نامعتبر است",
+					"formData":    c.Request.PostForm,
 				})
 				return
 			}
@@ -691,10 +717,9 @@ func main() {
 			meterPrice, _ := Utility.StringToFloat64(c.PostForm("MeterPrice"))
 			count, _ := Utility.StringToInt64(c.PostForm("Count"))
 			meter, _ := Utility.StringToFloat64(c.PostForm("Meter"))
-			Weight, _ := Utility.StringToFloat64(c.PostForm("Weight"))
-			WeightPrice, _ := Utility.StringToFloat64(c.PostForm("WeightPrice"))
+			weight, _ := Utility.StringToFloat64(c.PostForm("Weight"))
+			weightPrice, _ := Utility.StringToFloat64(c.PostForm("WeightPrice"))
 			inventoryID, _ := Utility.StringToUnit64(c.PostForm("InventoryNumber"))
-
 			// اعتبارسنجی: حداقل دو فیلد باید مقدار مثبت داشته باشند
 			validFields := 0
 			if rolePrice > 0 {
@@ -709,21 +734,22 @@ func main() {
 			if meter > 0 {
 				validFields++
 			}
-			if Weight > 0 {
+			if weight > 0 {
 				validFields++
 			}
-			if WeightPrice > 0 {
+			if weightPrice > 0 {
 				validFields++
 			}
 
 			if validFields < 2 {
 				c.HTML(http.StatusBadRequest, "add_product.html", gin.H{
-					"Username": session.Get("UserName"),
-					"UserRole": session.Get("UserRole"),
-					"title":    "ویرایش محصول",
-					"error":    "حداقل دو مورد از مقادیر (قیمت رول، قیمت متر، تعداد، متراژ) باید پر شوند",
-					"formData": c.Request.PostForm,
-					"products": model.GetProductById(int(ProductID)),
+					"Username":    session.Get("UserName"),
+					"UserRole":    session.Get("UserRole"),
+					"inventories": model.GetAllInventories(),
+					"title":       "ویرایش محصول",
+					"error":       "حداقل دو مورد از مقادیر (قیمت رول، قیمت متر، تعداد، متراژ) باید پر شوند",
+					"formData":    c.Request.PostForm,
+					"products":    model.GetProductById(int(ProductID)),
 				})
 				return
 			}
@@ -735,8 +761,8 @@ func main() {
 				MeterPrice:  meterPrice,
 				Count:       count,
 				Meter:       meter,
-				Weight:      Weight,
-				WeightPrice: WeightPrice,
+				Weight:      weight,
+				WeightPrice: weightPrice,
 				InventoryID: inventoryID,
 			}
 
@@ -746,23 +772,25 @@ func main() {
 
 			if res.RowsAffected > 0 {
 				c.HTML(http.StatusOK, "add_product.html", gin.H{
-					"Username": session.Get("UserName"),
-					"UserRole": session.Get("UserRole"),
-					"title":    "ویرایش محصول",
-					"products": currentProduct,
-					"action":   "editproduct",
-					"message":  "محصول با موفقیت ویرایش شد",
-					"success":  true,
+					"Username":    session.Get("UserName"),
+					"UserRole":    session.Get("UserRole"),
+					"inventories": model.GetAllInventories(),
+					"title":       "ویرایش محصول",
+					"products":    currentProduct,
+					"action":      "editproduct",
+					"message":     "محصول با موفقیت ویرایش شد",
+					"success":     true,
 				})
 			} else {
 				c.HTML(http.StatusOK, "add_product.html", gin.H{
-					"Username": session.Get("UserName"),
-					"UserRole": session.Get("UserRole"),
-					"title":    "ویرایش محصول",
-					"products": currentProduct,
-					"action":   "editproduct",
-					"error":    "خطا در ویرایش محصول",
-					"formData": c.Request.PostForm,
+					"Username":    session.Get("UserName"),
+					"UserRole":    session.Get("UserRole"),
+					"inventories": model.GetAllInventories(),
+					"title":       "ویرایش محصول",
+					"products":    currentProduct,
+					"action":      "editproduct",
+					"error":       "خطا در ویرایش محصول",
+					"formData":    c.Request.PostForm,
 				})
 			}
 		})
@@ -783,9 +811,10 @@ func main() {
 			totalItems := model.GetCountOfProduct(1)
 
 			c.HTML(http.StatusOK, "inventory.html", gin.H{
-				"Username": session.Get("UserName"),
-				"UserRole": session.Get("UserRole"),
-				"title":    "انبار",
+				"Username":    session.Get("UserName"),
+				"UserRole":    session.Get("UserRole"),
+				"inventories": model.GetAllInventories(),
+				"title":       "انبار",
 				"Paginate": template.HTML(Utility.MakeinventoryPaginate(
 					int64(totalItems),
 					int64(postperpage),
@@ -803,11 +832,12 @@ func main() {
 		v2.GET("/production", middleware.AuthMiddleware(), func(c *gin.Context) {
 			session := sessions.Default(c)
 			c.HTML(http.StatusOK, "production.html", gin.H{
-				"Username": session.Get("UserName"),
-				"UserRole": session.Get("UserRole"),
-				"title":    "تولید",
-				"action":   "updateproduct",
-				"products": model.GetAllProductsByInventory(int32(1)),
+				"Username":    session.Get("UserName"),
+				"UserRole":    session.Get("UserRole"),
+				"inventories": model.GetAllInventories(),
+				"title":       "تولید",
+				"action":      "updateproduct",
+				"products":    model.GetAllProductsWithInventory(),
 			})
 		})
 		v2.POST("/updateproduct", middleware.AuthMiddleware(), func(c *gin.Context) {
@@ -877,10 +907,11 @@ func main() {
 				if res.RowsAffected > 0 {
 					res, _ := model.GetAllPaymentsWithExportNumberAndUser(0, postperpage, status)
 					c.HTML(http.StatusOK, "payments.html", gin.H{
-						"Username": session.Get("UserName"),
-						"UserRole": session.Get("UserRole"),
-						"title":    "پرداخت ها",
-						"success":  true,
+						"Username":    session.Get("UserName"),
+						"UserRole":    session.Get("UserRole"),
+						"inventories": model.GetAllInventories(),
+						"title":       "پرداخت ها",
+						"success":     true,
 
 						// "Paginate": template.HTML(Utility.MakePaginate(model.GetCountOfExports()/1, "export-list")),
 						"Payments": res,
@@ -888,10 +919,11 @@ func main() {
 				} else {
 
 					c.HTML(http.StatusOK, "payments.html", gin.H{
-						"Username": session.Get("UserName"),
-						"UserRole": session.Get("UserRole"),
-						"title":    "پرداخت ها",
-						"success":  false,
+						"Username":    session.Get("UserName"),
+						"UserRole":    session.Get("UserRole"),
+						"inventories": model.GetAllInventories(),
+						"title":       "پرداخت ها",
+						"success":     false,
 
 						// "Paginate": template.HTML(Utility.MakePaginate(model.GetCountOfExports()/1, "export-list")),
 						"Payments": res,
@@ -911,16 +943,27 @@ func main() {
 			// 	return
 			// }
 			session := sessions.Default(c)
-
+			draft, err := Utility.StringToBool(c.DefaultQuery("draft", "false"))
+			HasDraft := false
+			if err != nil {
+				log.Fatalf("❌ faild to StringToBool in /export [GET]  ", err)
+				c.HTML(http.StatusInternalServerError, "error.html", gin.H{"error": "خطا در نمایش ثبت فاکتور"})
+				return
+			}
+			if draft {
+				HasDraft = true
+			}
 			c.HTML(http.StatusOK, "export.html", gin.H{
 
 				"Username":     session.Get("UserName"),
 				"UserRole":     session.Get("UserRole"),
+				"inventories":  inventories,
 				"action":       "export",
 				"title":        "فاکتور",
 				"date":         Utility.CurrentTime(),
 				"exportnumber": uniqueString,
 				"products":     model.GetAllProductsByInventory(1),
+				"HasDraft":     HasDraft,
 			})
 
 		})
@@ -939,22 +982,24 @@ func main() {
 				c.HTML(http.StatusOK, "export_list.html", gin.H{
 					"Username":    session.Get("UserName"),
 					"UserRole":    session.Get("UserRole"),
+					"inventories": model.GetAllInventories(),
 					"title":       "فاکتورها",
 					"message":     boot.Messages("Export removed success"),
 					"success":     true,
 					"Paginate":    template.HTML(Utility.MakePaginate(int64(totalItems), int64(postperpage), int64(page), "export-list")),
-					"exports":     model.GetAllExportsByPaginate(offset, postperpage),
+					"exports":     model.GetAllExportsByPaginate(offset, postperpage, false),
 					"CurrentPage": page,
 				})
 			} else {
 				c.HTML(http.StatusOK, "export_list.html", gin.H{
 					"Username":    session.Get("UserName"),
 					"UserRole":    session.Get("UserRole"),
+					"inventories": model.GetAllInventories(),
 					"title":       "فاکتورها",
 					"message":     boot.Messages("Export removed success"),
 					"success":     false,
 					"Paginate":    template.HTML(Utility.MakePaginate(int64(totalItems), int64(postperpage), int64(page), "export-list")),
-					"exports":     model.GetAllExportsByPaginate(offset, postperpage),
+					"exports":     model.GetAllExportsByPaginate(offset, postperpage, false),
 					"CurrentPage": page,
 				})
 			}
@@ -987,21 +1032,9 @@ func main() {
 			product := model.GetProductById(int(val))
 			c.JSON(http.StatusOK, gin.H{"result": product})
 		})
+
 		v2.POST("/export", func(c *gin.Context) {
-			// Product struct for binding and data handling
-			// type Product struct {
-			// 	ID          string `gorm:"primaryKey"`
-			// 	ProductId   string `gorm:"size:255;"`
-			// 	ExportID    string `gorm:"size:255;"`
-			// 	Name        string `gorm:"type:varchar(100)" json:"name"`
-			// 	Number      string `gorm:"size:255;"`
-			// 	RolePrice   string `gorm:"type:float"`
-			// 	MeterPrice  string `gorm:"type:float"`
-			// 	Count       string `gorm:"size:255;"`
-			// 	Meter       string `gorm:"size:255;"`
-			// 	TotalPrice  string `gorm:"index"`
-			// 	InventoryID uint64 `gorm:"size:255;"`
-			// }
+
 			type ExportProducts struct {
 				ID          uint64         `gorm:"primaryKey"`
 				ExportID    uint64         `gorm:"index"`
@@ -1010,32 +1043,15 @@ func main() {
 				RolePrice   float64        `gorm:"type:float" json:",string"`
 				MeterPrice  float64        `gorm:"type:float" json:",string"`
 				Count       int64          `gorm:"size:255;" json:",string"`
-				Meter       float64        `gorm:"type:float"`
+				Meter       float64        `gorm:"type:float" json:",string"`
+				Weight      float64        `gorm:"type:float" json:",string"`
 				TotalPrice  float64        `gorm:"type:float" json:",string"`
 				InventoryID uint64         `gorm:"index" json:",string"`
+				ProductID   uint64         `gorm:"index" json:",string"`
 				Export      Boot.Export    `gorm:"foreignKey:ExportID;references:ID"`
 				Inventory   Boot.Inventory `gorm:"foreignKey:InventoryID;references:ID"`
+				Product     Boot.Product   `gorm:"foreignKey:ProductID;references:ID"`
 			}
-			// type Product struct {
-			// 	ID          uint64    `gorm:"primaryKey"`
-			// 	Name        string    `gorm:"type:varchar(100)"`
-			// 	Number      string    `gorm:"size:255;"`
-			// 	RolePrice   float64   `gorm:"type:float"`
-			// 	MeterPrice  float64   `gorm:"type:float"`
-			// 	Count       int64     `gorm:"size:255;"`
-			// 	Meter       float64   `gorm:"type:float"`
-			// 	Weight      float64   `gorm:"type:float"`
-			// 	InventoryID uint64    `gorm:"index"`
-			// 	Inventory   Inventory `gorm:"foreignKey:InventoryID;references:ID"`
-			// }
-			// type PaymentRequest struct {
-			// 	Method     string  `gorm:"size:255;"`
-			// 	Number     string  `gorm:"size:255;"`
-			// 	Name       string  `json:"Name"`
-			// 	TotalPrice float64 `gorm:"type:float" json:",string"`
-			// 	CreatedAt  string  `gorm:"size:255;"`
-			// 	Status     string  `gorm:"size:255;"`
-			// }
 			type Payments struct {
 				ID          uint64         `gorm:"primaryKey"`
 				Method      string         `gorm:"type:varchar(100)"`
@@ -1062,7 +1078,6 @@ func main() {
 			}
 			// Bind data from request
 			if err := c.BindJSON(&data); err != nil {
-				fmt.Println(err)
 
 				c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 				return
@@ -1073,23 +1088,26 @@ func main() {
 			Ids := make(map[int64]int64)
 
 			for a := range data.Products {
+
 				// ids, _ := strconv.ParseInt(data.Products[a].ProductId, 10, 64)
 				exportproducts[a].ExportID = data.Products[a].ExportID
 				exportproducts[a].Name = data.Products[a].Name
-				exportproducts[a].Number = data.Products[a].Number
 				exportproducts[a].RolePrice = data.Products[a].RolePrice
 				exportproducts[a].MeterPrice = data.Products[a].MeterPrice
 				exportproducts[a].Count = data.Products[a].Count
 				exportproducts[a].Meter = data.Products[a].Meter
+				exportproducts[a].Weight = data.Products[a].Weight
 				exportproducts[a].TotalPrice = data.TotalPrice
 				exportproducts[a].InventoryID = data.Products[a].InventoryID
 				exportproducts[a].TotalPrice = data.Products[a].TotalPrice
+				exportproducts[a].ProductID = uint64(data.Products[a].ProductID)
 			}
 			PaymentRequest := make([]boot.Payments, len(data.Payments))
 			result := Utility.Unserialize(data.Content)
 			// Phonenumber := result["Phonenumber"]
 
 			invNum, err := Utility.StringToUnit64(result["InventoryNumber"])
+
 			for a, payment := range data.Payments {
 				totalPrice := payment.TotalPrice
 
@@ -1109,10 +1127,6 @@ func main() {
 			}
 			// Process user and export data
 
-			// if err != nil {
-			// 	c.JSON(http.StatusBadRequest, gin.H{"error": "invalid total price"})
-			// 	return
-			// }
 			tprice, _ := Utility.StringToFloat64(result["ExportTotalPrice"])
 			tax, _ := Utility.StringToInt64(result["Tax"])
 
@@ -1138,8 +1152,9 @@ func main() {
 				Export.Address = result["Address"]
 				Export.TotalPrice = tprice
 				Export.Tax = tax
+				Export.Draft, _ = Utility.StringToBool(result["draft"])
 				Export.CreatedAt = string(Utility.CurrentTime())
-				Export.ProductID = invNum
+				Export.InventoryID = invNum
 				Export.Describe = result["describe"]
 				Export.ExportProducts = exportproducts
 
@@ -1166,8 +1181,35 @@ func main() {
 					}
 				}
 				// Update export products with the correct ExportID
-				for i := range exportproducts {
+				for i, ep := range exportproducts {
+					var Product boot.Product
+					// fmt.Println("id", ep.ID, i)
+					if err := tx.Where("id = ?", ep.ProductID).First(&Product).Error; err != nil {
+						return fmt.Errorf("product with ID %d not found", ep.ProductID)
+					}
+					if ep.Count > 0 {
+						Product.Count -= ep.Count
+						if Product.Count < 0 {
+							Product.Count = 0
+						}
+					}
+					if ep.Meter > 0 {
+						Product.Meter -= ep.Meter
+						if Product.Meter < 0 {
+							Product.Meter = 0
+						}
+					}
+					if ep.Weight > 0 {
+						Product.Weight -= ep.Weight
+						if Product.Weight < 0 {
+							Product.Weight = 0
+						}
+					}
+					if err := tx.Save(&Product).Error; err != nil {
+						return err
+					}
 					exportproducts[i].ExportID = Export.ID
+
 				}
 				if err := tx.Where("id = ?", Export.ID).First(&exportproducts).Error; err != nil {
 					// Create export products
@@ -1204,21 +1246,41 @@ func main() {
 		v2.GET("/export-list", middleware.AuthMiddleware(), func(c *gin.Context) {
 			session := sessions.Default(c)
 			pageStr := c.DefaultQuery("page", "1")
+			draft, err := Utility.StringToBool(c.DefaultQuery("draft", "false"))
+
 			page, _ := strconv.Atoi(pageStr)
 			if page < 1 {
 				page = 1
 			}
 			offset := (page - 1) * postperpage
 
-			totalItems := model.GetCountOfExports()
+			if err != nil {
+				c.HTML(http.StatusInternalServerError, "error.html", gin.H{"error": "خطا در دریافت پیش فاکتور"})
+				return
+			}
+			var totalItems int64
+			var Exports []boot.EscapeExport
+			var ExportsPaginate string
+			HasDraft := false
+			if draft {
+				totalItems = model.GetCountOfExports()
+				Exports = model.GetAllExportsByPaginate(offset, postperpage, true)
+				HasDraft = true
+			} else {
+				totalItems = model.GetCountOfExports()
+				Exports = model.GetAllExportsByPaginate(offset, postperpage, false)
+			}
+			ExportsPaginate = Utility.MakePaginate(int64(totalItems), int64(postperpage), int64(page), "export-list")
 
 			c.HTML(http.StatusOK, "export_list.html", gin.H{
 				"Username":    session.Get("UserName"),
 				"UserRole":    session.Get("UserRole"),
+				"inventories": model.GetAllInventories(),
 				"title":       "فاکتورها",
-				"Paginate":    template.HTML(Utility.MakePaginate(int64(totalItems), int64(postperpage), int64(page), "export-list")),
-				"exports":     model.GetAllExportsByPaginate(offset, postperpage),
+				"Paginate":    template.HTML(ExportsPaginate),
+				"exports":     Exports,
 				"CurrentPage": page,
+				"HasDraft":    HasDraft,
 			})
 		})
 
@@ -1237,10 +1299,10 @@ func main() {
 			// fmt.Println(offset, page)
 			result := []Boot.EscapeExport{}
 			if page == 1 {
-				result = model.GetAllExportsByPaginate(0, postperpage)
+				result = model.GetAllExportsByPaginate(0, postperpage, false)
 
 			} else {
-				result = model.GetAllExportsByPaginate(offset, postperpage)
+				result = model.GetAllExportsByPaginate(offset, postperpage, false)
 
 			}
 			c.JSON(http.StatusOK, gin.H{"message": result})
@@ -1269,15 +1331,39 @@ func main() {
 			result := model.GetAllPaymentsByAttribiute(data.Term)
 			c.JSON(http.StatusOK, gin.H{"message": result})
 		})
+		v2.POST("/draft", middleware.AuthMiddleware(), func(c *gin.Context) {
+			var data struct {
+				ExportID   string `json:"Exportid"`
+				DraftValue bool   `json:"draftvalue"`
+			}
+
+			if err := c.BindJSON(&data); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request payload"})
+				return
+			}
+
+			id, err := Utility.StringToUnit64(data.ExportID)
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID format"})
+				return
+			}
+			result := model.ChangeExportDraftStatus(id, data.DraftValue)
+			if result {
+				c.JSON(http.StatusOK, gin.H{"message": "باموفقیت تغییر انجام شد"})
+			} else {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "خطا در تبدیل"})
+			}
+		})
 		v2.GET("/exportshow", middleware.AuthMiddleware(), func(c *gin.Context) {
 			session := sessions.Default(c)
 			exports, products := model.GetExportById(c)
 			c.HTML(http.StatusOK, "exportshow.html", gin.H{
-				"Username": session.Get("UserName"),
-				"UserRole": session.Get("UserRole"),
-				"title":    "فاکتورها",
-				"exports":  exports,
-				"products": products,
+				"Username":    session.Get("UserName"),
+				"UserRole":    session.Get("UserRole"),
+				"inventories": model.GetAllInventories(),
+				"title":       "فاکتورها",
+				"exports":     exports,
+				"products":    products,
 			})
 		})
 		v2.GET("/payments", middleware.AuthMiddleware(), func(c *gin.Context) {
@@ -1305,6 +1391,7 @@ func main() {
 			c.HTML(http.StatusOK, "payments.html", gin.H{
 				"Username":    session.Get("UserName"),
 				"UserRole":    session.Get("UserRole"),
+				"inventories": model.GetAllInventories(),
 				"title":       "پرداخت ها",
 				"Paginate":    template.HTML(Utility.MakePaginate(int64(totalItems), int64(postperpage), int64(page), "payments")),
 				"Payments":    res,
@@ -1320,10 +1407,155 @@ func main() {
 			baseURL := viper.GetString("LOCAL_URL")
 			backups, _ := boot.GetBackupList(fs, baseURL)
 			c.HTML(http.StatusOK, "backups.html", gin.H{
+				"Username":    session.Get("UserName"),
+				"UserRole":    session.Get("UserRole"),
+				"inventories": model.GetAllInventories(),
+				"title":       "بک آپ ها",
+				"backups":     backups,
+			})
+		})
+		v2.GET("/inventories", middleware.AuthMiddleware(), func(c *gin.Context) {
+			session := sessions.Default(c)
+			c.HTML(http.StatusOK, "inventories.html", gin.H{
+				"Username":    session.Get("UserName"),
+				"UserRole":    session.Get("UserRole"),
+				"title":       "انبارها",
+				"inventories": model.GetAllInventories(),
+			})
+		})
+		v2.GET("/deleteinventories", middleware.AuthMiddleware(), func(c *gin.Context) {
+			session := sessions.Default(c)
+			idStr := c.DefaultQuery("inventory-id", "")
+			id, err := Utility.StringToUnit64(idStr)
+			if err != nil {
+				log.Println("❌ Error in CheckAuth:", err)
+				c.HTML(http.StatusBadRequest, "error.html", gin.H{
+					"message": "ایمیل یا رمز عبور اشتباه است",
+				})
+				return
+			}
+
+			result := model.DeleteInventory(id)
+
+			var message string
+			if result {
+				message = boot.Messages("Inventory removed success")
+			} else {
+				message = boot.Messages("Failed to remove inventory")
+			}
+
+			c.HTML(http.StatusOK, "inventories.html", gin.H{
 				"Username": session.Get("UserName"),
 				"UserRole": session.Get("UserRole"),
-				"title":    "بک آپ ها",
-				"backups":  backups,
+
+				"title":       "انبارها",
+				"message":     message,
+				"inventories": model.GetAllInventories(),
+			})
+
+		})
+		// نمایش فرم ویرایش
+		v2.GET("/editinventory", middleware.AuthMiddleware(), func(c *gin.Context) {
+			session := sessions.Default(c)
+			id, err := strconv.ParseUint(c.Query("inventory-id"), 10, 64)
+			if err != nil {
+				c.Redirect(http.StatusFound, "/inventories")
+				return
+			}
+
+			inventory, err := model.GetInventoryByID(id)
+			if err != nil {
+				c.Redirect(http.StatusFound, "/inventories")
+				return
+			}
+
+			c.HTML(http.StatusOK, "inventory_edit.html", gin.H{
+				"Username":    session.Get("UserName"),
+				"UserRole":    session.Get("UserRole"),
+				"inventories": model.GetAllInventories(),
+
+				"title":     "ویرایش انبار",
+				"inventory": inventory,
+			})
+		})
+
+		v2.POST("/updateinventory", middleware.AuthMiddleware(), func(c *gin.Context) {
+			session := sessions.Default(c)
+
+			id, err := strconv.ParseUint(c.PostForm("inventory-id"), 10, 64)
+			if err != nil {
+				c.Redirect(http.StatusFound, "/inventories")
+				return
+			}
+
+			name := c.PostForm("name")
+			success := model.UpdateInventory(id, name)
+			var message string
+
+			if success != nil {
+				// c.Redirect(http.StatusFound, "/editinventory?inventory-id="+strconv.FormatUint(id, 10)+"&error=خطا در ویرایش انبار")
+				message = boot.Messages("Failed to remove inventory")
+
+			} else {
+
+				message = boot.Messages("Inventory removed success")
+
+			}
+			c.HTML(http.StatusOK, "inventories.html", gin.H{
+				"Username":    session.Get("UserName"),
+				"UserRole":    session.Get("UserRole"),
+				"title":       "انبارها",
+				"message":     message,
+				"inventories": model.GetAllInventories(),
+			})
+		})
+		v2.POST("/createinventory", middleware.AuthMiddleware(), func(c *gin.Context) {
+			session := sessions.Default(c)
+
+			name := c.PostForm("name")
+			if strings.TrimSpace(name) == "" {
+				c.HTML(http.StatusBadRequest, "error.html", gin.H{
+					"message": "خطا در دریافت اطلاعات کاربر. نام انبار نمیتواند خالی باشد.",
+				})
+			}
+
+			_, err := model.CreateInventory(name)
+			var message string
+
+			if err != nil {
+				// c.Redirect(http.StatusFound, "/editinventory?inventory-id="+strconv.FormatUint(id, 10)+"&error=خطا در ویرایش انبار")
+				message = boot.Messages("Failed to remove inventory")
+
+			} else {
+
+				message = boot.Messages("Inventory created success")
+
+			}
+			c.HTML(http.StatusOK, "inventories.html", gin.H{
+				"Username":    session.Get("UserName"),
+				"UserRole":    session.Get("UserRole"),
+				"title":       "انبارها",
+				"message":     message,
+				"inventories": model.GetAllInventories(),
+			})
+		})
+		v2.GET("/createinventory", middleware.AuthMiddleware(), func(c *gin.Context) {
+			session := sessions.Default(c)
+			if err != nil {
+				c.Redirect(http.StatusFound, "/inventories")
+				return
+			}
+
+			if err != nil {
+				c.Redirect(http.StatusFound, "/inventories")
+				return
+			}
+
+			c.HTML(http.StatusOK, "inventory_edit.html", gin.H{
+				"Username":    session.Get("UserName"),
+				"UserRole":    session.Get("UserRole"),
+				"inventories": model.GetAllInventories(),
+				"title":       "افزودن انبار",
 			})
 		})
 		r.GET("/backups/:filename", func(c *gin.Context) {
@@ -1364,14 +1596,15 @@ func main() {
 		v2.GET("/charts", middleware.AuthMiddleware(), func(c *gin.Context) {
 			session := sessions.Default(c)
 			c.HTML(http.StatusOK, "charts.html", gin.H{
-				"title":      "صفحه اصلی",
-				"Username":   session.Get("UserName"),
-				"UserRole":   session.Get("UserRole"),
-				"message":    boot.Messages("login success"),
-				"success":    true,
-				"users":      model.GetAllUsersByRole("guest"),
-				"exports":    model.GetAllExportsByPaginate(0, 5),
-				"allexports": model.GetAllExports(),
+				"title":       "صفحه اصلی",
+				"Username":    session.Get("UserName"),
+				"UserRole":    session.Get("UserRole"),
+				"inventories": model.GetAllInventories(),
+				"message":     boot.Messages("login success"),
+				"success":     true,
+				"users":       model.GetAllUsersByRole("guest"),
+				"exports":     model.GetAllExportsByPaginate(0, 5, false),
+				"allexports":  model.GetAllExports(),
 			})
 		})
 		v2.GET("/deletePayments", middleware.AuthMiddleware("Admin"), func(c *gin.Context) {
@@ -1392,6 +1625,7 @@ func main() {
 				c.HTML(http.StatusOK, "payments.html", gin.H{
 					"Username":    session.Get("UserName"),
 					"UserRole":    session.Get("UserRole"),
+					"inventories": model.GetAllInventories(),
 					"title":       "پرداختی ها",
 					"message":     boot.Messages("payments removed success"),
 					"success":     true,
@@ -1403,6 +1637,7 @@ func main() {
 				c.HTML(http.StatusOK, "payments.html", gin.H{
 					"Username":    session.Get("UserName"),
 					"UserRole":    session.Get("UserRole"),
+					"inventories": model.GetAllInventories(),
 					"title":       "پرداختی ها",
 					"message":     boot.Messages("payments removed faild"),
 					"success":     false,

@@ -68,25 +68,6 @@ func GetUserById(userID uint64) (*Boot.Users, error) {
 	return &user, nil
 }
 
-// func GetUserById2(userid Boot.Users) []Boot.Users {
-// 	var user []Boot.Users
-// 	db := Boot.DB()
-// 	sqlDB, err := db.DB()
-// 	if err != nil {
-// 		log.Println("خطا در دریافت اتصال دیتابیس:", err)
-// 	}
-// 	defer sqlDB.Close()
-// 	Boot.DB().Model(&Boot.Users{}).Select("*").Where("ID = ?", userid.ID).Scan(&user)
-// 	return user
-// }
-// func GetCurrentUser2(c *gin.Context) []Boot.Users {
-// 	Id := c.Request.URL.Query().Get("user-id")
-// 	userIdUint, _ := strconv.ParseUint(Id, 10, 64)
-// 	USERID := Boot.Users{ID: userIdUint}
-// 	currentUser := GetUserById2(USERID)
-// 	return currentUser
-// }
-
 func GetCurrentUser(c *gin.Context) (*Boot.Users, error) {
 	//get id from url
 	id := c.DefaultQuery("user-id", "")
@@ -226,4 +207,26 @@ func GetUserFullDetailsByID(userID uint64) (UserFullDetails, error) {
 	}
 
 	return result, nil
+}
+func ChangeExportDraftStatus(id uint64, value bool) bool {
+	// result := Boot.DB().Model(&Boot.Export{}).Where("id = ?", id).Update("draft", value)
+
+	// revece value
+	Draftvalue := true
+
+	if value {
+		Draftvalue = false
+	}
+	result := Boot.DB().Model(&[]Boot.Export{}).Where("id = ?", id).Update("draft", Draftvalue)
+	if result.Error != nil {
+		log.Printf("❌ خطا در بروزرسانی وضعیت پیش‌نویس فاکتور ID=%d : %v", id, result.Error)
+		return false
+	}
+
+	if result.RowsAffected == 0 {
+		log.Printf("⚠️ هیچ رکوردی با ID=%d یافت نشد", id)
+		return false
+	}
+
+	return true
 }

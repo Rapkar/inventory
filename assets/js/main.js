@@ -3,20 +3,16 @@ let ProductsOfExport = [];
 let ExportTotalPrice = [];
 let Payments = [];
 let tax = parseFloat(jQuery("input[name='Tax']").val())
+let draft = false;
 const directpaynumber = "PMT-" + Math.floor(Math.random() * 1000000)
+
+
+
 jQuery('#myModal').modal('show')
 // add  New product to export list
 
 jQuery("#AddProductToExport").on("click", function () {
-    // jQuery.ajax({
-    //     method: "POST",
-    //     url: "/Dashboard/export",
-    //     data: JSON.stringify({ name: "John", location: "Boston" }),
-    //     contentType: "application/json; charset=utf-8",
-    // })
-    //     .done(function (msg) {
-    //         console.log(msg);
-    //     });
+
     var existproductcount = jQuery("span.ProductsCount").html();
     var existproductMeter = jQuery("span.ProductsMeter").html();
     var Count = jQuery("#ProductBox input[name='Count']").val()
@@ -34,14 +30,10 @@ jQuery("#AddProductToExport").on("click", function () {
         // var Name=jQuery("#ProductIs").html()
 
         var Meter = jQuery("#ProductBox input[name='Meter']").val()
+        var Weight = jQuery("#ProductBox input[name='Weight']").val()
         var RolePrice = jQuery("#ProductBox input[name='RolePrice']").val()
         var MeterPrice = jQuery("#ProductBox input[name='MeterPrice']").val()
         var TotalPrice = `${CalculateItems()}`
-
-        // var oldprice = jQuery("input[name='TotalPrice']")
-        // oldprice=parseFloat(1)
-        // TotalPrice = parseFloat(TotalPrice)
-        // ExportTotalPrice = jQuery("input[name='ExportTotalPrice']").val()
 
         var edit = `<td dir="ltr" class="Edit" style="text-align:right;">
      <a class="me-3 remove"  href="./deleteExport?ExportId={{.ID}}"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
@@ -51,10 +43,12 @@ jQuery("#AddProductToExport").on("click", function () {
         var value = '<tr><td class="id" scope="row">' + ID + '</td><td>' + CurrentProductName + '</td><td class="prn">' + Count + '</td><td class="price">' + Meter + '</td><td class="price">' + MeterPrice + '</td><td class="price">' + RolePrice + '</td><td class="itemtotalprice price">' + CalculateItems() + '</td>' + edit + '</tr>';
         var newRow = {
             InventoryID: InventoryNumber,
-            ProductId: ID,
+            ProductID: ID,
             ExportID: ExportID,
             Name: CurrentProductName,
             Count: Count,
+            Meter: Meter,
+            Weight: Weight,
             MeterPrice: MeterPrice,
             RolePrice: RolePrice,
             TotalPrice: TotalPrice
@@ -82,12 +76,28 @@ jQuery("#AddProductToExport").on("click", function () {
         jQuery(".TotalPriceOut td").html(TotalPrice)
         jQuery(".Notfound").slideUp();
         jQuery(".close").click()
-        jQuery("td.TotalPrice,td.price,.price,td.prn,td.Tax,span.price").each(function () {
-            var val = jQuery(this).html();
-            var val = PersianTools.addCommas(val);
-            var convertToFa = PersianTools.digitsEnToFa(val);
+        // برای هر نوع قیمت به صورت جداگانه
+        var selectors = {
+            "td.TotalPrice": true,
+            "td.price": true,
+            ".price": true,
+            "td.prn": true,
+            "td.Tax": true,
+            "span.price": true
+        };
 
-            jQuery(this).html(convertToFa);
+        jQuery.each(selectors, function (selector) {
+            jQuery(selector).each(function () {
+                var originalValue = jQuery(this).html().trim();
+                var cleanedValue = originalValue.replace(/[^\d.,]/g, ''); // حذف کاراکترهای غیرعددی
+                var numberValue = parseFloat(cleanedValue.replace(/,/g, ''));
+
+                if (!isNaN(numberValue)) {
+                    var formattedValue = PersianTools.addCommas(numberValue.toString());
+                    var convertedValue = PersianTools.digitsEnToFa(formattedValue);
+                    jQuery(this).html(convertedValue);
+                }
+            });
         });
     }
 
@@ -163,7 +173,37 @@ jQuery(".ExportPeoducts select#InventoryIS").on("change", function () {
         jQuery(".ProductIs").slideUp();
     }
 })
+jQuery("#draft").on("change", function () {
+    draft = jQuery(this).prop('checked');
+})
 
+jQuery(".draft").on("change", function () {
+    var Exportid = jQuery(this).attr("Export-id");
+    var draftvalue = jQuery(this).prop('checked');
+    
+    jQuery.ajax({
+        method: "POST",
+        url: "/Dashboard/draft",  // Make sure this matches your backend route
+        data: JSON.stringify({
+            Exportid: Exportid,
+            draftvalue: draftvalue
+        }),
+        contentType: "application/json",
+        dataType: "json"
+    })
+    .done(function (msg) {
+        console.log("Success:", msg);
+        if (msg.error) {
+            alert("Error: " + msg.error);
+        } else {
+            alert(msg.message);
+        }
+    })
+    .fail(function (jqXHR, textStatus, errorThrown) {
+        console.error("AJAX Error:", textStatus, errorThrown);
+        alert("Request failed: " + textStatus);
+    });
+});
 // Select  Product name for fech the detail of product in Export Page
 
 jQuery(".ExportPeoducts select#ProductIs").on("change", function () {
@@ -179,11 +219,14 @@ jQuery(".ExportPeoducts select#ProductIs").on("change", function () {
             .done(function (msg) {
                 if (msg.result.length > 0) {
                     var product = msg.result[0];
+                    console.log("sss", product.Weight)
                     jQuery(".ExportPeoducts .ProductsCount").html(product.Count)
                     jQuery(".ExportPeoducts input[name='Count']").attr("max", product.Count)
                     jQuery(".ExportPeoducts .ProductsMeter").html(product.Meter)
                     jQuery(".ExportPeoducts input[name='Meter']").attr("max", product.Meter)
+                    jQuery(".ExportPeoducts input[name='Weight']").attr("max", product.Weight)
                     jQuery(".ExportPeoducts .ProductNumber").html(product.Number)
+                    jQuery(".ExportPeoducts .ProductsWeight").html(product.Weight)
                     jQuery(".ExportPeoducts input[name='RolePrice']").attr("value", product.RolePrice)
                     jQuery(".ExportPeoducts input[name='MeterPrice']").attr("value", product.MeterPrice)
                     jQuery(".ExportPeoducts input[name='TotalPrice']").attr("value", product.MeterPrice)
@@ -329,55 +372,54 @@ jQuery("input[name='Meter']").on("keyup", function () {
     });
 
 })
-// function getFormData($form){
-//     var unindexed_array = $form;
-//     var indexed_array = {};
 
-//     jQuery.map(unindexed_array, function(n, i){
-//         indexed_array[n['name']] = n['value'];
-//     });
-
-//     return indexed_array;
-// }
 function calculateTotalPayments(payments) {
     let total = 0;
     const directpay = document.getElementById("directpay");
+    if (directpay) {
+        if (directpay.value && directpay.value.trim().length > 0) {
+            console.log("not found ", typeof (Payment))
 
-    if (directpay.value && directpay.value.trim().length > 0) {
-        console.log("not found ", typeof (Payment))
+            var Payment = {
+                Method: "نقدی",
+                Name: "نقدی",
+                Status: "collected",
+                TotalPrice: directpay.value,
+                Number: directpaynumber, // شماره پیگیری تصادفی
+                CreatedAt: document.getElementById("checkDate").value
+            };
 
-        var Payment = {
-            Method: "نقدی",
-            Name: "نقدی",
-            Status: "collected",
-            TotalPrice: directpay.value,
-            Number: directpaynumber, // شماره پیگیری تصادفی
-            CreatedAt: document.getElementById("checkDate").value
-        };
+            var existingPaymentIndex = Payments.findIndex(p => p.Number === directpaynumber);
 
-        var existingPaymentIndex = Payments.findIndex(p => p.Number === directpaynumber);
-
-        if (existingPaymentIndex !== -1) {
-            Payments[existingPaymentIndex] = Payment;
-        } else {
-            Payments.push(Payment);
+            if (existingPaymentIndex !== -1) {
+                Payments[existingPaymentIndex] = Payment;
+            } else {
+                Payments.push(Payment);
+            }
         }
     }
 
     for (let payment of payments) {
         total += parseFloat(payment.TotalPrice);
     }
-    jQuery("#TotalPayments").html(total)
+    var val = PersianTools.addCommas(total);
+    jQuery("#TotalPayments").html(PersianTools.digitsEnToFa(val))
     return total;
 }
 jQuery("#directpay").on("keyup", function () {
-     calculateTotalPayments(Payments)
+    calculateTotalPayments(Payments)
 })
 jQuery("form[name='expotform']").submit(function (e) {
     e.preventDefault();
-
     var formValues = jQuery("form[name='expotform']").find("input, select, textarea").map(function () {
-        return $(this).attr("name") + "=" + $(this).val();
+        var $this = $(this);
+
+        // اگر عنصر checkbox بود
+        if ($this.attr('type') === 'checkbox') {
+            return $this.attr('name') + "=" + $this.prop('checked');
+        }
+        // برای سایر عناصر
+        return $this.attr("name") + "=" + $this.val();
     }).get().join("&");
     ExportPrice = GetExportTotalPrice(ExportTotalPrice);
 
@@ -491,7 +533,7 @@ jQuery("#findpayment").on("click", function (e) {
                     html += '<td class="' + index.Number + '" style="text-align:right;">' + index.Number + '</td>';
                     html += '<td class="' + index.Name + '" style="text-align:right;">' + index.Name + '</td>';
                     html += '<td class="' + index.TotalPrice + '" style="text-align:right;">' + index.TotalPrice + '</td>';
-                    html += '<td class="' + index.Describe + '" style="text-align:right;">' + index.Describe + '</td>';
+                    html += '<td class="' + index.UserName + '" style="text-align:right;">' + index.UserName + '</td>';
                     html += '<td class="' + index.CreatedAt + '" style="text-align:right;">' + index.CreatedAt + '</td>';
                     html += '<td class="' + index.export_number + '" style="text-align:right;">' + index.export_number + '</td>';
                     html += '<td class="' + index.ExportID + '" style="text-align:right;"><a class="me-3" href="./exportshow?ExportId=' + index.ExportID + '">';
@@ -910,6 +952,49 @@ document.addEventListener('DOMContentLoaded', function () {
         checkForm.addEventListener('click', function (e) {
             e.preventDefault();
 
+
+
+            // validation
+
+            let errorBox = document.getElementById('form-error');
+            if (!errorBox) {
+                errorBox = document.createElement('div');
+                errorBox.id = 'form-error';
+                errorBox.style.color = 'red';
+                errorBox.style.margin = '10px 0';
+                checkForm.parentNode.insertBefore(errorBox, checkForm.nextSibling);
+            }
+
+            const fields = [
+                { id: 'checkDate', name: 'تاریخ چک' },
+                { id: 'bankName', name: 'نام بانک' },
+                { id: 'serialCode', name: 'شماره سریال' },
+                { id: 'checkAmount', name: 'مبلغ چک' }
+            ];
+
+            let isValid = true;
+            errorBox.innerHTML = ''; // پاک کردن خطاهای قبلی
+
+            fields.forEach(field => {
+                const input = document.getElementById(field.id);
+                const value = input.value.trim();
+
+                if (!value) {
+                    isValid = false;
+                    errorBox.innerHTML += `فیلد ${field.name} الزامی است.<br>`;
+                    input.classList.add('error-field');
+                } else {
+                    input.classList.remove('error-field');
+                }
+            });
+
+            if (!isValid) {
+                // اسکرول به قسمت خطاها
+                errorBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return;
+            }
+
+            // validation
             const checkData = {
                 date: document.getElementById('checkDate').value,
                 bank: document.getElementById('bankName').value,
@@ -936,7 +1021,21 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-
+    function ToFaprice(val) {
+        var convertToFa = 0
+        if (parseFloat(val)) {
+            var val = PersianTools.addCommas(val);
+            var convertToFa = PersianTools.digitsEnToFa(val);
+        }
+        return convertToFa
+    }
+    function ToFaDigit(val) {
+        var convertToFa = 0
+        if (parseFloat(val)) {
+            var convertToFa = PersianTools.digitsEnToFa(val);
+        }
+        return convertToFa
+    }
     function renderChecksTable() {
         if (checksTableBody) {
             checksTableBody.innerHTML = '';
@@ -948,8 +1047,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     <td>${index + 1}</td>
                     <td>${check.date}</td>
                     <td>${getBankName(check.bank)}</td>
-                    <td class="serial">${check.serial}</td>
-                    <td>${Number(check.amount).toLocaleString()}</td>
+                    <td class="serial price">${ToFaDigit(check.serial)}</td>
+                    <td  class="price" >${ToFaprice(Number(check.amount).toLocaleString())}</td>
                     <td>
                         <select class="form-select status-select" data-index="${index}">
                             <option value="pending" ${check.status === 'pending' ? 'selected' : ''}>در انتظار</option>
@@ -978,13 +1077,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 checksTableBody.appendChild(row);
             }
         });
-
-        // Check on initial load (optional)
-        // if (directpay.value && directpay.value.length > 0) {
-        //     console.log(true);
-        // }
-
-        // Add event listener to check when the input changes
 
 
         // add check
@@ -1077,16 +1169,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
-
-// persian Date
-
-jQuery(document).ready(function () {
-    jQuery("#checkDate").pDatepicker({
-        format: 'YYYY/MM/dd',
-        autoClose: true
-    });
-});
-// تابع Debounce برای محدود کردن فراخوانی تابع
 function debounce(func, timeout = 500) {
     let timer;
     return (...args) => {
@@ -1167,3 +1249,58 @@ function sendSearchRequest() {
 }
 
 jQuery("input[name='Name'], input[name='Phonenumber']").on("keyup", debounce(sendSearchRequest, 500));
+
+jQuery(document).ready(function () {
+    jQuery("#checkDate").pDatepicker({
+        format: 'YYYY/MM/DD',
+        autoClose: true
+    });
+});
+
+function convertToEnglishNumbers(input) {
+    const persianNumbers = [/۰/g, /۱/g, /۲/g, /۳/g, /۴/g, /۵/g, /۶/g, /۷/g, /۸/g, /۹/g];
+    const arabicNumbers = [/٠/g, /١/g, /٢/g, /٣/g, /٤/g, /٥/g, /٦/g, /٧/g, /٨/g, /٩/g];
+    console.log(typeof input)
+    if (typeof input === 'string' || typeof input === 'number') {
+        for (let i = 0; i < 10; i++) {
+            input = input.replace(persianNumbers[i], i).replace(arabicNumbers[i], i);
+        }
+    }
+    return input;
+}
+
+function forceEnglishNumbers(e) {
+    const input = e.target;
+    let caretPos = input.selectionStart;
+    let convertedValue = convertToEnglishNumbers(input.value);
+
+    // بررسی آیا مقدار شامل حروف غیر عددی است
+    const hasNonNumeric = /[^0-9]/.test(convertedValue);
+
+    if (hasNonNumeric) {
+        alert("لطفاً فقط عدد وارد کنید!");
+        input.value = convertedValue.replace(/[^0-9]/g, ''); // حذف تمام غیر اعداد
+        caretPos = Math.max(0, caretPos - 1); // تنظیم موقعیت کارت
+        input.setSelectionRange(caretPos, caretPos);
+        return;
+    }
+
+    if (convertedValue !== input.value) {
+        input.value = convertedValue;
+        input.setSelectionRange(caretPos, caretPos);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    const numberInputs = document.querySelectorAll('input.price, input[name="Phonenumber"]');
+
+    numberInputs.forEach(input => {
+        input.addEventListener('input', forceEnglishNumbers);
+        input.addEventListener('keyup', forceEnglishNumbers);
+        input.addEventListener('paste', function (e) {
+            setTimeout(() => {
+                forceEnglishNumbers(e);
+            }, 0);
+        });
+    });
+});
