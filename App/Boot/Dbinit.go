@@ -107,22 +107,86 @@ func Init() {
 				log.Fatal("❌ Error in batch insert to Inventory Table. #", err)
 				return err
 			}
+			existingInventory = Inventory{
+				Name: "انبار زنجان"}
+
+			if err := tx.Create(&existingInventory).Error; err != nil {
+				log.Fatal("❌ Error in batch insert to Inventory Table. #", err)
+				return err
+			}
 		} else {
 			fmt.Println("base Inventory Found")
 		}
-		var existinProduct Product
+		var existinProduct []Product
 		if err := tx.Where("id =?", 1).First(&existinProduct).Error; err != nil {
-			existinProduct = Product{
-				Name:        "ایزوگام شرق",
-				RolePrice:   99250,
-				MeterPrice:  102500,
-				Count:       100,
-				Meter:       100,
-				InventoryID: existingInventory.ID}
-			if err := tx.Create(&existinProduct).Error; err != nil {
-				log.Fatal("❌ Erro in insert data to Inventory Table . #")
-				return err
+			existinProduct = []Product{{
+				Name:              " ایزوگام شرق صادراتی",
+				RollePrice:        99250,
+				Roll:              100,
+				MeasurementSystem: "roll",
+				InventoryID:       existingInventory.ID,
+			},
+				{
+					Name:              "ایزوگام غرب شرق مخصوص",
+					RollePrice:        92500,
+					Roll:              80,
+					MeasurementSystem: "roll",
+					InventoryID:       existingInventory.ID,
+				},
+				{
+					Name:              "ایزوگام شمال شرق بدون فویل",
+					RollePrice:        110000,
+					Roll:              115000,
+					MeasurementSystem: "roll",
+					InventoryID:       existingInventory.ID,
+				},
+				{
+					Name:              "ایزوگام سپید گام صادراتی",
+					RollePrice:        95000,
+					Roll:              120,
+					MeasurementSystem: "roll",
+					InventoryID:       existingInventory.ID,
+				},
+
+				{
+					Name:              "ایزوگام سپیدگام صادراتی بدون فویل",
+					RollePrice:        87500,
+					Roll:              80,
+					MeasurementSystem: "roll",
+					InventoryID:       existingInventory.ID,
+				},
+				{
+					Name:              "ایزوگام اصلاحی درجه ۲",
+					MeterPrice:        108000,
+					Meter:             50,
+					MeasurementSystem: "meter",
+					InventoryID:       existingInventory.ID,
+				},
+				{
+					Name:              "ایزوگام شرق طرح دار",
+					RollePrice:        95000,
+					Roll:              120,
+					MeasurementSystem: "roll",
+					InventoryID:       existingInventory.ID,
+				},
+				{
+					Name:              "بشکه قیر",
+					BarrelPrice:       108000,
+					Barrel:            75,
+					MeasurementSystem: "barrel",
+					InventoryID:       existingInventory.ID,
+				},
 			}
+			for _, item := range existinProduct {
+				if err := tx.Create(&item).Error; err != nil {
+					log.Fatalf("❌ خطا در ثبت محصول %s در جدول exportProducts: %v", item.Name, err)
+					return err
+				}
+			}
+			// if err := tx.Create(&existinProduct).Error; err != nil {
+			// 	log.Fatal("❌ Erro in insert data to Inventory Table . #")
+			// 	return err
+			// }
 		} else {
 			fmt.Println("base Inventory Found")
 		}
@@ -150,22 +214,87 @@ func Init() {
 
 		var existinExportProducts ExportProducts
 		if err := tx.Where("id = ?", 1).First(&existinExportProducts).Error; err != nil {
-			existinExportProducts = ExportProducts{
-				ExportID:    existinExport.ID, // اینجا از ID ایجاد شده استفاده می‌کنیم
-				Name:        "ایزوگام شرق",
-				RolePrice:   99250,
-				MeterPrice:  102500,
-				Count:       100,
-				InventoryID: existingInventory.ID,
-				ProductID:   existinProduct.ID,
-				TotalPrice:  2000000,
-				Meter:       10,
+			products := []ExportProducts{
+				{
+					ExportID:    existinExport.ID,
+					Name:        " ایزوگام شرق صادراتی",
+					RollePrice:  99250,
+					Roll:        5,
+					InventoryID: existingInventory.ID,
+					ProductID:   1,
+					TotalPrice:  496250,
+				},
+				{
+					ExportID:    existinExport.ID,
+					Name:        "ایزوگام غرب شرق مخصوص",
+					RollePrice:  87500,
+					Roll:        5,
+					InventoryID: existingInventory.ID,
+					ProductID:   2,
+					TotalPrice:  437500,
+				},
+				{
+					ExportID:    existinExport.ID,
+					Name:        "ایزوگام شمال شرق بدون فویل",
+					RollePrice:  110000,
+					Roll:        10,
+					InventoryID: existingInventory.ID,
+					ProductID:   3,
+					TotalPrice:  1100000,
+				},
+				{
+					ExportID:    existinExport.ID,
+					Name:        "ایزوگام سپید گام صادراتی",
+					RollePrice:  95000,
+					Roll:        100,
+					InventoryID: existingInventory.ID,
+					ProductID:   4,
+					TotalPrice:  9500000,
+				},
+				{
+					ExportID:    existinExport.ID,
+					Name:        "ایزوگام سپیدگام صادراتی بدون فویل",
+					RollePrice:  105000,
+					Roll:        10,
+					InventoryID: existingInventory.ID,
+					ProductID:   5,
+					TotalPrice:  1050000,
+				},
+				{
+					ExportID:    existinExport.ID,
+					Name:        "ایزوگام اصلاحی درجه ۲",
+					MeterPrice:  108000,
+					Meter:       10.5,
+					InventoryID: existingInventory.ID,
+					ProductID:   6,
+					TotalPrice:  1134000,
+				},
+				{
+					ExportID:    existinExport.ID,
+					Name:        "ایزوگام شرق طرح دار",
+					RollePrice:  95000,
+					Roll:        75,
+					InventoryID: existingInventory.ID,
+					ProductID:   7,
+					TotalPrice:  7125000,
+				},
+				{
+					ExportID:    existinExport.ID,
+					Name:        "بشکه قیر",
+					BarrelPrice: 108000,
+					Barrel:      75,
+					InventoryID: existingInventory.ID,
+					ProductID:   8,
+					TotalPrice:  8100000,
+				},
 			}
 
-			if err := tx.Create(&existinExportProducts).Error; err != nil {
-				log.Fatal("❌ Erro in insert data to exportProducts Table . #")
-
-				return err
+			// ذخیره همه محصولات در دیتابیس با یک حلقه
+			for _, product := range products {
+				if err := tx.Create(&product).Error; err != nil {
+					log.Fatalf("❌ خطا در ثبت محصول %s در جدول exportProducts: %v", product.Name, err)
+					return err
+				}
 			}
 		} else {
 			fmt.Println("base Inventory Found")

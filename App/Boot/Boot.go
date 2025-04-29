@@ -36,16 +36,21 @@ type Inventory struct {
 	Name string `gorm:"type:varchar(100)"`
 }
 type Product struct {
-	ID          uint64    `gorm:"primaryKey"`
-	Name        string    `gorm:"type:varchar(100)"`
-	RolePrice   float64   `gorm:"type:float"`
-	MeterPrice  float64   `gorm:"type:float"`
-	WeightPrice float64   `gorm:"type:float"`
-	Count       int64     `gorm:"size:255;"`
-	Meter       float64   `gorm:"type:float"`
-	Weight      float64   `gorm:"type:float"`
-	InventoryID uint64    `gorm:"index"`
-	Inventory   Inventory `gorm:"foreignKey:InventoryID;references:ID"`
+	ID                uint64    `gorm:"primaryKey"`
+	Name              string    `gorm:"type:varchar(100)"`
+	RollePrice        float64   `gorm:"type:float"`
+	MeterPrice        float64   `gorm:"type:float"`
+	WeightPrice       float64   `gorm:"type:float"`
+	CountPrice        float64   `gorm:"type:float"`
+	BarrelPrice       float64   `gorm:"type:float"`
+	Roll              int64     `gorm:"size:255;"`
+	Meter             float64   `gorm:"type:float"`
+	Weight            float64   `gorm:"type:float"`
+	Count             int64     `gorm:"size:255;"`
+	Barrel            int64     `gorm:"size:255;"`
+	InventoryID       uint64    `gorm:"index"`
+	MeasurementSystem string    `gorm:"type:varchar(100)"`
+	Inventory         Inventory `gorm:"foreignKey:InventoryID;references:ID"`
 }
 type Export struct {
 	ID             uint64           `gorm:"primaryKey"`
@@ -84,21 +89,26 @@ type Payments struct {
 }
 
 type ExportProducts struct {
-	ID          uint64    `gorm:"primaryKey"`
-	ExportID    uint64    `gorm:"index"`
-	Name        string    `gorm:"type:varchar(100)"`
-	RolePrice   float64   `gorm:"type:float"`
-	MeterPrice  float64   `gorm:"type:float"`
-	Count       int64     `gorm:"size:255;"`
-	Meter       float64   `gorm:"type:float"`
-	TotalPrice  float64   `gorm:"type:float"`
-	Weight      float64   `gorm:"type:float"`
-	WeightPrice float64   `gorm:"type:float"`
-	InventoryID uint64    `gorm:"index"`
-	ProductID   uint64    `gorm:"index"`
-	Export      Export    `gorm:"foreignKey:ExportID;references:ID"`
-	Inventory   Inventory `gorm:"foreignKey:InventoryID;references:ID"`
-	Product     Product   `gorm:"foreignKey:ProductID;references:ID"`
+	ID                uint64    `gorm:"primaryKey"`
+	ExportID          uint64    `gorm:"index"`
+	Name              string    `gorm:"type:varchar(100)"`
+	RollePrice        float64   `gorm:"type:float"`
+	MeterPrice        float64   `gorm:"type:float"`
+	WeightPrice       float64   `gorm:"type:float"`
+	CountPrice        float64   `gorm:"type:float"`
+	BarrelPrice       float64   `gorm:"type:float"`
+	Roll              int64     `gorm:"size:255;"`
+	Meter             float64   `gorm:"type:float"`
+	Weight            float64   `gorm:"type:float"`
+	Count             int64     `gorm:"size:255;"`
+	Barrel            int64     `gorm:"size:255;"`
+	TotalPrice        float64   `gorm:"type:float"`
+	InventoryID       uint64    `gorm:"index"`
+	ProductID         uint64    `gorm:"index"`
+	MeasurementSystem string    `gorm:"type:varchar(100)"`
+	Export            Export    `gorm:"foreignKey:ExportID;references:ID"`
+	Inventory         Inventory `gorm:"foreignKey:InventoryID;references:ID"`
+	Product           Product   `gorm:"foreignKey:ProductID;references:ID"`
 }
 
 type EscapeExport struct {
@@ -120,12 +130,16 @@ type EscapeExportProducts struct {
 	ID              uint64  `gorm:"primaryKey"`
 	ExportID        uint64  `gorm:"index"`
 	Name            string  `gorm:"type:varchar(100)"`
-	RolePrice       float64 `gorm:"type:float"`
+	RollePrice      float64 `gorm:"type:float"`
 	MeterPrice      float64 `gorm:"type:float"`
 	WeightPrice     float64 `gorm:"type:float"`
-	Count           string  `gorm:"size:255;"`
+	CountPrice      float64 `gorm:"type:float"`
+	BarrelPrice     float64 `gorm:"type:float"`
+	Roll            int64   `gorm:"size:255;"`
 	Meter           float64 `gorm:"type:float"`
 	Weight          float64 `gorm:"type:float"`
+	Count           int64   `gorm:"size:255;"`
+	Barrel          int64   `gorm:"size:255;"`
 	TotalPrice      float64 `gorm:"type:float"`
 	InventoryNumber int32   `gorm:"size:255;"`
 	// Inventory       Inventory `gorm:"foreignKey:InventoryNumber"`

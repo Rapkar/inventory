@@ -1304,3 +1304,47 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 });
+
+document.addEventListener('DOMContentLoaded', function() {
+    const measurementSystem = document.querySelector('select[name="MeasurementSystem"]');
+    
+    if (measurementSystem) {
+      // For edit mode
+      measurementSystem.addEventListener('change', function() {
+        const selectedValue = this.value;
+        
+        // Hide all sections first
+        document.querySelectorAll('[id$="-section"]').forEach(section => {
+          section.style.display = 'none';
+        });
+        
+        // Show selected section
+        if (selectedValue) {
+          document.getElementById(selectedValue + '-section').style.display = 'block';
+        }
+      });
+      
+      // Trigger change event on page load for edit mode
+      if (measurementSystem.value) {
+        measurementSystem.dispatchEvent(new Event('change'));
+      }
+    } else {
+      // For add mode
+      const addModeSelect = document.getElementById('measurement-system');
+      if (addModeSelect) {
+        addModeSelect.addEventListener('change', function() {
+          const selectedValue = this.value;
+          
+          // Hide all sections first
+          document.querySelectorAll('[id$="-section"]').forEach(section => {
+            section.style.display = 'none';
+          });
+          
+          // Show selected section
+          if (selectedValue) {
+            document.getElementById(selectedValue + '-section').style.display = 'block';
+          }
+        });
+      }
+    }
+  });

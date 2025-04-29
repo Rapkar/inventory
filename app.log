@@ -896,3 +896,211 @@
 2025/04/28 21:25:05 📦 ScheduleBackups started
 2025/04/28 21:25:05 ✅ created backup success backup-2025-04-27-21-25-05.sql
 2025/04/28 21:25:05 ✅ created backup success backup-2025-04-26-21-25-05.sql
+2025/04/29 10:21:13 🚀 Logger initialized
+2025/04/29 10:21:13 🔧 Booting application...
+2025/04/29 10:21:14 📦 ScheduleBackups started
+2025/04/29 10:21:14 ✅ created backup success backup-2025-04-27-10-21-14.sql
+2025/04/29 10:21:14 ✅ created backup success backup-2025-04-28-10-21-14.sql
+2025/04/29 11:18:05 خطا در دریافت اتصال دیتابیس: &{0xc0000ec000 <nil> 2 0xc0002d41c0 0}
+2025/04/29 11:18:12 خطا در دریافت اتصال دیتابیس: &{0xc0000ecb40 <nil> 2 0xc0002d4a80 0}
+2025/04/29 11:54:27 🚀 Logger initialized
+2025/04/29 11:54:27 🔧 Booting application...
+2025/04/29 11:54:28 📦 ScheduleBackups started
+2025/04/29 11:54:28 ✅ created backup success backup-2025-04-28-11-54-28.sql
+2025/04/29 11:54:28 ✅ created backup success backup-2025-04-27-11-54-28.sql
+2025/04/29 12:16:49 🚀 Logger initialized
+2025/04/29 12:16:49 🔧 Booting application...
+2025/04/29 12:16:50 📦 ScheduleBackups started
+2025/04/29 12:16:50 ✅ created backup success backup-2025-04-27-12-16-50.sql
+2025/04/29 12:16:50 ✅ created backup success backup-2025-04-28-12-16-50.sql
+2025/04/29 12:18:44 🚀 Logger initialized
+2025/04/29 12:18:44 🔧 Booting application...
+2025/04/29 12:18:46 📦 ScheduleBackups started
+2025/04/29 12:18:46 ✅ created backup success backup-2025-04-28-12-18-46.sql
+2025/04/29 12:18:46 ✅ created backup success backup-2025-04-27-12-18-46.sql
+2025/04/29 12:29:31 🚀 Logger initialized
+2025/04/29 12:29:31 🔧 Booting application...
+2025/04/29 12:29:32 ❌ خطا در ثبت محصول  ایزوگام شرق صادراتی در جدول exportProducts: Error 1452 (23000): Cannot add or update a child row: a foreign key constraint fails (`Inventory`.`export_products`, CONSTRAINT `fk_export_products_product` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`))
+2025/04/29 12:30:45 🚀 Logger initialized
+2025/04/29 12:30:45 🔧 Booting application...
+2025/04/29 12:30:46 ❌ خطا در ثبت محصول  ایزوگام شرق صادراتی در جدول exportProducts: Error 1452 (23000): Cannot add or update a child row: a foreign key constraint fails (`Inventory`.`export_products`, CONSTRAINT `fk_export_products_product` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`))
+2025/04/29 12:33:36 🚀 Logger initialized
+2025/04/29 12:33:36 🔧 Booting application...
+2025/04/29 13:15:33 🚀 Logger initialized
+2025/04/29 13:15:33 🔧 Booting application...
+2025/04/29 13:15:34 📦 ScheduleBackups started
+2025/04/29 13:15:34 ✅ created backup success backup-2025-04-27-13-15-34.sql
+2025/04/29 13:15:34 ✅ created backup success backup-2025-04-28-13-15-34.sql
+2025/04/29 13:36:44 🚀 Logger initialized
+2025/04/29 13:36:44 🔧 Booting application...
+2025/04/29 13:36:46 ❌ خطا در ثبت محصول  ایزوگام شرق صادراتی در جدول exportProducts: Error 1452 (23000): Cannot add or update a child row: a foreign key constraint fails (`Inventory`.`export_products`, CONSTRAINT `fk_export_products_product` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`))
+2025/04/29 13:39:01 🚀 Logger initialized
+2025/04/29 13:39:01 🔧 Booting application...
+2025/04/29 13:39:02 ❌ خطا در ثبت محصول  ایزوگام شرق صادراتی در جدول exportProducts: Error 1452 (23000): Cannot add or update a child row: a foreign key constraint fails (`Inventory`.`export_products`, CONSTRAINT `fk_export_products_product` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`))
+2025/04/29 13:39:56 🚀 Logger initialized
+2025/04/29 13:39:56 🔧 Booting application...
+2025/04/29 13:39:57 ❌ خطا در ثبت محصول  ایزوگام شرق صادراتی در جدول exportProducts: Error 1452 (23000): Cannot add or update a child row: a foreign key constraint fails (`Inventory`.`export_products`, CONSTRAINT `fk_export_products_product` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`))
+2025/04/29 13:40:27 🚀 Logger initialized
+2025/04/29 13:40:27 🔧 Booting application...
+2025/04/29 13:40:28 ❌ خطا در ثبت محصول  ایزوگام شرق صادراتی در جدول exportProducts: Error 1452 (23000): Cannot add or update a child row: a foreign key constraint fails (`Inventory`.`export_products`, CONSTRAINT `fk_export_products_product` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`))
+2025/04/29 13:43:13 🚀 Logger initialized
+2025/04/29 13:43:13 🔧 Booting application...
+2025/04/29 13:43:14 ❌ خطا در ثبت محصول  ایزوگام شرق صادراتی در جدول exportProducts: Error 1452 (23000): Cannot add or update a child row: a foreign key constraint fails (`Inventory`.`export_products`, CONSTRAINT `fk_export_products_product` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`))
+2025/04/29 13:47:38 🚀 Logger initialized
+2025/04/29 13:47:38 🔧 Booting application...
+2025/04/29 13:47:39 📦 ScheduleBackups started
+2025/04/29 13:47:39 ✅ created backup success backup-2025-04-28-13-47-39.sql
+2025/04/29 13:47:39 ✅ created backup success backup-2025-04-27-13-47-39.sql
+2025/04/29 14:36:08 🚀 Logger initialized
+2025/04/29 14:36:08 🔧 Booting application...
+2025/04/29 14:36:09 📦 ScheduleBackups started
+2025/04/29 14:36:09 ✅ created backup success backup-2025-04-28-14-36-09.sql
+2025/04/29 14:36:09 ✅ created backup success backup-2025-04-27-14-36-09.sql
+2025/04/29 14:36:20 🚀 Logger initialized
+2025/04/29 14:36:20 🔧 Booting application...
+2025/04/29 14:36:21 📦 ScheduleBackups started
+2025/04/29 14:36:21 ✅ created backup success backup-2025-04-27-14-36-21.sql
+2025/04/29 14:36:21 ✅ created backup success backup-2025-04-28-14-36-21.sql
+2025/04/29 14:44:27 🚀 Logger initialized
+2025/04/29 14:44:27 🔧 Booting application...
+2025/04/29 14:44:29 ❌ خطا در ثبت محصول  ایزوگام شرق صادراتی در جدول exportProducts: Error 1452 (23000): Cannot add or update a child row: a foreign key constraint fails (`Inventory`.`export_products`, CONSTRAINT `fk_export_products_product` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`))
+2025/04/29 14:46:41 🚀 Logger initialized
+2025/04/29 14:46:41 🔧 Booting application...
+2025/04/29 14:46:42 📦 ScheduleBackups started
+2025/04/29 14:46:42 ✅ created backup success backup-2025-04-27-14-46-42.sql
+2025/04/29 14:46:42 ✅ created backup success backup-2025-04-28-14-46-42.sql
+2025/04/29 14:56:53 🚀 Logger initialized
+2025/04/29 14:56:53 🔧 Booting application...
+2025/04/29 14:56:54 ❌ خطا در ثبت محصول  ایزوگام شرق صادراتی در جدول exportProducts: Error 1452 (23000): Cannot add or update a child row: a foreign key constraint fails (`Inventory`.`export_products`, CONSTRAINT `fk_export_products_product` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`))
+2025/04/29 15:03:11 🚀 Logger initialized
+2025/04/29 15:03:11 🔧 Booting application...
+2025/04/29 15:03:12 ❌ خطا در ثبت محصول  ایزوگام شرق صادراتی در جدول exportProducts: Error 1452 (23000): Cannot add or update a child row: a foreign key constraint fails (`Inventory`.`export_products`, CONSTRAINT `fk_exports_export_products` FOREIGN KEY (`export_id`) REFERENCES `exports` (`id`))
+2025/04/29 15:03:42 🚀 Logger initialized
+2025/04/29 15:03:42 🔧 Booting application...
+2025/04/29 15:04:03 🚀 Logger initialized
+2025/04/29 15:04:03 🔧 Booting application...
+2025/04/29 15:05:52 🚀 Logger initialized
+2025/04/29 15:05:52 🔧 Booting application...
+2025/04/29 15:05:54 ❌ خطا در ثبت محصول  ایزوگام شرق صادراتی در جدول exportProducts: Error 1452 (23000): Cannot add or update a child row: a foreign key constraint fails (`Inventory`.`export_products`, CONSTRAINT `fk_export_products_product` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`))
+2025/04/29 15:06:24 🚀 Logger initialized
+2025/04/29 15:06:24 🔧 Booting application...
+2025/04/29 15:06:25 ❌ خطا در ثبت محصول  ایزوگام شرق صادراتی در جدول exportProducts: Error 1452 (23000): Cannot add or update a child row: a foreign key constraint fails (`Inventory`.`export_products`, CONSTRAINT `fk_export_products_product` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`))
+2025/04/29 15:07:39 🚀 Logger initialized
+2025/04/29 15:07:39 🔧 Booting application...
+2025/04/29 15:07:41 ❌ خطا در ثبت محصول  ایزوگام شرق صادراتی در جدول exportProducts: Error 1452 (23000): Cannot add or update a child row: a foreign key constraint fails (`Inventory`.`export_products`, CONSTRAINT `fk_export_products_product` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`))
+2025/04/29 15:09:27 🚀 Logger initialized
+2025/04/29 15:09:27 🔧 Booting application...
+2025/04/29 15:09:28 ❌ خطا در ثبت محصول  ایزوگام شرق صادراتی در جدول exportProducts: Error 1452 (23000): Cannot add or update a child row: a foreign key constraint fails (`Inventory`.`export_products`, CONSTRAINT `fk_export_products_product` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`))
+2025/04/29 15:38:26 🚀 Logger initialized
+2025/04/29 15:38:26 🔧 Booting application...
+2025/04/29 15:38:27 📦 ScheduleBackups started
+2025/04/29 15:38:27 ✅ created backup success backup-2025-04-28-15-38-27.sql
+2025/04/29 15:38:27 ✅ created backup success backup-2025-04-27-15-38-27.sql
+2025/04/29 15:44:06 🚀 Logger initialized
+2025/04/29 15:44:06 🔧 Booting application...
+2025/04/29 15:44:07 📦 ScheduleBackups started
+2025/04/29 15:44:07 ✅ created backup success backup-2025-04-27-15-44-07.sql
+2025/04/29 15:44:07 ✅ created backup success backup-2025-04-28-15-44-07.sql
+2025/04/29 15:45:15 🚀 Logger initialized
+2025/04/29 15:45:15 🔧 Booting application...
+2025/04/29 15:45:40 🚀 Logger initialized
+2025/04/29 15:45:40 🔧 Booting application...
+2025/04/29 15:46:14 🚀 Logger initialized
+2025/04/29 15:46:14 🔧 Booting application...
+2025/04/29 15:46:16 📦 ScheduleBackups started
+2025/04/29 15:46:16 ✅ created backup success backup-2025-04-27-15-46-16.sql
+2025/04/29 15:46:16 ✅ created backup success backup-2025-04-28-15-46-16.sql
+2025/04/29 16:09:23 🚀 Logger initialized
+2025/04/29 16:09:23 🔧 Booting application...
+2025/04/29 16:09:24 📦 ScheduleBackups started
+2025/04/29 16:09:24 ✅ created backup success backup-2025-04-28-16-09-24.sql
+2025/04/29 16:09:24 ✅ created backup success backup-2025-04-27-16-09-24.sql
+2025/04/29 16:10:01 🚀 Logger initialized
+2025/04/29 16:10:01 🔧 Booting application...
+2025/04/29 16:10:03 📦 ScheduleBackups started
+2025/04/29 16:10:03 ✅ created backup success backup-2025-04-28-16-10-03.sql
+2025/04/29 16:10:03 ✅ created backup success backup-2025-04-27-16-10-03.sql
+2025/04/29 16:12:45 🚀 Logger initialized
+2025/04/29 16:12:45 🔧 Booting application...
+2025/04/29 16:12:46 📦 ScheduleBackups started
+2025/04/29 16:12:46 ✅ created backup success backup-2025-04-27-16-12-46.sql
+2025/04/29 16:12:46 ✅ created backup success backup-2025-04-28-16-12-46.sql
+2025/04/29 16:15:37 🚀 Logger initialized
+2025/04/29 16:15:37 🔧 Booting application...
+2025/04/29 16:15:38 📦 ScheduleBackups started
+2025/04/29 16:15:38 ✅ created backup success backup-2025-04-27-16-15-38.sql
+2025/04/29 16:15:38 ✅ created backup success backup-2025-04-28-16-15-38.sql
+2025/04/29 16:16:03 🚀 Logger initialized
+2025/04/29 16:16:03 🔧 Booting application...
+2025/04/29 16:16:04 ❌ خطا در ثبت محصول  ایزوگام شرق صادراتی در جدول exportProducts: Error 1452 (23000): Cannot add or update a child row: a foreign key constraint fails (`Inventory`.`export_products`, CONSTRAINT `fk_export_products_product` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`))
+2025/04/29 16:16:52 🚀 Logger initialized
+2025/04/29 16:16:52 🔧 Booting application...
+2025/04/29 16:16:53 📦 ScheduleBackups started
+2025/04/29 16:16:53 ✅ created backup success backup-2025-04-28-16-16-53.sql
+2025/04/29 16:16:53 ✅ created backup success backup-2025-04-27-16-16-53.sql
+2025/04/29 16:21:22 🚀 Logger initialized
+2025/04/29 16:21:22 🔧 Booting application...
+2025/04/29 16:21:23 📦 ScheduleBackups started
+2025/04/29 16:21:23 ✅ created backup success backup-2025-04-28-16-21-23.sql
+2025/04/29 16:21:23 ✅ created backup success backup-2025-04-27-16-21-23.sql
+2025/04/29 16:22:15 🚀 Logger initialized
+2025/04/29 16:22:15 🔧 Booting application...
+2025/04/29 16:22:16 📦 ScheduleBackups started
+2025/04/29 16:22:16 ✅ created backup success backup-2025-04-27-16-22-16.sql
+2025/04/29 16:22:16 ✅ created backup success backup-2025-04-28-16-22-16.sql
+2025/04/29 16:58:51 🚀 Logger initialized
+2025/04/29 16:58:51 🔧 Booting application...
+2025/04/29 16:58:53 📦 ScheduleBackups started
+2025/04/29 16:58:53 ✅ created backup success backup-2025-04-28-16-58-53.sql
+2025/04/29 16:58:53 ✅ created backup success backup-2025-04-27-16-58-53.sql
+2025/04/29 16:59:08 🚀 Logger initialized
+2025/04/29 16:59:08 🔧 Booting application...
+2025/04/29 16:59:09 📦 ScheduleBackups started
+2025/04/29 16:59:09 ✅ created backup success backup-2025-04-27-16-59-09.sql
+2025/04/29 16:59:09 ✅ created backup success backup-2025-04-28-16-59-09.sql
+2025/04/29 17:12:32 🚀 Logger initialized
+2025/04/29 17:12:32 🔧 Booting application...
+2025/04/29 17:12:33 📦 ScheduleBackups started
+2025/04/29 17:12:33 ✅ created backup success backup-2025-04-28-17-12-33.sql
+2025/04/29 17:12:33 ✅ created backup success backup-2025-04-27-17-12-33.sql
+2025/04/29 17:13:38 🚀 Logger initialized
+2025/04/29 17:13:38 🔧 Booting application...
+2025/04/29 17:13:39 📦 ScheduleBackups started
+2025/04/29 17:13:39 ✅ created backup success backup-2025-04-27-17-13-39.sql
+2025/04/29 17:13:39 ✅ created backup success backup-2025-04-28-17-13-39.sql
+2025/04/29 17:18:58 🚀 Logger initialized
+2025/04/29 17:18:58 🔧 Booting application...
+2025/04/29 17:18:59 📦 ScheduleBackups started
+2025/04/29 17:18:59 ✅ created backup success backup-2025-04-28-17-18-59.sql
+2025/04/29 17:18:59 ✅ created backup success backup-2025-04-27-17-18-59.sql
+2025/04/29 17:19:06 <nil>
+2025/04/29 17:20:01 🚀 Logger initialized
+2025/04/29 17:20:01 🔧 Booting application...
+2025/04/29 17:20:03 📦 ScheduleBackups started
+2025/04/29 17:20:03 ✅ created backup success backup-2025-04-27-17-20-03.sql
+2025/04/29 17:20:03 ✅ created backup success backup-2025-04-28-17-20-03.sql
+2025/04/29 17:23:04 🚀 Logger initialized
+2025/04/29 17:23:04 🔧 Booting application...
+2025/04/29 17:23:05 📦 ScheduleBackups started
+2025/04/29 17:23:05 ✅ created backup success backup-2025-04-27-17-23-05.sql
+2025/04/29 17:23:05 ✅ created backup success backup-2025-04-28-17-23-05.sql
+2025/04/29 17:38:28 🚀 Logger initialized
+2025/04/29 17:38:28 🔧 Booting application...
+2025/04/29 17:38:29 📦 ScheduleBackups started
+2025/04/29 17:38:29 ✅ created backup success backup-2025-04-27-17-38-29.sql
+2025/04/29 17:38:29 ✅ created backup success backup-2025-04-28-17-38-29.sql
+2025/04/29 17:42:51 🚀 Logger initialized
+2025/04/29 17:42:51 🔧 Booting application...
+2025/04/29 17:42:52 📦 ScheduleBackups started
+2025/04/29 17:42:52 ✅ created backup success backup-2025-04-27-17-42-52.sql
+2025/04/29 17:42:52 ✅ created backup success backup-2025-04-28-17-42-52.sql
+2025/04/29 17:44:26 🚀 Logger initialized
+2025/04/29 17:44:26 🔧 Booting application...
+2025/04/29 17:44:27 📦 ScheduleBackups started
+2025/04/29 17:44:27 ✅ created backup success backup-2025-04-27-17-44-27.sql
+2025/04/29 17:44:27 ✅ created backup success backup-2025-04-28-17-44-27.sql
+2025/04/29 17:45:25 🚀 Logger initialized
+2025/04/29 17:45:25 🔧 Booting application...
+2025/04/29 17:45:26 📦 ScheduleBackups started
+2025/04/29 17:45:26 ✅ created backup success backup-2025-04-28-17-45-26.sql
+2025/04/29 17:45:26 ✅ created backup success backup-2025-04-27-17-45-26.sql

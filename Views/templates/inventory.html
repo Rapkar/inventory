@@ -10,11 +10,15 @@
           <tr>
             <th scope="col">#</th>
             <th scope="col">نام محصول</th>
-            <th scope="col">تعداد</th>
+            <th scope="col">رول</th>
             <th scope="col">قیمت</th>
             <th scope="col">متراژ</th>
             <th scope="col">قیمت</th>
             <th scope="col">وزن</th>
+            <th scope="col">قیمت</th>
+            <th scope="col">تعداد</th>
+            <th scope="col">قیمت</th>
+            <th scope="col">بشکه</th>
             <th scope="col">قیمت</th>
             <th scope="col">ویرایش</th>
           </tr>
@@ -24,15 +28,19 @@
           <tr>
             <th scope="row">{{.ID}}</th>
             <td>{{.Name}}</td>
-            <td dir="ltr" style="text-align:right;" class="prn">{{.Count}}</td>
+            <td dir="ltr" style="text-align:right;" class="prn">{{.Roll}}</td>
 
-            <td dir="ltr" style="text-align:right;" class="price">{{.RolePrice}}</td>
+            <td dir="ltr" style="text-align:right;" class="price">{{.RollePrice}}</td>
             <td dir="ltr" style="text-align:right;" class="prn">{{.Meter}}</td>
 
             <td dir="ltr" style="text-align:right;" class="price">{{.MeterPrice}}</td>
             <td dir="ltr" style="text-align:right;" class="prn">{{.Weight}}</td>
+            <td dir="ltr" style="text-align:right;" class="prn">{{.WeightPrice}}</td>
 
-            <td dir="ltr" style="text-align:right;" class="price">{{.WeightPrice}}</td>
+            <td dir="ltr" style="text-align:right;" class="price">{{.Count}}</td>
+            <td dir="ltr" style="text-align:right;" class="price">{{.CountPrice}}</td>
+            <td dir="ltr" style="text-align:right;" class="price">{{.Barrel}}</td>
+            <td dir="ltr" style="text-align:right;" class="price">{{.BarrelPrice}}</td>
 
             <td dir="ltr" type="password text-center" style="text-align: center;">
               <a href="./deleteproduct/?product-id={{.ID}}&inventory={{.InventoryID}}"><svg

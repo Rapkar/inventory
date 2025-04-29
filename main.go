@@ -636,12 +636,18 @@ func main() {
 		v2.POST("/addproduct", middleware.AuthMiddleware("Admin"), func(c *gin.Context) {
 			var product boot.Product
 			product.Name = c.PostForm("Name")
-			product.RolePrice, _ = Utility.StringToFloat64(c.PostForm("RolePrice"))
+			product.RollePrice, _ = Utility.StringToFloat64(c.PostForm("RolePrice"))
 			product.MeterPrice, _ = Utility.StringToFloat64(c.PostForm("MeterPrice"))
+			product.WeightPrice, _ = Utility.StringToFloat64(c.PostForm("WeightPrice"))
+			product.CountPrice, _ = Utility.StringToFloat64(c.PostForm("CountPrice"))
+			product.BarrelPrice, _ = Utility.StringToFloat64(c.PostForm("BarrelPrice"))
+
 			product.Count, _ = Utility.StringToInt64(c.PostForm("Count"))
+			product.Barrel, _ = Utility.StringToInt64(c.PostForm("Barrel"))
+			product.Roll, _ = Utility.StringToInt64(c.PostForm("Roll"))
 			product.Meter, _ = Utility.StringToFloat64(c.PostForm("Meter"))
 			product.Weight, _ = Utility.StringToFloat64(c.PostForm("Weight"))
-			product.WeightPrice, _ = Utility.StringToFloat64(c.PostForm("WeightPrice"))
+			product.MeasurementSystem = c.PostForm("MeasurementSystem")
 			product.InventoryID, _ = Utility.StringToUnit64(c.PostForm("InventoryNumber"))
 
 			res := boot.DB().Create(&product)
@@ -713,63 +719,73 @@ func main() {
 			}
 
 			// دریافت و تبدیل مقادیر
-			rolePrice, _ := Utility.StringToFloat64(c.PostForm("RolePrice"))
-			meterPrice, _ := Utility.StringToFloat64(c.PostForm("MeterPrice"))
+
+			roll, _ := Utility.StringToInt64(c.PostForm("Roll"))
 			count, _ := Utility.StringToInt64(c.PostForm("Count"))
 			meter, _ := Utility.StringToFloat64(c.PostForm("Meter"))
 			weight, _ := Utility.StringToFloat64(c.PostForm("Weight"))
+			barrel, _ := Utility.StringToInt64(c.PostForm("Barrel"))
 			weightPrice, _ := Utility.StringToFloat64(c.PostForm("WeightPrice"))
+			rolePrice, _ := Utility.StringToFloat64(c.PostForm("RolePrice"))
+			meterPrice, _ := Utility.StringToFloat64(c.PostForm("MeterPrice"))
+			countPrice, _ := Utility.StringToFloat64(c.PostForm("CountPrice"))
+			barrelPrice, _ := Utility.StringToFloat64(c.PostForm("BarrelPrice"))
 			inventoryID, _ := Utility.StringToUnit64(c.PostForm("InventoryNumber"))
+			measurementSystem := c.PostForm("MeasurementSystem")
 			// اعتبارسنجی: حداقل دو فیلد باید مقدار مثبت داشته باشند
-			validFields := 0
-			if rolePrice > 0 {
-				validFields++
-			}
-			if meterPrice > 0 {
-				validFields++
-			}
-			if count > 0 {
-				validFields++
-			}
-			if meter > 0 {
-				validFields++
-			}
-			if weight > 0 {
-				validFields++
-			}
-			if weightPrice > 0 {
-				validFields++
-			}
+			// validFields := 0
+			// if rolePrice > 0 {
+			// 	validFields++
+			// }
+			// if meterPrice > 0 {
+			// 	validFields++
+			// }
+			// if count > 0 {
+			// 	validFields++
+			// }
+			// if meter > 0 {
+			// 	validFields++
+			// }
+			// if weight > 0 {
+			// 	validFields++
+			// }
+			// if weightPrice > 0 {
+			// 	validFields++
+			// }
 
-			if validFields < 2 {
-				c.HTML(http.StatusBadRequest, "add_product.html", gin.H{
-					"Username":    session.Get("UserName"),
-					"UserRole":    session.Get("UserRole"),
-					"inventories": model.GetAllInventories(),
-					"title":       "ویرایش محصول",
-					"error":       "حداقل دو مورد از مقادیر (قیمت رول، قیمت متر، تعداد، متراژ) باید پر شوند",
-					"formData":    c.Request.PostForm,
-					"products":    model.GetProductById(int(ProductID)),
-				})
-				return
-			}
+			// if validFields < 2 {
+			// 	c.HTML(http.StatusBadRequest, "add_product.html", gin.H{
+			// 		"Username":    session.Get("UserName"),
+			// 		"UserRole":    session.Get("UserRole"),
+			// 		"inventories": model.GetAllInventories(),
+			// 		"title":       "ویرایش محصول",
+			// 		"error":       "حداقل دو مورد از مقادیر (قیمت رول، قیمت متر، تعداد، متراژ) باید پر شوند",
+			// 		"formData":    c.Request.PostForm,
+			// 		"products":    model.GetProductById(int(ProductID)),
+			// 	})
+			// 	return
+			// }
 
 			// آماده‌سازی محصول برای آپدیت
 			product := boot.Product{
-				Name:        c.PostForm("Name"),
-				RolePrice:   rolePrice,
-				MeterPrice:  meterPrice,
-				Count:       count,
-				Meter:       meter,
-				Weight:      weight,
-				WeightPrice: weightPrice,
-				InventoryID: inventoryID,
+				Name:              c.PostForm("Name"),
+				Count:             count,
+				Roll:              roll,
+				Meter:             meter,
+				Weight:            weight,
+				Barrel:            barrel,
+				WeightPrice:       weightPrice,
+				RollePrice:        rolePrice,
+				MeterPrice:        meterPrice,
+				CountPrice:        countPrice,
+				BarrelPrice:       barrelPrice,
+				InventoryID:       inventoryID,
+				MeasurementSystem: measurementSystem,
 			}
 
-			// انجام عملیات آپدیت
 			res := boot.DB().Model(&boot.Product{}).Where("id = ?", ProductID).Updates(&product)
+			fmt.Println(res)
 			currentProduct := model.GetProductById(int(ProductID))
-
 			if res.RowsAffected > 0 {
 				c.HTML(http.StatusOK, "add_product.html", gin.H{
 					"Username":    session.Get("UserName"),
@@ -848,7 +864,7 @@ func main() {
 			res := boot.DB().Model(&product).Where("id = ? ", product.ID).Scan(&oldproduct)
 			if res.RowsAffected > 0 {
 				product.Name = oldproduct.Name
-				product.RolePrice, _ = Utility.StringToFloat64(c.PostForm("RolePrice"))
+				product.RollePrice, _ = Utility.StringToFloat64(c.PostForm("RolePrice"))
 				product.MeterPrice, _ = Utility.StringToFloat64(c.PostForm("MeterPrice"))
 				pCount, _ := Utility.StringToInt64(c.PostForm("ProductsCount"))
 				product.Count = oldproduct.Count + pCount
@@ -1092,7 +1108,7 @@ func main() {
 				// ids, _ := strconv.ParseInt(data.Products[a].ProductId, 10, 64)
 				exportproducts[a].ExportID = data.Products[a].ExportID
 				exportproducts[a].Name = data.Products[a].Name
-				exportproducts[a].RolePrice = data.Products[a].RolePrice
+				exportproducts[a].RollePrice = data.Products[a].RolePrice
 				exportproducts[a].MeterPrice = data.Products[a].MeterPrice
 				exportproducts[a].Count = data.Products[a].Count
 				exportproducts[a].Meter = data.Products[a].Meter
