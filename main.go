@@ -859,38 +859,49 @@ func main() {
 		v2.POST("/updateproduct", middleware.AuthMiddleware(), func(c *gin.Context) {
 			var product boot.Product
 			var oldproduct boot.Product
-			product.ID, _ = strconv.ParseUint(c.PostForm("ProductName"), 10, 64)
+			product.ID, _ = strconv.ParseUint(c.PostForm("ProductID"), 10, 64)
 
 			res := boot.DB().Model(&product).Where("id = ? ", product.ID).Scan(&oldproduct)
 			if res.RowsAffected > 0 {
-				product.Name = oldproduct.Name
-				product.RollePrice, _ = Utility.StringToFloat64(c.PostForm("RolePrice"))
-				product.MeterPrice, _ = Utility.StringToFloat64(c.PostForm("MeterPrice"))
-				pCount, _ := Utility.StringToInt64(c.PostForm("ProductsCount"))
-				product.Count = oldproduct.Count + pCount
-				pMeter, _ := Utility.StringToFloat64(c.PostForm("Weight"))
-				product.Weight, _ = Utility.StringToFloat64(c.PostForm("WeightPrice"))
-				product.WeightPrice, _ = Utility.StringToFloat64(c.PostForm("ProductMeter"))
-				product.Meter = oldproduct.Meter + pMeter
-				product.InventoryID = 1
+				pRoll, _ := Utility.StringToInt64(c.PostForm("ProducedRoll"))
+				product.Roll = oldproduct.Roll + pRoll
 
-				res := boot.DB().Model(&product).Where("id = ? ", product.ID).Updates(&product)
+				pCount, _ := Utility.StringToInt64(c.PostForm("ProducedCount"))
+				product.Count = oldproduct.Count + pCount
+				pMeter, _ := Utility.StringToFloat64(c.PostForm("ProducedMeter"))
+				product.Meter = oldproduct.Meter + pMeter
+				pBarrel, _ := Utility.StringToInt64(c.PostForm("ProducedBarrel"))
+				product.Barrel = oldproduct.Barrel + pBarrel
+				pWeight, _ := Utility.StringToFloat64(c.PostForm("WeightPrice"))
+				product.Weight = oldproduct.Weight + pWeight
+
+				product.CountPrice, _ = Utility.StringToFloat64(c.PostForm("CountPrice"))
+				product.RollePrice, _ = Utility.StringToFloat64(c.PostForm("RollePrice"))
+				product.BarrelPrice, _ = Utility.StringToFloat64(c.PostForm("BarrelPrice"))
+				product.MeterPrice, _ = Utility.StringToFloat64(c.PostForm("MeterPrice"))
+				product.WeightPrice, _ = Utility.StringToFloat64(c.PostForm("ProductMeter"))
+				product.InventoryID = 1
+				res := boot.DB().Model(&Boot.Product{}).Where("id = ? ", product.ID).Updates(&product)
+				fmt.Println(res)
+
 				if res.RowsAffected > 0 {
-					c.HTML(http.StatusOK, "production.html", gin.H{
-						"title": "محصول",
-						// "action":   "addproduct",
-						"message":  boot.Messages("product made success"),
-						"success":  true,
-						"products": model.GetAllProductsByInventory(int32(1)),
-					})
-				} else {
-					c.HTML(http.StatusOK, "production.html", gin.H{
-						"title": "محصول",
-						// "action":   "addproduct",
-						"message":  boot.Messages("product made success"),
-						"success":  false,
-						"products": model.GetAllProductsByInventory(int32(1)),
-					})
+					// c.HTML(http.StatusOK, "production.html", gin.H{
+					// 	"title": "محصول",
+					// 	// "action":   "addproduct",
+					// 	"message":  boot.Messages("product made success"),
+					// 	"success":  true,
+					// 	"products": model.GetAllProductsWithInventory(),
+					// })
+
+					c.Redirect(http.StatusFound, "production")
+
+					// c.HTML(http.StatusOK, "production.html", gin.H{
+					// 	"title": "محصول",
+					// 	// "action":   "addproduct",
+					// 	"message":  boot.Messages("product made faild"),
+					// 	"success":  false,
+					// 	"products": model.GetAllProductsWithInventory(),
+					// })
 				}
 			}
 
@@ -986,13 +997,31 @@ func main() {
 		v2.GET("/deleteExport", middleware.AuthMiddleware("Admin"), func(c *gin.Context) {
 			session := sessions.Default(c)
 			pageStr := c.DefaultQuery("page", "1")
+			draft, err := Utility.StringToBool(c.DefaultQuery("draft", "false"))
+
 			page, _ := strconv.Atoi(pageStr)
 			if page < 1 {
 				page = 1
 			}
 			offset := (page - 1) * postperpage
-
-			totalItems := model.GetCountOfExports()
+			if err != nil {
+				c.HTML(http.StatusInternalServerError, "error.html", gin.H{"error": "خطا در دریافت پیش فاکتور"})
+				return
+			}
+			var totalItems int64
+			var Exports []boot.EscapeExport
+			var ExportsPaginate string
+			HasDraft := false
+			if draft {
+				totalItems = model.GetCountOfExports()
+				Exports = model.GetAllExportsByPaginate(offset, postperpage, true)
+				HasDraft = true
+			} else {
+				totalItems = model.GetCountOfExports()
+				Exports = model.GetAllExportsByPaginate(offset, postperpage, false)
+			}
+			ExportsPaginate = Utility.MakePaginate(int64(totalItems), int64(postperpage), int64(page), "export-list")
+			fmt.Println("offset", offset, "postperpage", postperpage, "Exports", Exports, "draft", draft)
 
 			if model.RemoveCurrentExport(c) {
 				c.HTML(http.StatusOK, "export_list.html", gin.H{
@@ -1002,9 +1031,10 @@ func main() {
 					"title":       "فاکتورها",
 					"message":     boot.Messages("Export removed success"),
 					"success":     true,
-					"Paginate":    template.HTML(Utility.MakePaginate(int64(totalItems), int64(postperpage), int64(page), "export-list")),
-					"exports":     model.GetAllExportsByPaginate(offset, postperpage, false),
+					"Paginate":    template.HTML(ExportsPaginate),
+					"exports":     Exports,
 					"CurrentPage": page,
+					"HasDraft":    HasDraft,
 				})
 			} else {
 				c.HTML(http.StatusOK, "export_list.html", gin.H{
@@ -1012,11 +1042,12 @@ func main() {
 					"UserRole":    session.Get("UserRole"),
 					"inventories": model.GetAllInventories(),
 					"title":       "فاکتورها",
-					"message":     boot.Messages("Export removed success"),
+					"message":     boot.Messages("Export removed faild"),
 					"success":     false,
-					"Paginate":    template.HTML(Utility.MakePaginate(int64(totalItems), int64(postperpage), int64(page), "export-list")),
-					"exports":     model.GetAllExportsByPaginate(offset, postperpage, false),
+					"Paginate":    template.HTML(ExportsPaginate),
+					"exports":     Exports,
 					"CurrentPage": page,
+					"HasDraft":    HasDraft,
 				})
 			}
 		})
@@ -1287,6 +1318,7 @@ func main() {
 				Exports = model.GetAllExportsByPaginate(offset, postperpage, false)
 			}
 			ExportsPaginate = Utility.MakePaginate(int64(totalItems), int64(postperpage), int64(page), "export-list")
+			fmt.Println("offset", offset, "postperpage", postperpage, "Exports", Exports, "draft", draft)
 
 			c.HTML(http.StatusOK, "export_list.html", gin.H{
 				"Username":    session.Get("UserName"),
@@ -1370,18 +1402,7 @@ func main() {
 				c.JSON(http.StatusInternalServerError, gin.H{"error": "خطا در تبدیل"})
 			}
 		})
-		v2.GET("/exportshow", middleware.AuthMiddleware(), func(c *gin.Context) {
-			session := sessions.Default(c)
-			exports, products := model.GetExportById(c)
-			c.HTML(http.StatusOK, "exportshow.html", gin.H{
-				"Username":    session.Get("UserName"),
-				"UserRole":    session.Get("UserRole"),
-				"inventories": model.GetAllInventories(),
-				"title":       "فاکتورها",
-				"exports":     exports,
-				"products":    products,
-			})
-		})
+
 		v2.GET("/payments", middleware.AuthMiddleware(), func(c *gin.Context) {
 			session := sessions.Default(c)
 			status := c.Query("status")
@@ -1662,6 +1683,20 @@ func main() {
 					"CurrentPage": page,
 				})
 			}
+		})
+		v2.GET("/exportshow", middleware.AuthMiddleware(), func(c *gin.Context) {
+			session := sessions.Default(c)
+			exports, products := model.GetExportById(c)
+			exporttype := c.DefaultQuery("type", "buyer")
+			c.HTML(http.StatusOK, "exportshow.html", gin.H{
+				"Username":    session.Get("UserName"),
+				"UserRole":    session.Get("UserRole"),
+				"inventories": model.GetAllInventories(),
+				"title":       "فاکتورها",
+				"exports":     exports,
+				"products":    products,
+				"exporttype":  exporttype,
+			})
 		})
 		// v2.GET("/Download", middleware.AuthMiddleware(), func(c *gin.Context) {
 		// 	session := sessions.Default(c)

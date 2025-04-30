@@ -13,34 +13,48 @@ jQuery('#myModal').modal('show')
 
 jQuery("#AddProductToExport").on("click", function () {
 
-    var existproductcount = jQuery("span.ProductsCount").html();
-    var existproductMeter = jQuery("span.ProductsMeter").html();
-    var Count = jQuery("#ProductBox input[name='Count']").val()
-    var Meter = jQuery("#ProductBox input[name='Meter']").val()
-    productcount = parseInt(existproductcount) - parseInt(Count);
-    productMeter = parseInt(existproductMeter) - parseInt(Meter);
-    if ((productcount == 0) && (productMeter == 0)) {
-        alert('مقدار را مشخص کنید')
-    } else if (productcount < 0 || productMeter < 0) {
-        alert('موجودی  کافی نیست')
-    } else {
+    // var existproductcount = jQuery("span.ProductsCount").html();
+    // var existproductMeter = jQuery("span.ProductsMeter").html();
+
+    // productcount = parseInt(existproductcount) - parseInt(Count);
+    // productMeter = parseInt(existproductMeter) - parseInt(Meter);
+    // if ((productcount == 0) && (productMeter == 0)) {
+    //     alert('مقدار را مشخص کنید')
+    // } else if (productcount < 0 || productMeter < 0) {
+    //     alert('موجودی  کافی نیست')
+    // } else {
         var ID = jQuery("#ProductIs").val();
         var ExportID = jQuery("input[name='ExportNumber']").val();
         var InventoryNumber = jQuery("#InventoryIS").val();
         // var Name=jQuery("#ProductIs").html()
-
-        var Meter = jQuery("#ProductBox input[name='Meter']").val()
-        var Weight = jQuery("#ProductBox input[name='Weight']").val()
-        var RolePrice = jQuery("#ProductBox input[name='RolePrice']").val()
-        var MeterPrice = jQuery("#ProductBox input[name='MeterPrice']").val()
-        var TotalPrice = `${CalculateItems()}`
-
+        var Meter = jQuery("#ProductBox input[name='Meter']").val() || "0";
+        var Weight = jQuery("#ProductBox input[name='Weight']").val() || "0";
+        var Barrel = jQuery("#ProductBox input[name='Barrel']").val() || "0";
+        var Count = jQuery("#ProductBox input[name='Count']").val() || "0";
+        var Rolle = jQuery("#ProductBox input[name='Rolle']").val() || "0";
+        var RollePrice = jQuery("#ProductBox input[name='RollePrice']").val() || "0";
+        var MeterPrice = jQuery("#ProductBox input[name='MeterPrice']").val() || "0";
+        var WeightPrice = jQuery("#ProductBox input[name='WeightPrice']").val() || "0";
+        var BarrelPrice = jQuery("#ProductBox input[name='BarrelPrice']").val() || "0";
+        var CountPrice = jQuery("#ProductBox input[name='CountPrice']").val() || "0";
+        var TotalPrice = jQuery("#ProductBox input[name='TotalPrice']").val() || "0";
+    
+        // بررسی تکراری نبودن محصول
+        var isDuplicate = ProductsOfExport.some(item => 
+            item.ProductID === ID && item.ExportID === ExportID
+        );
+        
+        if (isDuplicate) {
+            alert("این محصول قبلاً اضافه شده است!");
+            return;
+        }
+    
         var edit = `<td dir="ltr" class="Edit" style="text-align:right;">
      <a class="me-3 remove"  href="./deleteExport?ExportId={{.ID}}"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
        <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5"/>
      </svg></a>
      </td>`;
-        var value = '<tr><td class="id" scope="row">' + ID + '</td><td>' + CurrentProductName + '</td><td class="prn">' + Count + '</td><td class="price">' + Meter + '</td><td class="price">' + MeterPrice + '</td><td class="price">' + RolePrice + '</td><td class="itemtotalprice price">' + CalculateItems() + '</td>' + edit + '</tr>';
+        var value = '<tr><td   scope="row">' + ID + '</td><td>' + CurrentProductName + '</td><td class="prn">' + Rolle + '</td><td class="price">' + RollePrice + '</td><td class="price">' + Meter + '</td><td class="price">' + MeterPrice + '</td><td class="price">' + Weight + '</td><td class="price">' + WeightPrice + '</td><td class="price">' + Count + '</td><td class="price">' + CountPrice + '</td><td class="price">' + Barrel + '</td><td class="price">' + BarrelPrice + '</td><td class="itemtotalprice price">' + TotalPrice + '</td>' + edit + '</tr>';
         var newRow = {
             InventoryID: InventoryNumber,
             ProductID: ID,
@@ -50,7 +64,7 @@ jQuery("#AddProductToExport").on("click", function () {
             Meter: Meter,
             Weight: Weight,
             MeterPrice: MeterPrice,
-            RolePrice: RolePrice,
+            RollePrice: RollePrice,
             TotalPrice: TotalPrice
 
         };
@@ -99,7 +113,7 @@ jQuery("#AddProductToExport").on("click", function () {
                 }
             });
         });
-    }
+    // }
 
 })
 // directpay.addEventListener("click",function(){
@@ -131,11 +145,11 @@ function CalculateItems() {
             jQuery(this).val(0)
         }
     });
-    var Meter = jQuery("input[name='Meter']").val()
-    var MeterPrice = jQuery("input[name='MeterPrice']").val()
-    var Count = jQuery("input[name='Count']").val()
-    var CountPrice = jQuery("input[name='RolePrice']").val()
-    var result = (parseFloat(Meter) * parseFloat(MeterPrice)) + (parseFloat(Count) * parseFloat(CountPrice))
+    var target = jQuery(this).val()
+    var id = jQuery(this).attr("name")
+    var price = jQuery("input[name='"+id+"Price']").val()
+
+    var result = (parseFloat(target) * parseFloat(price))
     jQuery("input[name='TotalPrice']").val(result)
     return result
 }
@@ -180,7 +194,7 @@ jQuery("#draft").on("change", function () {
 jQuery(".draft").on("change", function () {
     var Exportid = jQuery(this).attr("Export-id");
     var draftvalue = jQuery(this).prop('checked');
-    
+
     jQuery.ajax({
         method: "POST",
         url: "/Dashboard/draft",  // Make sure this matches your backend route
@@ -191,20 +205,45 @@ jQuery(".draft").on("change", function () {
         contentType: "application/json",
         dataType: "json"
     })
-    .done(function (msg) {
-        console.log("Success:", msg);
-        if (msg.error) {
-            alert("Error: " + msg.error);
-        } else {
-            alert(msg.message);
-        }
-    })
-    .fail(function (jqXHR, textStatus, errorThrown) {
-        console.error("AJAX Error:", textStatus, errorThrown);
-        alert("Request failed: " + textStatus);
-    });
+        .done(function (msg) {
+            console.log("Success:", msg);
+            if (msg.error) {
+                alert("Error: " + msg.error);
+            } else {
+                alert(msg.message);
+            }
+        })
+        .fail(function (jqXHR, textStatus, errorThrown) {
+            console.error("AJAX Error:", textStatus, errorThrown);
+            alert("Request failed: " + textStatus);
+        });
 });
 // Select  Product name for fech the detail of product in Export Page
+
+function ToggleSIBoxInExport(value) {
+    jQuery(".Content .inputs .form-group").each(function (index, element) {
+        jQuery(element).slideUp();
+
+        if (jQuery(element).attr("attr-si") == value) {
+            jQuery(element).slideDown();
+            jQuery(element).removeClass("d-none");
+
+        }
+
+    });
+    jQuery(".Content .calculator .form-group").each(function (index, element) {
+        jQuery(element).slideUp();
+
+        if (jQuery(element).attr("attr-si") == value) {
+            jQuery(element).slideDown();
+            jQuery(element).removeClass("d-none");
+
+        }
+
+    });
+
+}
+
 
 jQuery(".ExportPeoducts select#ProductIs").on("change", function () {
     var ID = this.value;
@@ -219,17 +258,19 @@ jQuery(".ExportPeoducts select#ProductIs").on("change", function () {
             .done(function (msg) {
                 if (msg.result.length > 0) {
                     var product = msg.result[0];
-                    console.log("sss", product.Weight)
-                    jQuery(".ExportPeoducts .ProductsCount").html(product.Count)
+                    ToggleSIBoxInExport(product.MeasurementSystem)
+                    jQuery(".ExportPeoducts .ProductsRolle").html(product.Roll)
                     jQuery(".ExportPeoducts input[name='Count']").attr("max", product.Count)
                     jQuery(".ExportPeoducts .ProductsMeter").html(product.Meter)
                     jQuery(".ExportPeoducts input[name='Meter']").attr("max", product.Meter)
                     jQuery(".ExportPeoducts input[name='Weight']").attr("max", product.Weight)
                     jQuery(".ExportPeoducts .ProductNumber").html(product.Number)
                     jQuery(".ExportPeoducts .ProductsWeight").html(product.Weight)
-                    jQuery(".ExportPeoducts input[name='RolePrice']").attr("value", product.RolePrice)
+                    jQuery(".ExportPeoducts .ProductsBarrel").html(product.Barrel)
+                    jQuery(".ExportPeoducts input[name='RollePrice']").attr("value", product.RollePrice)
                     jQuery(".ExportPeoducts input[name='MeterPrice']").attr("value", product.MeterPrice)
-                    jQuery(".ExportPeoducts input[name='TotalPrice']").attr("value", product.MeterPrice)
+                    jQuery(".ExportPeoducts input[name='BarrelPrice']").attr("value", product.BarrelPrice)
+                    // jQuery(".ExportPeoducts input[name='TotalPrice']").attr("value", product.MeterPrice)
                     jQuery(".ExportPeoducts .Content").slideDown();
                     jQuery(".ExportPeoducts  input[type='number']").each(function () {
                         var val = jQuery(this).val();
@@ -343,8 +384,9 @@ jQuery("input[name='Count']").on("keyup", function () {
 
 // Calculate TotalPrice by price of meter  
 
-jQuery("input[name='Meter']").on("keyup", function () {
+jQuery(".Content .inputs input").on("keyup", function () {
     var number = parseInt(this.value)
+    var id = jQuery(this).attr("name");
     if (number != 0) {
         jQuery(".modal-footer").slideDown();
 
@@ -352,17 +394,17 @@ jQuery("input[name='Meter']").on("keyup", function () {
         jQuery(".modal-footer").slideUp();
     }
     // jQuery("input[name='Count']").val(0);
-    RolePrice = parseFloat(jQuery(".ExportPeoducts input[name='MeterPrice']").val());
+    targetPrice = parseFloat(jQuery(".ExportPeoducts .calculator input[name='" + id + "Price']").val());
     Count = parseFloat(jQuery(this).val());
-
-    if (isNaN(RolePrice) || isNaN(Count)) {
+    var TotalPrice = 0
+    if (isNaN(targetPrice) || isNaN(Count)) {
         console.log("Invalid number");
     } else {
-        var TotalPrice = RolePrice * Count;
+        var TotalPrice = targetPrice * Count;
     }
 
 
-    jQuery("input[name='TotalPrice']").val(CalculateItems())
+    jQuery("input[name='TotalPrice']").val(TotalPrice)
     jQuery("#ProductBox input[type='number']").each(function () {
         var val = jQuery(this).val();
         var val = PersianTools.addCommas(val);
@@ -1305,46 +1347,46 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const measurementSystem = document.querySelector('select[name="MeasurementSystem"]');
-    
+
     if (measurementSystem) {
-      // For edit mode
-      measurementSystem.addEventListener('change', function() {
-        const selectedValue = this.value;
-        
-        // Hide all sections first
-        document.querySelectorAll('[id$="-section"]').forEach(section => {
-          section.style.display = 'none';
+        // For edit mode
+        measurementSystem.addEventListener('change', function () {
+            const selectedValue = this.value;
+
+            // Hide all sections first
+            document.querySelectorAll('[id$="-section"]').forEach(section => {
+                section.style.display = 'none';
+            });
+
+            // Show selected section
+            if (selectedValue) {
+                document.getElementById(selectedValue + '-section').style.display = 'block';
+            }
         });
-        
-        // Show selected section
-        if (selectedValue) {
-          document.getElementById(selectedValue + '-section').style.display = 'block';
+
+        // Trigger change event on page load for edit mode
+        if (measurementSystem.value) {
+            measurementSystem.dispatchEvent(new Event('change'));
         }
-      });
-      
-      // Trigger change event on page load for edit mode
-      if (measurementSystem.value) {
-        measurementSystem.dispatchEvent(new Event('change'));
-      }
     } else {
-      // For add mode
-      const addModeSelect = document.getElementById('measurement-system');
-      if (addModeSelect) {
-        addModeSelect.addEventListener('change', function() {
-          const selectedValue = this.value;
-          
-          // Hide all sections first
-          document.querySelectorAll('[id$="-section"]').forEach(section => {
-            section.style.display = 'none';
-          });
-          
-          // Show selected section
-          if (selectedValue) {
-            document.getElementById(selectedValue + '-section').style.display = 'block';
-          }
-        });
-      }
+        // For add mode
+        const addModeSelect = document.getElementById('measurement-system');
+        if (addModeSelect) {
+            addModeSelect.addEventListener('change', function () {
+                const selectedValue = this.value;
+
+                // Hide all sections first
+                document.querySelectorAll('[id$="-section"]').forEach(section => {
+                    section.style.display = 'none';
+                });
+
+                // Show selected section
+                if (selectedValue) {
+                    document.getElementById(selectedValue + '-section').style.display = 'block';
+                }
+            });
+        }
     }
-  });
+});

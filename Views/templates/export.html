@@ -9,7 +9,7 @@
             {{else if eq .success false}}
             {{template "danger_notif" .}}
             {{end}}
-            <div class="col-xs-12 col-sm-9">
+            <div class="col-xs-12 col-sm-12">
                 <form name="expotform" class="form-horizontal mb-4" method="post" action="/Dashboard/{{.action}}">
                     <div class="row ">
                         <div class="panel panel-default col-12">
@@ -275,20 +275,26 @@
                                             <tr>
                                                 <th scope="col">#</th>
                                                 <th scope="col">نام محصول</th>
-                                                <th scope="col">تعداد </th>
-                                                <th scope="col">متراژ</th>
-                                                <th scope="col">قیمت هر متر</th>
-                                                <th scope="col">قیمت هر رول</th>
+                                                <th attr-si="roll" class="psi items"  scope="col"  >تعداد رول</th>
+                                                <th attr-si="roll" class="pr items" scope="col">قیمت هر رول</th>
+                                                <th attr-si="meter" class="psi items" scope="col">متراژ</th>
+                                                <th attr-si="meter" class="pr items" scope="col">قیمت هر متر</th>
+                                                <th attr-si="weight" class="psi items" scope="col">وزن</th>
+                                                <th attr-si="weight" class="pr items" scope="col">قیمت هر کیلو</th>
+                                                <th attr-si="count" class="psi items" scope="col">تعداد</th>
+                                                <th attr-si="count" class="pr items" scope="col">قیمت هر عدد</th>
+                                                <th attr-si="barrel" class="psi items" scope="col">تعداد</th>
+                                                <th attr-si="barrel" class="pr items" scope="col">قیمت هر بشکه</th>
                                                 <th scope="col"> قیمت کل</th>
                                                 <th scope="col"> ویرایش</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <td class="Notfound" colspan="8">محصولی اضافه نشده است</td>
+                                           <tr> <td class="Notfound " colspan="14">محصولی اضافه نشده است</td></tr>
                                         </tbody>
                                         <tfoot style="background-color: #ddd;">
                                             <tr>
-                                                <td class="price" colspan="8" style="text-align: left;">0</td>
+                                                <td class="price" colspan="14" style="text-align: left;">0</td>
                                             </tr>
                                             <input class="d-none" name="ExportTotalPrice" novalidate
                                                 id="ExportTotalPrice" type="number">
@@ -351,61 +357,148 @@
                                                         </div>
                                                     </div>
 
-                                                    <div class=" Content" style="display: none;">
+                                                    <div class="Content" style="display: none;">
                                                         <div class="row">
-                                                            <div class="form-group col-lg-4  mt-3">
-                                                                <label class="col-sm-12 control-label" min="0">تعداد
-                                                                    رول</label>
-                                                                <div class="col-sm-12">
-                                                                    <input style="text-align:right;" min="0"
-                                                                        name="Count" pattern="[0-9]*" type="number"
-                                                                        class="form-control">
-                                                                    <p><span class="ProductsCount"> </span>موجودی</p>
+                                                            <!-- inputs  -->
+                                                            <input type="hidden" name="measurementsystem">
+                                                            <div class="inputs">
+                                                                <div attr-si="roll"
+                                                                    class="form-group col-lg-12  mt-3 d-none">
+                                                                    <label class="col-sm-12 control-label" min="0">تعداد
+                                                                        رول</label>
+                                                                    <div class="col-sm-12">
+                                                                        <input style="text-align:right;" min="0"
+                                                                            name="Rolle" pattern="[0-9]*" type="number"
+                                                                            class="form-control">
+                                                                        <small class="text-muted w-100">موجودی فعلی:
+                                                                            <span class="ProductsRolle">0</span>
+                                                                            رول</small>
+                                                                    </div>
                                                                 </div>
+                                                                <div attr-si="meter"
+                                                                    class="form-group col-lg-12  mt-3 d-none">
+                                                                    <label class="col-sm-12 control-label"
+                                                                        min="0">متراژ</label>
+                                                                    <div class="col-sm-12">
+                                                                        <input name="Meter" pattern="[0-9]*" min="0"
+                                                                            type="number" class="form-control ">
+                                                                        <small class="text-muted w-100">موجودی فعلی:
+                                                                            <span class="ProductsMeter">0</span>
+                                                                            متر</small>
+                                                                    </div>
+                                                                </div>
+                                                                <div attr-si="weight"
+                                                                    class="form-group col-lg-12  mt-3 d-none">
+                                                                    <label class="col-sm-12 control-label"
+                                                                        min="0">وزن</label>
+                                                                    <div class="col-sm-12">
+                                                                        <input name="Weight" pattern="[0-9]*" min="0"
+                                                                            type="number" class="form-control ">
+                                                                        <small class="text-muted w-100">موجودی فعلی:
+                                                                            <span class="ProductsWeight">0</span>
+                                                                            کیلوگرم</small>
+                                                                    </div>
+                                                                </div>
+                                                                <div attr-si="count"
+                                                                    class="form-group col-lg-12  mt-3 d-none">
+                                                                    <label class="col-sm-12 control-label"
+                                                                        min="0">تعداد</label>
+                                                                    <div class="col-sm-12">
+                                                                        <input name="Count" pattern="[0-9]*" min="0"
+                                                                            type="number" class="form-control ">
+
+                                                                        <small class="text-muted w-100">موجودی فعلی:
+                                                                            <span class="ProductsWeight">0</span>
+                                                                            عدد</small>
+                                                                    </div>
+                                                                </div>
+                                                                <div attr-si="barrel"
+                                                                    class="form-group col-lg-12  mt-3 d-none">
+                                                                    <label class="col-sm-12 control-label"
+                                                                        min="0">بشکه</label>
+                                                                    <div class="col-sm-12">
+                                                                        <input name="Barrel" pattern="[0-9]*" min="0"
+                                                                            type="number" class="form-control ">
+                                                                        <small class="text-muted w-100">موجودی فعلی:
+                                                                            <span class="ProductsBarrel">0</span>
+                                                                            بشکه</small>
+
+                                                                    </div>
+                                                                </div>
+
+
                                                             </div>
-                                                            <div class="form-group col-lg-4  mt-3">
-                                                                <label class="col-sm-12 control-label"
-                                                                    min="0">متراژ</label>
-                                                                <div class="col-sm-12">
-                                                                    <input name="Meter" pattern="[0-9]*" min="0"
-                                                                        type="number" class="form-control ">
-                                                                    <p><span class="ProductsMeter"> </span>موجودی</p>
+                                                            <div class="calculator">
+                                                                <!-- calculator -->
+                                                                <div attr-si="roll" class="form-group col-lg-12  mt-3">
+                                                                    <label class="col-sm-12   control-label"
+                                                                        min="0">قیمت هر
+                                                                        رول</label>
+                                                                    <div class="col-sm-12">
+                                                                        <input name="RollePrice" min="0" readonly
+                                                                            type="number" value="{{.RollePrice}}"
+                                                                            class="form-control bg-dark text-white">
+                                                                    </div>
+                                                                    <span class="out"></span>&nbsp;تومان
                                                                 </div>
-                                                            </div>
-                                                            <div class="form-group col-lg-4  mt-3">
-                                                                <label class="col-sm-12 control-label"
-                                                                    min="0">وزن</label>
-                                                                <div class="col-sm-12">
-                                                                    <input name="Weight" pattern="[0-9]*" min="0"
-                                                                        type="number" class="form-control ">
-                                                                    <p><span class="ProductsWeight"> </span>موجودی</p>
+                                                                <div attr-si="meter"
+                                                                    class="form-group  col-lg-12  mt-3">
+                                                                    <label class="col-sm-12 control-label" min="0">قیمت
+                                                                        هر
+                                                                        متر</label>
+                                                                    <div class="col-sm-12">
+                                                                        <input name="MeterPrice" min="0" readonly
+                                                                            type="number" value="{{.MeterPrice}}"
+                                                                            class="form-control bg-dark text-white">
+                                                                    </div>
+                                                                    <span class="out"></span>&nbsp;تومان
                                                                 </div>
-                                                            </div>
-                                                            <div class="form-group col-lg-6  mt-3">
-                                                                <label class="col-sm-12   control-label" min="0">قیمت هر
-                                                                    رول</label>
-                                                                <div class="col-sm-12">
-                                                                    <input name="RolePrice" min="0" readonly
-                                                                        type="number" value="{{.Email}}"
-                                                                        class="form-control">
+                                                                <div attr-si="weight"
+                                                                    class="form-group  col-lg-12  mt-3">
+                                                                    <label class="col-sm-12 control-label" min="0">قیمت
+                                                                        هر
+                                                                        متر</label>
+                                                                    <div class="col-sm-12">
+                                                                        <input name="WeightPrice" min="0" readonly
+                                                                            type="number" value="{{.WeightPrice}}"
+                                                                            class="form-control bg-dark text-white">
+                                                                    </div>
+                                                                    <span class="out"></span>&nbsp;تومان
                                                                 </div>
-                                                                <span class="out"></span>&nbsp;تومان
-                                                            </div>
-                                                            <div class="form-group  col-lg-6  mt-3">
-                                                                <label class="col-sm-12 control-label" min="0">قیمت هر
-                                                                    متر</label>
-                                                                <div class="col-sm-12">
-                                                                    <input name="MeterPrice" min="0" readonly
-                                                                        type="number" value="{{.Email}}"
-                                                                        class="form-control">
+                                                                <div attr-si="count"
+                                                                    class="form-group  col-lg-12  mt-3">
+                                                                    <label
+                                                                        class="col-sm-12 control-label bg-dark text-white"
+                                                                        min="0">قیمت
+                                                                        هر
+                                                                        عدد</label>
+                                                                    <div class="col-sm-12">
+                                                                        <input name="CountPrice" min="0" readonly
+                                                                            type="number" value="{{.CountPrice}}"
+                                                                            class="form-control bg-dark text-white">
+                                                                    </div>
+                                                                    <span class="out"></span>&nbsp;تومان
                                                                 </div>
-                                                                <span class="out"></span>&nbsp;تومان
+                                                                <div attr-si="barrel"
+                                                                    class="form-group  col-lg-12  mt-3">
+                                                                    <label class="col-sm-12 control-label" min="0">قیمت
+                                                                        هر
+                                                                        بشکه</label>
+                                                                    <div class="col-sm-12">
+                                                                        <input name="BarrelPrice" min="0" readonly
+                                                                            type="number" value="{{.BarrelPrice}}"
+                                                                            class="form-control bg-dark text-white">
+                                                                    </div>
+                                                                    <span class="out"></span>&nbsp;تومان
+                                                                </div>
+
                                                             </div>
                                                             <div class="form-group mt-3">
                                                                 <label class="col-sm-12 control-label" min="0">مجموع
                                                                     قیمت </label>
                                                                 <div class="col-sm-12">
-                                                                    <input type="number" class="form-control" min="0"
+                                                                    <input type="number"
+                                                                        class="form-control bg-dark text-white" min="0"
                                                                         name="TotalPrice" readonly>
                                                                 </div>
                                                                 <span class="out"></span>&nbsp;تومان

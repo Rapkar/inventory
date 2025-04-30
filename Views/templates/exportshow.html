@@ -10,6 +10,7 @@
       }
     }
   </style>
+  {{if eq .exporttype "buyer"}}
   <div id="myTable" class="h-100 d-flex align-items-center mt-5">
     <div class="container mt-5">
       <div class="card" style="border: 1px solid rgba(0,0,0,.125);" id="card">
@@ -84,8 +85,6 @@
                     </td>
                   </tr>
                 </table>
-
-
               </div>
               {{end}}
               <div class="row my-2 mx-1 justify-content-center">
@@ -107,7 +106,7 @@
                       <th scope="row">{{.ID}}</th>
                       <td>{{.Name}}</td>
                       <td class="prn">{{.Count}}</td>
-                      
+
                       <td class="price">{{.RolePrice}}</td>
                       <td class="prn">{{.Meter}}</td>
                       <td class="price">{{.MeterPrice}}</td>
@@ -128,13 +127,15 @@
                     <td>
                       <ul class="list-unstyled">
 
-                        <li class="text-muted d-flex   ms-3 mt-2"  >  ارزش افزوده :  <span class="text-black me-4 price">{{.Tax}}</span></li>
+                        <li class="text-muted d-flex   ms-3 mt-2"> ارزش افزوده : <span
+                            class="text-black me-4 price">{{.Tax}}</span></li>
                       </ul>
                     </td>
                     <td>
                       <div class="d-flex justify-content-center flex-column">
                         <p class="text-black float-start" dir="ltr"><span class="text-black me-3"></span> قیمت کل :
-                          <span class="price" style="font-size: 25px;">{{.TotalPrice}}</span> تومان </p>
+                          <span class="price" style="font-size: 25px;">{{.TotalPrice}}</span> تومان
+                        </p>
                         <p style="font-size: 12px;" class="text-black float-start" dir="ltr"><span
                             class="text-black me-3"></span> قیمت کل : <span class="wordprice"
                             style="font-size: 12px;">{{.TotalPrice}}</span> تومان </p>
@@ -163,4 +164,163 @@
           </div>
         </div>
       </div>
-      {{template "footer.html"}}
+    </div>
+  </div>
+  {{else}}
+  <div id="myTable" class="h-100 d-flex align-items-center mt-5">
+    <div class="container mt-5">
+      <div class="card" style="border: 1px solid rgba(0,0,0,.125);" id="card">
+        <div class="card-body">
+          <div class="container mb-5 mt-3">
+            <div style="display: flex !important;flex-wrap: wrap;" class="row d-flex align-items-baseline">
+              <table style="margin-bottom: 30px;">
+                <tr>
+                  <td> {{range .exports}}
+                    <p style="color: #7e8d9f;font-size: 20px;margin: 0;">شماره فاکتور >> <strong>{{.Number}}</strong>
+                    </p>
+                    {{end}}
+                  </td>
+                  <td style="text-align: left;"> <a onclick="Print()" data-mdb-ripple-init id="printButton"
+                      class="  btn btn-light text-capitalize border-0" data-mdb-ripple-color="dark"><i
+                        class="fas fa-print text-primary"></i> پرینت</a>
+
+                  </td>
+                </tr>
+              </table>
+
+
+              <hr style="border-top: 1px solid #dfdfdf;height: 2px;opacity: 0.5;">
+            </div>
+
+            <div class="container">
+              <div class="col-md-12">
+                <div class="text-center">
+                  <i class="fab fa-mdb fa-4x ms-0" style="color:#5d9fc5 ;"></i>
+                  <p class="pt-0">عایق سازان سپیدگام</p>
+                  <p class="pt-0" style="font-size: 12px;">(ایزوگام شرق عایق اصل)</p>
+                </div>
+
+              </div>
+
+              {{range .exports}}
+              <div class="row">
+
+                <table>
+
+                  <tr>
+                    <td>
+                      <div class="pr-5 ms-3">
+                        <ul class="list-unstyled">
+                          <li class="text-muted">خریدار: <span style="color:#5d9fc5 ;">{{.Name}}</span></li>
+                          <li class="text-muted">آدرس: <br>{{.Address}}</li>
+                          <li class="text-muted " dir="ltr"><i class="fas fa-phone"></i>{{.Phonenumber}}</li>
+                        </ul>
+                      </div>
+                    </td>
+                    <td style="text-align: left;">
+                      <div class="pl-5 me-3">
+                        <p class="text-muted">شماره فاکتور</p>
+
+                        <ul class="list-unstyled">
+                          <li class="text-muted"><i class="fas fa-circle" style="color:#84B0CA ;"></i> <span
+                              class="fw-bold prn">{{.Number}}</span></li>
+
+                          <li class="text-muted"><i class="fas fa-circle" style="color:#84B0CA ;"></i> <span
+                              class="me-1 fw-bold">وضعیت:</span><span style="background-color: #ffc107 !important;"
+                              class="badge bg-warning text-black fw-bold">
+                              فروخته شده</span></li>
+                        </ul>
+
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="2">
+                      <p class="text-muted ms-3"><i class="fas fa-circle" style="color:#84B0CA ;"></i> <span
+                          class="fw-bold">تاریخ خرید: </span>{{.CreatedAt}}</p>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+              {{end}}
+              <div class="row my-2 mx-1 justify-content-center">
+                <table class="table table-striped table-borderless ">
+                  <thead style="background-color:#84B0CA ;" class="text-white">
+                    <tr>
+                      <th scope="col">#</th>
+                      <th scope="col">توضیحات</th>
+                      <th scope="col">تعداد</th>
+                      <th scope="col">قیمت عدد</th>
+                      <th scope="col">متراژ</th>
+                      <th scope="col">قیمت متر</th>
+                      <th scope="col">قیمت کل</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {{ range .products}}
+                    <tr>
+                      <th scope="row">{{.ID}}</th>
+                      <td>{{.Name}}</td>
+                      <td class="prn">{{.Count}}</td>
+
+                      <td class="price">{{.RollePrice}}</td>
+                      <td class="prn">{{.Meter}}</td>
+                      <td class="price">{{.MeterPrice}}</td>
+
+                      <td dir="ltr" class="TotalPrice" style="text-align:right;">{{.TotalPrice}}</td>
+                    </tr>
+                    {{end}}
+                  </tbody>
+
+                </table>
+              </div>
+              <div class="row">
+
+                {{range .exports}}
+
+                <table>
+                  <tr>
+                    <td>
+                      <ul class="list-unstyled">
+
+                        <li class="text-muted d-flex   ms-3 mt-2"> ارزش افزوده : <span
+                            class="text-black me-4 price">{{.Tax}}</span></li>
+                      </ul>
+                    </td>
+                    <td>
+                      <div class="d-flex justify-content-center flex-column">
+                        <p class="text-black float-start" dir="ltr"><span class="text-black me-3"></span> قیمت کل :
+                          <span class="price" style="font-size: 25px;">{{printf "%.0f"  .TotalPrice}}</span> تومان
+                        </p>
+                        <p style="font-size: 12px;" class="text-black float-start" dir="ltr"><span
+                            class="text-black me-3"></span> قیمت کل : <span class="wordprice"
+                            style="font-size: 12px;">{{printf "%.0f"  .TotalPrice}}</span> تومان </p>
+                      </div>
+
+              </div>
+              </td>
+              </tr>
+              </table>
+
+              <div class="col-xl-8">
+                <p class="ms-3"> {{.Describe}}</p>
+
+              </div>
+              {{end}}
+              <hr>
+              <div class="row">
+                <div class="col-xl-10">
+                  <p>باتشکر از خرید شما</p>
+                </div>
+                <div class="col-xl-2">
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {{end}}
+  {{template "footer.html"}}
