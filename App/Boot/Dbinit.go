@@ -197,6 +197,7 @@ func Init() {
 				Number:      "9283422",
 				Phonenumber: "09125174854",
 				UserID:      existingUser.ID,
+				CreatorName: existingUser.Name,
 				Address:     "کرج -کرج=-ایران -سیسی",
 				TotalPrice:  10000000,
 				Tax:         10,

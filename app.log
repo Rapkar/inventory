@@ -1596,3 +1596,63 @@
 2025/05/01 02:21:27 خطا در دریافت اتصال دیتابیس: &{0xc0001e6510 <nil> 7 0xc00053c1c0 0}
 2025/05/01 02:21:31 خطا در دریافت اتصال دیتابیس: &{0xc0000202d0 <nil> 7 0xc000e8dc00 0}
 2025/05/01 02:22:41 new Export submited
+2025/05/01 09:09:03 🚀 Logger initialized
+2025/05/01 09:09:03 🔧 Booting application...
+2025/05/01 09:09:04 📦 ScheduleBackups started
+2025/05/01 09:09:04 ✅ created backup success backup-2025-04-29-09-09-04.sql
+2025/05/01 09:09:04 ✅ created backup success backup-2025-04-30-09-09-04.sql
+2025/05/01 09:21:45 🚀 Logger initialized
+2025/05/01 09:21:45 🔧 Booting application...
+2025/05/01 09:21:46 📦 ScheduleBackups started
+2025/05/01 09:21:46 ✅ created backup success backup-2025-04-29-09-21-46.sql
+2025/05/01 09:21:46 ✅ created backup success backup-2025-04-30-09-21-46.sql
+2025/05/01 09:49:07 🚀 Logger initialized
+2025/05/01 09:49:07 🔧 Booting application...
+2025/05/01 09:49:08 📦 ScheduleBackups started
+2025/05/01 09:51:55 🚀 Logger initialized
+2025/05/01 09:51:55 🔧 Booting application...
+2025/05/01 09:51:56 📦 ScheduleBackups started
+2025/05/01 09:51:56 ✅ created backup success backup-2025-04-30-09-51-56.sql
+2025/05/01 09:51:56 ✅ created backup success backup-2025-04-29-09-51-56.sql
+2025/05/01 10:29:21 🚀 Logger initialized
+2025/05/01 10:29:21 🔧 Booting application...
+2025/05/01 10:29:22 📦 ScheduleBackups started
+2025/05/01 10:29:23 ✅ created backup success backup-2025-04-29-10-29-22.sql
+2025/05/01 10:29:23 ✅ created backup success backup-2025-04-30-10-29-22.sql
+2025/05/01 10:29:29 خطا در دریافت اتصال دیتابیس: &{0xc0005b22d0 <nil> 7 0xc000314380 0}
+2025/05/01 10:30:37 خطا در دریافت اتصال دیتابیس: &{0xc000442240 <nil> 7 0xc00037c700 0}
+2025/05/01 10:31:09 new Export submited
+2025/05/01 10:33:17 🚀 Logger initialized
+2025/05/01 10:33:17 🔧 Booting application...
+2025/05/01 10:33:18 📦 ScheduleBackups started
+2025/05/01 10:33:19 ✅ created backup success backup-2025-04-30-10-33-18.sql
+2025/05/01 10:33:19 ✅ created backup success backup-2025-04-29-10-33-18.sql
+2025/05/01 10:34:41 🚀 Logger initialized
+2025/05/01 10:34:41 🔧 Booting application...
+2025/05/01 10:34:42 📦 ScheduleBackups started
+2025/05/01 10:34:42 ✅ created backup success backup-2025-04-30-10-34-42.sql
+2025/05/01 10:34:42 ✅ created backup success backup-2025-04-29-10-34-42.sql
+2025/05/01 12:24:19 🚀 Logger initialized
+2025/05/01 12:24:19 🔧 Booting application...
+2025/05/01 12:24:20 📦 ScheduleBackups started
+2025/05/01 12:26:40 🚀 Logger initialized
+2025/05/01 12:26:40 🔧 Booting application...
+2025/05/01 12:26:41 📦 ScheduleBackups started
+2025/05/01 12:27:37 🚀 Logger initialized
+2025/05/01 12:27:37 🔧 Booting application...
+2025/05/01 12:27:38 📦 ScheduleBackups started
+2025/05/01 12:28:26 🚀 Logger initialized
+2025/05/01 12:28:26 🔧 Booting application...
+2025/05/01 12:28:27 📦 ScheduleBackups started
+2025/05/01 12:28:35 🚀 Logger initialized
+2025/05/01 12:28:35 🔧 Booting application...
+2025/05/01 12:28:36 📦 ScheduleBackups started
+2025/05/01 12:28:36 ✅ created backup success backup-2025-04-29-12-28-36.sql
+2025/05/01 12:28:36 ✅ created backup success backup-2025-04-30-12-28-36.sql
+2025/05/01 12:28:57 ❌ Invalid ExportId: strconv.ParseUint: parsing "": invalid syntax
+2025/05/01 12:31:15 ❌ err in Export delete : Error 1451 (23000): Cannot delete or update a parent row: a foreign key constraint fails (`Inventory`.`export_products`, CONSTRAINT `fk_exports_export_products` FOREIGN KEY (`export_id`) REFERENCES `exports` (`id`))
+2025/05/01 12:59:46 🚀 Logger initialized
+2025/05/01 12:59:46 🔧 Booting application...
+2025/05/01 12:59:47 📦 ScheduleBackups started
+2025/05/01 12:59:48 ✅ created backup success backup-2025-04-29-12-59-47.sql
+2025/05/01 12:59:48 ✅ created backup success backup-2025-04-30-12-59-47.sql

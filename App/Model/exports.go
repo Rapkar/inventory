@@ -230,6 +230,100 @@ func GetPaymentNumberById(c *gin.Context) ([]Boot.Payments, error) {
 	return payments, nil
 }
 
+const (
+	RollColumn   int16 = 1 << 0
+	MeterColumn  int16 = 1 << 1
+	WeightColumn int16 = 1 << 2
+	CountColumn  int16 = 1 << 3
+	BarrelColumn int16 = 1 << 4
+)
+
+func GetExportProductsColumns(products []Boot.EscapeExportProducts) int16 {
+	var columns int16 = 0
+
+	for _, p := range products {
+		if p.Roll > 0 {
+			columns |= RollColumn
+		}
+		if p.Meter > 0 {
+			columns |= MeterColumn
+		}
+		if p.Weight > 0 {
+			columns |= WeightColumn
+		}
+		if p.Count > 0 {
+			columns |= CountColumn
+		}
+		if p.Barrel > 0 {
+			columns |= BarrelColumn
+		}
+	}
+	return columns
+}
+func GetExportById2(c *gin.Context) (Boot.EscapeExport, []Boot.EscapeExportProducts) {
+	// دریافت ID از Query Param
+	Id := c.DefaultQuery("ExportId", "")
+	ExportID, err := strconv.ParseUint(Id, 10, 64)
+	if err != nil || ExportID == 0 {
+		log.Println("❌ Invalid ExportId:", err)
+		return Boot.EscapeExport{}, nil
+	}
+
+	var export Boot.Export
+	// جستجو در جدول Export
+	err = Boot.DB().Model(&Boot.Export{}).Where("id = ?", ExportID).First(&export).Error
+	if err != nil {
+		log.Println("❌ Error fetching export by ID:", err)
+		return Boot.EscapeExport{}, nil
+	}
+
+	escapeExport := Boot.EscapeExport{
+		ID:              export.ID,
+		Name:            export.Name,
+		Address:         export.Address,
+		Number:          export.Number,
+		Phonenumber:     export.Phonenumber,
+		Tax:             export.Tax,
+		Describe:        export.Describe,
+		InventoryNumber: int32(export.InventoryID),
+		ExportProducts:  export.ExportProducts,
+		CreatedAt:       export.CreatedAt,
+		CreatorName:     export.CreatorName,
+		TotalPrice:      export.TotalPrice,
+		Draft:           export.Draft,
+	}
+
+	// جستجو برای محصولات مربوط به Export
+	var exportProducts []Boot.ExportProducts
+	err = Boot.DB().Model(&Boot.ExportProducts{}).Where("export_id = ?", ExportID).Find(&exportProducts).Error
+	if err != nil {
+		log.Println("❌ Error fetching export products:", err)
+		return escapeExport, nil
+	}
+
+	var escapeExportProducts []Boot.EscapeExportProducts
+	for _, exportProduct := range exportProducts {
+		escapeExportProduct := Boot.EscapeExportProducts{
+			ID:              exportProduct.ID,
+			Name:            exportProduct.Name,
+			ExportID:        exportProduct.ExportID,
+			InventoryNumber: int32(exportProduct.InventoryID),
+			TotalPrice:      exportProduct.TotalPrice,
+			Roll:            exportProduct.Roll,
+			Meter:           exportProduct.Meter,
+			Count:           exportProduct.Count,
+			Weight:          exportProduct.Weight,
+			Barrel:          exportProduct.Barrel,
+			RollePrice:      exportProduct.RollePrice,
+			MeterPrice:      exportProduct.MeterPrice,
+			CountPrice:      exportProduct.CountPrice,
+			BarrelPrice:     exportProduct.BarrelPrice,
+		}
+		escapeExportProducts = append(escapeExportProducts, escapeExportProduct)
+	}
+
+	return escapeExport, escapeExportProducts
+}
 func GetExportById(c *gin.Context) ([]Boot.EscapeExport, []Boot.EscapeExportProducts) {
 	// دریافت ID از Query Param
 	Id := c.DefaultQuery("ExportId", "")
@@ -259,6 +353,7 @@ func GetExportById(c *gin.Context) ([]Boot.EscapeExport, []Boot.EscapeExportProd
 			InventoryNumber: int32(export.InventoryID),
 			ExportProducts:  export.ExportProducts,
 			CreatedAt:       export.CreatedAt,
+			CreatorName:     export.CreatorName,
 			TotalPrice:      export.TotalPrice,
 		}
 		escapeExports = append(escapeExports, escapeExport)
@@ -278,12 +373,17 @@ func GetExportById(c *gin.Context) ([]Boot.EscapeExport, []Boot.EscapeExportProd
 			ID:              exportProduct.ID,
 			Name:            exportProduct.Name,
 			ExportID:        exportProduct.ExportID,
-			RollePrice:      exportProduct.RollePrice,
-			MeterPrice:      exportProduct.MeterPrice,
 			InventoryNumber: int32(exportProduct.ID),
 			TotalPrice:      exportProduct.TotalPrice,
-			Count:           exportProduct.Count,
+			Roll:            exportProduct.Roll,
 			Meter:           exportProduct.Meter,
+			Count:           exportProduct.Count,
+			Weight:          exportProduct.Weight,
+			Barrel:          exportProduct.Barrel,
+			RollePrice:      exportProduct.RollePrice,
+			MeterPrice:      exportProduct.MeterPrice,
+			CountPrice:      exportProduct.CountPrice,
+			BarrelPrice:     exportProduct.BarrelPrice,
 		}
 		escapeExportProducts = append(escapeExportProducts, escapeExportProduct)
 	}

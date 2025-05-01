@@ -273,3 +273,6 @@ func MakeRandValue() string {
 
 	return uniqueString
 }
+func BitAnd(a, b int16) bool {
+	return a&b != 0
+}

@@ -1,0 +1,273 @@
+{{template "header" . }}
+{{template "navbar" . }}
+
+<body>
+    <div class="container mt-5">
+        {{if .success}}
+        {{template "success_notif" .}}
+        {{else if eq .success false}}
+        {{template "danger_notif" .}}
+        {{end}}
+        
+        <div class="row">
+            <div class="col-12">
+                <h2 class="mb-4">ویرایش فاکتور {{.exports.Number}}</h2>
+                
+                <form method="post" action="/exportedit/update/{{.exports.ID}}?type={{.exporttype}}">
+                    <input type="hidden" name="ExportID" value="{{.exports.ID}}">
+                    <form>
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5>اطلاعات مشتری</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="form-group col-md-6">
+                                    <label>نام خریدار</label>
+                                    <input type="text" class="form-control" name="Name" value="{{.exports.Name}}" required>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label>شماره تماس</label>
+                                    <input type="tel" class="form-control" name="Phonenumber" value="{{.exports.Phonenumber}}" required>
+                                </div>
+                                <div class="form-group col-12">
+                                    <label>آدرس</label>
+                                    <textarea class="form-control" name="Address">{{.exports.Address}}</textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5>اطلاعات فاکتور</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="form-group col-md-4">
+                                    <label>شماره فاکتور</label>
+                                    <input type="text" class="form-control" value="{{.exports.Number}}" readonly>
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label>مالیات و ارزش افزوده</label>
+                                    <input type="number" class="form-control price" name="Tax" value="{{.exports.Tax}}">
+                                    <span class="out"></span>&nbsp;تومان
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label>تاریخ ایجاد</label>
+                                    <input type="text" class="form-control" value="{{.exports.CreatedAt}}" readonly>
+                                </div>
+                                <div class="form-group col-12">
+                                    <label>توضیحات</label>
+                                    <textarea class="form-control" name="Describe">{{.exports.Describe}}</textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5>محصولات</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>نام محصول</th>
+                                            {{range .columns}}
+                                            <th>{{.}}</th>
+                                            {{end}}
+                                            <th>قیمت کل</th>
+                                            <th>عملیات</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {{range $index, $product := .products}}
+                                        <tr>
+                                            <td>{{$index | increment}}</td>
+                                            <td>{{$product.Name}}</td>
+                                            
+                                            {{if eq $product.MeasurementSystem "roll"}}
+                                            <td>{{$product.Roll}} رول</td>
+                                            <td>{{$product.RollePrice}} تومان</td>
+                                            {{else if eq $product.MeasurementSystem "meter"}}
+                                            <td>{{$product.Meter}} متر</td>
+                                            <td>{{$product.MeterPrice}} تومان</td>
+                                            {{else if eq $product.MeasurementSystem "weight"}}
+                                            <td>{{$product.Weight}} کیلوگرم</td>
+                                            <td>{{$product.WeightPrice}} تومان</td>
+                                            {{else if eq $product.MeasurementSystem "count"}}
+                                            <td>{{$product.Count}} عدد</td>
+                                            <td>{{$product.CountPrice}} تومان</td>
+                                            {{else if eq $product.MeasurementSystem "barrel"}}
+                                            <td>{{$product.Barrel}} بشکه</td>
+                                            <td>{{$product.BarrelPrice}} تومان</td>
+                                            {{end}}
+                                            
+                                            <td>{{$product.TotalPrice}} تومان</td>
+                                            <td>
+                                                <a href="/exportedit/removeproduct/{{$product.ID}}?exportid={{$.exports.ID}}&type={{$.exporttype}}" class="btn btn-sm btn-danger">حذف</a>
+                                            </td>
+                                        </tr>
+                                        {{end}}
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="{{add (len .columns) 2}}" class="text-left">جمع کل:</td>
+                                            <td>{{.exports.TotalPrice}} تومان</td>
+                                            <td></td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                            
+                            <button type="button" class="btn btn-primary mt-3" data-toggle="modal" data-target="#addProductModal">
+                                افزودن محصول جدید
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5>پرداخت‌ها</h5>
+                        </div>
+                        <div class="card-body">
+                            <!-- Payment information would go here -->
+                            <div class="text-right">
+                                <p>مجموع پرداختی: <span id="totalPayments">0</span> تومان</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-success">ذخیره تغییرات</button>
+                        <a href="/Dashboard/exports" class="btn btn-secondary">انصراف</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Add Product Modal -->
+    <div class="modal fade" id="addProductModal" tabindex="-1" role="dialog" aria-labelledby="addProductModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addProductModalLabel">افزودن محصول جدید</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="addProductForm">
+                        <div class="form-group">
+                            <label>انبار</label>
+                            <select class="form-control" name="InventoryID" required>
+                                <option value="">انتخاب انبار</option>
+                                {{range .inventories}}
+                                <option value="{{.ID}}">{{.Name}}</option>
+                                {{end}}
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>محصول</label>
+                            <select class="form-control" name="ProductID" required disabled>
+                                <option value="">ابتدا انبار را انتخاب کنید</option>
+                            </select>
+                        </div>
+                        
+                        <div id="productFields" style="display: none;">
+                            <!-- Dynamic fields will be added here based on product type -->
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">بستن</button>
+                    <button type="button" id="saveProductBtn" class="btn btn-primary" disabled>ذخیره محصول</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{template "footer.html"}}
+    
+    <script>
+    $(document).ready(function() {
+        // Format price inputs
+        $('.price').on('input', function() {
+            let value = $(this).val().replace(/,/g, '');
+            $(this).val(parseInt(value || 0).toLocaleString('en-US'));
+            $(this).next('.out').text(parseInt(value || 0).toLocaleString('fa-IR'));
+        }).trigger('input');
+        
+        // Load products when inventory is selected
+        $('select[name="InventoryID"]').change(function() {
+            let inventoryId = $(this).val();
+            if (inventoryId) {
+                $.get('/api/products?inventory=' + inventoryId, function(data) {
+                    let productSelect = $('select[name="ProductID"]');
+                    productSelect.empty().append('<option value="">انتخاب محصول</option>');
+                    
+                    data.forEach(function(product) {
+                        productSelect.append(`<option value="${product.ID}" data-measurement="${product.MeasurementSystem}">${product.Name}</option>`);
+                    });
+                    
+                    productSelect.prop('disabled', false);
+                });
+            }
+        });
+        
+        // Show appropriate fields when product is selected
+        $('select[name="ProductID"]').change(function() {
+            let measurementSystem = $(this).find('option:selected').data('measurement');
+            let fieldsDiv = $('#productFields');
+            
+            fieldsDiv.empty().show();
+            
+            if (measurementSystem === 'roll') {
+                fieldsDiv.append(`
+                    <div class="form-group">
+                        <label>تعداد رول</label>
+                        <input type="number" class="form-control" name="Roll" required>
+                    </div>
+                    <div class="form-group">
+                        <label>قیمت هر رول (تومان)</label>
+                        <input type="number" class="form-control price" name="RollePrice" required>
+                    </div>
+                `);
+            } else if (measurementSystem === 'meter') {
+                fieldsDiv.append(`
+                    <div class="form-group">
+                        <label>متراژ</label>
+                        <input type="number" step="0.01" class="form-control" name="Meter" required>
+                    </div>
+                    <div class="form-group">
+                        <label>قیمت هر متر (تومان)</label>
+                        <input type="number" class="form-control price" name="MeterPrice" required>
+                    </div>
+                `);
+            } // Add other measurement systems as needed
+            
+            $('#saveProductBtn').prop('disabled', false);
+        });
+        
+        // Save product to export
+        $('#saveProductBtn').click(function() {
+            let formData = $('#addProductForm').serializeArray();
+            formData.push({name: 'ExportID', value: '{{.exports.ID}}'});
+            
+            $.post('/exportedit/addproduct', formData, function(response) {
+                if (response.success) {
+                    location.reload();
+                } else {
+                    alert('خطا در افزودن محصول: ' + response.message);
+                }
+            });
+        });
+    });
+    </script>
+</body>
+</html>

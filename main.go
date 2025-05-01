@@ -25,6 +25,13 @@ import (
 	"gorm.io/gorm"
 )
 
+func bitAnd(a, b int16) bool {
+	return a&b != 0
+}
+func increment(i int) int {
+	return i + 1
+}
+
 func main() {
 
 	logFile, err := os.OpenFile("app.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
@@ -50,7 +57,11 @@ func main() {
 	}()
 
 	r := gin.Default()
-
+	r.SetFuncMap(template.FuncMap{
+		"bitAnd":    bitAnd,
+		"increment": increment,
+		"add":       func(i int) int { return i + 1 },
+	})
 	r.LoadHTMLGlob("Views/templates/*")
 	r.Static("assets", "./assets")
 	inventories := model.GetAllInventories()
@@ -1081,6 +1092,7 @@ func main() {
 		})
 
 		v2.POST("/export", func(c *gin.Context) {
+			session := sessions.Default(c)
 
 			type ExportProducts struct {
 				ID          uint64         `gorm:"primaryKey"`
@@ -1190,6 +1202,11 @@ func main() {
 					if err := tx.Create(&User).Error; err != nil {
 						return err
 					}
+				}
+				if creatorName, ok := session.Get("UserName").(string); ok {
+					Export.CreatorName = creatorName
+				} else {
+					log.Println("❌ UserName not found or not a string in session")
 				}
 
 				Export.UserID = User.ID
@@ -1687,6 +1704,7 @@ func main() {
 		v2.GET("/exportshow", middleware.AuthMiddleware(), func(c *gin.Context) {
 			session := sessions.Default(c)
 			exports, products := model.GetExportById(c)
+			columns := model.GetExportProductsColumns(products)
 			exporttype := c.DefaultQuery("type", "buyer")
 			c.HTML(http.StatusOK, "exportshow.html", gin.H{
 				"Username":    session.Get("UserName"),
@@ -1696,6 +1714,23 @@ func main() {
 				"exports":     exports,
 				"products":    products,
 				"exporttype":  exporttype,
+				"columns":     columns,
+			})
+		})
+		v2.GET("/exportedit", middleware.AuthMiddleware(), func(c *gin.Context) {
+			session := sessions.Default(c)
+			exports, products := model.GetExportById2(c)
+			columns := model.GetExportProductsColumns(products)
+			exporttype := c.DefaultQuery("type", "buyer")
+			c.HTML(http.StatusOK, "export_edit.html", gin.H{
+				"Username":    session.Get("UserName"),
+				"UserRole":    session.Get("UserRole"),
+				"inventories": model.GetAllInventories(),
+				"title":       "فاکتورها",
+				"exports":     exports,
+				"products":    products,
+				"exporttype":  exporttype,
+				"columns":     columns,
 			})
 		})
 		// v2.GET("/Download", middleware.AuthMiddleware(), func(c *gin.Context) {

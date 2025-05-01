@@ -58,6 +58,7 @@ type Export struct {
 	Number         string           `gorm:"varchar(255),unique"`
 	Phonenumber    string           `gorm:"size:255;"`
 	UserID         uint64           `gorm:"index;"`
+	CreatorName    string           `gorm:"size:255;"`
 	Address        string           `gorm:"size:255;"`
 	TotalPrice     float64          `gorm:"type:float"`
 	Tax            int64            `gorm:"size:255;"`
@@ -122,6 +123,7 @@ type EscapeExport struct {
 	Draft           bool             `gorm:"type:boolean"`
 	Describe        string           `gorm:"size:255;"`
 	CreatedAt       string           `json:"CreatedAt"` // assign the format to a string
+	CreatorName     string           `gorm:"size:255;"`
 	InventoryNumber int32            `gorm:"size:255;"`
 	ExportProducts  []ExportProducts `gorm:"foreignKey:ExportID"`
 	// Inventory       Inventory        `gorm:"foreignKey:InventoryNumber"`

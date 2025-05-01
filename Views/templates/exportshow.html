@@ -87,35 +87,77 @@
                 </table>
               </div>
               {{end}}
+             
               <div class="row my-2 mx-1 justify-content-center">
-                <table class="table table-striped table-borderless ">
-                  <thead style="background-color:#84B0CA ;" class="text-white">
+                <table class="table table-striped table-bordered">
+                  <thead style="background-color:#84B0CA;" class="text-white">
                     <tr>
-                      <th scope="col">#</th>
-                      <th scope="col">توضیحات</th>
-                      <th scope="col">تعداد</th>
-                      <th scope="col">قیمت عدد</th>
-                      <th scope="col">متراژ</th>
-                      <th scope="col">قیمت متر</th>
-                      <th scope="col">قیمت کل</th>
+                      <th>#</th>
+                      <th>توضیحات</th>
+            
+                      {{ if bitAnd .columns 1 }}
+                        <th>تعداد (رول)</th>
+                        <th>قیمت واحد رول</th>
+                      {{ end }}
+            
+                      {{ if bitAnd .columns 2 }}
+                        <th>متراژ</th>
+                        <th>قیمت هر متر</th>
+                      {{ end }}
+            
+                      {{ if bitAnd .columns 4 }}
+                        <th>وزن (kg)</th>
+                        <th>قیمت وزن</th>
+                      {{ end }}
+            
+                      {{ if bitAnd .columns 8 }}
+                        <th>تعداد</th>
+                        <th>قیمت واحد</th>
+                      {{ end }}
+            
+                      {{ if bitAnd .columns 16 }}
+                        <th>تعداد (بشکه)</th>
+                        <th>قیمت بشکه</th>
+                      {{ end }}
+            
+                      <th>قیمت کل</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {{ range .products}}
+                    {{ range .products }}
                     <tr>
-                      <th scope="row">{{.ID}}</th>
-                      <td>{{.Name}}</td>
-                      <td class="prn">{{.Count}}</td>
-
-                      <td class="price">{{.RolePrice}}</td>
-                      <td class="prn">{{.Meter}}</td>
-                      <td class="price">{{.MeterPrice}}</td>
-
-                      <td dir="ltr" class="TotalPrice" style="text-align:right;">{{.TotalPrice}}</td>
+                      <td>{{ .ID }}</td>
+                      <td>{{ .Name }}</td>
+            
+                      {{ if bitAnd $.columns 1 }}
+                        <td>{{ .Roll }}</td>
+                        <td>{{printf "%.0f" .RollePrice }}</td>
+                      {{ end }}
+            
+                      {{ if bitAnd $.columns 2 }}
+                        <td>{{ .Meter }}</td>
+                        <td>{{printf "%.0f" .MeterPrice }}</td>
+                      {{ end }}
+            
+                      {{ if bitAnd $.columns 4 }}
+                        <td>{{ .Weight }}</td>
+                        <td>{{printf "%.0f" .WeightPrice }}</td>
+                      {{ end }}
+            
+                      {{ if bitAnd $.columns 8 }}
+                        <td>{{ .Count }}</td>
+                        <td>{{printf "%.0f" .CountPrice }}</td>
+                      {{ end }}
+            
+                      {{ if bitAnd $.columns 16 }}
+                        <td>{{ .Barrel }}</td>
+                        <td>{{printf "%.0f" .BarrelPrice }}</td>
+                      {{ end }}
+            
+                      <td>{{printf "%.0f" .TotalPrice }}</td>
                     </tr>
-                    {{end}}
+                    {{ end }}
                   </tbody>
-
                 </table>
               </div>
               <div class="row">
@@ -134,11 +176,11 @@
                     <td>
                       <div class="d-flex justify-content-center flex-column">
                         <p class="text-black float-start" dir="ltr"><span class="text-black me-3"></span> قیمت کل :
-                          <span class="price" style="font-size: 25px;">{{.TotalPrice}}</span> تومان
+                          <span class="price" style="font-size: 25px;">{{printf "%.0f"  .TotalPrice}}</span> تومان
                         </p>
                         <p style="font-size: 12px;" class="text-black float-start" dir="ltr"><span
                             class="text-black me-3"></span> قیمت کل : <span class="wordprice"
-                            style="font-size: 12px;">{{.TotalPrice}}</span> تومان </p>
+                            style="font-size: 12px;">{{printf "%.0f"  .TotalPrice}}</span> تومان </p>
                       </div>
 
               </div>
@@ -211,6 +253,7 @@
                     <td>
                       <div class="pr-5 ms-3">
                         <ul class="list-unstyled">
+                          <li class="text-muted">متصدی فروش: <span style="color:#5d9fc5 ;">{{.CreatorName}}</span></li>
                           <li class="text-muted">خریدار: <span style="color:#5d9fc5 ;">{{.Name}}</span></li>
                           <li class="text-muted">آدرس: <br>{{.Address}}</li>
                           <li class="text-muted " dir="ltr"><i class="fas fa-phone"></i>{{.Phonenumber}}</li>
@@ -244,34 +287,75 @@
               </div>
               {{end}}
               <div class="row my-2 mx-1 justify-content-center">
-                <table class="table table-striped table-borderless ">
-                  <thead style="background-color:#84B0CA ;" class="text-white">
+                          <table class="table table-striped table-bordered">
+                  <thead style="background-color:#84B0CA;" class="text-white">
                     <tr>
-                      <th scope="col">#</th>
-                      <th scope="col">توضیحات</th>
-                      <th scope="col">تعداد</th>
-                      <th scope="col">قیمت عدد</th>
-                      <th scope="col">متراژ</th>
-                      <th scope="col">قیمت متر</th>
-                      <th scope="col">قیمت کل</th>
+                      <th>#</th>
+                      <th>توضیحات</th>
+            
+                      {{ if bitAnd .columns 1 }}
+                        <th>تعداد (رول)</th>
+                        <th>قیمت واحد رول</th>
+                      {{ end }}
+            
+                      {{ if bitAnd .columns 2 }}
+                        <th>متراژ</th>
+                        <th>قیمت هر متر</th>
+                      {{ end }}
+            
+                      {{ if bitAnd .columns 4 }}
+                        <th>وزن (kg)</th>
+                        <th>قیمت وزن</th>
+                      {{ end }}
+            
+                      {{ if bitAnd .columns 8 }}
+                        <th>تعداد</th>
+                        <th>قیمت واحد</th>
+                      {{ end }}
+            
+                      {{ if bitAnd .columns 16 }}
+                        <th>تعداد (بشکه)</th>
+                        <th>قیمت بشکه</th>
+                      {{ end }}
+            
+                      <th>قیمت کل</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {{ range .products}}
+                    {{ range .products }}
                     <tr>
-                      <th scope="row">{{.ID}}</th>
-                      <td>{{.Name}}</td>
-                      <td class="prn">{{.Count}}</td>
-
-                      <td class="price">{{.RollePrice}}</td>
-                      <td class="prn">{{.Meter}}</td>
-                      <td class="price">{{.MeterPrice}}</td>
-
-                      <td dir="ltr" class="TotalPrice" style="text-align:right;">{{.TotalPrice}}</td>
+                      <td>{{ .ID }}</td>
+                      <td>{{ .Name }}</td>
+            
+                      {{ if bitAnd $.columns 1 }}
+                        <td>{{ .Roll }}</td>
+                        <td>{{printf "%.0f" .RollePrice }}</td>
+                      {{ end }}
+            
+                      {{ if bitAnd $.columns 2 }}
+                        <td>{{ .Meter }}</td>
+                        <td>{{printf "%.0f" .MeterPrice }}</td>
+                      {{ end }}
+            
+                      {{ if bitAnd $.columns 4 }}
+                        <td>{{ .Weight }}</td>
+                        <td>{{printf "%.0f" .WeightPrice }}</td>
+                      {{ end }}
+            
+                      {{ if bitAnd $.columns 8 }}
+                        <td>{{ .Count }}</td>
+                        <td>{{printf "%.0f" .CountPrice }}</td>
+                      {{ end }}
+            
+                      {{ if bitAnd $.columns 16 }}
+                        <td>{{ .Barrel }}</td>
+                        <td>{{printf "%.0f" .BarrelPrice }}</td>
+                      {{ end }}
+            
+                      <td>{{printf "%.0f" .TotalPrice }}</td>
                     </tr>
-                    {{end}}
+                    {{ end }}
                   </tbody>
-
                 </table>
               </div>
               <div class="row">
