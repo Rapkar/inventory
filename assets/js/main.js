@@ -13,20 +13,9 @@ jQuery('#myModal').modal('show')
 
 jQuery("#AddProductToExport").on("click", function () {
 
-    // var existproductcount = jQuery("span.ProductsCount").html();
-    // var existproductMeter = jQuery("span.ProductsMeter").html();
-
-    // productcount = parseInt(existproductcount) - parseInt(Count);
-    // productMeter = parseInt(existproductMeter) - parseInt(Meter);
-    // if ((productcount == 0) && (productMeter == 0)) {
-    //     alert('مقدار را مشخص کنید')
-    // } else if (productcount < 0 || productMeter < 0) {
-    //     alert('موجودی  کافی نیست')
-    // } else {
         var ID = jQuery("#ProductIs").val();
         var ExportID = jQuery("input[name='ExportNumber']").val();
         var InventoryNumber = jQuery("#InventoryIS").val();
-        // var Name=jQuery("#ProductIs").html()
         var Meter = jQuery("#ProductBox input[name='Meter']").val() || "0";
         var Weight = jQuery("#ProductBox input[name='Weight']").val() || "0";
         var Barrel = jQuery("#ProductBox input[name='Barrel']").val() || "0";
@@ -38,8 +27,6 @@ jQuery("#AddProductToExport").on("click", function () {
         var BarrelPrice = jQuery("#ProductBox input[name='BarrelPrice']").val() || "0";
         var CountPrice = jQuery("#ProductBox input[name='CountPrice']").val() || "0";
         var TotalPrice = jQuery("#ProductBox input[name='TotalPrice']").val() || "0";
-    
-        // بررسی تکراری نبودن محصول
         var isDuplicate = ProductsOfExport.some(item => 
             item.ProductID === ID && item.ExportID === ExportID
         );
@@ -1156,7 +1143,6 @@ document.addEventListener('DOMContentLoaded', function () {
                             return; // برای توقف حلقه بعد از حذف
                         }
                     });
-                    console.log(Payments)
                     renderChecksTable();
                 }
             });
