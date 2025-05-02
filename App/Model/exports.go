@@ -588,3 +588,21 @@ func GetUsersByNameAndPhone(nameTerm string, phoneTerm string) ([]Boot.ResponseU
 
 	return result, message
 }
+func GetPaymentNumberByExportId(c *gin.Context) ([]Boot.Payments, error) {
+	id := c.Query("ExportID")
+	if id == "" {
+		return nil, fmt.Errorf("ExportID parameter is required")
+	}
+
+	// جستجوی پرداخت‌ها در دیتابیس
+	var payments []Boot.Payments
+	if err := Boot.DB().Model(&Boot.Payments{}).
+		Where("export_id = ?", id).
+		Find(&payments).Error; err != nil {
+
+		log.Printf("❌ Database error in GetPaymentNumberByExportId: %v", err)
+		return nil, fmt.Errorf("database error")
+	}
+
+	return payments, nil
+}

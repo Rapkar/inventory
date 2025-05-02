@@ -972,7 +972,12 @@ document.addEventListener('DOMContentLoaded', function () {
     let checks = []; // Removed localStorage dependency
     let editIndex = null;
     // let Payments = []; // Array to store payment data
+    btncheckbox.addEventListener('click', function (e) {
+        var ExportID = jQuery("input[name='ExportNumber']").val();
 
+       
+        console.log("ExportID",ExportID,"Payments",Payments, getPaymentsByExportId(ExportID))
+    })
     // Load checks when page loads
     renderChecksTable();
 
@@ -1379,3 +1384,42 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 });
+
+// FechPaymentS
+
+/**
+ * دریافت لیست پرداخت‌ها بر اساس ExportID
+ * @param {string} exportID - شناسه صادراتی مورد نظر
+ * @param {string} token - توکن احراز هویت
+ * @returns {Promise<Object>} - نتیجه درخواست
+ */
+async function getPaymentsByExportId(exportID) {
+    try {
+        const apiUrl = `/Dashboard/getpaymentsbyexportid?ExportID=${encodeURIComponent(exportID)}`;
+        
+        const response = await fetch(apiUrl, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept-Language': 'fa-IR' // برای پیام‌های فارسی
+            }
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'خطا در دریافت اطلاعات');
+        }
+
+        const result = await response.json();
+        
+        if (result.message && result.data) {
+            console.log(result.data); // نمایش پیام موفقیت
+            return result.data; // بازگرداندن داده‌های پرداخت
+        } else {
+            throw new Error('فرمت پاسخ سرور نامعتبر است');
+        }
+    } catch (error) {
+        console.error('❌ خطا در دریافت پرداخت‌ها:', error.message);
+        throw error; // پرتاب مجدد خطا برای مدیریت توسط caller
+    }
+}

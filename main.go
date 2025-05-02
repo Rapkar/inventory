@@ -1734,6 +1734,16 @@ func main() {
 				"columns":     columns,
 			})
 		})
+		v2.GET("/getpaymentsbyexportid", middleware.AuthMiddleware(), func(c *gin.Context) {
+			result, err := model.GetPaymentNumberByExportId(c)
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "خطا در تبدیل"})
+				return
+			}
+
+			c.JSON(http.StatusOK, gin.H{"message": "باموفقیت تغییر انجام شد", "data": result})
+
+		})
 		// v2.GET("/Download", middleware.AuthMiddleware(), func(c *gin.Context) {
 		// 	session := sessions.Default(c)
 		// 	// Id := c.Request.URL.Query().Get("ExportId")

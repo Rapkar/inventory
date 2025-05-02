@@ -1709,3 +1709,14 @@
 2025/05/01 20:22:57 خطا در دریافت اتصال دیتابیس: &{0xc000782120 <nil> 7 0xc000a0e540 0}
 2025/05/01 20:24:45 خطا در دریافت اتصال دیتابیس: &{0xc00011b440 <nil> 7 0xc000a0f180 0}
 2025/05/02 07:14:49 خطا در دریافت اتصال دیتابیس: &{0xc00070e000 <nil> 7 0xc000622540 0}
+2025/05/02 07:41:09 🚀 Logger initialized
+2025/05/02 07:41:09 🔧 Booting application...
+2025/05/02 07:41:10 📦 ScheduleBackups started
+2025/05/02 07:41:10 ✅ created backup success backup-2025-04-30-07-41-10.sql
+2025/05/02 07:41:10 ✅ created backup success backup-2025-05-01-07-41-10.sql
+2025/05/02 07:41:18 ❌ Database error in GetPaymentNumberByExportId: Error 1054 (42S22): Unknown column 'ExportID' in 'where clause'
+2025/05/02 07:42:45 🚀 Logger initialized
+2025/05/02 07:42:45 🔧 Booting application...
+2025/05/02 07:42:46 📦 ScheduleBackups started
+2025/05/02 07:42:46 ✅ created backup success backup-2025-05-01-07-42-46.sql
+2025/05/02 07:42:46 ✅ created backup success backup-2025-04-30-07-42-46.sql
