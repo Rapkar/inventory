@@ -286,7 +286,7 @@
                                                 <th attr-si="barrel" class="psi items" scope="col">تعداد</th>
                                                 <th attr-si="barrel" class="pr items" scope="col">قیمت هر بشکه</th>
                                                 <th scope="col"> قیمت کل</th>
-                                                <th scope="col"> ویرایش</th>
+                                                <th scope="col"> حذف</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -337,8 +337,9 @@
                                                                 class="col-12">
                                                                 <option defualt value="0">لطفا یک انبار را انتخاب کنید
                                                                 </option>
-                                                                <option value="1">انبار شماره 1</option>
-                                                                <option value="2">انبار شماره 2</option>
+                                                                {{range $.inventories}}
+                                                                <option defualt value="{{.ID}}">{{.Name}}</option>
+          {{end}}
                                                             </select>
 
                                                         </div>

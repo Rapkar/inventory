@@ -8,227 +8,547 @@
         {{else if eq .success false}}
         {{template "danger_notif" .}}
         {{end}}
-        
+
         <div class="row">
             <div class="col-12">
                 <h2 class="mb-4">ویرایش فاکتور {{.exports.Number}}</h2>
-                
+
                 <form method="post" action="/exportedit/update/{{.exports.ID}}?type={{.exporttype}}">
                     <input type="hidden" name="ExportID" value="{{.exports.ID}}">
                     <form>
-                    <div class="card mb-4">
-                        <div class="card-header">
-                            <h5>اطلاعات مشتری</h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="form-group col-md-6">
-                                    <label>نام خریدار</label>
-                                    <input type="text" class="form-control" name="Name" value="{{.exports.Name}}" required>
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <label>شماره تماس</label>
-                                    <input type="tel" class="form-control" name="Phonenumber" value="{{.exports.Phonenumber}}" required>
-                                </div>
-                                <div class="form-group col-12">
-                                    <label>آدرس</label>
-                                    <textarea class="form-control" name="Address">{{.exports.Address}}</textarea>
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5>اطلاعات مشتری</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="form-group col-md-6">
+                                        <label>نام خریدار</label>
+                                        <input type="text" class="form-control" name="Name" value="{{.exports.Name}}"
+                                            required>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label>شماره تماس</label>
+                                        <input type="tel" class="form-control" name="Phonenumber"
+                                            value="{{.exports.Phonenumber}}" required>
+                                    </div>
+                                    <div class="form-group col-12">
+                                        <label>آدرس</label>
+                                        <textarea class="form-control" name="Address">{{.exports.Address}}</textarea>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    
-                    <div class="card mb-4">
-                        <div class="card-header">
-                            <h5>اطلاعات فاکتور</h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="form-group col-md-4">
-                                    <label>شماره فاکتور</label>
-                                    <input type="text" class="form-control" value="{{.exports.Number}}" readonly>
-                                </div>
-                                <div class="form-group col-md-4">
-                                    <label>مالیات و ارزش افزوده</label>
-                                    <input type="number" class="form-control price" name="Tax" value="{{.exports.Tax}}">
-                                    <span class="out"></span>&nbsp;تومان
-                                </div>
-                                <div class="form-group col-md-4">
-                                    <label>تاریخ ایجاد</label>
-                                    <input type="text" class="form-control" value="{{.exports.CreatedAt}}" readonly>
-                                </div>
-                                <div class="form-group col-12">
-                                    <label>توضیحات</label>
-                                    <textarea class="form-control" name="Describe">{{.exports.Describe}}</textarea>
+
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5>اطلاعات فاکتور</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="form-group col-md-4">
+                                        <label>شماره فاکتور</label>
+                                        <input type="text" class="form-control" value="{{.exports.Number}}" readonly>
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <label>مالیات و ارزش افزوده</label>
+                                        <input type="number" class="form-control price" name="Tax"
+                                            value="{{.exports.Tax}}">
+                                        <span class="out"></span>&nbsp;تومان
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <label>تاریخ ایجاد</label>
+                                        <input type="text" class="form-control" value="{{.exports.CreatedAt}}" readonly>
+                                    </div>
+                                    <div class="form-group col-12">
+                                        <label>توضیحات</label>
+                                        <textarea class="form-control" name="Describe">{{.exports.Describe}}</textarea>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    
-                    <div class="card mb-4">
-                        <div class="card-header">
-                            <h5>محصولات</h5>
+                        <div class="form-group card col-lg-12  mt-3 ">
+                            <div class="card-header">
+                                <h5>پرداخت ها</h5>
+                            </div>
+                            <div class="accordion" id="accordionExample">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="headingOne">
+                                        <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                            data-bs-target="#collapseOne" aria-expanded="true"
+                                            aria-controls="collapseOne">
+                                            مستقیم
+                                        </button>
+                                    </h2>
+                                    <div id="collapseOne" class="accordion-collapse collapse show"
+                                        aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                                        <div class="accordion-body">
+                                            <div class="">
+                                                {{$directPayment := 0}}
+                                                {{range .payments}}
+                                                {{if eq .Method "نقدی"}}
+                                                {{$directPayment = .TotalPrice}}
+                                                {{end}}
+                                                {{end}}
+
+                                                <input name="directpay" class="price" id="directpay" type='text'
+                                                    inputmode="numeric" value="{{$directPayment}}">
+                                                <span class="out"></span>&nbsp;تومان
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="headingTwo">
+                                        <button class="accordion-button collapsed" type="button"
+                                            data-bs-toggle="collapse" data-bs-target="#collapseTwo"
+                                            aria-expanded="false" aria-controls="collapseTwo">
+                                            چک‌ها
+                                        </button>
+                                    </h2>
+
+
+
+                                    <div id="collapseTwo" class="accordion-collapse collapse"
+                                        aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                                        <div class="accordion-body">
+                                            <!-- Form for adding new checks -->
+                                            <div class="mb-4 p-3 border rounded">
+                                                <h5 class="mb-3">افزودن چک جدید</h5>
+                                                <div class="row g-3">
+                                                    <div class="col-md-3">
+                                                        <label for="checkDate" class="form-label">تاریخ
+                                                            چک</label>
+                                                        <input type="button" class="form-control" id="checkDate">
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <label for="bankName" class="form-label">بانک</label>
+                                                        <select class="form-select" id="bankName">
+                                                            <option value="" selected disabled>انتخاب کنید...
+                                                            </option>
+                                                            <option value="melli">ملی</option>
+                                                            <option value="mellat">ملت</option>
+                                                            <option value="saderat">صادرات</option>
+                                                            <option value="tejarat">تجارت</option>
+                                                            <option value="saman">سامان</option>
+                                                            <option value="shahr">شهر</option>
+                                                            <option value="pasargad">پاسارگاد</option>
+                                                            <option value="sepah">سپه</option>
+                                                            <option value="keshavarzi">کشاورزی</option>
+                                                            <option value="parsian">پارسیان</option>
+                                                            <option value="eghtesad-novin">اقتصاد نوین</option>
+                                                            <option value="ansar">انصار</option>
+                                                            <option value="karafarin">کارآفرین</option>
+                                                            <option value="sina">سینا</option>
+                                                            <option value="sarmayeh">سرمایه</option>
+                                                            <option value="tosee">توسعه</option>
+                                                            <option value="tosee-saderat">توسعه صادرات</option>
+                                                            <option value="tosee-taavon">توسعه تعاون</option>
+                                                            <option value="day">دی</option>
+                                                            <option value="hekmat">حکمت ایرانیان</option>
+                                                            <option value="ayandeh">آینده</option>
+                                                            <option value="ghavamin">قوامین</option>
+                                                            <option value="khavar">خاورمیانه</option>
+                                                            <option value="mehr-iran">مهر ایران</option>
+                                                            <option value="mehr-eqtesad">مهر اقتصاد</option>
+                                                            <option value="post">پست بانک</option>
+                                                            <option value="qarzolqasaneh">قرض‌الحسنه مهر ایران
+                                                            </option>
+                                                            <option value="qarzolqasaneh-resalat">قرض‌الحسنه
+                                                                رسالت</option>
+                                                            <option value="iran-zamin">ایران زمین</option>
+                                                            <option value="kosar">کوثر</option>
+                                                            <option value="markazi">مرکزی</option>
+                                                            <option value="reffah">رفاه</option>
+                                                            <option value="tourism">گردشگری</option>
+                                                            <option value="industry">صنعت و معدن</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-3 form-group">
+                                                        <label for="serialCode" class="form-label">کد
+                                                            سریال</label>
+                                                        <input type="text" class="form-control price" id="serialCode"
+                                                            placeholder="123-456-789">
+                                                    </div>
+                                                    <div class="col-md-3 form-group">
+                                                        <label for="checkAmount" class="form-label">مبلغ
+                                                            (تومان)</label>
+                                                        <input type="text" class="form-control price" id="checkAmount"
+                                                            placeholder="1,000,000">
+                                                        <span class="out"></span>&nbsp;تومان
+
+                                                    </div>
+                                                </div>
+                                                <button id="addcheck" class="btn btn-primary mt-3">ذخیره
+                                                    چک</button>
+                                            </div>
+
+                                            <!-- List of registered checks -->
+                                            <div class="mt-4">
+                                                <h5>چک‌های ثبت شده</h5>
+                                                <div class="table-responsive">
+                                                    <table class="table table-striped table-hover">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>ردیف</th>
+                                                                <th>تاریخ</th>
+                                                                <th>بانک</th>
+                                                                <th>کد سریال</th>
+                                                                <th>مبلغ</th>
+                                                                <th>وضعیت</th>
+                                                                <th>عملیات</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody id="checksTableBody">
+                                                            {{range .payments}}
+                                                            {{if eq .Method "چک"}}
+                                                            <tr>
+                                                                <td>{{.ID}}</td>
+                                                                <td>{{.CreatedAt}}</td>
+                                                                <td>{{.Name}}</td>
+                                                                <td class="serial price">{{.Number}}</td>
+                                                                <td class="price">{{.TotalPrice}}</td>
+                                                                <td>
+                                                                    <select class="form-select status-select"
+                                                                        data-index="{{.ID}}">
+                                                                        <option value="pending" selected="">در انتظار
+                                                                        </option>
+                                                                        <option value="collected">وصول شده</option>
+                                                                        <option value="rejected">برگشت خورده</option>
+                                                                    </select>
+                                                                </td>
+                                                                <td>
+                                                                    <button
+                                                                        class="btn btn-sm btn-outline-danger delete-btn"
+                                                                        data-index="{{.ID}}">حذف</button>
+                                                                </td>
+                                                            </tr>
+                                                            {{end}}
+                                                            {{end}}
+
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </div>
+
+
                         </div>
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th>#</th>
-                                            <th>نام محصول</th>
-                                            {{range .columns}}
-                                            <th>{{.}}</th>
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5>محصولات</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="ExportProductsList" class="table-responsive">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">#</th>
+                                                <th scope="col">نام محصول</th>
+                                                <th attr-si="roll" class="psi items" scope="col">تعداد رول</th>
+                                                <th attr-si="roll" class="pr items" scope="col">قیمت هر رول</th>
+                                                <th attr-si="meter" class="psi items" scope="col">متراژ</th>
+                                                <th attr-si="meter" class="pr items" scope="col">قیمت هر متر</th>
+                                                <th attr-si="weight" class="psi items" scope="col">وزن</th>
+                                                <th attr-si="weight" class="pr items" scope="col">قیمت هر کیلو</th>
+                                                <th attr-si="count" class="psi items" scope="col">تعداد</th>
+                                                <th attr-si="count" class="pr items" scope="col">قیمت هر عدد</th>
+                                                <th attr-si="barrel" class="psi items" scope="col">تعداد</th>
+                                                <th attr-si="barrel" class="pr items" scope="col">قیمت هر بشکه</th>
+                                                <th scope="col"> قیمت کل</th>
+                                                <th scope="col"> حذف</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {{range .products}}
+                                            <tr>
+                                                <td>{{.ID}}</td>
+                                                <td>{{.Name}}</td>
+                                                <td class="price">{{.Roll}}</td>
+                                                <td class="price">{{printf "%.0f" .RollePrice}}</td>
+                                                <td class="price">{{.Meter}}</td>
+                                                <td class="price">{{printf "%.0f" .MeterPrice}}</td>
+                                                <td class="price">{{.Weight}}</td>
+                                                <td class="price">{{printf "%.0f" .WeightPrice}}</td>
+                                                <td class="price">{{.Count}}</td>
+                                                <td class="price">{{printf "%.0f" .CountPrice}}</td>
+                                                <td class="price">{{.Barrel}}</td>
+                                                <td class="price">{{printf "%.0f" .BarrelPrice}}</td>
+                                                <td class="price">{{printf "%.0f" .TotalPrice}}</td>
+                                                <td>
+                                                    <a class="me-3 remove" href="./deleteExport?ExportId={{.ID}}"><svg
+                                                            xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                            fill="currentColor" class="bi bi-trash3"
+                                                            viewBox="0 0 16 16">
+                                                            <path
+                                                                d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5">
+                                                            </path>
+                                                        </svg></a>
+                                                </td>
+                                            </tr>
                                             {{end}}
-                                            <th>قیمت کل</th>
-                                            <th>عملیات</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {{range $index, $product := .products}}
-                                        <tr>
-                                            <td>{{$index | increment}}</td>
-                                            <td>{{$product.Name}}</td>
-                                            
-                                            {{if eq $product.MeasurementSystem "roll"}}
-                                            <td>{{$product.Roll}} رول</td>
-                                            <td>{{$product.RollePrice}} تومان</td>
-                                            {{else if eq $product.MeasurementSystem "meter"}}
-                                            <td>{{$product.Meter}} متر</td>
-                                            <td>{{$product.MeterPrice}} تومان</td>
-                                            {{else if eq $product.MeasurementSystem "weight"}}
-                                            <td>{{$product.Weight}} کیلوگرم</td>
-                                            <td>{{$product.WeightPrice}} تومان</td>
-                                            {{else if eq $product.MeasurementSystem "count"}}
-                                            <td>{{$product.Count}} عدد</td>
-                                            <td>{{$product.CountPrice}} تومان</td>
-                                            {{else if eq $product.MeasurementSystem "barrel"}}
-                                            <td>{{$product.Barrel}} بشکه</td>
-                                            <td>{{$product.BarrelPrice}} تومان</td>
-                                            {{end}}
-                                            
-                                            <td>{{$product.TotalPrice}} تومان</td>
-                                            <td>
-                                                <a href="/exportedit/removeproduct/{{$product.ID}}?exportid={{$.exports.ID}}&type={{$.exporttype}}" class="btn btn-sm btn-danger">حذف</a>
-                                            </td>
-                                        </tr>
-                                        {{end}}
-                                    </tbody>
-                                    <tfoot>
-                                        <tr>
-                                            <td colspan="{{add (len .columns) 2}}" class="text-left">جمع کل:</td>
-                                            <td>{{.exports.TotalPrice}} تومان</td>
-                                            <td></td>
-                                        </tr>
-                                    </tfoot>
-                                </table>
-                            </div>
-                            
-                            <button type="button" class="btn btn-primary mt-3" data-toggle="modal" data-target="#addProductModal">
-                                افزودن محصول جدید
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div class="card mb-4">
-                        <div class="card-header">
-                            <h5>پرداخت‌ها</h5>
-                        </div>
-                        <div class="card-body">
-                            <!-- Payment information would go here -->
-                            <div class="text-right">
-                                <p>مجموع پرداختی: <span id="totalPayments">0</span> تومان</p>
+                                        </tbody>
+                                        <tfoot style="background-color: #ddd;">
+                                            <tr>
+                                                <td class="price" colspan="14" style="text-align: left;">{{printf "%.0f"
+                                                    .exports.TotalPrice}}</td>
+                                            </tr>
+                                            <input class="d-none" name="ExportTotalPrice" novalidate
+                                                id="ExportTotalPrice" type="number">
+                                        </tfoot>
+                                    </table>
+                                </div>
+                                <div
+                                    class="form-group col-lg-6  mt-3 text-success text-right d-flex justify-content-start">
+                                    <p>مجموع دریافتی از مشتری:
+                                        <span id="TotalPayments">0</span>
+                                        تومان
+                                    </p>
+                                </div>
+
+                                <button type="button" id="modal" class="btn btn-primary ms-auto " data-toggle="modal"
+                                    data-target="#ProductBox">
+                                    افزودن محصول +
+                                </button>
                             </div>
                         </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <button type="submit" class="btn btn-success">ذخیره تغییرات</button>
-                        <a href="/Dashboard/exports" class="btn btn-secondary">انصراف</a>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Add Product Modal -->
-    <div class="modal fade" id="addProductModal" tabindex="-1" role="dialog" aria-labelledby="addProductModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addProductModalLabel">افزودن محصول جدید</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form id="addProductForm">
-                        <div class="form-group">
-                            <label>انبار</label>
-                            <select class="form-control" name="InventoryID" required>
-                                <option value="">انتخاب انبار</option>
-                                {{range .inventories}}
-                                <option value="{{.ID}}">{{.Name}}</option>
-                                {{end}}
-                            </select>
+                        <!-- Modal -->
+                        <div class="modal fade bd-example-modal-lg ExportPeoducts" id="ProductBox" tabindex="-1"
+                            role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLongTitle">انتخاب محصول</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="row">
+                                            <div class="form-group col-12  mt-3">
+                                                <label class="col-sm-12 control-label">نام انبار</label>
+                                                <div class="col-sm-12">
+
+                                                    <select name="InventoryNumber" id="InventoryIS" class="col-12">
+                                                        <option defualt value="0">لطفا یک انبار را انتخاب کنید
+                                                        </option>
+                                                        {{range $.inventories}}
+                                                        <option defualt value="{{.ID}}">{{.Name}}</option>
+                                                        {{end}}
+                                                    </select>
+
+                                                </div>
+                                            </div>
+                                            <div class="form-group col-12  mt-3 ProductIs" style="display: none;">
+                                                <label class="col-sm-12 control-label">نام کالا</label>
+                                                <div class="col-sm-12">
+
+                                                    <select disabled name="ProductName" id="ProductIs" class="col-12">
+                                                        <option defualt value="0">لطفا یک محصول را انتخاب کنید
+                                                        </option>
+                                                    </select>
+
+                                                </div>
+                                            </div>
+
+                                            <div class="Content" style="display: none;">
+                                                <div class="row">
+                                                    <!-- inputs  -->
+                                                    <input type="hidden" name="measurementsystem">
+                                                    <div class="inputs">
+                                                        <div attr-si="roll" class="form-group col-lg-12  mt-3 d-none">
+                                                            <label class="col-sm-12 control-label" min="0">تعداد
+                                                                رول</label>
+                                                            <div class="col-sm-12">
+                                                                <input style="text-align:right;" min="0" name="Rolle"
+                                                                    pattern="[0-9]*" type="number" class="form-control">
+                                                                <small class="text-muted w-100">موجودی فعلی:
+                                                                    <span class="ProductsRolle">0</span>
+                                                                    رول</small>
+                                                            </div>
+                                                        </div>
+                                                        <div attr-si="meter" class="form-group col-lg-12  mt-3 d-none">
+                                                            <label class="col-sm-12 control-label" min="0">متراژ</label>
+                                                            <div class="col-sm-12">
+                                                                <input name="Meter" pattern="[0-9]*" min="0"
+                                                                    type="number" class="form-control ">
+                                                                <small class="text-muted w-100">موجودی فعلی:
+                                                                    <span class="ProductsMeter">0</span>
+                                                                    متر</small>
+                                                            </div>
+                                                        </div>
+                                                        <div attr-si="weight" class="form-group col-lg-12  mt-3 d-none">
+                                                            <label class="col-sm-12 control-label" min="0">وزن</label>
+                                                            <div class="col-sm-12">
+                                                                <input name="Weight" pattern="[0-9]*" min="0"
+                                                                    type="number" class="form-control ">
+                                                                <small class="text-muted w-100">موجودی فعلی:
+                                                                    <span class="ProductsWeight">0</span>
+                                                                    کیلوگرم</small>
+                                                            </div>
+                                                        </div>
+                                                        <div attr-si="count" class="form-group col-lg-12  mt-3 d-none">
+                                                            <label class="col-sm-12 control-label" min="0">تعداد</label>
+                                                            <div class="col-sm-12">
+                                                                <input name="Count" pattern="[0-9]*" min="0"
+                                                                    type="number" class="form-control ">
+
+                                                                <small class="text-muted w-100">موجودی فعلی:
+                                                                    <span class="ProductsWeight">0</span>
+                                                                    عدد</small>
+                                                            </div>
+                                                        </div>
+                                                        <div attr-si="barrel" class="form-group col-lg-12  mt-3 d-none">
+                                                            <label class="col-sm-12 control-label" min="0">بشکه</label>
+                                                            <div class="col-sm-12">
+                                                                <input name="Barrel" pattern="[0-9]*" min="0"
+                                                                    type="number" class="form-control ">
+                                                                <small class="text-muted w-100">موجودی فعلی:
+                                                                    <span class="ProductsBarrel">0</span>
+                                                                    بشکه</small>
+
+                                                            </div>
+                                                        </div>
+
+
+                                                    </div>
+                                                    <div class="calculator">
+                                                        <!-- calculator -->
+                                                        <div attr-si="roll" class="form-group col-lg-12  mt-3">
+                                                            <label class="col-sm-12   control-label" min="0">قیمت هر
+                                                                رول</label>
+                                                            <div class="col-sm-12">
+                                                                <input name="RollePrice" min="0" readonly type="number"
+                                                                    value="{{.RollePrice}}"
+                                                                    class="form-control bg-dark text-white">
+                                                            </div>
+                                                            <span class="out"></span>&nbsp;تومان
+                                                        </div>
+                                                        <div attr-si="meter" class="form-group  col-lg-12  mt-3">
+                                                            <label class="col-sm-12 control-label" min="0">قیمت
+                                                                هر
+                                                                متر</label>
+                                                            <div class="col-sm-12">
+                                                                <input name="MeterPrice" min="0" readonly type="number"
+                                                                    value="{{.MeterPrice}}"
+                                                                    class="form-control bg-dark text-white">
+                                                            </div>
+                                                            <span class="out"></span>&nbsp;تومان
+                                                        </div>
+                                                        <div attr-si="weight" class="form-group  col-lg-12  mt-3">
+                                                            <label class="col-sm-12 control-label" min="0">قیمت
+                                                                هر
+                                                                متر</label>
+                                                            <div class="col-sm-12">
+                                                                <input name="WeightPrice" min="0" readonly type="number"
+                                                                    value="{{.WeightPrice}}"
+                                                                    class="form-control bg-dark text-white">
+                                                            </div>
+                                                            <span class="out"></span>&nbsp;تومان
+                                                        </div>
+                                                        <div attr-si="count" class="form-group  col-lg-12  mt-3">
+                                                            <label class="col-sm-12 control-label bg-dark text-white"
+                                                                min="0">قیمت
+                                                                هر
+                                                                عدد</label>
+                                                            <div class="col-sm-12">
+                                                                <input name="CountPrice" min="0" readonly type="number"
+                                                                    value="{{.CountPrice}}"
+                                                                    class="form-control bg-dark text-white">
+                                                            </div>
+                                                            <span class="out"></span>&nbsp;تومان
+                                                        </div>
+                                                        <div attr-si="barrel" class="form-group  col-lg-12  mt-3">
+                                                            <label class="col-sm-12 control-label" min="0">قیمت
+                                                                هر
+                                                                بشکه</label>
+                                                            <div class="col-sm-12">
+                                                                <input name="BarrelPrice" min="0" readonly type="number"
+                                                                    value="{{.BarrelPrice}}"
+                                                                    class="form-control bg-dark text-white">
+                                                            </div>
+                                                            <span class="out"></span>&nbsp;تومان
+                                                        </div>
+
+                                                    </div>
+                                                    <div class="form-group mt-3">
+                                                        <label class="col-sm-12 control-label" min="0">مجموع
+                                                            قیمت </label>
+                                                        <div class="col-sm-12">
+                                                            <input type="number" class="form-control bg-dark text-white"
+                                                                min="0" name="TotalPrice" readonly>
+                                                        </div>
+                                                        <span class="out"></span>&nbsp;تومان
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer" style="display: none;">
+                                        <button type="button" class="btn btn-secondary"
+                                            data-dismiss="modal">بستن</button>
+                                        <button id="AddProductToExport" type="button" class="btn btn-primary">ذخیره
+                                            اطلاعات</button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        
+
+
                         <div class="form-group">
-                            <label>محصول</label>
-                            <select class="form-control" name="ProductID" required disabled>
-                                <option value="">ابتدا انبار را انتخاب کنید</option>
-                            </select>
-                        </div>
-                        
-                        <div id="productFields" style="display: none;">
-                            <!-- Dynamic fields will be added here based on product type -->
+                            <button type="submit" class="btn btn-success">ذخیره تغییرات</button>
+                            <a href="/Dashboard/exports" class="btn btn-secondary">انصراف</a>
                         </div>
                     </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">بستن</button>
-                    <button type="button" id="saveProductBtn" class="btn btn-primary" disabled>ذخیره محصول</button>
-                </div>
             </div>
         </div>
     </div>
 
+
+
     {{template "footer.html"}}
-    
+
     <script>
-    $(document).ready(function() {
-        // Format price inputs
-        $('.price').on('input', function() {
-            let value = $(this).val().replace(/,/g, '');
-            $(this).val(parseInt(value || 0).toLocaleString('en-US'));
-            $(this).next('.out').text(parseInt(value || 0).toLocaleString('fa-IR'));
-        }).trigger('input');
-        
-        // Load products when inventory is selected
-        $('select[name="InventoryID"]').change(function() {
-            let inventoryId = $(this).val();
-            if (inventoryId) {
-                $.get('/api/products?inventory=' + inventoryId, function(data) {
-                    let productSelect = $('select[name="ProductID"]');
-                    productSelect.empty().append('<option value="">انتخاب محصول</option>');
-                    
-                    data.forEach(function(product) {
-                        productSelect.append(`<option value="${product.ID}" data-measurement="${product.MeasurementSystem}">${product.Name}</option>`);
+        $(document).ready(function () {
+            // Format price inputs
+            $('.price').on('input', function () {
+                let value = $(this).val().replace(/,/g, '');
+                $(this).val(parseInt(value || 0).toLocaleString('en-US'));
+                $(this).next('.out').text(parseInt(value || 0).toLocaleString('fa-IR'));
+            }).trigger('input');
+
+            // Load products when inventory is selected
+            $('select[name="InventoryID"]').change(function () {
+                let inventoryId = $(this).val();
+                if (inventoryId) {
+                    $.get('/api/products?inventory=' + inventoryId, function (data) {
+                        let productSelect = $('select[name="ProductID"]');
+                        productSelect.empty().append('<option value="">انتخاب محصول</option>');
+
+                        data.forEach(function (product) {
+                            productSelect.append(`<option value="${product.ID}" data-measurement="${product.MeasurementSystem}">${product.Name}</option>`);
+                        });
+
+                        productSelect.prop('disabled', false);
                     });
-                    
-                    productSelect.prop('disabled', false);
-                });
-            }
-        });
-        
-        // Show appropriate fields when product is selected
-        $('select[name="ProductID"]').change(function() {
-            let measurementSystem = $(this).find('option:selected').data('measurement');
-            let fieldsDiv = $('#productFields');
-            
-            fieldsDiv.empty().show();
-            
-            if (measurementSystem === 'roll') {
-                fieldsDiv.append(`
+                }
+            });
+
+            // Show appropriate fields when product is selected
+            $('select[name="ProductID"]').change(function () {
+                let measurementSystem = $(this).find('option:selected').data('measurement');
+                let fieldsDiv = $('#productFields');
+
+                fieldsDiv.empty().show();
+
+                if (measurementSystem === 'roll') {
+                    fieldsDiv.append(`
                     <div class="form-group">
                         <label>تعداد رول</label>
                         <input type="number" class="form-control" name="Roll" required>
@@ -238,8 +558,8 @@
                         <input type="number" class="form-control price" name="RollePrice" required>
                     </div>
                 `);
-            } else if (measurementSystem === 'meter') {
-                fieldsDiv.append(`
+                } else if (measurementSystem === 'meter') {
+                    fieldsDiv.append(`
                     <div class="form-group">
                         <label>متراژ</label>
                         <input type="number" step="0.01" class="form-control" name="Meter" required>
@@ -249,25 +569,26 @@
                         <input type="number" class="form-control price" name="MeterPrice" required>
                     </div>
                 `);
-            } // Add other measurement systems as needed
-            
-            $('#saveProductBtn').prop('disabled', false);
-        });
-        
-        // Save product to export
-        $('#saveProductBtn').click(function() {
-            let formData = $('#addProductForm').serializeArray();
-            formData.push({name: 'ExportID', value: '{{.exports.ID}}'});
-            
-            $.post('/exportedit/addproduct', formData, function(response) {
-                if (response.success) {
-                    location.reload();
-                } else {
-                    alert('خطا در افزودن محصول: ' + response.message);
-                }
+                } // Add other measurement systems as needed
+
+                $('#saveProductBtn').prop('disabled', false);
+            });
+
+            // Save product to export
+            $('#saveProductBtn').click(function () {
+                let formData = $('#addProductForm').serializeArray();
+                formData.push({ name: 'ExportID', value: '{{.exports.ID}}' });
+
+                $.post('/exportedit/addproduct', formData, function (response) {
+                    if (response.success) {
+                        location.reload();
+                    } else {
+                        alert('خطا در افزودن محصول: ' + response.message);
+                    }
+                });
             });
         });
-    });
     </script>
 </body>
+
 </html>

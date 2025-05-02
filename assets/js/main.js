@@ -427,7 +427,7 @@ function calculateTotalPayments(payments) {
                 Name: "نقدی",
                 Status: "collected",
                 TotalPrice: directpay.value,
-                Number: directpaynumber, // شماره پیگیری تصادفی
+                Number: directpaynumber,  
                 CreatedAt: document.getElementById("checkDate").value
             };
 
@@ -1137,7 +1137,8 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         document.querySelectorAll('.delete-btn').forEach(btn => {
-            btn.addEventListener('click', function () {
+            btn.addEventListener('click', function (e) {
+                e.preventDefault()
                 // دریافت مقدار شماره چک از ستون مربوطه
                 var numberElement = jQuery(this).closest("tr").find(".serial");
                 var checkNumber = numberElement.text().trim(); // یا .val() اگر input باشد
@@ -1153,7 +1154,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             return; // برای توقف حلقه بعد از حذف
                         }
                     });
-
+                    console.log(Payments)
                     renderChecksTable();
                 }
             });

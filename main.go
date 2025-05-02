@@ -1719,7 +1719,7 @@ func main() {
 		})
 		v2.GET("/exportedit", middleware.AuthMiddleware(), func(c *gin.Context) {
 			session := sessions.Default(c)
-			exports, products := model.GetExportById2(c)
+			exports, products, payments := model.GetExportById2(c)
 			columns := model.GetExportProductsColumns(products)
 			exporttype := c.DefaultQuery("type", "buyer")
 			c.HTML(http.StatusOK, "export_edit.html", gin.H{
@@ -1730,6 +1730,7 @@ func main() {
 				"exports":     exports,
 				"products":    products,
 				"exporttype":  exporttype,
+				"payments":    payments,
 				"columns":     columns,
 			})
 		})

@@ -260,21 +260,21 @@ func GetExportProductsColumns(products []Boot.EscapeExportProducts) int16 {
 	}
 	return columns
 }
-func GetExportById2(c *gin.Context) (Boot.EscapeExport, []Boot.EscapeExportProducts) {
+func GetExportById2(c *gin.Context) (Boot.EscapeExport, []Boot.EscapeExportProducts, []Boot.Payments) {
 	// دریافت ID از Query Param
 	Id := c.DefaultQuery("ExportId", "")
 	ExportID, err := strconv.ParseUint(Id, 10, 64)
 	if err != nil || ExportID == 0 {
 		log.Println("❌ Invalid ExportId:", err)
-		return Boot.EscapeExport{}, nil
+		return Boot.EscapeExport{}, nil, nil
 	}
 
 	var export Boot.Export
-	// جستجو در جدول Export
-	err = Boot.DB().Model(&Boot.Export{}).Where("id = ?", ExportID).First(&export).Error
+	// جستجو در جدول Export با پیش‌بارگذاری روابط
+	err = Boot.DB().Preload("Payments").Where("id = ?", ExportID).First(&export).Error
 	if err != nil {
 		log.Println("❌ Error fetching export by ID:", err)
-		return Boot.EscapeExport{}, nil
+		return Boot.EscapeExport{}, nil, nil
 	}
 
 	escapeExport := Boot.EscapeExport{
@@ -295,10 +295,10 @@ func GetExportById2(c *gin.Context) (Boot.EscapeExport, []Boot.EscapeExportProdu
 
 	// جستجو برای محصولات مربوط به Export
 	var exportProducts []Boot.ExportProducts
-	err = Boot.DB().Model(&Boot.ExportProducts{}).Where("export_id = ?", ExportID).Find(&exportProducts).Error
+	err = Boot.DB().Where("export_id = ?", ExportID).Find(&exportProducts).Error
 	if err != nil {
 		log.Println("❌ Error fetching export products:", err)
-		return escapeExport, nil
+		return escapeExport, nil, export.Payments
 	}
 
 	var escapeExportProducts []Boot.EscapeExportProducts
@@ -322,7 +322,7 @@ func GetExportById2(c *gin.Context) (Boot.EscapeExport, []Boot.EscapeExportProdu
 		escapeExportProducts = append(escapeExportProducts, escapeExportProduct)
 	}
 
-	return escapeExport, escapeExportProducts
+	return escapeExport, escapeExportProducts, export.Payments
 }
 func GetExportById(c *gin.Context) ([]Boot.EscapeExport, []Boot.EscapeExportProducts) {
 	// دریافت ID از Query Param
