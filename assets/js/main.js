@@ -1054,6 +1054,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 checks.push(checkData);
             }
 
+
+
             // Refresh table
             renderChecksTable();
 
@@ -1079,7 +1081,7 @@ document.addEventListener('DOMContentLoaded', function () {
         return convertToFa
     }
     function renderChecksTable() {
-        if (checksTableBody) {
+        if (checksTableBody && Payments.length!=0) {
             checksTableBody.innerHTML = '';
         }
         checks.forEach((check, index) => {
