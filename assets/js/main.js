@@ -2,104 +2,142 @@ let CurrentProductName = "";
 let ProductsOfExport = [];
 let ExportTotalPrice = [];
 let Payments = [];
+let checks = [];
+let ExportID
+if (document.getElementById("ExportNumber")) {
+    ExportID = document.getElementById("ExportNumber").value
+}
 let tax = parseFloat(jQuery("input[name='Tax']").val())
 let draft = false;
 const directpaynumber = "PMT-" + Math.floor(Math.random() * 1000000)
+function fetchAndLogPayments() {
+    if (Payments.length < 1) {
+        return jQuery.ajax({
+            method: "POST",
+            url: "/Dashboard/getpaymentsbyexportid",
+            data: JSON.stringify({ "ExportNumber": ExportID }),
+            contentType: "application/json; charset=utf-8",
+        }).done(function (msg) {
+            if (msg.sucess) {
+                Payments = msg.data;
+                Payments.forEach((element, i) => {
+                    console.log(element.method != "نقدی", element.method)
+                    if (element.Method != "نقدی") {
+                        var checkData = {
+                            date: element.CreatedAt,
+                            bank: element.Name,
+                            serial: element.Number,
+                            amount: element.TotalPrice,
+                            status: element.Status,
+                        };
+                        checks.push(checkData);
+                    }
+                });
+
+            }
+            renderChecksTable();
+        })
+    }
+}
 
 
+fetchAndLogPayments().then(function () {
+
+    console.log("Payments loaded:", Payments);
+    // اینجا می‌توانید از Payments استفاده کنید
+});
 
 jQuery('#myModal').modal('show')
 // add  New product to export list
 
 jQuery("#AddProductToExport").on("click", function () {
 
-        var ID = jQuery("#ProductIs").val();
-        var ExportID = jQuery("input[name='ExportNumber']").val();
-        var InventoryNumber = jQuery("#InventoryIS").val();
-        var Meter = jQuery("#ProductBox input[name='Meter']").val() || "0";
-        var Weight = jQuery("#ProductBox input[name='Weight']").val() || "0";
-        var Barrel = jQuery("#ProductBox input[name='Barrel']").val() || "0";
-        var Count = jQuery("#ProductBox input[name='Count']").val() || "0";
-        var Rolle = jQuery("#ProductBox input[name='Rolle']").val() || "0";
-        var RollePrice = jQuery("#ProductBox input[name='RollePrice']").val() || "0";
-        var MeterPrice = jQuery("#ProductBox input[name='MeterPrice']").val() || "0";
-        var WeightPrice = jQuery("#ProductBox input[name='WeightPrice']").val() || "0";
-        var BarrelPrice = jQuery("#ProductBox input[name='BarrelPrice']").val() || "0";
-        var CountPrice = jQuery("#ProductBox input[name='CountPrice']").val() || "0";
-        var TotalPrice = jQuery("#ProductBox input[name='TotalPrice']").val() || "0";
-        var isDuplicate = ProductsOfExport.some(item => 
-            item.ProductID === ID && item.ExportID === ExportID
-        );
-        
-        if (isDuplicate) {
-            alert("این محصول قبلاً اضافه شده است!");
-            return;
-        }
-    
-        var edit = `<td dir="ltr" class="Edit" style="text-align:right;">
+    var ID = jQuery("#ProductIs").val();
+    var InventoryNumber = jQuery("#InventoryIS").val();
+    var Meter = jQuery("#ProductBox input[name='Meter']").val() || "0";
+    var Weight = jQuery("#ProductBox input[name='Weight']").val() || "0";
+    var Barrel = jQuery("#ProductBox input[name='Barrel']").val() || "0";
+    var Count = jQuery("#ProductBox input[name='Count']").val() || "0";
+    var Rolle = jQuery("#ProductBox input[name='Rolle']").val() || "0";
+    var RollePrice = jQuery("#ProductBox input[name='RollePrice']").val() || "0";
+    var MeterPrice = jQuery("#ProductBox input[name='MeterPrice']").val() || "0";
+    var WeightPrice = jQuery("#ProductBox input[name='WeightPrice']").val() || "0";
+    var BarrelPrice = jQuery("#ProductBox input[name='BarrelPrice']").val() || "0";
+    var CountPrice = jQuery("#ProductBox input[name='CountPrice']").val() || "0";
+    var TotalPrice = jQuery("#ProductBox input[name='TotalPrice']").val() || "0";
+    var isDuplicate = ProductsOfExport.some(item =>
+        item.ProductID === ID && item.ExportID === ExportID
+    );
+
+    if (isDuplicate) {
+        alert("این محصول قبلاً اضافه شده است!");
+        return;
+    }
+
+    var edit = `<td dir="ltr" class="Edit" style="text-align:right;">
      <a class="me-3 remove"  href="./deleteExport?ExportId={{.ID}}"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
        <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5"/>
      </svg></a>
      </td>`;
-        var value = '<tr><td   scope="row">' + ID + '</td><td>' + CurrentProductName + '</td><td class="prn">' + Rolle + '</td><td class="price">' + RollePrice + '</td><td class="price">' + Meter + '</td><td class="price">' + MeterPrice + '</td><td class="price">' + Weight + '</td><td class="price">' + WeightPrice + '</td><td class="price">' + Count + '</td><td class="price">' + CountPrice + '</td><td class="price">' + Barrel + '</td><td class="price">' + BarrelPrice + '</td><td class="itemtotalprice price">' + TotalPrice + '</td>' + edit + '</tr>';
-        var newRow = {
-            InventoryID: InventoryNumber,
-            ProductID: ID,
-            ExportID: ExportID,
-            Name: CurrentProductName,
-            Count: Count,
-            Meter: Meter,
-            Weight: Weight,
-            MeterPrice: MeterPrice,
-            RollePrice: RollePrice,
-            TotalPrice: TotalPrice
+    var value = '<tr><td   scope="row">' + ID + '</td><td>' + CurrentProductName + '</td><td class="prn">' + Rolle + '</td><td class="price">' + RollePrice + '</td><td class="price">' + Meter + '</td><td class="price">' + MeterPrice + '</td><td class="price">' + Weight + '</td><td class="price">' + WeightPrice + '</td><td class="price">' + Count + '</td><td class="price">' + CountPrice + '</td><td class="price">' + Barrel + '</td><td class="price">' + BarrelPrice + '</td><td class="itemtotalprice price">' + TotalPrice + '</td>' + edit + '</tr>';
+    var newRow = {
+        InventoryID: InventoryNumber,
+        ProductID: ID,
+        ExportID: ExportID,
+        Name: CurrentProductName,
+        Count: Count,
+        Meter: Meter,
+        Weight: Weight,
+        MeterPrice: MeterPrice,
+        RollePrice: RollePrice,
+        TotalPrice: TotalPrice
 
-        };
-        var NewPrice = {
-            ProductId: ID,
-            price: TotalPrice
-        }
-        ExportTotalPrice.push(NewPrice)
-        ProductsOfExport.push(newRow)
-
-
-        // console.log(ExportTotalPrice)
-        exporttotal_Price = "0"
-        // ExportTotalPrice.forEach(function(e,i){
-        //     exporttotal_Price = parseFloat(exporttotal_Price) +  parseFloat(e.price)
-        // })
-        res = GetExportTotalPrice(ExportTotalPrice);
+    };
+    var NewPrice = {
+        ProductId: ID,
+        price: TotalPrice
+    }
+    ExportTotalPrice.push(NewPrice)
+    ProductsOfExport.push(newRow)
 
 
-        jQuery("tfoot td").html(res);
-        jQuery("#ExportTotalPrice").val(res);
-        jQuery("#ExportProductsList tbody").append(value);
-        jQuery(".TotalPriceOut td").html(TotalPrice)
-        jQuery(".Notfound").slideUp();
-        jQuery(".close").click()
-        // برای هر نوع قیمت به صورت جداگانه
-        var selectors = {
-            "td.TotalPrice": true,
-            "td.price": true,
-            ".price": true,
-            "td.prn": true,
-            "td.Tax": true,
-            "span.price": true
-        };
+    // console.log(ExportTotalPrice)
+    exporttotal_Price = "0"
+    // ExportTotalPrice.forEach(function(e,i){
+    //     exporttotal_Price = parseFloat(exporttotal_Price) +  parseFloat(e.price)
+    // })
+    res = GetExportTotalPrice(ExportTotalPrice);
 
-        jQuery.each(selectors, function (selector) {
-            jQuery(selector).each(function () {
-                var originalValue = jQuery(this).html().trim();
-                var cleanedValue = originalValue.replace(/[^\d.,]/g, ''); // حذف کاراکترهای غیرعددی
-                var numberValue = parseFloat(cleanedValue.replace(/,/g, ''));
 
-                if (!isNaN(numberValue)) {
-                    var formattedValue = PersianTools.addCommas(numberValue.toString());
-                    var convertedValue = PersianTools.digitsEnToFa(formattedValue);
-                    jQuery(this).html(convertedValue);
-                }
-            });
+    jQuery("tfoot td").html(res);
+    jQuery("#ExportTotalPrice").val(res);
+    jQuery("#ExportProductsList tbody").append(value);
+    jQuery(".TotalPriceOut td").html(TotalPrice)
+    jQuery(".Notfound").slideUp();
+    jQuery(".close").click()
+    // برای هر نوع قیمت به صورت جداگانه
+    var selectors = {
+        "td.TotalPrice": true,
+        "td.price": true,
+        ".price": true,
+        "td.prn": true,
+        "td.Tax": true,
+        "span.price": true
+    };
+
+    jQuery.each(selectors, function (selector) {
+        jQuery(selector).each(function () {
+            var originalValue = jQuery(this).html().trim();
+            var cleanedValue = originalValue.replace(/[^\d.,]/g, ''); // حذف کاراکترهای غیرعددی
+            var numberValue = parseFloat(cleanedValue.replace(/,/g, ''));
+
+            if (!isNaN(numberValue)) {
+                var formattedValue = PersianTools.addCommas(numberValue.toString());
+                var convertedValue = PersianTools.digitsEnToFa(formattedValue);
+                jQuery(this).html(convertedValue);
+            }
         });
+    });
     // }
 
 })
@@ -134,7 +172,7 @@ function CalculateItems() {
     });
     var target = jQuery(this).val()
     var id = jQuery(this).attr("name")
-    var price = jQuery("input[name='"+id+"Price']").val()
+    var price = jQuery("input[name='" + id + "Price']").val()
 
     var result = (parseFloat(target) * parseFloat(price))
     jQuery("input[name='TotalPrice']").val(result)
@@ -193,7 +231,6 @@ jQuery(".draft").on("change", function () {
         dataType: "json"
     })
         .done(function (msg) {
-            console.log("Success:", msg);
             if (msg.error) {
                 alert("Error: " + msg.error);
             } else {
@@ -311,7 +348,6 @@ jQuery(".production select#ProductIs").on("change", function () {
             .done(function (msg) {
                 if (msg.result.length > 0) {
                     var product = msg.result[0];
-                    console.log(product, product.Count)
                     jQuery(".production span.ProductsCount").html(product.Count)
                     jQuery(".production span.ProductMeter").html(product.Meter)
                     jQuery(".production input[name='ProductsCount']").attr("value", product.Count)
@@ -407,14 +443,13 @@ function calculateTotalPayments(payments) {
     const directpay = document.getElementById("directpay");
     if (directpay) {
         if (directpay.value && directpay.value.trim().length > 0) {
-            console.log("not found ", typeof (Payment))
 
             var Payment = {
                 Method: "نقدی",
                 Name: "نقدی",
                 Status: "collected",
                 TotalPrice: directpay.value,
-                Number: directpaynumber,  
+                Number: directpaynumber,
                 CreatedAt: document.getElementById("checkDate").value
             };
 
@@ -454,7 +489,6 @@ jQuery("form[name='expotform']").submit(function (e) {
 
     if (Array.isArray(ProductsOfExport) && ProductsOfExport.length > 0) {
         calculateTotalPayments(Payments)
-        console.log(parseFloat(calculateTotalPayments(Payments)), parseFloat(ExportPrice))
         if (parseFloat(calculateTotalPayments(Payments)) < parseFloat(ExportPrice)) {
             const isConfirmed = confirm("مبلغ پرداختی کمتر از قیمت فاکتور میباشد آیا از ادامه مطمین هستید؟");
             if (!isConfirmed) {
@@ -507,7 +541,6 @@ jQuery("#find").on("click", function (e) {
             if (lengthofres > 0) {
                 let html = "";
                 msg.message.forEach(function (index) {
-                    console.log(index);
                     html += '<tr>';
                     html += '<td class="' + index.ID + '" style="text-align:right;">' + index.ID + '</td>';
                     html += '<td class="' + index.Name + '" style="text-align:right;">' + index.Name + '</td>';
@@ -937,6 +970,7 @@ fetch("/Dashboard/api/allexports")
             date.push(item.TotalPrice);
 
         })
+        console.log("cahrt", date, labels)
         const ctx = document.getElementById('myChart');
         if (ctx) {
             new Chart(ctx, {
@@ -966,120 +1000,117 @@ fetch("/Dashboard/api/allexports")
     .catch(error => {
         console.error('There was a problem with the fetch operation:', error);
     });
-document.addEventListener('DOMContentLoaded', function () {
-    const checkForm = document.getElementById('addcheck');
-    const checksTableBody = document.getElementById('checksTableBody');
-    let checks = []; // Removed localStorage dependency
-    let editIndex = null;
-    // let Payments = []; // Array to store payment data
-    btncheckbox.addEventListener('click', function (e) {
-        var ExportID = jQuery("input[name='ExportNumber']").val();
+const checkForm = document.getElementById('addcheck');
+const checksTableBody = document.getElementById('checksTableBody');
+let editIndex = null;
+// let Payments = []; // Array to store payment data
+//     btncheckbox.addEventListener('click', function (e) {
+//         var ExportNumber = jQuery("input[name='ExportNumber']").val();
+// console.log("payments",Payments,"getPaymentsByExportId",)
 
-       
-        console.log("ExportID",ExportID,"Payments",Payments, getPaymentsByExportId(ExportID))
-    })
-    // Load checks when page loads
-    renderChecksTable();
+//     })
+// Load checks when page loads
+renderChecksTable();
 
-    // Form submission
-    if (checkForm) {
-        checkForm.addEventListener('click', function (e) {
-            e.preventDefault();
+// Form submission
+if (checkForm) {
+    checkForm.addEventListener('click', function (e) {
+        e.preventDefault();
 
 
 
-            // validation
+        // validation
 
-            let errorBox = document.getElementById('form-error');
-            if (!errorBox) {
-                errorBox = document.createElement('div');
-                errorBox.id = 'form-error';
-                errorBox.style.color = 'red';
-                errorBox.style.margin = '10px 0';
-                checkForm.parentNode.insertBefore(errorBox, checkForm.nextSibling);
-            }
+        let errorBox = document.getElementById('form-error');
+        if (!errorBox) {
+            errorBox = document.createElement('div');
+            errorBox.id = 'form-error';
+            errorBox.style.color = 'red';
+            errorBox.style.margin = '10px 0';
+            checkForm.parentNode.insertBefore(errorBox, checkForm.nextSibling);
+        }
 
-            const fields = [
-                { id: 'checkDate', name: 'تاریخ چک' },
-                { id: 'bankName', name: 'نام بانک' },
-                { id: 'serialCode', name: 'شماره سریال' },
-                { id: 'checkAmount', name: 'مبلغ چک' }
-            ];
+        const fields = [
+            { id: 'checkDate', name: 'تاریخ چک' },
+            { id: 'bankName', name: 'نام بانک' },
+            { id: 'serialCode', name: 'شماره سریال' },
+            { id: 'checkAmount', name: 'مبلغ چک' }
+        ];
 
-            let isValid = true;
-            errorBox.innerHTML = ''; // پاک کردن خطاهای قبلی
+        let isValid = true;
+        errorBox.innerHTML = ''; // پاک کردن خطاهای قبلی
 
-            fields.forEach(field => {
-                const input = document.getElementById(field.id);
-                const value = input.value.trim();
+        fields.forEach(field => {
+            const input = document.getElementById(field.id);
+            const value = input.value.trim();
 
-                if (!value) {
-                    isValid = false;
-                    errorBox.innerHTML += `فیلد ${field.name} الزامی است.<br>`;
-                    input.classList.add('error-field');
-                } else {
-                    input.classList.remove('error-field');
-                }
-            });
-
-            if (!isValid) {
-                // اسکرول به قسمت خطاها
-                errorBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                return;
-            }
-
-            // validation
-            const checkData = {
-                date: document.getElementById('checkDate').value,
-                bank: document.getElementById('bankName').value,
-                serial: document.getElementById('serialCode').value,
-                amount: document.getElementById('checkAmount').value,
-                status: 'pending' // Default status
-            };
-
-            if (editIndex !== null) {
-                // Update existing check
-                checks[editIndex] = checkData;
-                editIndex = null;
+            if (!value) {
+                isValid = false;
+                errorBox.innerHTML += `فیلد ${field.name} الزامی است.<br>`;
+                input.classList.add('error-field');
             } else {
-                // Add new check
-                checks.push(checkData);
+                input.classList.remove('error-field');
             }
-
-
-
-            // Refresh table
-            renderChecksTable();
-
-            // Reset form
-            // checkForm.reset();
-            document.getElementById('addcheck').textContent = 'ذخیره چک';
         });
-    }
 
-    function ToFaprice(val) {
-        var convertToFa = 0
-        if (parseFloat(val)) {
-            var val = PersianTools.addCommas(val);
-            var convertToFa = PersianTools.digitsEnToFa(val);
+        if (!isValid) {
+            // اسکرول به قسمت خطاها
+            errorBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            return;
         }
-        return convertToFa
-    }
-    function ToFaDigit(val) {
-        var convertToFa = 0
-        if (parseFloat(val)) {
-            var convertToFa = PersianTools.digitsEnToFa(val);
-        }
-        return convertToFa
-    }
-    function renderChecksTable() {
-        if (checksTableBody && Payments.length!=0) {
-            checksTableBody.innerHTML = '';
-        }
-        checks.forEach((check, index) => {
-            const row = document.createElement('tr');
 
-            row.innerHTML = `
+        // validation
+        const checkData = {
+            date: document.getElementById('checkDate').value,
+            bank: document.getElementById('bankName').value,
+            serial: document.getElementById('serialCode').value,
+            amount: document.getElementById('checkAmount').value,
+            status: 'pending' // Default status
+        };
+
+        if (editIndex !== null) {
+            // Update existing check
+            checks[editIndex] = checkData;
+            editIndex = null;
+        } else {
+            // Add new check
+            checks.push(checkData);
+        }
+
+
+        // Refresh table
+        renderChecksTable();
+
+        // Reset form
+        // checkForm.reset();
+        document.getElementById('addcheck').textContent = 'ذخیره چک';
+    });
+}
+
+function ToFaprice(val) {
+    var convertToFa = 0
+    if (parseFloat(val)) {
+        var val = PersianTools.addCommas(val);
+        var convertToFa = PersianTools.digitsEnToFa(val);
+    }
+    return convertToFa
+}
+function ToFaDigit(val) {
+    var convertToFa = 0
+    if (parseFloat(val)) {
+        var convertToFa = PersianTools.digitsEnToFa(val);
+    }
+    return convertToFa
+}
+function renderChecksTable() {
+    if (checksTableBody && Payments.length != 0) {
+        checksTableBody.innerHTML = '';
+    }
+    checks.forEach((check, index) => {
+        console.log("ssssssssssssssssss")
+        const row = document.createElement('tr');
+
+        row.innerHTML = `
                     <td>${index + 1}</td>
                     <td>${check.date}</td>
                     <td>${getBankName(check.bank)}</td>
@@ -1097,113 +1128,112 @@ document.addEventListener('DOMContentLoaded', function () {
                     </td>
                 `;
 
-            // Create Payment object for each check
-            var Payment = {
-                Method: "چک",
-                Name: getBankName(check.bank),
-                ExportID: jQuery("input[name='ExportNumber']").val(),
-                Status: check.status,
-                TotalPrice: check.amount,
-                Number: check.serial,
-                CreatedAt: check.date
-            };
+        // Create Payment object for each check
+        var Payment = {
+            Method: "چک",
+            Name: getBankName(check.bank),
+            ExportID: jQuery("input[name='ExportNumber']").val(),
+            Status: check.status,
+            TotalPrice: check.amount,
+            Number: check.serial,
+            CreatedAt: check.date
+        };
 
-            Payments.push(Payment);
-            if (checksTableBody) {
-                checksTableBody.appendChild(row);
+        Payments.push(Payment);
+        if (checksTableBody) {
+            checksTableBody.appendChild(row);
+        }
+    });
+
+
+    // add check
+    document.querySelectorAll('.edit-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            editIndex = parseInt(this.getAttribute('data-index'));
+            const check = checks[editIndex];
+
+            document.getElementById('checkDate').value = check.date;
+            document.getElementById('bankName').value = check.bank;
+            document.getElementById('serialCode').value = check.serial;
+            document.getElementById('checkAmount').value = check.amount;
+
+            document.querySelector('#checkForm button[type="submit"]').textContent = 'ویرایش چک';
+        });
+    });
+
+    document.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', function (e) {
+            e.preventDefault()
+            // دریافت مقدار شماره چک از ستون مربوطه
+            var numberElement = jQuery(this).closest("tr").find(".serial");
+            var checkNumber = numberElement.text().trim(); // یا .val() اگر input باشد
+
+            if (confirm('آیا از حذف این چک مطمئن هستید؟')) {
+                const index = parseInt(this.getAttribute('data-index'));
+                checks.splice(index, 1);
+
+                // حذف از آرایه Payments با مقایسه صحیح
+                Payments.forEach((element, i) => {
+                    if (element.Number.toString() === checkNumber) {
+                        Payments.splice(i, 1);
+                        return; // برای توقف حلقه بعد از حذف
+                    }
+                });
+                renderChecksTable();
             }
         });
+    });
 
-
-        // add check
-        document.querySelectorAll('.edit-btn').forEach(btn => {
-            btn.addEventListener('click', function () {
-                editIndex = parseInt(this.getAttribute('data-index'));
-                const check = checks[editIndex];
-
-                document.getElementById('checkDate').value = check.date;
-                document.getElementById('bankName').value = check.bank;
-                document.getElementById('serialCode').value = check.serial;
-                document.getElementById('checkAmount').value = check.amount;
-
-                document.querySelector('#checkForm button[type="submit"]').textContent = 'ویرایش چک';
-            });
+    document.querySelectorAll('.status-select').forEach(select => {
+        select.addEventListener('change', function () {
+            const index = parseInt(this.getAttribute('data-index'));
+            checks[index].status = this.value;
+            renderChecksTable(); // Refresh to update Payments array
         });
+    });
+    calculateTotalPayments(Payments)
+}
 
-        document.querySelectorAll('.delete-btn').forEach(btn => {
-            btn.addEventListener('click', function (e) {
-                e.preventDefault()
-                // دریافت مقدار شماره چک از ستون مربوطه
-                var numberElement = jQuery(this).closest("tr").find(".serial");
-                var checkNumber = numberElement.text().trim(); // یا .val() اگر input باشد
-
-                if (confirm('آیا از حذف این چک مطمئن هستید؟')) {
-                    const index = parseInt(this.getAttribute('data-index'));
-                    checks.splice(index, 1);
-
-                    // حذف از آرایه Payments با مقایسه صحیح
-                    Payments.forEach((element, i) => {
-                        if (element.Number.toString() === checkNumber) {
-                            Payments.splice(i, 1);
-                            return; // برای توقف حلقه بعد از حذف
-                        }
-                    });
-                    renderChecksTable();
-                }
-            });
-        });
-
-        document.querySelectorAll('.status-select').forEach(select => {
-            select.addEventListener('change', function () {
-                const index = parseInt(this.getAttribute('data-index'));
-                checks[index].status = this.value;
-                renderChecksTable(); // Refresh to update Payments array
-            });
-        });
-        calculateTotalPayments(Payments)
-    }
-
-    // Bank Names
-    function getBankName(bankCode) {
-        const banks = {
-            'melli': 'ملی',
-            'mellat': 'ملت',
-            'saderat': 'صادرات',
-            'tejarat': 'تجارت',
-            'saman': 'سامان',
-            'shahr': 'شهر',
-            'pasargad': 'پاسارگاد',
-            'sepah': 'سپه',
-            'keshavarzi': 'کشاورزی',
-            'parsian': 'پارسیان',
-            'eghtesad-novin': 'اقتصاد نوین',
-            'ansar': 'انصار',
-            'karafarin': 'کارآفرین',
-            'sina': 'سینا',
-            'sarmayeh': 'سرمایه',
-            'tosee': 'توسعه',
-            'tosee-saderat': 'توسعه صادرات',
-            'tosee-taavon': 'توسعه تعاون',
-            'day': 'دی',
-            'hekmat': 'حکمت ایرانیان',
-            'ayandeh': 'آینده',
-            'ghavamin': 'قوامین',
-            'khavar': 'خاورمیانه',
-            'mehr-iran': 'مهر ایران',
-            'mehr-eqtesad': 'مهر اقتصاد',
-            'post': 'پست بانک',
-            'qarzolqasaneh': 'قرض‌الحسنه مهر ایران',
-            'qarzolqasaneh-resalat': 'قرض‌الحسنه رسالت',
-            'iran-zamin': 'ایران زمین',
-            'kosar': 'کوثر',
-            'markazi': 'مرکزی',
-            'reffah': 'رفاه',
-            'tourism': 'گردشگری',
-            'industry': 'صنعت و معدن'
-        };
-        return banks[bankCode] || bankCode;
-    }
-});
+// Bank Names
+function getBankName(bankCode) {
+    const banks = {
+        'melli': 'ملی',
+        'mellat': 'ملت',
+        'saderat': 'صادرات',
+        'tejarat': 'تجارت',
+        'saman': 'سامان',
+        'shahr': 'شهر',
+        'pasargad': 'پاسارگاد',
+        'sepah': 'سپه',
+        'keshavarzi': 'کشاورزی',
+        'parsian': 'پارسیان',
+        'eghtesad-novin': 'اقتصاد نوین',
+        'ansar': 'انصار',
+        'karafarin': 'کارآفرین',
+        'sina': 'سینا',
+        'sarmayeh': 'سرمایه',
+        'tosee': 'توسعه',
+        'tosee-saderat': 'توسعه صادرات',
+        'tosee-taavon': 'توسعه تعاون',
+        'day': 'دی',
+        'hekmat': 'حکمت ایرانیان',
+        'ayandeh': 'آینده',
+        'ghavamin': 'قوامین',
+        'khavar': 'خاورمیانه',
+        'mehr-iran': 'مهر ایران',
+        'mehr-eqtesad': 'مهر اقتصاد',
+        'post': 'پست بانک',
+        'qarzolqasaneh': 'قرض‌الحسنه مهر ایران',
+        'qarzolqasaneh-resalat': 'قرض‌الحسنه رسالت',
+        'iran-zamin': 'ایران زمین',
+        'kosar': 'کوثر',
+        'markazi': 'مرکزی',
+        'reffah': 'رفاه',
+        'tourism': 'گردشگری',
+        'industry': 'صنعت و معدن'
+    };
+    return banks[bankCode] || bankCode;
+}
 
 function debounce(func, timeout = 500) {
     let timer;
@@ -1389,14 +1419,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
 /**
  * دریافت لیست پرداخت‌ها بر اساس ExportID
- * @param {string} exportID - شناسه صادراتی مورد نظر
+ * @param {string} ExportID - شناسه صادراتی مورد نظر
  * @param {string} token - توکن احراز هویت
  * @returns {Promise<Object>} - نتیجه درخواست
  */
-async function getPaymentsByExportId(exportID) {
+async function getPaymentsByExportId() {
     try {
-        const apiUrl = `/Dashboard/getpaymentsbyexportid?ExportID=${encodeURIComponent(exportID)}`;
-        
+        const apiUrl = `/Dashboard/getpaymentsbyexportid?ExportNumber=${encodeURIComponent(ExportID)}`;
+
         const response = await fetch(apiUrl, {
             method: 'GET',
             headers: {
@@ -1411,7 +1441,7 @@ async function getPaymentsByExportId(exportID) {
         }
 
         const result = await response.json();
-        
+
         if (result.message && result.data) {
             console.log(result.data); // نمایش پیام موفقیت
             return result.data; // بازگرداندن داده‌های پرداخت

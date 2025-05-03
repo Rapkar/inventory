@@ -1734,14 +1734,21 @@ func main() {
 				"columns":     columns,
 			})
 		})
-		v2.GET("/getpaymentsbyexportid", middleware.AuthMiddleware(), func(c *gin.Context) {
-			result, err := model.GetPaymentNumberByExportId(c)
+		v2.POST("/getpaymentsbyexportid", middleware.AuthMiddleware(), func(c *gin.Context) {
+			var data struct {
+				ExportNumber string `json:"ExportNumber"`
+			}
+			if err := c.BindJSON(&data); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+				return
+			}
+			fmt.Println("dddddddddddd", data.ExportNumber)
+			result, err := model.GetPaymentNumberByExportId(data.ExportNumber)
 			if err != nil {
 				c.JSON(http.StatusInternalServerError, gin.H{"error": "خطا در تبدیل"})
 				return
 			}
-
-			c.JSON(http.StatusOK, gin.H{"message": "باموفقیت تغییر انجام شد", "data": result})
+			c.JSON(http.StatusOK, gin.H{"message": "باموفقیت تغییر انجام شد", "sucess": true, "data": result})
 
 		})
 		// v2.GET("/Download", middleware.AuthMiddleware(), func(c *gin.Context) {

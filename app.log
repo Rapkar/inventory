@@ -1720,3 +1720,112 @@
 2025/05/02 07:42:46 📦 ScheduleBackups started
 2025/05/02 07:42:46 ✅ created backup success backup-2025-05-01-07-42-46.sql
 2025/05/02 07:42:46 ✅ created backup success backup-2025-04-30-07-42-46.sql
+2025/05/03 09:13:24 🚀 Logger initialized
+2025/05/03 09:13:24 🔧 Booting application...
+2025/05/03 09:13:50 🚀 Logger initialized
+2025/05/03 09:13:50 🔧 Booting application...
+2025/05/03 09:13:51 📦 ScheduleBackups started
+2025/05/03 09:13:51 ✅ created backup success backup-2025-05-01-09-13-51.sql
+2025/05/03 09:13:51 ✅ created backup success backup-2025-05-02-09-13-51.sql
+2025/05/03 09:14:17 خطا در دریافت اتصال دیتابیس: &{0xc0006866c0 <nil> 7 0xc0002eb180 0}
+2025/05/03 09:16:43 🚀 Logger initialized
+2025/05/03 09:16:43 🔧 Booting application...
+2025/05/03 09:16:44 📦 ScheduleBackups started
+2025/05/03 09:16:44 ✅ created backup success backup-2025-05-02-09-16-44.sql
+2025/05/03 09:16:44 ✅ created backup success backup-2025-05-01-09-16-44.sql
+2025/05/03 09:17:24 🚀 Logger initialized
+2025/05/03 09:17:24 🔧 Booting application...
+2025/05/03 09:17:25 📦 ScheduleBackups started
+2025/05/03 09:17:25 ✅ created backup success backup-2025-05-01-09-17-25.sql
+2025/05/03 09:17:25 ✅ created backup success backup-2025-05-02-09-17-25.sql
+2025/05/03 09:21:33 🚀 Logger initialized
+2025/05/03 09:21:33 🔧 Booting application...
+2025/05/03 09:21:34 📦 ScheduleBackups started
+2025/05/03 09:21:34 ✅ created backup success backup-2025-05-01-09-21-34.sql
+2025/05/03 09:21:34 ✅ created backup success backup-2025-05-02-09-21-34.sql
+2025/05/03 09:30:01 🚀 Logger initialized
+2025/05/03 09:30:01 🔧 Booting application...
+2025/05/03 09:30:02 📦 ScheduleBackups started
+2025/05/03 09:30:02 ✅ created backup success backup-2025-05-02-09-30-02.sql
+2025/05/03 09:30:02 ✅ created backup success backup-2025-05-01-09-30-02.sql
+2025/05/03 10:49:00 🚀 Logger initialized
+2025/05/03 10:49:00 🔧 Booting application...
+2025/05/03 10:49:01 📦 ScheduleBackups started
+2025/05/03 10:49:01 ✅ created backup success backup-2025-05-02-10-49-01.sql
+2025/05/03 10:49:01 ✅ created backup success backup-2025-05-01-10-49-01.sql
+2025/05/03 10:49:30 🚀 Logger initialized
+2025/05/03 10:49:30 🔧 Booting application...
+2025/05/03 10:49:32 📦 ScheduleBackups started
+2025/05/03 10:49:32 ✅ created backup success backup-2025-05-02-10-49-32.sql
+2025/05/03 10:49:32 ✅ created backup success backup-2025-05-01-10-49-32.sql
+2025/05/03 10:49:57 🚀 Logger initialized
+2025/05/03 10:49:57 🔧 Booting application...
+2025/05/03 10:49:58 📦 ScheduleBackups started
+2025/05/03 10:49:58 ✅ created backup success backup-2025-05-02-10-49-58.sql
+2025/05/03 10:49:58 ✅ created backup success backup-2025-05-01-10-49-58.sql
+2025/05/03 10:52:02 🚀 Logger initialized
+2025/05/03 10:52:02 🔧 Booting application...
+2025/05/03 10:52:03 📦 ScheduleBackups started
+2025/05/03 10:52:04 ✅ created backup success backup-2025-05-01-10-52-03.sql
+2025/05/03 10:52:04 ✅ created backup success backup-2025-05-02-10-52-03.sql
+2025/05/03 10:52:26 🚀 Logger initialized
+2025/05/03 10:52:26 🔧 Booting application...
+2025/05/03 10:52:27 📦 ScheduleBackups started
+2025/05/03 10:52:27 ✅ created backup success backup-2025-05-02-10-52-27.sql
+2025/05/03 10:52:27 ✅ created backup success backup-2025-05-01-10-52-27.sql
+2025/05/03 10:53:15 🚀 Logger initialized
+2025/05/03 10:53:15 🔧 Booting application...
+2025/05/03 10:53:16 📦 ScheduleBackups started
+2025/05/03 10:53:16 ✅ created backup success backup-2025-05-02-10-53-16.sql
+2025/05/03 10:53:16 ✅ created backup success backup-2025-05-01-10-53-16.sql
+2025/05/03 10:54:21 🚀 Logger initialized
+2025/05/03 10:54:21 🔧 Booting application...
+2025/05/03 10:54:22 📦 ScheduleBackups started
+2025/05/03 10:54:22 ✅ created backup success backup-2025-05-02-10-54-22.sql
+2025/05/03 10:54:22 ✅ created backup success backup-2025-05-01-10-54-22.sql
+2025/05/03 10:57:06 🚀 Logger initialized
+2025/05/03 10:57:06 🔧 Booting application...
+2025/05/03 10:57:07 📦 ScheduleBackups started
+2025/05/03 10:57:07 ✅ created backup success backup-2025-05-02-10-57-07.sql
+2025/05/03 10:57:07 ✅ created backup success backup-2025-05-01-10-57-07.sql
+2025/05/03 10:59:34 🚀 Logger initialized
+2025/05/03 10:59:34 🔧 Booting application...
+2025/05/03 10:59:35 📦 ScheduleBackups started
+2025/05/03 10:59:35 ✅ created backup success backup-2025-05-01-10-59-35.sql
+2025/05/03 10:59:35 ✅ created backup success backup-2025-05-02-10-59-35.sql
+2025/05/03 11:00:31 🚀 Logger initialized
+2025/05/03 11:00:31 🔧 Booting application...
+2025/05/03 11:00:32 📦 ScheduleBackups started
+2025/05/03 11:00:32 ✅ created backup success backup-2025-05-01-11-00-32.sql
+2025/05/03 11:00:32 ✅ created backup success backup-2025-05-02-11-00-32.sql
+2025/05/03 14:25:34 🚀 Logger initialized
+2025/05/03 14:25:34 🔧 Booting application...
+2025/05/03 14:25:35 📦 ScheduleBackups started
+2025/05/03 14:25:35 ✅ created backup success backup-2025-05-01-14-25-35.sql
+2025/05/03 14:25:35 ✅ created backup success backup-2025-05-02-14-25-35.sql
+2025/05/03 15:22:29 خطا در دریافت اتصال دیتابیس: &{0xc0003b4480 <nil> 7 0xc0004c6c40 0}
+2025/05/03 15:22:34 خطا در دریافت اتصال دیتابیس: &{0xc0003b4480 <nil> 7 0xc0004c7340 0}
+2025/05/03 15:24:58 خطا در دریافت اتصال دیتابیس: &{0xc0003b4240 <nil> 7 0xc0004c7a40 0}
+2025/05/03 15:25:10 🚀 Logger initialized
+2025/05/03 15:25:10 🔧 Booting application...
+2025/05/03 15:25:11 📦 ScheduleBackups started
+2025/05/03 15:25:12 ✅ created backup success backup-2025-05-02-15-25-11.sql
+2025/05/03 15:25:12 ✅ created backup success backup-2025-05-01-15-25-11.sql
+2025/05/03 15:25:14 خطا در دریافت اتصال دیتابیس: &{0xc000380000 <nil> 7 0xc0004de380 0}
+2025/05/03 17:58:30 🚀 Logger initialized
+2025/05/03 17:58:30 🔧 Booting application...
+2025/05/03 17:58:31 📦 ScheduleBackups started
+2025/05/03 17:58:31 ✅ created backup success backup-2025-05-01-17-58-31.sql
+2025/05/03 17:58:31 ✅ created backup success backup-2025-05-02-17-58-31.sql
+2025/05/03 17:59:17 خطا در دریافت اتصال دیتابیس: &{0xc000524990 <nil> 7 0xc000162540 0}
+2025/05/03 17:59:58 خطا در دریافت اتصال دیتابیس: &{0xc0001847e0 <nil> 7 0xc0003ad340 0}
+2025/05/03 18:00:16 خطا در دریافت اتصال دیتابیس: &{0xc0005243f0 <nil> 7 0xc0003ad6c0 0}
+2025/05/03 18:02:21 خطا در دریافت اتصال دیتابیس: &{0xc0003a8090 <nil> 7 0xc0002581c0 0}
+2025/05/03 18:22:20 خطا در دریافت اتصال دیتابیس: &{0xc00060c2d0 <nil> 7 0xc0006d3500 0}
+2025/05/03 18:27:43 خطا در دریافت اتصال دیتابیس: &{0xc000980000 <nil> 7 0xc000780700 0}
+2025/05/03 18:28:55 خطا در دریافت اتصال دیتابیس: &{0xc0003a8ab0 <nil> 7 0xc000436a80 0}
+2025/05/03 18:44:23 🚀 Logger initialized
+2025/05/03 18:44:23 🔧 Booting application...
+2025/05/03 18:44:24 📦 ScheduleBackups started
+2025/05/03 18:44:25 ✅ created backup success backup-2025-05-02-18-44-24.sql
+2025/05/03 18:44:25 ✅ created backup success backup-2025-05-01-18-44-24.sql

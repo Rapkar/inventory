@@ -1,0 +1,25 @@
+                   {{range .payments}}
+                                                            {{if eq .Method "چک"}}
+                                                            <tr>
+                                                                <td>{{.ID}}</td>
+                                                                <td>{{.CreatedAt}}</td>
+                                                                <td>{{.Name}}</td>
+                                                                <td class="serial price">{{.Number}}</td>
+                                                                <td class="price">{{.TotalPrice}}</td>
+                                                                <td>
+                                                                    <select class="form-select status-select"
+                                                                        data-index="{{.ID}}">
+                                                                        <option value="pending" selected="">در انتظار
+                                                                        </option>
+                                                                        <option value="collected">وصول شده</option>
+                                                                        <option value="rejected">برگشت خورده</option>
+                                                                    </select>
+                                                                </td>
+                                                                <td>
+                                                                    <button
+                                                                        class="btn btn-sm btn-outline-danger delete-btn"
+                                                                        data-index="{{.ID}}">حذف</button>
+                                                                </td>
+                                                            </tr>
+                                                            {{end}}
+                                                            {{end}}

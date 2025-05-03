@@ -1,6 +1,7 @@
 package Model
 
 import (
+	"errors"
 	"fmt"
 	"inventory/App/Boot"
 	"inventory/App/Utility"
@@ -9,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 func GetAllExports() []Boot.EscapeExport {
@@ -588,16 +590,28 @@ func GetUsersByNameAndPhone(nameTerm string, phoneTerm string) ([]Boot.ResponseU
 
 	return result, message
 }
-func GetPaymentNumberByExportId(c *gin.Context) ([]Boot.Payments, error) {
-	id := c.Query("ExportID")
-	if id == "" {
-		return nil, fmt.Errorf("ExportID parameter is required")
+func GetPaymentNumberByExportId(ExportNumber string) ([]Boot.Payments, error) {
+	// تغییر پارامتر به ExportNumber
+	if ExportNumber == "" {
+		return nil, fmt.Errorf("ExportNumber parameter is required")
+	}
+	// ابتدا Export مربوطه را پیدا می‌کنیم
+	var export Boot.Export
+	if err := Boot.DB().Model(&Boot.Export{}).
+		Where("number = ?", ExportNumber).
+		First(&export).Error; err != nil {
+
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, fmt.Errorf("export with number %s not found", ExportNumber)
+		}
+		log.Printf("❌ Database error in finding export: %v", err)
+		return nil, fmt.Errorf("database error")
 	}
 
-	// جستجوی پرداخت‌ها در دیتابیس
+	// سپس پرداخت‌های مربوط به این Export را پیدا می‌کنیم
 	var payments []Boot.Payments
 	if err := Boot.DB().Model(&Boot.Payments{}).
-		Where("export_id = ?", id).
+		Where("export_id = ?", export.ID).
 		Find(&payments).Error; err != nil {
 
 		log.Printf("❌ Database error in GetPaymentNumberByExportId: %v", err)
