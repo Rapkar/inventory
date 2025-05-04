@@ -9,6 +9,7 @@ if (document.getElementById("ExportNumber")) {
 }
 let tax = parseFloat(jQuery("input[name='Tax']").val())
 let draft = false;
+
 const directpaynumber = "PMT-" + Math.floor(Math.random() * 1000000)
 function fetchAndLogPayments() {
     if (Payments.length < 1) {
@@ -19,9 +20,11 @@ function fetchAndLogPayments() {
             contentType: "application/json; charset=utf-8",
         }).done(function (msg) {
             if (msg.sucess) {
-                Payments = msg.data;
-                Payments.forEach((element, i) => {
-                    console.log(element.method != "نقدی", element.method)
+
+                // Payments = msg.data;
+                console.log("مدل دریافتی", msg)
+
+                msg.data.forEach((element, i) => {
                     if (element.Method != "نقدی") {
                         var checkData = {
                             date: element.CreatedAt,
@@ -31,11 +34,15 @@ function fetchAndLogPayments() {
                             status: element.Status,
                         };
                         checks.push(checkData);
+                    } else {
+                        jQuery("#directpay").val(element.TotalPrice)
                     }
                 });
 
             }
             renderChecksTable();
+            console.log("مقایر کل", Payments, checks)
+
         })
     }
 }
@@ -43,7 +50,6 @@ function fetchAndLogPayments() {
 
 fetchAndLogPayments().then(function () {
 
-    console.log("Payments loaded:", Payments);
     // اینجا می‌توانید از Payments استفاده کنید
 });
 
@@ -448,7 +454,7 @@ function calculateTotalPayments(payments) {
                 Method: "نقدی",
                 Name: "نقدی",
                 Status: "collected",
-                TotalPrice: directpay.value,
+                TotalPrice: parseFloat(directpay.value),
                 Number: directpaynumber,
                 CreatedAt: document.getElementById("checkDate").value
             };
@@ -465,8 +471,11 @@ function calculateTotalPayments(payments) {
 
     for (let payment of payments) {
         total += parseFloat(payment.TotalPrice);
+
     }
     var val = PersianTools.addCommas(total);
+    console.log("ttttt", val)
+
     jQuery("#TotalPayments").html(PersianTools.digitsEnToFa(val))
     return total;
 }
@@ -588,7 +597,6 @@ jQuery("#findpayment").on("click", function (e) {
             if (lengthofres > 0) {
                 let html = "";
                 msg.message.forEach(function (index) {
-                    console.log(index);
                     html += '<tr>';
                     html += '<td class="' + index.ID + '" style="text-align:right;">' + index.ID + '</td>';
                     html += '<td class="' + index.Method + '" style="text-align:right;">' + index.Method + '</td>';
@@ -796,7 +804,6 @@ jQuery("input[name='Tax']").on("keyup", function (e) {
 jQuery(document).on('click', '.remove', function (e) {
     e.preventDefault()
     var id = jQuery(this).parent().closest("tr").find(".id").html();
-    console.log(id, jQuery(this).parent().closest("tr").find(".id").html(), jQuery(this).parent().closest("tr").html())
     id = parseInt(id)
     RemoveItem(this, id);
 })
@@ -805,7 +812,6 @@ jQuery(document).on('click', '.remove', function (e) {
 
 
 function RemoveItem(target, id) {
-    console.log(ExportTotalPrice, ProductsOfExport)
 
     ExportTotalPrice.forEach((element, index) => {
         console.log(index == id, element.ProductId, id)
@@ -818,7 +824,6 @@ function RemoveItem(target, id) {
             ProductsOfExport.splice(index, 1);
         }
     });
-    console.log(ExportTotalPrice, ProductsOfExport)
     res = GetExportTotalPrice(ExportTotalPrice);
 
     jQuery("tfoot td").html(res);
@@ -970,7 +975,6 @@ fetch("/Dashboard/api/allexports")
             date.push(item.TotalPrice);
 
         })
-        console.log("cahrt", date, labels)
         const ctx = document.getElementById('myChart');
         if (ctx) {
             new Chart(ctx, {
@@ -1107,14 +1111,13 @@ function renderChecksTable() {
         checksTableBody.innerHTML = '';
     }
     checks.forEach((check, index) => {
-        console.log("ssssssssssssssssss")
         const row = document.createElement('tr');
 
         row.innerHTML = `
                     <td>${index + 1}</td>
                     <td>${check.date}</td>
                     <td>${getBankName(check.bank)}</td>
-                    <td class="serial price">${ToFaDigit(check.serial)}</td>
+                    <td data-code="${check.serial}" class="serial price serial">${ToFaDigit(check.serial)}</td>
                     <td  class="price" >${ToFaprice(Number(check.amount).toLocaleString())}</td>
                     <td>
                         <select class="form-select status-select" data-index="${index}">
@@ -1138,8 +1141,13 @@ function renderChecksTable() {
             Number: check.serial,
             CreatedAt: check.date
         };
+        var isDuplicate = Payments.some(item =>
+            item.Number === check.serial
+        );
+        if (!isDuplicate) {
+            Payments.push(Payment);
+        }
 
-        Payments.push(Payment);
         if (checksTableBody) {
             checksTableBody.appendChild(row);
         }
@@ -1165,13 +1173,13 @@ function renderChecksTable() {
         btn.addEventListener('click', function (e) {
             e.preventDefault()
             // دریافت مقدار شماره چک از ستون مربوطه
-            var numberElement = jQuery(this).closest("tr").find(".serial");
-            var checkNumber = numberElement.text().trim(); // یا .val() اگر input باشد
+            var numberElement = jQuery(this).closest("tr").find(".serial").attr("data-code");
+            var checkNumber = numberElement.trim(); // یا .val() اگر input باشد
 
             if (confirm('آیا از حذف این چک مطمئن هستید؟')) {
                 const index = parseInt(this.getAttribute('data-index'));
                 checks.splice(index, 1);
-
+                console.log("Payments1", Payments)
                 // حذف از آرایه Payments با مقایسه صحیح
                 Payments.forEach((element, i) => {
                     if (element.Number.toString() === checkNumber) {
@@ -1179,6 +1187,7 @@ function renderChecksTable() {
                         return; // برای توقف حلقه بعد از حذف
                     }
                 });
+                console.log("Payments2", Payments)
                 renderChecksTable();
             }
         });
@@ -1326,7 +1335,6 @@ jQuery(document).ready(function () {
 function convertToEnglishNumbers(input) {
     const persianNumbers = [/۰/g, /۱/g, /۲/g, /۳/g, /۴/g, /۵/g, /۶/g, /۷/g, /۸/g, /۹/g];
     const arabicNumbers = [/٠/g, /١/g, /٢/g, /٣/g, /٤/g, /٥/g, /٦/g, /٧/g, /٨/g, /٩/g];
-    console.log(typeof input)
     if (typeof input === 'string' || typeof input === 'number') {
         for (let i = 0; i < 10; i++) {
             input = input.replace(persianNumbers[i], i).replace(arabicNumbers[i], i);
@@ -1423,33 +1431,32 @@ document.addEventListener('DOMContentLoaded', function () {
  * @param {string} token - توکن احراز هویت
  * @returns {Promise<Object>} - نتیجه درخواست
  */
-async function getPaymentsByExportId() {
-    try {
-        const apiUrl = `/Dashboard/getpaymentsbyexportid?ExportNumber=${encodeURIComponent(ExportID)}`;
+// async function getPaymentsByExportId() {
+//     try {
+//         const apiUrl = `/Dashboard/getpaymentsbyexportid?ExportNumber=${encodeURIComponent(ExportID)}`;
 
-        const response = await fetch(apiUrl, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept-Language': 'fa-IR' // برای پیام‌های فارسی
-            }
-        });
+//         const response = await fetch(apiUrl, {
+//             method: 'GET',
+//             headers: {
+//                 'Content-Type': 'application/json',
+//                 'Accept-Language': 'fa-IR' // برای پیام‌های فارسی
+//             }
+//         });
 
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error || 'خطا در دریافت اطلاعات');
-        }
+//         if (!response.ok) {
+//             const errorData = await response.json();
+//             throw new Error(errorData.error || 'خطا در دریافت اطلاعات');
+//         }
 
-        const result = await response.json();
+//         const result = await response.json();
 
-        if (result.message && result.data) {
-            console.log(result.data); // نمایش پیام موفقیت
-            return result.data; // بازگرداندن داده‌های پرداخت
-        } else {
-            throw new Error('فرمت پاسخ سرور نامعتبر است');
-        }
-    } catch (error) {
-        console.error('❌ خطا در دریافت پرداخت‌ها:', error.message);
-        throw error; // پرتاب مجدد خطا برای مدیریت توسط caller
-    }
-}
+//         if (result.message && result.data) {
+//             return result.data; // بازگرداندن داده‌های پرداخت
+//         } else {
+//             throw new Error('فرمت پاسخ سرور نامعتبر است');
+//         }
+//     } catch (error) {
+//         console.error('❌ خطا در دریافت پرداخت‌ها:', error.message);
+//         throw error; // پرتاب مجدد خطا برای مدیریت توسط caller
+//     }
+// }

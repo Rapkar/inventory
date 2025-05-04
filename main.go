@@ -1742,8 +1742,8 @@ func main() {
 				c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 				return
 			}
-			fmt.Println("dddddddddddd", data.ExportNumber)
 			result, err := model.GetPaymentNumberByExportId(data.ExportNumber)
+			fmt.Println(len(result))
 			if err != nil {
 				c.JSON(http.StatusInternalServerError, gin.H{"error": "خطا در تبدیل"})
 				return

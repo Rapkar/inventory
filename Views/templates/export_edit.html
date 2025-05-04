@@ -50,10 +50,12 @@
                                         <label>شماره فاکتور</label>
                                         <input   name="ExportNumber" id="ExportNumber" type="text" class="form-control" value="{{.exports.Number}}" readonly>
                                     </div>
+                                  
                                     <div class="form-group col-md-4">
                                         <label>مالیات و ارزش افزوده</label>
-                                        <input type="number" class="form-control price" name="Tax"
-                                            value="{{.exports.Tax}}">
+                                       
+                                        <input type="text" class="form-control" name="Tax"
+                                            value='{{.exports.Tax}}'>
                                         <span class="out"></span>&nbsp;تومان
                                     </div>
                                     <div class="form-group col-md-4">
@@ -91,7 +93,7 @@
                                                 {{end}}
                                                 {{end}}
 
-                                                <input name="directpay" class="price" id="directpay" type='text'
+                                                <input name="directpay"  id="directpay" type='text'
                                                     inputmode="numeric" value="{{$directPayment}}">
                                                 <span class="out"></span>&nbsp;تومان
 
@@ -168,7 +170,7 @@
                                                     <div class="col-md-3 form-group">
                                                         <label for="serialCode" class="form-label">کد
                                                             سریال</label>
-                                                        <input type="text" class="form-control price" id="serialCode"
+                                                        <input data-code="" type="text" class="form-control price serial" id="serialCode"
                                                             placeholder="123-456-789">
                                                     </div>
                                                     <div class="col-md-3 form-group">
