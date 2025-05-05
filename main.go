@@ -1095,33 +1095,39 @@ func main() {
 			session := sessions.Default(c)
 
 			type ExportProducts struct {
-				ID          uint64         `gorm:"primaryKey"`
-				ExportID    uint64         `gorm:"index"`
-				Name        string         `gorm:"type:varchar(100)"`
-				Number      string         `gorm:"size:255;"`
-				RolePrice   float64        `gorm:"type:float" json:",string"`
-				MeterPrice  float64        `gorm:"type:float" json:",string"`
-				Count       int64          `gorm:"size:255;" json:",string"`
-				Meter       float64        `gorm:"type:float" json:",string"`
-				Weight      float64        `gorm:"type:float" json:",string"`
-				TotalPrice  float64        `gorm:"type:float" json:",string"`
-				InventoryID uint64         `gorm:"index" json:",string"`
-				ProductID   uint64         `gorm:"index" json:",string"`
-				Export      Boot.Export    `gorm:"foreignKey:ExportID;references:ID"`
-				Inventory   Boot.Inventory `gorm:"foreignKey:InventoryID;references:ID"`
-				Product     Boot.Product   `gorm:"foreignKey:ProductID;references:ID"`
+				ID                uint64         `gorm:"primaryKey"`
+				ExportID          uint64         `gorm:"index"`
+				Name              string         `gorm:"type:varchar(100)"`
+				Number            string         `gorm:"size:255;"` // اضافه شده از نسخه اول
+				RollePrice        float64        `gorm:"type:float" json:"rollePrice"`
+				MeterPrice        float64        `gorm:"type:float" json:"meterPrice"`
+				WeightPrice       float64        `gorm:"type:float" json:"weightPrice"` // جدید
+				CountPrice        float64        `gorm:"type:float" json:"countPrice"`  // جدید
+				BarrelPrice       float64        `gorm:"type:float" json:"barrelPrice"` // جدید
+				Roll              int64          `gorm:"size:255;" json:"roll"`         // جدید
+				Meter             float64        `gorm:"type:float" json:"meter"`
+				Weight            float64        `gorm:"type:float" json:"weight"`
+				Count             int64          `gorm:"size:255;" json:"count"`
+				Barrel            int64          `gorm:"size:255;" json:"barrel"` // جدید
+				TotalPrice        float64        `gorm:"type:float" json:"totalPrice"`
+				InventoryID       uint64         `gorm:"index" json:"inventoryID"`
+				ProductID         uint64         `gorm:"index" json:"productID"`
+				MeasurementSystem string         `gorm:"type:varchar(100)" json:"measurementSystem"` // جدید
+				Export            Boot.Export    `gorm:"foreignKey:ExportID;references:ID"`
+				Inventory         Boot.Inventory `gorm:"foreignKey:InventoryID;references:ID"`
+				Product           Boot.Product   `gorm:"foreignKey:ProductID;references:ID"`
 			}
 			type Payments struct {
 				ID          uint64         `gorm:"primaryKey"`
 				Method      string         `gorm:"type:varchar(100)"`
 				Number      string         `gorm:"varchar(255),unique"`
 				Name        string         `gorm:"type:varchar(100)"`
-				TotalPrice  float64        `gorm:"type:float" json:",string"`
+				TotalPrice  float64        `gorm:"type:float" json:"TotalPrice"` // تغییر اینجا
 				Describe    string         `gorm:"size:255;"`
-				CreatedAt   string         `json:"CreatedAt"` // assign the format to a string
-				ExportID    uint64         `gorm:"index"`
-				UserID      uint64         `gorm:"index"`
-				InventoryID uint64         `gorm:"index"`
+				CreatedAt   string         `json:"createdAt"`                // تغییر اینجا
+				ExportID    uint64         `gorm:"index" json:"string"`      // تغییر اینجا
+				UserID      uint64         `gorm:"index" json:"userID"`      // تغییر اینجا
+				InventoryID uint64         `gorm:"index" json:"inventoryID"` // تغییر اینجا
 				Export      Boot.Export    `gorm:"foreignKey:ExportID"`
 				Status      string         `gorm:"type:varchar(100)"`
 				User        Boot.Users     `gorm:"foreignKey:UserID"`
@@ -1141,25 +1147,28 @@ func main() {
 				c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 				return
 			}
-
+			fmt.Println(data.Products)
 			// Convert products to ExportProducts
 			exportproducts := make([]boot.ExportProducts, len(data.Products))
 			Ids := make(map[int64]int64)
 
 			for a := range data.Products {
-
-				// ids, _ := strconv.ParseInt(data.Products[a].ProductId, 10, 64)
 				exportproducts[a].ExportID = data.Products[a].ExportID
 				exportproducts[a].Name = data.Products[a].Name
-				exportproducts[a].RollePrice = data.Products[a].RolePrice
+				exportproducts[a].RollePrice = data.Products[a].RollePrice
 				exportproducts[a].MeterPrice = data.Products[a].MeterPrice
-				exportproducts[a].Count = data.Products[a].Count
+				exportproducts[a].WeightPrice = data.Products[a].WeightPrice // جدید
+				exportproducts[a].CountPrice = data.Products[a].CountPrice   // جدید
+				exportproducts[a].BarrelPrice = data.Products[a].BarrelPrice // جدید
+				exportproducts[a].Roll = data.Products[a].Roll               // جدید
 				exportproducts[a].Meter = data.Products[a].Meter
 				exportproducts[a].Weight = data.Products[a].Weight
-				exportproducts[a].TotalPrice = data.TotalPrice
-				exportproducts[a].InventoryID = data.Products[a].InventoryID
+				exportproducts[a].Count = data.Products[a].Count
+				exportproducts[a].Barrel = data.Products[a].Barrel // جدید
 				exportproducts[a].TotalPrice = data.Products[a].TotalPrice
-				exportproducts[a].ProductID = uint64(data.Products[a].ProductID)
+				exportproducts[a].InventoryID = data.Products[a].InventoryID
+				exportproducts[a].ProductID = data.Products[a].ProductID
+				exportproducts[a].MeasurementSystem = data.Products[a].MeasurementSystem // جدید
 			}
 			PaymentRequest := make([]boot.Payments, len(data.Payments))
 			result := Utility.Unserialize(data.Content)
@@ -1269,6 +1278,18 @@ func main() {
 							Product.Weight = 0
 						}
 					}
+					if ep.Roll > 0 {
+						Product.Roll -= ep.Roll
+						if Product.Roll < 0 {
+							Product.Roll = 0
+						}
+					}
+					if ep.Barrel > 0 {
+						Product.Barrel -= ep.Barrel
+						if Product.Barrel < 0 {
+							Product.Barrel = 0
+						}
+					}
 					if err := tx.Save(&Product).Error; err != nil {
 						return err
 					}
@@ -1307,6 +1328,239 @@ func main() {
 			log.Print("new Export submited")
 			c.JSON(http.StatusOK, gin.H{"message": "sucess", "id": Export.ID})
 		})
+
+		v2.PUT("/exportupdate/:id", func(c *gin.Context) {
+			session := sessions.Default(c)
+			exportID, _ := Utility.StringToUnit64(c.Param("id"))
+
+			// تعریف ساختارهای داده
+			type ExportProducts struct {
+				ID                uint64         `gorm:"primaryKey"`
+				ExportID          uint64         `gorm:"index"`
+				Name              string         `gorm:"type:varchar(100)"`
+				Number            string         `gorm:"size:255;"` // اضافه شده از نسخه اول
+				RollePrice        float64        `gorm:"type:float" json:"rollePrice"`
+				MeterPrice        float64        `gorm:"type:float" json:"meterPrice"`
+				WeightPrice       float64        `gorm:"type:float" json:"weightPrice"` // جدید
+				CountPrice        float64        `gorm:"type:float" json:"countPrice"`  // جدید
+				BarrelPrice       float64        `gorm:"type:float" json:"barrelPrice"` // جدید
+				Roll              int64          `gorm:"size:255;" json:"roll"`         // جدید
+				Meter             float64        `gorm:"type:float" json:"meter"`
+				Weight            float64        `gorm:"type:float" json:"weight"`
+				Count             int64          `gorm:"size:255;" json:"count"`
+				Barrel            int64          `gorm:"size:255;" json:"barrel"` // جدید
+				TotalPrice        float64        `gorm:"type:float" json:"totalPrice"`
+				InventoryID       uint64         `gorm:"index" json:"inventoryID"`
+				ProductID         uint64         `gorm:"index" json:"productID"`
+				MeasurementSystem string         `gorm:"type:varchar(100)" json:"measurementSystem"` // جدید
+				Export            Boot.Export    `gorm:"foreignKey:ExportID;references:ID"`
+				Inventory         Boot.Inventory `gorm:"foreignKey:InventoryID;references:ID"`
+				Product           Boot.Product   `gorm:"foreignKey:ProductID;references:ID"`
+			}
+
+			type Payments struct {
+				ID          uint64         `gorm:"primaryKey"`
+				Method      string         `gorm:"type:varchar(100)"`
+				Number      string         `gorm:"varchar(255),unique"`
+				Name        string         `gorm:"type:varchar(100)"`
+				TotalPrice  float64        `gorm:"type:float" json:"totalPrice"` // تغییر اینجا
+				Describe    string         `gorm:"size:255;"`
+				CreatedAt   string         `json:"createdAt"`                // تغییر اینجا
+				ExportID    uint64         `gorm:"index" json:"string"`      // تغییر اینجا
+				UserID      uint64         `gorm:"index" json:"userID"`      // تغییر اینجا
+				InventoryID uint64         `gorm:"index" json:"inventoryID"` // تغییر اینجا
+				Export      Boot.Export    `gorm:"foreignKey:ExportID"`
+				Status      string         `gorm:"type:varchar(100)"`
+				User        Boot.Users     `gorm:"foreignKey:UserID"`
+				Inventory   Boot.Inventory `gorm:"foreignKey:InventoryID;references:ID"`
+			}
+			// ساختار برای دریافت داده‌ها
+			var data struct {
+				Name       string           `json:"Name"`
+				TotalPrice float64          `json:"TotalPrice"`
+				Content    string           `json:"Content"`
+				Products   []ExportProducts `json:"Products"`
+				Payments   []Payments       `json:"Payments"`
+			}
+
+			// دریافت داده‌های JSON
+			if err := c.BindJSON(&data); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+
+				return
+			}
+			// تبدیل محصولات
+			exportproducts := make([]Boot.ExportProducts, len(data.Products))
+			Ids := make(map[int64]int64)
+
+			for a := range data.Products {
+				exportproducts[a].ExportID = data.Products[a].ExportID
+				exportproducts[a].Name = data.Products[a].Name
+				exportproducts[a].RollePrice = data.Products[a].RollePrice
+				exportproducts[a].MeterPrice = data.Products[a].MeterPrice
+				exportproducts[a].WeightPrice = data.Products[a].WeightPrice // جدید
+				exportproducts[a].CountPrice = data.Products[a].CountPrice   // جدید
+				exportproducts[a].BarrelPrice = data.Products[a].BarrelPrice // جدید
+				exportproducts[a].Roll = data.Products[a].Roll               // جدید
+				exportproducts[a].Meter = data.Products[a].Meter
+				exportproducts[a].Weight = data.Products[a].Weight
+				exportproducts[a].Count = data.Products[a].Count
+				exportproducts[a].Barrel = data.Products[a].Barrel // جدید
+				exportproducts[a].TotalPrice = data.Products[a].TotalPrice
+				exportproducts[a].InventoryID = data.Products[a].InventoryID
+				exportproducts[a].ProductID = data.Products[a].ProductID
+				exportproducts[a].MeasurementSystem = data.Products[a].MeasurementSystem // جدید
+			}
+
+			// تبدیل پرداخت‌ها
+			PaymentRequest := make([]Boot.Payments, len(data.Payments))
+			result := Utility.Unserialize(data.Content)
+			fmt.Println("invNum", result, result["InventoryID"])
+
+			invNum, err := Utility.StringToUnit64(result["InventoryID"])
+			if err != nil {
+				log.Fatal("err in inventory number in update export ", err)
+
+			}
+			for a, payment := range data.Payments {
+				totalPrice := payment.TotalPrice
+				createdAt := payment.CreatedAt
+				if createdAt == "" {
+					createdAt = Utility.CurrentTime()
+				}
+
+				PaymentRequest[a].Method = payment.Method
+				PaymentRequest[a].Number = payment.Number
+				PaymentRequest[a].Name = payment.Name
+				PaymentRequest[a].TotalPrice = totalPrice
+				PaymentRequest[a].CreatedAt = createdAt
+				PaymentRequest[a].Status = payment.Status
+				PaymentRequest[a].InventoryID = invNum
+			}
+
+			// پردازش داده‌های صادرات
+			tprice, _ := Utility.StringToFloat64(result["ExportTotalPrice"])
+			tax, _ := Utility.StringToInt64(result["Tax"])
+
+			// شروع تراکنش دیتابیس
+			err = Boot.DB().Transaction(func(tx *gorm.DB) error {
+				// یافتن صادرات موجود
+				var existingExport Boot.Export
+				if err := tx.Where("id = ?", exportID).First(&existingExport).Error; err != nil {
+					return fmt.Errorf("export not found")
+				}
+
+				// به‌روزرسانی کاربر
+				var User Boot.Users
+				if err := tx.Where("phonenumber = ?", result["Phonenumber"]).First(&User).Error; err != nil {
+					User = Boot.Users{
+						Name:        result["Name"],
+						Phonenumber: result["Phonenumber"],
+						Address:     result["Address"],
+						Role:        "guest"}
+					if err := tx.Create(&User).Error; err != nil {
+						return err
+					}
+				}
+
+				// به‌روزرسانی اطلاعات صادرات
+				updates := map[string]interface{}{
+					"UserID":      User.ID,
+					"Name":        result["Name"],
+					"Phonenumber": result["Phonenumber"],
+					"Address":     result["Address"],
+					"TotalPrice":  tprice,
+					"Tax":         tax,
+					"Draft":       true,
+					"InventoryID": invNum,
+					"Describe":    result["describe"],
+					"CreatedAt":   Utility.CurrentTime(),
+				}
+
+				if creatorName, ok := session.Get("UserName").(string); ok {
+					updates["CreatorName"] = creatorName
+				}
+
+				if err := tx.Model(&Boot.Export{}).Where("id = ?", exportID).Updates(updates).Error; err != nil {
+					return err
+				}
+
+				// حذف محصولات قدیمی و اضافه کردن جدید
+				if err := tx.Where("export_id = ?", exportID).Delete(&Boot.ExportProducts{}).Error; err != nil {
+					return err
+				}
+
+				for i := range exportproducts {
+					exportproducts[i].ExportID = existingExport.ID
+				}
+
+				if err := tx.Create(&exportproducts).Error; err != nil {
+					return err
+				}
+
+				// به‌روزرسانی موجودی محصولات
+				for _, ep := range exportproducts {
+					var Product Boot.Product
+					if err := tx.Where("id = ?", ep.ProductID).First(&Product).Error; err != nil {
+						return fmt.Errorf("product with ID %d not found", ep.ProductID)
+					}
+
+					// محاسبه تغییرات موجودی
+					if ep.Count > 0 {
+						Product.Count -= ep.Count
+						if Product.Count < 0 {
+							Product.Count = 0
+						}
+					}
+					if ep.Meter > 0 {
+						Product.Meter -= ep.Meter
+						if Product.Meter < 0 {
+							Product.Meter = 0
+						}
+					}
+					if ep.Weight > 0 {
+						Product.Weight -= ep.Weight
+						if Product.Weight < 0 {
+							Product.Weight = 0
+						}
+					}
+
+					if err := tx.Save(&Product).Error; err != nil {
+						return err
+					}
+				}
+
+				// حذف پرداخت‌های قدیمی و اضافه کردن جدید
+				if err := tx.Where("export_id = ?", exportID).Delete(&Boot.Payments{}).Error; err != nil {
+					return err
+				}
+
+				for i := range PaymentRequest {
+					PaymentRequest[i].ExportID = existingExport.ID
+					PaymentRequest[i].UserID = User.ID
+				}
+
+				if err := tx.Create(&PaymentRequest).Error; err != nil {
+					return err
+				}
+
+				// به‌روزرسانی موجودی
+				controller.InventoryCalculation(Ids)
+
+				return nil
+			})
+
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{
+					"message": "update failed",
+					"error":   err.Error(),
+				})
+				return
+			}
+
+			c.JSON(http.StatusOK, gin.H{"message": "export updated successfully"})
+		})
+
 		v2.GET("/export-list", middleware.AuthMiddleware(), func(c *gin.Context) {
 			session := sessions.Default(c)
 			pageStr := c.DefaultQuery("page", "1")
@@ -1742,13 +1996,12 @@ func main() {
 				c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 				return
 			}
-			result, err := model.GetPaymentNumberByExportId(data.ExportNumber)
-			fmt.Println(len(result))
+			Payments, Exports, err := model.GetPaymentNumberByExportId(data.ExportNumber)
 			if err != nil {
 				c.JSON(http.StatusInternalServerError, gin.H{"error": "خطا در تبدیل"})
 				return
 			}
-			c.JSON(http.StatusOK, gin.H{"message": "باموفقیت تغییر انجام شد", "sucess": true, "data": result})
+			c.JSON(http.StatusOK, gin.H{"message": "باموفقیت تغییر انجام شد", "sucess": true, "Payments": Payments, "Exports": Exports})
 
 		})
 		// v2.GET("/Download", middleware.AuthMiddleware(), func(c *gin.Context) {

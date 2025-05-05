@@ -472,21 +472,39 @@ func GetCountOfPayments() int64 {
 }
 
 func RemoveCurrentExport(c *gin.Context) bool {
-	id := c.Query("ExportId") // ساده‌تر از c.Request.URL.Query().Get
+	id := c.Query("ExportId")
 	exportID, err := strconv.ParseUint(id, 10, 64)
 	if err != nil {
-		log.Println("❌ Export Convert has conflict:", err)
+		log.Println("❌ Export ID conversion error:", err)
 		return false
 	}
 
-	result := Boot.DB().Delete(&Boot.Export{}, exportID)
-	if result.Error != nil {
-		log.Println("❌ err in Export delete :", result.Error)
-		return false
-	}
+	// Start a database transaction
+	err = Boot.DB().Transaction(func(tx *gorm.DB) error {
+		// 1. First delete related products
+		if err := tx.Delete(&Boot.ExportProducts{}, "export_id = ?", exportID).Error; err != nil {
+			return fmt.Errorf("failed to delete export products: %v", err)
+		}
 
-	if result.RowsAffected == 0 {
-		log.Println("⚠️ Payment record id not found")
+		// 2. Then delete related payments
+		if err := tx.Delete(&Boot.Payments{}, "export_id = ?", exportID).Error; err != nil {
+			return fmt.Errorf("failed to delete payments: %v", err)
+		}
+
+		// 3. Finally delete the main export record
+		result := tx.Delete(&Boot.Export{}, exportID)
+		if result.Error != nil {
+			return fmt.Errorf("failed to delete export: %v", result.Error)
+		}
+		if result.RowsAffected == 0 {
+			return fmt.Errorf("no export record found with ID %d", exportID)
+		}
+
+		return nil // Return nil to commit the transaction
+	})
+
+	if err != nil {
+		log.Println("❌ Transaction failed:", err)
 		return false
 	}
 
@@ -591,33 +609,40 @@ func GetUsersByNameAndPhone(nameTerm string, phoneTerm string) ([]Boot.ResponseU
 
 	return result, message
 }
-func GetPaymentNumberByExportId(ExportNumber string) ([]Boot.Payments, error) {
-	// تغییر پارامتر به ExportNumber
+func GetPaymentNumberByExportId(ExportNumber string) ([]Boot.Payments, []Boot.ExportProducts, error) {
 	if ExportNumber == "" {
-		return nil, fmt.Errorf("ExportNumber parameter is required")
+		return nil, nil, fmt.Errorf("ExportNumber parameter is required")
 	}
-	// ابتدا Export مربوطه را پیدا می‌کنیم
+
 	var export Boot.Export
 	if err := Boot.DB().Model(&Boot.Export{}).
 		Where("number = ?", ExportNumber).
 		First(&export).Error; err != nil {
 
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, fmt.Errorf("export with number %s not found", ExportNumber)
+			return nil, nil, fmt.Errorf("export with number %s not found", ExportNumber)
 		}
 		log.Printf("❌ Database error in finding export: %v", err)
-		return nil, fmt.Errorf("database error")
+		return nil, nil, fmt.Errorf("database error")
 	}
 
-	// سپس پرداخت‌های مربوط به این Export را پیدا می‌کنیم
 	var payments []Boot.Payments
 	if err := Boot.DB().Model(&Boot.Payments{}).
 		Where("export_id = ?", export.ID).
 		Find(&payments).Error; err != nil {
 
-		log.Printf("❌ Database error in GetPaymentNumberByExportId: %v", err)
-		return nil, fmt.Errorf("database error")
+		log.Printf("❌ Database error in finding payments: %v", err)
+		return nil, nil, fmt.Errorf("database error")
 	}
 
-	return payments, nil
+	var ExportProducts []Boot.ExportProducts
+	if err := Boot.DB().Model(&Boot.ExportProducts{}).
+		Where("export_id = ?", export.ID).
+		Find(&ExportProducts).Error; err != nil {
+
+		log.Printf("❌ Database error in finding export products: %v", err)
+		return nil, nil, fmt.Errorf("database error")
+	}
+
+	return payments, ExportProducts, nil
 }

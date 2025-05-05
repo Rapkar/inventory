@@ -5,38 +5,38 @@
  - using code:	gin.SetMode(gin.ReleaseMode)
 
 [GIN-debug] Loaded HTML Templates (32): 
-	- header
-	- login.html
-	- error.html
-	- footer.html
-	- inventory_edit.html
 	- production.html
-	- 
-	- admins.html
-	- danger.html
-	- export_edit.html
-	- export_list.html
-	- users.html
-	- dashboard.html
-	- header.html
-	- test.html
-	- backups.html
-	- edit_user.html
-	- navbar.html
-	- payments.html
-	- success_notif
-	- success.html
-	- charts.html
-	- danger_notif
-	- inventories.html
-	- inventory.html
-	- navbar
-	- 404.html
-	- add_product.html
-	- home.html
-	- details_user.html
 	- export.html
 	- exportshow.html
+	- inventories.html
+	- inventory.html
+	- login.html
+	- navbar.html
+	- admins.html
+	- danger_notif
+	- footer.html
+	- header
+	- success.html
+	- charts.html
+	- success_notif
+	- users.html
+	- 
+	- backups.html
+	- edit_user.html
+	- export_edit.html
+	- danger.html
+	- dashboard.html
+	- details_user.html
+	- header.html
+	- inventory_edit.html
+	- navbar
+	- payments.html
+	- 404.html
+	- add_product.html
+	- test.html
+	- error.html
+	- export_list.html
+	- home.html
 
 [GIN-debug] GET    /assets/*filepath         --> github.com/gin-gonic/gin.(*RouterGroup).createStaticHandler.func1 (3 handlers)
 [GIN-debug] HEAD   /assets/*filepath         --> github.com/gin-gonic/gin.(*RouterGroup).createStaticHandler.func1 (3 handlers)
@@ -72,365 +72,37 @@
 [GIN-debug] POST   /Dashboard/getproductbyinventory --> main.main.func33 (4 handlers)
 [GIN-debug] POST   /Dashboard/getproductbyid --> main.main.func34 (4 handlers)
 [GIN-debug] POST   /Dashboard/export         --> main.main.func35 (4 handlers)
-[GIN-debug] GET    /Dashboard/export-list    --> main.main.func36 (5 handlers)
-[GIN-debug] POST   /Dashboard/export-list    --> main.main.func37 (5 handlers)
-[GIN-debug] POST   /Dashboard/export-find    --> main.main.func38 (5 handlers)
-[GIN-debug] POST   /Dashboard/payment-find   --> main.main.func39 (5 handlers)
-[GIN-debug] POST   /Dashboard/draft          --> main.main.func40 (5 handlers)
-[GIN-debug] GET    /Dashboard/payments       --> main.main.func41 (5 handlers)
-[GIN-debug] GET    /Dashboard/backup         --> main.main.func42 (5 handlers)
-[GIN-debug] GET    /Dashboard/inventories    --> main.main.func43 (5 handlers)
-[GIN-debug] GET    /Dashboard/deleteinventories --> main.main.func44 (5 handlers)
-[GIN-debug] GET    /Dashboard/editinventory  --> main.main.func45 (5 handlers)
-[GIN-debug] POST   /Dashboard/updateinventory --> main.main.func46 (5 handlers)
-[GIN-debug] POST   /Dashboard/createinventory --> main.main.func47 (5 handlers)
-[GIN-debug] GET    /Dashboard/createinventory --> main.main.func48 (5 handlers)
-[GIN-debug] GET    /backups/:filename        --> main.main.func49 (4 handlers)
-[GIN-debug] GET    /Dashboard/charts         --> main.main.func50 (5 handlers)
-[GIN-debug] GET    /Dashboard/deletePayments --> main.main.func51 (5 handlers)
-[GIN-debug] GET    /Dashboard/exportshow     --> main.main.func52 (5 handlers)
-[GIN-debug] GET    /Dashboard/exportedit     --> main.main.func53 (5 handlers)
-[GIN-debug] POST   /Dashboard/getpaymentsbyexportid --> main.main.func54 (5 handlers)
+[GIN-debug] PUT    /Dashboard/exportupdate/:id --> main.main.func36 (4 handlers)
+[GIN-debug] GET    /Dashboard/export-list    --> main.main.func37 (5 handlers)
+[GIN-debug] POST   /Dashboard/export-list    --> main.main.func38 (5 handlers)
+[GIN-debug] POST   /Dashboard/export-find    --> main.main.func39 (5 handlers)
+[GIN-debug] POST   /Dashboard/payment-find   --> main.main.func40 (5 handlers)
+[GIN-debug] POST   /Dashboard/draft          --> main.main.func41 (5 handlers)
+[GIN-debug] GET    /Dashboard/payments       --> main.main.func42 (5 handlers)
+[GIN-debug] GET    /Dashboard/backup         --> main.main.func43 (5 handlers)
+[GIN-debug] GET    /Dashboard/inventories    --> main.main.func44 (5 handlers)
+[GIN-debug] GET    /Dashboard/deleteinventories --> main.main.func45 (5 handlers)
+[GIN-debug] GET    /Dashboard/editinventory  --> main.main.func46 (5 handlers)
+[GIN-debug] POST   /Dashboard/updateinventory --> main.main.func47 (5 handlers)
+[GIN-debug] POST   /Dashboard/createinventory --> main.main.func48 (5 handlers)
+[GIN-debug] GET    /Dashboard/createinventory --> main.main.func49 (5 handlers)
+[GIN-debug] GET    /backups/:filename        --> main.main.func50 (4 handlers)
+[GIN-debug] GET    /Dashboard/charts         --> main.main.func51 (5 handlers)
+[GIN-debug] GET    /Dashboard/deletePayments --> main.main.func52 (5 handlers)
+[GIN-debug] GET    /Dashboard/exportshow     --> main.main.func53 (5 handlers)
+[GIN-debug] GET    /Dashboard/exportedit     --> main.main.func54 (5 handlers)
+[GIN-debug] POST   /Dashboard/getpaymentsbyexportid --> main.main.func55 (5 handlers)
 [GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
 Please check https://pkg.go.dev/github.com/gin-gonic/gin#readme-don-t-trust-all-proxies for details.
 [GIN-debug] Environment variable PORT is undefined. Using port :8080 by default
 [GIN-debug] Listening and serving HTTP on :8080
-[GIN] 2025/05/04 - 17:49:16 | 200 |    14.91786ms |       127.0.0.1 | GET      "/Dashboard/exportedit?ExportId=4"
-[GIN] 2025/05/04 - 17:49:17 | 200 |    6.250189ms |       127.0.0.1 | GET      "/assets/css/bootstrap.rtl.min.css"
-[GIN] 2025/05/04 - 17:49:17 | 200 |    4.388258ms |       127.0.0.1 | GET      "/assets/css/main.css"
-[GIN] 2025/05/04 - 17:49:17 | 200 |     607.544µs |       127.0.0.1 | GET      "/assets/js/jquery-3.7.1.min.js"
-[GIN] 2025/05/04 - 17:49:17 | 200 |     371.927µs |       127.0.0.1 | GET      "/assets/js/bootstrap.min.js"
-[GIN] 2025/05/04 - 17:49:17 | 200 |     395.944µs |       127.0.0.1 | GET      "/assets/js/persian-tools.umd.js"
-[GIN] 2025/05/04 - 17:49:17 | 200 |      674.05µs |       127.0.0.1 | GET      "/assets/js/jspdf.umd.min.js"
-[GIN] 2025/05/04 - 17:49:17 | 200 |     751.108µs |       127.0.0.1 | GET      "/assets/js/chart.js"
-[GIN] 2025/05/04 - 17:49:17 | 200 |    4.218867ms |       127.0.0.1 | GET      "/Dashboard/installHook.js.map"
-[GIN] 2025/05/04 - 17:49:17 | 200 |      194.61µs |       127.0.0.1 | GET      "/assets/js/main.js"
-[GIN] 2025/05/04 - 17:49:17 | 200 |      67.427µs |       127.0.0.1 | GET      "/assets/images/user.png"
-[GIN] 2025/05/04 - 17:49:17 | 200 |      893.56µs |       127.0.0.1 | GET      "/assets/images/techrootlogo.png"
-[GIN] 2025/05/04 - 17:49:17 | 200 |     202.346µs |       127.0.0.1 | GET      "/assets/fonts/Vazir-Medium.woff2"
-[GIN] 2025/05/04 - 17:49:17 | 200 |     2.97905ms |       127.0.0.1 | GET      "/assets/js/bootstrap.min.js.map"
-[GIN] 2025/05/04 - 17:49:17 | 200 |     8.93223ms |       127.0.0.1 | GET      "/assets/js/persian-tools.umd.js.map"
-[GIN] 2025/05/04 - 17:49:17 | 200 |   10.491973ms |       127.0.0.1 | GET      "/assets/js/jspdf.umd.min.js.map"
-[GIN] 2025/05/04 - 17:49:17 | 200 |    7.561916ms |       127.0.0.1 | GET      "/assets/js/chart.umd.js.map"
-[GIN] 2025/05/04 - 17:49:17 | 200 |    9.559651ms |       127.0.0.1 | POST     "/Dashboard/getpaymentsbyexportid"
-[GIN] 2025/05/04 - 17:49:17 | 200 |    7.829571ms |       127.0.0.1 | GET      "/Dashboard/api/allexports"
-[GIN] 2025/05/04 - 17:49:17 | 200 |    9.744704ms |       127.0.0.1 | GET      "/favicon.ico"
-[GIN] 2025/05/04 - 17:49:22 | 200 |    1.838144ms |       127.0.0.1 | POST     "/Dashboard/getproductbyinventory"
-[GIN] 2025/05/04 - 17:49:24 | 200 |    4.902375ms |       127.0.0.1 | POST     "/Dashboard/getproductbyid"
-[GIN] 2025/05/04 - 17:49:33 | 200 |    3.357828ms |       127.0.0.1 | GET      "/assets/css/bootstrap.rtl.min.css.map"
-[GIN] 2025/05/04 - 17:51:26 | 200 |    12.20468ms |       127.0.0.1 | GET      "/Dashboard/exportedit?ExportId=4"
-[GIN] 2025/05/04 - 17:51:26 | 200 |    3.023521ms |       127.0.0.1 | GET      "/Dashboard/installHook.js.map"
-[GIN] 2025/05/04 - 17:51:26 | 200 |     266.579µs |       127.0.0.1 | GET      "/assets/css/bootstrap.rtl.min.css"
-[GIN] 2025/05/04 - 17:51:26 | 200 |     114.637µs |       127.0.0.1 | GET      "/assets/css/main.css"
-[GIN] 2025/05/04 - 17:51:26 | 200 |     192.839µs |       127.0.0.1 | GET      "/assets/js/jquery-3.7.1.min.js"
-[GIN] 2025/05/04 - 17:51:26 | 200 |     162.953µs |       127.0.0.1 | GET      "/assets/js/bootstrap.min.js"
-[GIN] 2025/05/04 - 17:51:26 | 200 |     398.456µs |       127.0.0.1 | GET      "/assets/js/persian-tools.umd.js"
-[GIN] 2025/05/04 - 17:51:26 | 200 |     521.588µs |       127.0.0.1 | GET      "/assets/js/jspdf.umd.min.js"
-[GIN] 2025/05/04 - 17:51:26 | 200 |     387.155µs |       127.0.0.1 | GET      "/assets/js/chart.js"
-[GIN] 2025/05/04 - 17:51:26 | 200 |     218.956µs |       127.0.0.1 | GET      "/assets/js/main.js"
-[GIN] 2025/05/04 - 17:51:27 | 200 |    4.330381ms |       127.0.0.1 | GET      "/assets/css/bootstrap.rtl.min.css.map"
-[GIN] 2025/05/04 - 17:51:30 | 200 |     268.953µs |       127.0.0.1 | GET      "/assets/fonts/Vazir-Medium.woff2"
-[GIN] 2025/05/04 - 17:51:30 | 200 |     103.351µs |       127.0.0.1 | GET      "/assets/images/user.png"
-[GIN] 2025/05/04 - 17:51:30 | 200 |      879.55µs |       127.0.0.1 | GET      "/assets/images/techrootlogo.png"
-[GIN] 2025/05/04 - 17:51:31 | 200 |    3.324254ms |       127.0.0.1 | GET      "/assets/js/bootstrap.min.js.map"
-[GIN] 2025/05/04 - 17:51:31 | 200 |    2.992968ms |       127.0.0.1 | GET      "/assets/js/persian-tools.umd.js.map"
-[GIN] 2025/05/04 - 17:51:31 | 200 |    5.336669ms |       127.0.0.1 | GET      "/assets/js/jspdf.umd.min.js.map"
-[GIN] 2025/05/04 - 17:51:31 | 200 |    4.818426ms |       127.0.0.1 | GET      "/assets/js/chart.umd.js.map"
-[GIN] 2025/05/04 - 17:51:32 | 200 |    3.411225ms |       127.0.0.1 | GET      "/Dashboard/api/allexports"
-[GIN] 2025/05/04 - 17:51:32 | 200 |    7.999474ms |       127.0.0.1 | POST     "/Dashboard/getpaymentsbyexportid"
-[GIN] 2025/05/04 - 17:51:32 | 200 |    2.580674ms |       127.0.0.1 | GET      "/favicon.ico"
-[GIN] 2025/05/04 - 17:51:34 | 200 |    1.848424ms |       127.0.0.1 | POST     "/Dashboard/getproductbyinventory"
-[GIN] 2025/05/04 - 17:51:36 | 200 |    3.413313ms |       127.0.0.1 | POST     "/Dashboard/getproductbyid"
-[GIN] 2025/05/04 - 17:53:27 | 200 |   12.779541ms |       127.0.0.1 | GET      "/Dashboard/exportedit?ExportId=4"
-[GIN] 2025/05/04 - 17:53:27 | 200 |     251.786µs |       127.0.0.1 | GET      "/assets/css/bootstrap.rtl.min.css"
-[GIN] 2025/05/04 - 17:53:27 | 200 |     271.575µs |       127.0.0.1 | GET      "/assets/css/main.css"
-[GIN] 2025/05/04 - 17:53:27 | 200 |    4.473701ms |       127.0.0.1 | GET      "/Dashboard/installHook.js.map"
-[GIN] 2025/05/04 - 17:53:27 | 200 |     216.455µs |       127.0.0.1 | GET      "/assets/js/jquery-3.7.1.min.js"
-[GIN] 2025/05/04 - 17:53:27 | 200 |     187.581µs |       127.0.0.1 | GET      "/assets/js/bootstrap.min.js"
-[GIN] 2025/05/04 - 17:53:27 | 200 |     383.616µs |       127.0.0.1 | GET      "/assets/js/persian-tools.umd.js"
-[GIN] 2025/05/04 - 17:53:27 | 200 |     423.382µs |       127.0.0.1 | GET      "/assets/js/jspdf.umd.min.js"
-[GIN] 2025/05/04 - 17:53:27 | 200 |     274.167µs |       127.0.0.1 | GET      "/assets/js/chart.js"
-[GIN] 2025/05/04 - 17:53:27 | 200 |     326.639µs |       127.0.0.1 | GET      "/assets/js/main.js"
-[GIN] 2025/05/04 - 17:53:27 | 200 |      96.954µs |       127.0.0.1 | GET      "/assets/images/user.png"
-[GIN] 2025/05/04 - 17:53:27 | 200 |     808.291µs |       127.0.0.1 | GET      "/assets/images/techrootlogo.png"
-[GIN] 2025/05/04 - 17:53:27 | 200 |     198.819µs |       127.0.0.1 | GET      "/assets/fonts/Vazir-Medium.woff2"
-[GIN] 2025/05/04 - 17:53:28 | 200 |      5.1962ms |       127.0.0.1 | GET      "/assets/js/bootstrap.min.js.map"
-[GIN] 2025/05/04 - 17:53:28 | 200 |    7.896164ms |       127.0.0.1 | GET      "/assets/js/jspdf.umd.min.js.map"
-[GIN] 2025/05/04 - 17:53:28 | 200 |    7.908418ms |       127.0.0.1 | GET      "/assets/js/persian-tools.umd.js.map"
-[GIN] 2025/05/04 - 17:53:28 | 200 |    5.354702ms |       127.0.0.1 | GET      "/assets/js/chart.umd.js.map"
-[GIN] 2025/05/04 - 17:53:28 | 200 |    5.731531ms |       127.0.0.1 | GET      "/Dashboard/api/allexports"
-[GIN] 2025/05/04 - 17:53:28 | 200 |   10.064738ms |       127.0.0.1 | POST     "/Dashboard/getpaymentsbyexportid"
-[GIN] 2025/05/04 - 17:53:28 | 200 |     4.24143ms |       127.0.0.1 | GET      "/favicon.ico"
-[GIN] 2025/05/04 - 17:53:33 | 200 |    3.251942ms |       127.0.0.1 | POST     "/Dashboard/getproductbyinventory"
-[GIN] 2025/05/04 - 17:53:35 | 200 |    3.690967ms |       127.0.0.1 | POST     "/Dashboard/getproductbyid"
-[GIN] 2025/05/04 - 17:55:08 | 200 |   14.330476ms |       127.0.0.1 | GET      "/Dashboard/exportedit?ExportId=4"
-[GIN] 2025/05/04 - 17:55:08 | 200 |     115.523µs |       127.0.0.1 | GET      "/assets/css/main.css"
-[GIN] 2025/05/04 - 17:55:08 | 200 |     181.619µs |       127.0.0.1 | GET      "/assets/css/bootstrap.rtl.min.css"
-[GIN] 2025/05/04 - 17:55:08 | 200 |     250.261µs |       127.0.0.1 | GET      "/assets/js/jquery-3.7.1.min.js"
-[GIN] 2025/05/04 - 17:55:08 | 200 |     178.024µs |       127.0.0.1 | GET      "/assets/js/bootstrap.min.js"
-[GIN] 2025/05/04 - 17:55:08 | 200 |     567.423µs |       127.0.0.1 | GET      "/assets/js/persian-tools.umd.js"
-[GIN] 2025/05/04 - 17:55:08 | 200 |     331.637µs |       127.0.0.1 | GET      "/assets/js/jspdf.umd.min.js"
-[GIN] 2025/05/04 - 17:55:08 | 200 |     254.347µs |       127.0.0.1 | GET      "/assets/js/chart.js"
-[GIN] 2025/05/04 - 17:55:08 | 200 |      370.75µs |       127.0.0.1 | GET      "/assets/js/main.js"
-[GIN] 2025/05/04 - 17:55:09 | 200 |    3.752159ms |       127.0.0.1 | GET      "/Dashboard/installHook.js.map"
-[GIN] 2025/05/04 - 17:55:09 | 200 |      66.616µs |       127.0.0.1 | GET      "/assets/images/user.png"
-[GIN] 2025/05/04 - 17:55:09 | 200 |      887.68µs |       127.0.0.1 | GET      "/assets/images/techrootlogo.png"
-[GIN] 2025/05/04 - 17:55:09 | 200 |     535.588µs |       127.0.0.1 | GET      "/assets/fonts/Vazir-Medium.woff2"
-[GIN] 2025/05/04 - 17:55:09 | 200 |   10.649365ms |       127.0.0.1 | POST     "/Dashboard/getpaymentsbyexportid"
-[GIN] 2025/05/04 - 17:55:09 | 200 |    4.705997ms |       127.0.0.1 | GET      "/Dashboard/api/allexports"
-[GIN] 2025/05/04 - 17:55:09 | 200 |    2.602296ms |       127.0.0.1 | GET      "/favicon.ico"
-[GIN] 2025/05/04 - 17:55:09 | 200 |    7.108784ms |       127.0.0.1 | GET      "/assets/js/bootstrap.min.js.map"
-[GIN] 2025/05/04 - 17:55:09 | 200 |    3.970108ms |       127.0.0.1 | GET      "/assets/js/persian-tools.umd.js.map"
-[GIN] 2025/05/04 - 17:55:09 | 200 |    10.47273ms |       127.0.0.1 | GET      "/assets/js/chart.umd.js.map"
-[GIN] 2025/05/04 - 17:55:09 | 200 |   11.633296ms |       127.0.0.1 | GET      "/assets/js/jspdf.umd.min.js.map"
-[GIN] 2025/05/04 - 17:55:15 | 200 |    1.846426ms |       127.0.0.1 | POST     "/Dashboard/getproductbyinventory"
-[GIN] 2025/05/04 - 17:55:17 | 200 |    2.536565ms |       127.0.0.1 | POST     "/Dashboard/getproductbyid"
-[GIN] 2025/05/04 - 17:55:36 | 200 |   13.445101ms |       127.0.0.1 | GET      "/Dashboard/exportedit?ExportId=4"
-[GIN] 2025/05/04 - 17:55:36 | 200 |     361.277µs |       127.0.0.1 | GET      "/assets/css/bootstrap.rtl.min.css"
-[GIN] 2025/05/04 - 17:55:36 | 200 |      99.649µs |       127.0.0.1 | GET      "/assets/css/main.css"
-[GIN] 2025/05/04 - 17:55:36 | 200 |     735.475µs |       127.0.0.1 | GET      "/assets/images/techrootlogo.png"
-[GIN] 2025/05/04 - 17:55:36 | 200 |      92.721µs |       127.0.0.1 | GET      "/assets/images/user.png"
-[GIN] 2025/05/04 - 17:55:36 | 200 |     187.891µs |       127.0.0.1 | GET      "/assets/js/jquery-3.7.1.min.js"
-[GIN] 2025/05/04 - 17:55:36 | 200 |     189.536µs |       127.0.0.1 | GET      "/assets/js/bootstrap.min.js"
-[GIN] 2025/05/04 - 17:55:36 | 200 |      403.86µs |       127.0.0.1 | GET      "/assets/js/persian-tools.umd.js"
-[GIN] 2025/05/04 - 17:55:36 | 200 |     377.821µs |       127.0.0.1 | GET      "/assets/js/jspdf.umd.min.js"
-[GIN] 2025/05/04 - 17:55:36 | 200 |     316.663µs |       127.0.0.1 | GET      "/assets/js/chart.js"
-[GIN] 2025/05/04 - 17:55:36 | 200 |     158.648µs |       127.0.0.1 | GET      "/assets/js/main.js"
-[GIN] 2025/05/04 - 17:55:36 | 200 |    2.521301ms |       127.0.0.1 | GET      "/Dashboard/installHook.js.map"
-[GIN] 2025/05/04 - 17:55:36 | 200 |     335.277µs |       127.0.0.1 | GET      "/assets/fonts/Vazir-Medium.woff2"
-[GIN] 2025/05/04 - 17:55:37 | 200 |    7.651951ms |       127.0.0.1 | GET      "/assets/js/bootstrap.min.js.map"
-[GIN] 2025/05/04 - 17:55:37 | 200 |    7.948155ms |       127.0.0.1 | GET      "/assets/js/persian-tools.umd.js.map"
-[GIN] 2025/05/04 - 17:55:37 | 200 |    6.731182ms |       127.0.0.1 | GET      "/assets/js/jspdf.umd.min.js.map"
-[GIN] 2025/05/04 - 17:55:37 | 200 |   10.079246ms |       127.0.0.1 | GET      "/assets/js/chart.umd.js.map"
-[GIN] 2025/05/04 - 17:55:37 | 200 |    7.570446ms |       127.0.0.1 | GET      "/Dashboard/api/allexports"
-[GIN] 2025/05/04 - 17:55:37 | 200 |   10.272391ms |       127.0.0.1 | POST     "/Dashboard/getpaymentsbyexportid"
-[GIN] 2025/05/04 - 17:55:37 | 200 |    8.426131ms |       127.0.0.1 | GET      "/favicon.ico"
-[GIN] 2025/05/04 - 17:55:39 | 200 |    1.802976ms |       127.0.0.1 | POST     "/Dashboard/getproductbyinventory"
-[GIN] 2025/05/04 - 17:55:40 | 200 |    1.966799ms |       127.0.0.1 | POST     "/Dashboard/getproductbyinventory"
-[GIN] 2025/05/04 - 17:55:42 | 200 |     3.38302ms |       127.0.0.1 | POST     "/Dashboard/getproductbyid"
-[GIN] 2025/05/04 - 17:56:18 | 200 |   12.748899ms |       127.0.0.1 | GET      "/Dashboard/exportedit?ExportId=4"
-[GIN] 2025/05/04 - 17:56:18 | 200 |     269.637µs |       127.0.0.1 | GET      "/assets/css/bootstrap.rtl.min.css"
-[GIN] 2025/05/04 - 17:56:18 | 200 |     114.207µs |       127.0.0.1 | GET      "/assets/css/main.css"
-[GIN] 2025/05/04 - 17:56:18 | 200 |     213.473µs |       127.0.0.1 | GET      "/assets/js/jquery-3.7.1.min.js"
-[GIN] 2025/05/04 - 17:56:18 | 200 |     175.386µs |       127.0.0.1 | GET      "/assets/js/bootstrap.min.js"
-[GIN] 2025/05/04 - 17:56:18 | 200 |    4.355691ms |       127.0.0.1 | GET      "/Dashboard/installHook.js.map"
-[GIN] 2025/05/04 - 17:56:18 | 200 |     499.661µs |       127.0.0.1 | GET      "/assets/js/persian-tools.umd.js"
-[GIN] 2025/05/04 - 17:56:18 | 200 |      399.83µs |       127.0.0.1 | GET      "/assets/js/jspdf.umd.min.js"
-[GIN] 2025/05/04 - 17:56:18 | 200 |     344.943µs |       127.0.0.1 | GET      "/assets/js/chart.js"
-[GIN] 2025/05/04 - 17:56:18 | 200 |     169.297µs |       127.0.0.1 | GET      "/assets/js/main.js"
-[GIN] 2025/05/04 - 17:56:18 | 200 |     119.224µs |       127.0.0.1 | GET      "/assets/images/user.png"
-[GIN] 2025/05/04 - 17:56:18 | 200 |     912.419µs |       127.0.0.1 | GET      "/assets/images/techrootlogo.png"
-[GIN] 2025/05/04 - 17:56:18 | 200 |     191.661µs |       127.0.0.1 | GET      "/assets/fonts/Vazir-Medium.woff2"
-[GIN] 2025/05/04 - 17:56:19 | 200 |    8.774718ms |       127.0.0.1 | GET      "/assets/js/bootstrap.min.js.map"
-[GIN] 2025/05/04 - 17:56:19 | 200 |    6.865435ms |       127.0.0.1 | GET      "/assets/js/persian-tools.umd.js.map"
-[GIN] 2025/05/04 - 17:56:19 | 200 |   11.995715ms |       127.0.0.1 | GET      "/assets/js/jspdf.umd.min.js.map"
-[GIN] 2025/05/04 - 17:56:19 | 200 |    8.260405ms |       127.0.0.1 | GET      "/assets/js/chart.umd.js.map"
-[GIN] 2025/05/04 - 17:56:19 | 200 |    8.132972ms |       127.0.0.1 | GET      "/Dashboard/api/allexports"
-[GIN] 2025/05/04 - 17:56:19 | 200 |   14.856286ms |       127.0.0.1 | POST     "/Dashboard/getpaymentsbyexportid"
-[GIN] 2025/05/04 - 17:56:19 | 200 |    5.386235ms |       127.0.0.1 | GET      "/favicon.ico"
-[GIN] 2025/05/04 - 17:56:22 | 200 |    2.885203ms |       127.0.0.1 | POST     "/Dashboard/getproductbyinventory"
-[GIN] 2025/05/04 - 17:56:23 | 200 |    2.846827ms |       127.0.0.1 | POST     "/Dashboard/getproductbyid"
-[GIN] 2025/05/04 - 17:57:04 | 200 |   13.131369ms |       127.0.0.1 | GET      "/Dashboard/exportedit?ExportId=4"
-[GIN] 2025/05/04 - 17:57:04 | 200 |     235.394µs |       127.0.0.1 | GET      "/assets/css/bootstrap.rtl.min.css"
-[GIN] 2025/05/04 - 17:57:04 | 200 |     101.241µs |       127.0.0.1 | GET      "/assets/css/main.css"
-[GIN] 2025/05/04 - 17:57:04 | 200 |     171.353µs |       127.0.0.1 | GET      "/assets/js/jquery-3.7.1.min.js"
-[GIN] 2025/05/04 - 17:57:04 | 200 |     188.907µs |       127.0.0.1 | GET      "/assets/js/bootstrap.min.js"
-[GIN] 2025/05/04 - 17:57:04 | 200 |     391.301µs |       127.0.0.1 | GET      "/assets/js/persian-tools.umd.js"
-[GIN] 2025/05/04 - 17:57:04 | 200 |      381.55µs |       127.0.0.1 | GET      "/assets/js/jspdf.umd.min.js"
-[GIN] 2025/05/04 - 17:57:04 | 200 |     280.299µs |       127.0.0.1 | GET      "/assets/js/chart.js"
-[GIN] 2025/05/04 - 17:57:04 | 200 |     133.929µs |       127.0.0.1 | GET      "/assets/js/main.js"
-[GIN] 2025/05/04 - 17:57:04 | 200 |     5.30472ms |       127.0.0.1 | GET      "/Dashboard/installHook.js.map"
-[GIN] 2025/05/04 - 17:57:05 | 200 |      210.93µs |       127.0.0.1 | GET      "/assets/fonts/Vazir-Medium.woff2"
-[GIN] 2025/05/04 - 17:57:05 | 200 |     970.796µs |       127.0.0.1 | GET      "/assets/images/user.png"
-[GIN] 2025/05/04 - 17:57:05 | 200 |      892.85µs |       127.0.0.1 | GET      "/assets/images/techrootlogo.png"
-[GIN] 2025/05/04 - 17:57:06 | 200 |    3.081784ms |       127.0.0.1 | GET      "/assets/js/bootstrap.min.js.map"
-[GIN] 2025/05/04 - 17:57:06 | 200 |   10.517673ms |       127.0.0.1 | GET      "/assets/js/persian-tools.umd.js.map"
-[GIN] 2025/05/04 - 17:57:06 | 200 |    6.519454ms |       127.0.0.1 | GET      "/assets/js/jspdf.umd.min.js.map"
-[GIN] 2025/05/04 - 17:57:06 | 200 |    9.002769ms |       127.0.0.1 | GET      "/assets/js/chart.umd.js.map"
-[GIN] 2025/05/04 - 17:57:06 | 200 |    5.417345ms |       127.0.0.1 | GET      "/Dashboard/api/allexports"
-[GIN] 2025/05/04 - 17:57:06 | 200 |   11.613564ms |       127.0.0.1 | POST     "/Dashboard/getpaymentsbyexportid"
-[GIN] 2025/05/04 - 17:57:06 | 200 |     6.84679ms |       127.0.0.1 | GET      "/favicon.ico"
-[GIN] 2025/05/04 - 17:57:11 | 200 |    2.264273ms |       127.0.0.1 | POST     "/Dashboard/getproductbyinventory"
-[GIN] 2025/05/04 - 17:57:12 | 200 |    2.376974ms |       127.0.0.1 | POST     "/Dashboard/getproductbyid"
-[GIN] 2025/05/04 - 17:57:48 | 200 |   11.013255ms |       127.0.0.1 | GET      "/Dashboard/exportedit?ExportId=4"
-[GIN] 2025/05/04 - 17:57:48 | 200 |     411.885µs |       127.0.0.1 | GET      "/assets/css/bootstrap.rtl.min.css"
-[GIN] 2025/05/04 - 17:57:48 | 200 |      85.051µs |       127.0.0.1 | GET      "/assets/css/main.css"
-[GIN] 2025/05/04 - 17:57:48 | 200 |    4.500456ms |       127.0.0.1 | GET      "/Dashboard/installHook.js.map"
-[GIN] 2025/05/04 - 17:57:48 | 200 |     720.101µs |       127.0.0.1 | GET      "/assets/images/techrootlogo.png"
-[GIN] 2025/05/04 - 17:57:48 | 200 |      75.029µs |       127.0.0.1 | GET      "/assets/images/user.png"
-[GIN] 2025/05/04 - 17:57:48 | 200 |     187.402µs |       127.0.0.1 | GET      "/assets/js/jquery-3.7.1.min.js"
-[GIN] 2025/05/04 - 17:57:48 | 200 |     181.343µs |       127.0.0.1 | GET      "/assets/js/bootstrap.min.js"
-[GIN] 2025/05/04 - 17:57:48 | 200 |     395.813µs |       127.0.0.1 | GET      "/assets/js/persian-tools.umd.js"
-[GIN] 2025/05/04 - 17:57:48 | 200 |     392.855µs |       127.0.0.1 | GET      "/assets/js/jspdf.umd.min.js"
-[GIN] 2025/05/04 - 17:57:48 | 200 |     300.814µs |       127.0.0.1 | GET      "/assets/js/chart.js"
-[GIN] 2025/05/04 - 17:57:48 | 200 |      272.11µs |       127.0.0.1 | GET      "/assets/js/main.js"
-[GIN] 2025/05/04 - 17:57:48 | 200 |     561.403µs |       127.0.0.1 | GET      "/assets/fonts/Vazir-Medium.woff2"
-[GIN] 2025/05/04 - 17:57:49 | 200 |    6.901859ms |       127.0.0.1 | GET      "/assets/js/bootstrap.min.js.map"
-[GIN] 2025/05/04 - 17:57:49 | 200 |    4.869103ms |       127.0.0.1 | GET      "/assets/js/persian-tools.umd.js.map"
-[GIN] 2025/05/04 - 17:57:49 | 200 |    6.282545ms |       127.0.0.1 | GET      "/assets/js/jspdf.umd.min.js.map"
-[GIN] 2025/05/04 - 17:57:49 | 200 |    7.984152ms |       127.0.0.1 | GET      "/assets/js/chart.umd.js.map"
-[GIN] 2025/05/04 - 17:57:50 | 200 |     5.18828ms |       127.0.0.1 | GET      "/Dashboard/api/allexports"
-[GIN] 2025/05/04 - 17:57:50 | 200 |   10.643019ms |       127.0.0.1 | POST     "/Dashboard/getpaymentsbyexportid"
-[GIN] 2025/05/04 - 17:57:50 | 200 |    4.588988ms |       127.0.0.1 | GET      "/favicon.ico"
-[GIN] 2025/05/04 - 17:57:53 | 200 |    2.504841ms |       127.0.0.1 | POST     "/Dashboard/getproductbyinventory"
-[GIN] 2025/05/04 - 17:57:54 | 200 |    3.463803ms |       127.0.0.1 | POST     "/Dashboard/getproductbyinventory"
-[GIN] 2025/05/04 - 17:57:56 | 200 |    3.156997ms |       127.0.0.1 | POST     "/Dashboard/getproductbyid"
-[GIN] 2025/05/04 - 17:59:08 | 200 |   12.993362ms |       127.0.0.1 | GET      "/Dashboard/exportedit?ExportId=4"
-[GIN] 2025/05/04 - 17:59:08 | 200 |     255.602µs |       127.0.0.1 | GET      "/assets/css/bootstrap.rtl.min.css"
-[GIN] 2025/05/04 - 17:59:08 | 200 |      100.63µs |       127.0.0.1 | GET      "/assets/css/main.css"
-[GIN] 2025/05/04 - 17:59:08 | 200 |     213.388µs |       127.0.0.1 | GET      "/assets/js/jquery-3.7.1.min.js"
-[GIN] 2025/05/04 - 17:59:08 | 200 |     212.716µs |       127.0.0.1 | GET      "/assets/js/bootstrap.min.js"
-[GIN] 2025/05/04 - 17:59:08 | 200 |     360.648µs |       127.0.0.1 | GET      "/assets/js/persian-tools.umd.js"
-[GIN] 2025/05/04 - 17:59:08 | 200 |     328.085µs |       127.0.0.1 | GET      "/assets/js/jspdf.umd.min.js"
-[GIN] 2025/05/04 - 17:59:08 | 200 |     280.674µs |       127.0.0.1 | GET      "/assets/js/chart.js"
-[GIN] 2025/05/04 - 17:59:08 | 200 |    2.512677ms |       127.0.0.1 | GET      "/Dashboard/installHook.js.map"
-[GIN] 2025/05/04 - 17:59:08 | 200 |     170.299µs |       127.0.0.1 | GET      "/assets/js/main.js"
-[GIN] 2025/05/04 - 17:59:08 | 200 |     209.329µs |       127.0.0.1 | GET      "/assets/fonts/Vazir-Medium.woff2"
-[GIN] 2025/05/04 - 17:59:08 | 200 |      127.98µs |       127.0.0.1 | GET      "/assets/images/user.png"
-[GIN] 2025/05/04 - 17:59:08 | 200 |     859.627µs |       127.0.0.1 | GET      "/assets/images/techrootlogo.png"
-[GIN] 2025/05/04 - 17:59:09 | 200 |    5.189427ms |       127.0.0.1 | GET      "/assets/js/bootstrap.min.js.map"
-[GIN] 2025/05/04 - 17:59:09 | 200 |    6.108258ms |       127.0.0.1 | GET      "/assets/js/jspdf.umd.min.js.map"
-[GIN] 2025/05/04 - 17:59:09 | 200 |    8.103093ms |       127.0.0.1 | GET      "/assets/js/persian-tools.umd.js.map"
-[GIN] 2025/05/04 - 17:59:09 | 200 |    5.644418ms |       127.0.0.1 | GET      "/assets/js/chart.umd.js.map"
-[GIN] 2025/05/04 - 17:59:09 | 200 |    7.826102ms |       127.0.0.1 | GET      "/Dashboard/api/allexports"
-[GIN] 2025/05/04 - 17:59:09 | 200 |    11.19787ms |       127.0.0.1 | POST     "/Dashboard/getpaymentsbyexportid"
-[GIN] 2025/05/04 - 17:59:09 | 200 |    3.347643ms |       127.0.0.1 | GET      "/favicon.ico"
-[GIN] 2025/05/04 - 17:59:12 | 200 |    2.745207ms |       127.0.0.1 | POST     "/Dashboard/getproductbyinventory"
-[GIN] 2025/05/04 - 17:59:13 | 200 |    2.562244ms |       127.0.0.1 | POST     "/Dashboard/getproductbyid"
-[GIN] 2025/05/04 - 17:59:47 | 200 |   14.831276ms |       127.0.0.1 | GET      "/Dashboard/exportedit?ExportId=4"
-[GIN] 2025/05/04 - 17:59:47 | 200 |      254.84µs |       127.0.0.1 | GET      "/assets/css/bootstrap.rtl.min.css"
-[GIN] 2025/05/04 - 17:59:47 | 200 |     111.999µs |       127.0.0.1 | GET      "/assets/css/main.css"
-[GIN] 2025/05/04 - 17:59:47 | 200 |     209.871µs |       127.0.0.1 | GET      "/assets/js/jquery-3.7.1.min.js"
-[GIN] 2025/05/04 - 17:59:47 | 200 |      186.01µs |       127.0.0.1 | GET      "/assets/js/bootstrap.min.js"
-[GIN] 2025/05/04 - 17:59:47 | 200 |    4.006236ms |       127.0.0.1 | GET      "/Dashboard/installHook.js.map"
-[GIN] 2025/05/04 - 17:59:47 | 200 |     467.816µs |       127.0.0.1 | GET      "/assets/js/persian-tools.umd.js"
-[GIN] 2025/05/04 - 17:59:47 | 200 |     397.686µs |       127.0.0.1 | GET      "/assets/js/jspdf.umd.min.js"
-[GIN] 2025/05/04 - 17:59:47 | 200 |     328.346µs |       127.0.0.1 | GET      "/assets/js/chart.js"
-[GIN] 2025/05/04 - 17:59:47 | 200 |     209.623µs |       127.0.0.1 | GET      "/assets/js/main.js"
-[GIN] 2025/05/04 - 17:59:48 | 200 |     189.044µs |       127.0.0.1 | GET      "/assets/fonts/Vazir-Medium.woff2"
-[GIN] 2025/05/04 - 17:59:48 | 200 |     353.636µs |       127.0.0.1 | GET      "/assets/images/user.png"
-[GIN] 2025/05/04 - 17:59:48 | 200 |    2.519919ms |       127.0.0.1 | GET      "/assets/images/techrootlogo.png"
-[GIN] 2025/05/04 - 17:59:49 | 200 |    2.711012ms |       127.0.0.1 | GET      "/assets/js/bootstrap.min.js.map"
-[GIN] 2025/05/04 - 17:59:49 | 200 |    4.741532ms |       127.0.0.1 | GET      "/assets/js/chart.umd.js.map"
-[GIN] 2025/05/04 - 17:59:49 | 200 |    9.831785ms |       127.0.0.1 | GET      "/assets/js/persian-tools.umd.js.map"
-[GIN] 2025/05/04 - 17:59:49 | 200 |    9.226065ms |       127.0.0.1 | GET      "/assets/js/jspdf.umd.min.js.map"
-[GIN] 2025/05/04 - 17:59:49 | 200 |    7.222763ms |       127.0.0.1 | GET      "/Dashboard/api/allexports"
-[GIN] 2025/05/04 - 17:59:49 | 200 |   15.974414ms |       127.0.0.1 | POST     "/Dashboard/getpaymentsbyexportid"
-[GIN] 2025/05/04 - 17:59:49 | 200 |    3.703495ms |       127.0.0.1 | GET      "/favicon.ico"
-[GIN] 2025/05/04 - 17:59:54 | 200 |     1.90556ms |       127.0.0.1 | POST     "/Dashboard/getproductbyinventory"
-[GIN] 2025/05/04 - 17:59:56 | 200 |    2.704104ms |       127.0.0.1 | POST     "/Dashboard/getproductbyid"
-[GIN] 2025/05/04 - 18:00:14 | 200 |    9.949603ms |       127.0.0.1 | GET      "/assets/css/bootstrap.rtl.min.css.map"
-[GIN] 2025/05/04 - 18:02:59 | 200 |   13.388446ms |       127.0.0.1 | GET      "/Dashboard/exportedit?ExportId=4"
-[GIN] 2025/05/04 - 18:02:59 | 200 |     228.103µs |       127.0.0.1 | GET      "/assets/css/bootstrap.rtl.min.css"
-[GIN] 2025/05/04 - 18:02:59 | 200 |    2.787702ms |       127.0.0.1 | GET      "/Dashboard/installHook.js.map"
-[GIN] 2025/05/04 - 18:02:59 | 200 |      87.117µs |       127.0.0.1 | GET      "/assets/css/main.css"
-[GIN] 2025/05/04 - 18:02:59 | 200 |     223.337µs |       127.0.0.1 | GET      "/assets/js/jquery-3.7.1.min.js"
-[GIN] 2025/05/04 - 18:02:59 | 200 |     203.438µs |       127.0.0.1 | GET      "/assets/js/bootstrap.min.js"
-[GIN] 2025/05/04 - 18:02:59 | 200 |     936.319µs |       127.0.0.1 | GET      "/assets/js/persian-tools.umd.js"
-[GIN] 2025/05/04 - 18:02:59 | 200 |     416.158µs |       127.0.0.1 | GET      "/assets/js/jspdf.umd.min.js"
-[GIN] 2025/05/04 - 18:02:59 | 200 |     356.425µs |       127.0.0.1 | GET      "/assets/js/chart.js"
-[GIN] 2025/05/04 - 18:02:59 | 200 |     221.264µs |       127.0.0.1 | GET      "/assets/js/main.js"
-[GIN] 2025/05/04 - 18:02:59 | 200 |       96.46µs |       127.0.0.1 | GET      "/assets/images/user.png"
-[GIN] 2025/05/04 - 18:02:59 | 200 |     943.173µs |       127.0.0.1 | GET      "/assets/images/techrootlogo.png"
-[GIN] 2025/05/04 - 18:02:59 | 200 |      234.23µs |       127.0.0.1 | GET      "/assets/fonts/Vazir-Medium.woff2"
-[GIN] 2025/05/04 - 18:03:00 | 200 |    7.643731ms |       127.0.0.1 | GET      "/assets/js/bootstrap.min.js.map"
-[GIN] 2025/05/04 - 18:03:00 | 200 |    6.108923ms |       127.0.0.1 | GET      "/assets/js/persian-tools.umd.js.map"
-[GIN] 2025/05/04 - 18:03:00 | 200 |    4.951864ms |       127.0.0.1 | GET      "/assets/js/jspdf.umd.min.js.map"
-[GIN] 2025/05/04 - 18:03:00 | 200 |    3.984468ms |       127.0.0.1 | GET      "/assets/js/chart.umd.js.map"
-[GIN] 2025/05/04 - 18:03:00 | 200 |    6.467164ms |       127.0.0.1 | POST     "/Dashboard/getpaymentsbyexportid"
-[GIN] 2025/05/04 - 18:03:00 | 200 |    5.169429ms |       127.0.0.1 | GET      "/Dashboard/api/allexports"
-[GIN] 2025/05/04 - 18:03:00 | 200 |    7.283532ms |       127.0.0.1 | GET      "/favicon.ico"
-[GIN] 2025/05/04 - 18:03:00 | 200 |    2.473902ms |       127.0.0.1 | GET      "/assets/css/bootstrap.rtl.min.css.map"
-[GIN] 2025/05/04 - 18:03:09 | 200 |   13.524634ms |       127.0.0.1 | GET      "/Dashboard/exportedit?ExportId=4"
-[GIN] 2025/05/04 - 18:03:09 | 200 |     230.425µs |       127.0.0.1 | GET      "/assets/css/bootstrap.rtl.min.css"
-[GIN] 2025/05/04 - 18:03:09 | 200 |     102.947µs |       127.0.0.1 | GET      "/assets/css/main.css"
-[GIN] 2025/05/04 - 18:03:09 | 200 |     193.546µs |       127.0.0.1 | GET      "/assets/js/jquery-3.7.1.min.js"
-[GIN] 2025/05/04 - 18:03:09 | 200 |     167.312µs |       127.0.0.1 | GET      "/assets/js/bootstrap.min.js"
-[GIN] 2025/05/04 - 18:03:09 | 200 |      388.13µs |       127.0.0.1 | GET      "/assets/js/persian-tools.umd.js"
-[GIN] 2025/05/04 - 18:03:09 | 200 |     352.416µs |       127.0.0.1 | GET      "/assets/js/jspdf.umd.min.js"
-[GIN] 2025/05/04 - 18:03:09 | 200 |     274.056µs |       127.0.0.1 | GET      "/assets/js/chart.js"
-[GIN] 2025/05/04 - 18:03:09 | 200 |     172.063µs |       127.0.0.1 | GET      "/assets/js/main.js"
-[GIN] 2025/05/04 - 18:03:09 | 200 |    5.236202ms |       127.0.0.1 | GET      "/Dashboard/installHook.js.map"
-[GIN] 2025/05/04 - 18:03:09 | 200 |     106.739µs |       127.0.0.1 | GET      "/assets/images/user.png"
-[GIN] 2025/05/04 - 18:03:09 | 200 |    1.152699ms |       127.0.0.1 | GET      "/assets/images/techrootlogo.png"
-[GIN] 2025/05/04 - 18:03:10 | 200 |      183.36µs |       127.0.0.1 | GET      "/assets/fonts/Vazir-Medium.woff2"
-[GIN] 2025/05/04 - 18:03:10 | 200 |    4.621318ms |       127.0.0.1 | GET      "/assets/js/bootstrap.min.js.map"
-[GIN] 2025/05/04 - 18:03:10 | 200 |    8.709021ms |       127.0.0.1 | GET      "/assets/js/persian-tools.umd.js.map"
-[GIN] 2025/05/04 - 18:03:10 | 200 |    3.131904ms |       127.0.0.1 | GET      "/assets/js/jspdf.umd.min.js.map"
-[GIN] 2025/05/04 - 18:03:10 | 200 |    4.872921ms |       127.0.0.1 | GET      "/assets/js/chart.umd.js.map"
-[GIN] 2025/05/04 - 18:03:10 | 200 |    6.809571ms |       127.0.0.1 | POST     "/Dashboard/getpaymentsbyexportid"
-[GIN] 2025/05/04 - 18:03:10 | 200 |    7.341389ms |       127.0.0.1 | GET      "/Dashboard/api/allexports"
-[GIN] 2025/05/04 - 18:03:10 | 200 |    2.555981ms |       127.0.0.1 | GET      "/favicon.ico"
-[GIN] 2025/05/04 - 18:03:10 | 200 |    4.487392ms |       127.0.0.1 | GET      "/assets/css/bootstrap.rtl.min.css.map"
-[GIN] 2025/05/04 - 18:03:14 | 200 |    2.732443ms |       127.0.0.1 | POST     "/Dashboard/getproductbyinventory"
-[GIN] 2025/05/04 - 18:03:15 | 200 |    2.441006ms |       127.0.0.1 | POST     "/Dashboard/getproductbyid"
-[GIN] 2025/05/04 - 18:05:20 | 200 |   13.544842ms |       127.0.0.1 | GET      "/Dashboard/exportedit?ExportId=4"
-[GIN] 2025/05/04 - 18:05:21 | 200 |    2.467166ms |       127.0.0.1 | GET      "/Dashboard/installHook.js.map"
-[GIN] 2025/05/04 - 18:05:21 | 200 |     245.886µs |       127.0.0.1 | GET      "/assets/css/bootstrap.rtl.min.css"
-[GIN] 2025/05/04 - 18:05:21 | 200 |      83.051µs |       127.0.0.1 | GET      "/assets/css/main.css"
-[GIN] 2025/05/04 - 18:05:21 | 200 |     224.064µs |       127.0.0.1 | GET      "/assets/js/jquery-3.7.1.min.js"
-[GIN] 2025/05/04 - 18:05:21 | 200 |     208.844µs |       127.0.0.1 | GET      "/assets/js/bootstrap.min.js"
-[GIN] 2025/05/04 - 18:05:21 | 200 |     395.984µs |       127.0.0.1 | GET      "/assets/js/persian-tools.umd.js"
-[GIN] 2025/05/04 - 18:05:21 | 200 |     388.796µs |       127.0.0.1 | GET      "/assets/js/jspdf.umd.min.js"
-[GIN] 2025/05/04 - 18:05:21 | 200 |     303.247µs |       127.0.0.1 | GET      "/assets/js/chart.js"
-[GIN] 2025/05/04 - 18:05:21 | 200 |      484.08µs |       127.0.0.1 | GET      "/assets/js/main.js"
-[GIN] 2025/05/04 - 18:05:21 | 200 |     107.383µs |       127.0.0.1 | GET      "/assets/images/user.png"
-[GIN] 2025/05/04 - 18:05:21 | 200 |    1.084842ms |       127.0.0.1 | GET      "/assets/images/techrootlogo.png"
-[GIN] 2025/05/04 - 18:05:21 | 200 |     354.196µs |       127.0.0.1 | GET      "/assets/fonts/Vazir-Medium.woff2"
-[GIN] 2025/05/04 - 18:05:21 | 200 |   15.803134ms |       127.0.0.1 | GET      "/assets/js/persian-tools.umd.js.map"
-[GIN] 2025/05/04 - 18:05:21 | 200 |   21.765317ms |       127.0.0.1 | GET      "/assets/js/bootstrap.min.js.map"
-[GIN] 2025/05/04 - 18:05:21 | 200 |    8.786633ms |       127.0.0.1 | POST     "/Dashboard/getpaymentsbyexportid"
-[GIN] 2025/05/04 - 18:05:21 | 200 |     7.88061ms |       127.0.0.1 | GET      "/Dashboard/api/allexports"
-[GIN] 2025/05/04 - 18:05:21 | 200 |    9.281785ms |       127.0.0.1 | GET      "/favicon.ico"
-[GIN] 2025/05/04 - 18:05:21 | 200 |    2.591942ms |       127.0.0.1 | GET      "/assets/js/chart.umd.js.map"
-[GIN] 2025/05/04 - 18:05:21 | 200 |    4.382454ms |       127.0.0.1 | GET      "/assets/js/jspdf.umd.min.js.map"
-[GIN] 2025/05/04 - 18:05:22 | 200 |    6.643605ms |       127.0.0.1 | GET      "/assets/css/bootstrap.rtl.min.css.map"
-[GIN] 2025/05/04 - 18:05:25 | 200 |    1.845254ms |       127.0.0.1 | POST     "/Dashboard/getproductbyinventory"
-[GIN] 2025/05/04 - 18:05:26 | 200 |    2.488858ms |       127.0.0.1 | POST     "/Dashboard/getproductbyid"
-[GIN] 2025/05/04 - 18:05:29 | 200 |    3.052209ms |       127.0.0.1 | POST     "/Dashboard/getproductbyid"
-[GIN] 2025/05/04 - 18:05:42 | 200 |    13.42179ms |       127.0.0.1 | GET      "/Dashboard/exportedit?ExportId=4"
-[GIN] 2025/05/04 - 18:05:42 | 200 |     252.772µs |       127.0.0.1 | GET      "/assets/css/bootstrap.rtl.min.css"
-[GIN] 2025/05/04 - 18:05:42 | 200 |     112.106µs |       127.0.0.1 | GET      "/assets/css/main.css"
-[GIN] 2025/05/04 - 18:05:42 | 200 |     172.528µs |       127.0.0.1 | GET      "/assets/js/jquery-3.7.1.min.js"
-[GIN] 2025/05/04 - 18:05:42 | 200 |     168.467µs |       127.0.0.1 | GET      "/assets/js/bootstrap.min.js"
-[GIN] 2025/05/04 - 18:05:42 | 200 |     422.297µs |       127.0.0.1 | GET      "/assets/js/persian-tools.umd.js"
-[GIN] 2025/05/04 - 18:05:42 | 200 |     474.937µs |       127.0.0.1 | GET      "/assets/js/jspdf.umd.min.js"
-[GIN] 2025/05/04 - 18:05:42 | 200 |    2.587088ms |       127.0.0.1 | GET      "/Dashboard/installHook.js.map"
-[GIN] 2025/05/04 - 18:05:42 | 200 |       250.4µs |       127.0.0.1 | GET      "/assets/js/chart.js"
-[GIN] 2025/05/04 - 18:05:42 | 200 |     175.566µs |       127.0.0.1 | GET      "/assets/js/main.js"
-[GIN] 2025/05/04 - 18:05:42 | 200 |     116.325µs |       127.0.0.1 | GET      "/assets/images/user.png"
-[GIN] 2025/05/04 - 18:05:42 | 200 |     998.636µs |       127.0.0.1 | GET      "/assets/images/techrootlogo.png"
-[GIN] 2025/05/04 - 18:05:42 | 200 |     203.776µs |       127.0.0.1 | GET      "/assets/fonts/Vazir-Medium.woff2"
-[GIN] 2025/05/04 - 18:05:43 | 200 |    7.815752ms |       127.0.0.1 | GET      "/assets/js/bootstrap.min.js.map"
-[GIN] 2025/05/04 - 18:05:43 | 200 |    8.007055ms |       127.0.0.1 | GET      "/assets/js/persian-tools.umd.js.map"
-[GIN] 2025/05/04 - 18:05:43 | 200 |    2.701687ms |       127.0.0.1 | GET      "/assets/js/jspdf.umd.min.js.map"
-[GIN] 2025/05/04 - 18:05:43 | 200 |    5.504236ms |       127.0.0.1 | GET      "/assets/js/chart.umd.js.map"
-[GIN] 2025/05/04 - 18:05:43 | 200 |   22.578228ms |       127.0.0.1 | POST     "/Dashboard/getpaymentsbyexportid"
-[GIN] 2025/05/04 - 18:05:43 | 200 |     6.73549ms |       127.0.0.1 | GET      "/Dashboard/api/allexports"
-[GIN] 2025/05/04 - 18:05:43 | 200 |    8.389255ms |       127.0.0.1 | GET      "/favicon.ico"
-[GIN] 2025/05/04 - 18:05:43 | 200 |    2.579222ms |       127.0.0.1 | GET      "/assets/css/bootstrap.rtl.min.css.map"
-[GIN] 2025/05/04 - 18:05:46 | 200 |    2.323634ms |       127.0.0.1 | POST     "/Dashboard/getproductbyinventory"
-[GIN] 2025/05/04 - 18:05:48 | 200 |    5.747663ms |       127.0.0.1 | POST     "/Dashboard/getproductbyid"
-[GIN] 2025/05/04 - 18:06:36 | 200 |   14.944643ms |       127.0.0.1 | GET      "/Dashboard/exportedit?ExportId=4"
-[GIN] 2025/05/04 - 18:06:37 | 200 |    1.196208ms |       127.0.0.1 | GET      "/assets/css/bootstrap.rtl.min.css"
-[GIN] 2025/05/04 - 18:06:37 | 200 |      97.208µs |       127.0.0.1 | GET      "/assets/css/main.css"
-[GIN] 2025/05/04 - 18:06:37 | 200 |     218.154µs |       127.0.0.1 | GET      "/assets/js/jquery-3.7.1.min.js"
-[GIN] 2025/05/04 - 18:06:37 | 200 |     228.441µs |       127.0.0.1 | GET      "/assets/js/bootstrap.min.js"
-[GIN] 2025/05/04 - 18:06:37 | 200 |     393.054µs |       127.0.0.1 | GET      "/assets/js/persian-tools.umd.js"
-[GIN] 2025/05/04 - 18:06:37 | 200 |     488.818µs |       127.0.0.1 | GET      "/assets/js/jspdf.umd.min.js"
-[GIN] 2025/05/04 - 18:06:37 | 200 |     307.124µs |       127.0.0.1 | GET      "/assets/js/chart.js"
-[GIN] 2025/05/04 - 18:06:37 | 200 |     181.889µs |       127.0.0.1 | GET      "/assets/js/main.js"
-[GIN] 2025/05/04 - 18:06:37 | 200 |    3.655351ms |       127.0.0.1 | GET      "/Dashboard/installHook.js.map"
-[GIN] 2025/05/04 - 18:06:37 | 200 |    5.625416ms |       127.0.0.1 | GET      "/assets/css/bootstrap.rtl.min.css.map"
-[GIN] 2025/05/04 - 18:06:37 | 200 |     287.868µs |       127.0.0.1 | GET      "/assets/fonts/Vazir-Medium.woff2"
-[GIN] 2025/05/04 - 18:06:37 | 200 |     116.786µs |       127.0.0.1 | GET      "/assets/images/user.png"
-[GIN] 2025/05/04 - 18:06:37 | 200 |    1.089503ms |       127.0.0.1 | GET      "/assets/images/techrootlogo.png"
-[GIN] 2025/05/04 - 18:06:38 | 200 |    2.552315ms |       127.0.0.1 | GET      "/assets/js/bootstrap.min.js.map"
-[GIN] 2025/05/04 - 18:06:38 | 200 |    8.297124ms |       127.0.0.1 | GET      "/assets/js/jspdf.umd.min.js.map"
-[GIN] 2025/05/04 - 18:06:38 | 200 |   11.224554ms |       127.0.0.1 | GET      "/assets/js/persian-tools.umd.js.map"
-[GIN] 2025/05/04 - 18:06:38 | 200 |    3.929896ms |       127.0.0.1 | GET      "/assets/js/chart.umd.js.map"
-[GIN] 2025/05/04 - 18:06:39 | 200 |    2.957856ms |       127.0.0.1 | GET      "/Dashboard/api/allexports"
-[GIN] 2025/05/04 - 18:06:39 | 200 |    6.924224ms |       127.0.0.1 | POST     "/Dashboard/getpaymentsbyexportid"
-[GIN] 2025/05/04 - 18:06:39 | 200 |     4.99928ms |       127.0.0.1 | GET      "/favicon.ico"
-[GIN] 2025/05/04 - 18:06:40 | 200 |    2.097749ms |       127.0.0.1 | POST     "/Dashboard/getproductbyinventory"
-[GIN] 2025/05/04 - 18:06:41 | 200 |    3.726858ms |       127.0.0.1 | POST     "/Dashboard/getproductbyid"
+[GIN] 2025/05/06 - 03:25:43 | 200 |   10.725342ms |       127.0.0.1 | GET      "/Dashboard/export-list?draft=true"
+[GIN] 2025/05/06 - 03:25:43 | 304 |     106.205µs |       127.0.0.1 | GET      "/assets/js/main.js"
+[GIN] 2025/05/06 - 03:25:44 | 500 |     250.261µs |       127.0.0.1 | POST     "/Dashboard/getpaymentsbyexportid"
+[GIN] 2025/05/06 - 03:25:44 | 200 |    6.540638ms |       127.0.0.1 | GET      "/Dashboard/api/allexports"
+[GIN] 2025/05/06 - 03:25:50 | 200 |   20.393455ms |       127.0.0.1 | GET      "/Dashboard/deleteExport?ExportId=6&draft=true"
+[GIN] 2025/05/06 - 03:25:50 | 500 |     172.972µs |       127.0.0.1 | POST     "/Dashboard/getpaymentsbyexportid"
+[GIN] 2025/05/06 - 03:25:50 | 200 |    2.995704ms |       127.0.0.1 | GET      "/Dashboard/api/allexports"
+[GIN] 2025/05/06 - 03:25:54 | 200 |   12.574824ms |       127.0.0.1 | GET      "/Dashboard/deleteExport?ExportId=6&draft=true"
+[GIN] 2025/05/06 - 03:25:54 | 500 |     182.597µs |       127.0.0.1 | POST     "/Dashboard/getpaymentsbyexportid"
+[GIN] 2025/05/06 - 03:25:54 | 200 |      3.6734ms |       127.0.0.1 | GET      "/Dashboard/api/allexports"

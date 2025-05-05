@@ -1890,3 +1890,337 @@
 2025/05/04 18:05:25 خطا در دریافت اتصال دیتابیس: &{0xc000716120 <nil> 7 0xc000ad4e00 0}
 2025/05/04 18:05:46 خطا در دریافت اتصال دیتابیس: &{0xc00027e3f0 <nil> 7 0xc000b92a80 0}
 2025/05/04 18:06:40 خطا در دریافت اتصال دیتابیس: &{0xc000716ab0 <nil> 7 0xc000b0c8c0 0}
+2025/05/05 19:45:30 🚀 Logger initialized
+2025/05/05 19:45:30 🔧 Booting application...
+2025/05/05 19:45:31 📦 ScheduleBackups started
+2025/05/05 19:45:31 ✅ created backup success backup-2025-05-03-19-45-31.sql
+2025/05/05 19:45:31 ✅ created backup success backup-2025-05-04-19-45-31.sql
+2025/05/05 20:17:07 🚀 Logger initialized
+2025/05/05 20:17:07 🔧 Booting application...
+2025/05/05 20:17:08 📦 ScheduleBackups started
+2025/05/05 20:17:08 ✅ created backup success backup-2025-05-04-20-17-08.sql
+2025/05/05 20:17:08 ✅ created backup success backup-2025-05-03-20-17-08.sql
+2025/05/05 21:17:35 خطا در دریافت اتصال دیتابیس: &{0xc00030a480 <nil> 7 0xc00045a380 0}
+2025/05/05 21:28:06 خطا در دریافت اتصال دیتابیس: &{0xc00009e120 <nil> 7 0xc0006eec40 0}
+2025/05/05 21:29:13 خطا در دریافت اتصال دیتابیس: &{0xc00009e6c0 <nil> 7 0xc0002da8c0 0}
+2025/05/05 21:39:52 🚀 Logger initialized
+2025/05/05 21:39:52 🔧 Booting application...
+2025/05/05 21:39:53 📦 ScheduleBackups started
+2025/05/05 21:39:53 ✅ created backup success backup-2025-05-04-21-39-53.sql
+2025/05/05 21:39:53 ✅ created backup success backup-2025-05-03-21-39-53.sql
+2025/05/05 21:39:59 ⚠️ Payment record id not found
+2025/05/05 21:43:04 🚀 Logger initialized
+2025/05/05 21:43:04 🔧 Booting application...
+2025/05/05 21:43:05 📦 ScheduleBackups started
+2025/05/05 21:43:05 ✅ created backup success backup-2025-05-03-21-43-05.sql
+2025/05/05 21:43:05 ✅ created backup success backup-2025-05-04-21-43-05.sql
+2025/05/05 21:43:45 🚀 Logger initialized
+2025/05/05 21:43:45 🔧 Booting application...
+2025/05/05 21:43:46 📦 ScheduleBackups started
+2025/05/05 21:43:46 ✅ created backup success backup-2025-05-03-21-43-46.sql
+2025/05/05 21:43:46 ✅ created backup success backup-2025-05-04-21-43-46.sql
+2025/05/05 21:46:53 ⚠️ Payment record id not found
+2025/05/05 21:49:10 🚀 Logger initialized
+2025/05/05 21:49:10 🔧 Booting application...
+2025/05/05 21:49:11 📦 ScheduleBackups started
+2025/05/05 21:49:11 ✅ created backup success backup-2025-05-03-21-49-11.sql
+2025/05/05 21:49:11 ✅ created backup success backup-2025-05-04-21-49-11.sql
+2025/05/05 21:55:43 🚀 Logger initialized
+2025/05/05 21:55:43 🔧 Booting application...
+2025/05/05 21:55:44 📦 ScheduleBackups started
+2025/05/05 21:55:44 ✅ created backup success backup-2025-05-04-21-55-44.sql
+2025/05/05 21:55:44 ✅ created backup success backup-2025-05-03-21-55-44.sql
+2025/05/05 21:58:35 🚀 Logger initialized
+2025/05/05 21:58:35 🔧 Booting application...
+2025/05/05 21:58:36 📦 ScheduleBackups started
+2025/05/05 21:58:36 ✅ created backup success backup-2025-05-03-21-58-36.sql
+2025/05/05 21:58:36 ✅ created backup success backup-2025-05-04-21-58-36.sql
+2025/05/05 21:59:44 🚀 Logger initialized
+2025/05/05 21:59:44 🔧 Booting application...
+2025/05/05 21:59:45 📦 ScheduleBackups started
+2025/05/05 21:59:45 ✅ created backup success backup-2025-05-03-21-59-45.sql
+2025/05/05 21:59:45 ✅ created backup success backup-2025-05-04-21-59-45.sql
+2025/05/05 22:00:26 🚀 Logger initialized
+2025/05/05 22:00:26 🔧 Booting application...
+2025/05/05 22:00:27 📦 ScheduleBackups started
+2025/05/05 22:00:27 ✅ created backup success backup-2025-05-03-22-00-27.sql
+2025/05/05 22:00:27 ✅ created backup success backup-2025-05-04-22-00-27.sql
+2025/05/05 22:00:54 🚀 Logger initialized
+2025/05/05 22:00:54 🔧 Booting application...
+2025/05/05 22:00:55 📦 ScheduleBackups started
+2025/05/05 22:00:55 ✅ created backup success backup-2025-05-04-22-00-55.sql
+2025/05/05 22:00:55 ✅ created backup success backup-2025-05-03-22-00-55.sql
+2025/05/05 22:02:39 🚀 Logger initialized
+2025/05/05 22:02:39 🔧 Booting application...
+2025/05/05 22:02:40 📦 ScheduleBackups started
+2025/05/05 22:02:40 ✅ created backup success backup-2025-05-03-22-02-40.sql
+2025/05/05 22:02:40 ✅ created backup success backup-2025-05-04-22-02-40.sql
+2025/05/05 22:04:50 🚀 Logger initialized
+2025/05/05 22:04:50 🔧 Booting application...
+2025/05/05 22:04:51 📦 ScheduleBackups started
+2025/05/05 22:04:51 ✅ created backup success backup-2025-05-03-22-04-51.sql
+2025/05/05 22:04:51 ✅ created backup success backup-2025-05-04-22-04-51.sql
+2025/05/05 22:06:24 🚀 Logger initialized
+2025/05/05 22:06:24 🔧 Booting application...
+2025/05/05 22:06:25 📦 ScheduleBackups started
+2025/05/05 22:06:25 ✅ created backup success backup-2025-05-03-22-06-25.sql
+2025/05/05 22:06:25 ✅ created backup success backup-2025-05-04-22-06-25.sql
+2025/05/05 22:08:00 🚀 Logger initialized
+2025/05/05 22:08:00 🔧 Booting application...
+2025/05/05 22:08:01 📦 ScheduleBackups started
+2025/05/05 22:08:01 ✅ created backup success backup-2025-05-04-22-08-01.sql
+2025/05/05 22:08:01 ✅ created backup success backup-2025-05-03-22-08-01.sql
+2025/05/05 22:14:54 🚀 Logger initialized
+2025/05/05 22:14:54 🔧 Booting application...
+2025/05/05 22:14:55 📦 ScheduleBackups started
+2025/05/05 22:14:55 ✅ created backup success backup-2025-05-03-22-14-55.sql
+2025/05/05 22:14:55 ✅ created backup success backup-2025-05-04-22-14-55.sql
+2025/05/05 22:16:33 🚀 Logger initialized
+2025/05/05 22:16:33 🔧 Booting application...
+2025/05/05 22:16:34 📦 ScheduleBackups started
+2025/05/05 22:16:34 ✅ created backup success backup-2025-05-04-22-16-34.sql
+2025/05/05 22:16:34 ✅ created backup success backup-2025-05-03-22-16-34.sql
+2025/05/05 22:17:58 🚀 Logger initialized
+2025/05/05 22:17:58 🔧 Booting application...
+2025/05/05 22:17:59 📦 ScheduleBackups started
+2025/05/05 22:17:59 ✅ created backup success backup-2025-05-04-22-17-59.sql
+2025/05/05 22:17:59 ✅ created backup success backup-2025-05-03-22-17-59.sql
+2025/05/05 22:19:15 🚀 Logger initialized
+2025/05/05 22:19:15 🔧 Booting application...
+2025/05/05 22:19:16 📦 ScheduleBackups started
+2025/05/05 22:19:16 ✅ created backup success backup-2025-05-04-22-19-16.sql
+2025/05/05 22:19:16 ✅ created backup success backup-2025-05-03-22-19-16.sql
+2025/05/05 22:20:41 🚀 Logger initialized
+2025/05/05 22:20:41 🔧 Booting application...
+2025/05/05 22:20:42 📦 ScheduleBackups started
+2025/05/05 22:20:42 ✅ created backup success backup-2025-05-04-22-20-42.sql
+2025/05/05 22:20:42 ✅ created backup success backup-2025-05-03-22-20-42.sql
+2025/05/05 22:21:40 🚀 Logger initialized
+2025/05/05 22:21:40 🔧 Booting application...
+2025/05/05 22:21:41 📦 ScheduleBackups started
+2025/05/05 22:21:41 ✅ created backup success backup-2025-05-03-22-21-41.sql
+2025/05/05 22:21:41 ✅ created backup success backup-2025-05-04-22-21-41.sql
+2025/05/05 22:25:25 ⚠️ Payment record id not found
+2025/05/05 22:28:29 🚀 Logger initialized
+2025/05/05 22:28:29 🔧 Booting application...
+2025/05/05 22:28:30 📦 ScheduleBackups started
+2025/05/05 22:28:30 ✅ created backup success backup-2025-05-04-22-28-30.sql
+2025/05/05 22:28:30 ✅ created backup success backup-2025-05-03-22-28-30.sql
+2025/05/05 22:28:59 🚀 Logger initialized
+2025/05/05 22:28:59 🔧 Booting application...
+2025/05/05 22:29:00 📦 ScheduleBackups started
+2025/05/05 22:29:00 ✅ created backup success backup-2025-05-03-22-29-00.sql
+2025/05/05 22:29:00 ✅ created backup success backup-2025-05-04-22-29-00.sql
+2025/05/05 22:31:13 🚀 Logger initialized
+2025/05/05 22:31:13 🔧 Booting application...
+2025/05/05 22:31:14 📦 ScheduleBackups started
+2025/05/05 22:31:14 ✅ created backup success backup-2025-05-03-22-31-14.sql
+2025/05/05 22:31:14 ✅ created backup success backup-2025-05-04-22-31-14.sql
+2025/05/05 22:31:55 🚀 Logger initialized
+2025/05/05 22:31:55 🔧 Booting application...
+2025/05/05 22:31:56 📦 ScheduleBackups started
+2025/05/05 22:31:56 ✅ created backup success backup-2025-05-03-22-31-56.sql
+2025/05/05 22:31:56 ✅ created backup success backup-2025-05-04-22-31-56.sql
+2025/05/05 22:33:56 🚀 Logger initialized
+2025/05/05 22:33:56 🔧 Booting application...
+2025/05/05 22:33:57 📦 ScheduleBackups started
+2025/05/05 22:33:57 ✅ created backup success backup-2025-05-03-22-33-57.sql
+2025/05/05 22:33:57 ✅ created backup success backup-2025-05-04-22-33-57.sql
+2025/05/05 22:34:44 🚀 Logger initialized
+2025/05/05 22:34:44 🔧 Booting application...
+2025/05/05 22:34:45 📦 ScheduleBackups started
+2025/05/05 22:34:45 ✅ created backup success backup-2025-05-03-22-34-45.sql
+2025/05/05 22:34:45 ✅ created backup success backup-2025-05-04-22-34-45.sql
+2025/05/05 22:36:00 🚀 Logger initialized
+2025/05/05 22:36:00 🔧 Booting application...
+2025/05/05 22:36:01 📦 ScheduleBackups started
+2025/05/05 22:36:01 ✅ created backup success backup-2025-05-04-22-36-01.sql
+2025/05/05 22:36:01 ✅ created backup success backup-2025-05-03-22-36-01.sql
+2025/05/05 22:40:35 🚀 Logger initialized
+2025/05/05 22:40:35 🔧 Booting application...
+2025/05/05 22:40:36 📦 ScheduleBackups started
+2025/05/05 22:40:36 ✅ created backup success backup-2025-05-03-22-40-36.sql
+2025/05/05 22:40:36 ✅ created backup success backup-2025-05-04-22-40-36.sql
+2025/05/05 22:44:38 🚀 Logger initialized
+2025/05/05 22:44:38 🔧 Booting application...
+2025/05/05 22:44:39 📦 ScheduleBackups started
+2025/05/05 22:44:39 ✅ created backup success backup-2025-05-04-22-44-39.sql
+2025/05/05 22:44:39 ✅ created backup success backup-2025-05-03-22-44-39.sql
+2025/05/05 22:44:43 ⚠️ Payment record id not found
+2025/05/05 22:47:20 🚀 Logger initialized
+2025/05/05 22:47:20 🔧 Booting application...
+2025/05/05 22:47:21 📦 ScheduleBackups started
+2025/05/05 22:47:21 ✅ created backup success backup-2025-05-03-22-47-21.sql
+2025/05/05 22:47:21 ✅ created backup success backup-2025-05-04-22-47-21.sql
+2025/05/05 22:51:18 🚀 Logger initialized
+2025/05/05 22:51:18 🔧 Booting application...
+2025/05/05 22:51:19 📦 ScheduleBackups started
+2025/05/05 22:51:19 ✅ created backup success backup-2025-05-04-22-51-19.sql
+2025/05/05 22:51:19 ✅ created backup success backup-2025-05-03-22-51-19.sql
+2025/05/05 22:51:51 🚀 Logger initialized
+2025/05/05 22:51:51 🔧 Booting application...
+2025/05/05 22:51:52 📦 ScheduleBackups started
+2025/05/05 22:51:52 ✅ created backup success backup-2025-05-04-22-51-52.sql
+2025/05/05 22:51:52 ✅ created backup success backup-2025-05-03-22-51-52.sql
+2025/05/05 22:52:26 🚀 Logger initialized
+2025/05/05 22:52:26 🔧 Booting application...
+2025/05/05 22:52:27 📦 ScheduleBackups started
+2025/05/05 22:52:27 ✅ created backup success backup-2025-05-04-22-52-27.sql
+2025/05/05 22:52:27 ✅ created backup success backup-2025-05-03-22-52-27.sql
+2025/05/05 22:54:00 🚀 Logger initialized
+2025/05/05 22:54:00 🔧 Booting application...
+2025/05/05 22:54:01 📦 ScheduleBackups started
+2025/05/05 22:54:01 ✅ created backup success backup-2025-05-03-22-54-01.sql
+2025/05/05 22:54:01 ✅ created backup success backup-2025-05-04-22-54-01.sql
+2025/05/05 22:54:59 🚀 Logger initialized
+2025/05/05 22:54:59 🔧 Booting application...
+2025/05/05 22:55:00 📦 ScheduleBackups started
+2025/05/05 22:55:01 ✅ created backup success backup-2025-05-04-22-55-00.sql
+2025/05/05 22:55:01 ✅ created backup success backup-2025-05-03-22-55-00.sql
+2025/05/05 22:56:25 🚀 Logger initialized
+2025/05/05 22:56:25 🔧 Booting application...
+2025/05/05 22:56:26 📦 ScheduleBackups started
+2025/05/05 22:56:26 ✅ created backup success backup-2025-05-03-22-56-26.sql
+2025/05/05 22:56:26 ✅ created backup success backup-2025-05-04-22-56-26.sql
+2025/05/05 23:06:17 🚀 Logger initialized
+2025/05/05 23:06:17 🔧 Booting application...
+2025/05/05 23:06:18 📦 ScheduleBackups started
+2025/05/05 23:06:18 ✅ created backup success backup-2025-05-03-23-06-18.sql
+2025/05/05 23:06:18 ✅ created backup success backup-2025-05-04-23-06-18.sql
+2025/05/05 23:06:27 err in inventory number in update export strconv.ParseFloat: parsing "": invalid syntax
+2025/05/05 23:07:09 🚀 Logger initialized
+2025/05/05 23:07:09 🔧 Booting application...
+2025/05/05 23:07:10 📦 ScheduleBackups started
+2025/05/05 23:07:10 ✅ created backup success backup-2025-05-04-23-07-10.sql
+2025/05/05 23:07:10 ✅ created backup success backup-2025-05-03-23-07-10.sql
+2025/05/05 23:08:00 🚀 Logger initialized
+2025/05/05 23:08:00 🔧 Booting application...
+2025/05/05 23:08:01 📦 ScheduleBackups started
+2025/05/05 23:08:01 ✅ created backup success backup-2025-05-03-23-08-01.sql
+2025/05/05 23:08:01 ✅ created backup success backup-2025-05-04-23-08-01.sql
+2025/05/05 23:09:38 🚀 Logger initialized
+2025/05/05 23:09:38 🔧 Booting application...
+2025/05/05 23:09:39 📦 ScheduleBackups started
+2025/05/05 23:09:39 ✅ created backup success backup-2025-05-04-23-09-39.sql
+2025/05/05 23:09:39 ✅ created backup success backup-2025-05-03-23-09-39.sql
+2025/05/05 23:16:39 🚀 Logger initialized
+2025/05/05 23:16:39 🔧 Booting application...
+2025/05/05 23:16:40 📦 ScheduleBackups started
+2025/05/05 23:16:40 ✅ created backup success backup-2025-05-03-23-16-40.sql
+2025/05/05 23:16:40 ✅ created backup success backup-2025-05-04-23-16-40.sql
+2025/05/05 23:17:18 خطا در دریافت اتصال دیتابیس: &{0xc000160bd0 <nil> 7 0xc0004e4c40 0}
+2025/05/06 00:33:17 خطا در دریافت اتصال دیتابیس: &{0xc000160000 <nil> 7 0xc0001388c0 0}
+2025/05/06 00:34:19 خطا در دریافت اتصال دیتابیس: &{0xc0002ea000 <nil> 7 0xc0001388c0 0}
+2025/05/06 00:35:25 خطا در دریافت اتصال دیتابیس: &{0xc0000d2b40 <nil> 7 0xc000139c00 0}
+2025/05/06 00:36:05 خطا در دریافت اتصال دیتابیس: &{0xc0001846c0 <nil> 7 0xc000225880 0}
+2025/05/06 00:46:28 خطا در دریافت اتصال دیتابیس: &{0xc000160000 <nil> 7 0xc000139c00 0}
+2025/05/06 00:47:36 خطا در دریافت اتصال دیتابیس: &{0xc0001601b0 <nil> 7 0xc00057afc0 0}
+2025/05/06 00:48:23 خطا در دریافت اتصال دیتابیس: &{0xc000160000 <nil> 7 0xc000139c00 0}
+2025/05/06 00:48:57 خطا در دریافت اتصال دیتابیس: &{0xc0000d2000 <nil> 7 0xc000225500 0}
+2025/05/06 01:16:31 🚀 Logger initialized
+2025/05/06 01:16:31 🔧 Booting application...
+2025/05/06 01:16:32 📦 ScheduleBackups started
+2025/05/06 01:16:32 ✅ created backup success backup-2025-05-05-01-16-32.sql
+2025/05/06 01:16:32 ✅ created backup success backup-2025-05-04-01-16-32.sql
+2025/05/06 01:18:44 🚀 Logger initialized
+2025/05/06 01:18:44 🔧 Booting application...
+2025/05/06 01:18:45 📦 ScheduleBackups started
+2025/05/06 01:18:45 ✅ created backup success backup-2025-05-04-01-18-45.sql
+2025/05/06 01:18:45 ✅ created backup success backup-2025-05-05-01-18-45.sql
+2025/05/06 01:31:10 خطا در دریافت اتصال دیتابیس: &{0xc000184510 <nil> 7 0xc00016ca80 0}
+2025/05/06 01:31:49 خطا در دریافت اتصال دیتابیس: &{0xc000132b40 <nil> 7 0xc0004e1dc0 0}
+2025/05/06 01:34:32 خطا در دریافت اتصال دیتابیس: &{0xc000614360 <nil> 7 0xc0004e0540 0}
+2025/05/06 01:35:07 خطا در دریافت اتصال دیتابیس: &{0xc0006142d0 <nil> 7 0xc000564700 0}
+2025/05/06 01:37:15 🚀 Logger initialized
+2025/05/06 01:37:15 🔧 Booting application...
+2025/05/06 01:37:16 📦 ScheduleBackups started
+2025/05/06 01:37:16 ✅ created backup success backup-2025-05-04-01-37-16.sql
+2025/05/06 01:37:16 ✅ created backup success backup-2025-05-05-01-37-16.sql
+2025/05/06 01:38:55 🚀 Logger initialized
+2025/05/06 01:38:55 🔧 Booting application...
+2025/05/06 01:38:56 📦 ScheduleBackups started
+2025/05/06 01:38:56 ✅ created backup success backup-2025-05-04-01-38-56.sql
+2025/05/06 01:38:56 ✅ created backup success backup-2025-05-05-01-38-56.sql
+2025/05/06 01:39:34 🚀 Logger initialized
+2025/05/06 01:39:34 🔧 Booting application...
+2025/05/06 01:39:35 📦 ScheduleBackups started
+2025/05/06 01:39:35 ✅ created backup success backup-2025-05-04-01-39-35.sql
+2025/05/06 01:39:35 ✅ created backup success backup-2025-05-05-01-39-35.sql
+2025/05/06 01:43:10 🚀 Logger initialized
+2025/05/06 01:43:10 🔧 Booting application...
+2025/05/06 01:43:11 📦 ScheduleBackups started
+2025/05/06 01:43:11 ✅ created backup success backup-2025-05-04-01-43-11.sql
+2025/05/06 01:43:11 ✅ created backup success backup-2025-05-05-01-43-11.sql
+2025/05/06 01:45:08 🚀 Logger initialized
+2025/05/06 01:45:08 🔧 Booting application...
+2025/05/06 01:45:09 📦 ScheduleBackups started
+2025/05/06 01:45:09 ✅ created backup success backup-2025-05-05-01-45-09.sql
+2025/05/06 01:45:09 ✅ created backup success backup-2025-05-04-01-45-09.sql
+2025/05/06 01:45:10 خطا در دریافت اتصال دیتابیس: &{0xc0001847e0 <nil> 7 0xc0004f4e00 0}
+2025/05/06 01:45:16 خطا در دریافت اتصال دیتابیس: &{0xc0007861b0 <nil> 7 0xc0004f5180 0}
+2025/05/06 01:45:31 خطا در دریافت اتصال دیتابیس: &{0xc000786480 <nil> 7 0xc0004f5a40 0}
+2025/05/06 01:46:11 خطا در دریافت اتصال دیتابیس: &{0xc0005fe090 <nil> 7 0xc00017c540 0}
+2025/05/06 01:46:56 new Export submited
+2025/05/06 01:50:10 ❌ err in Export delete : Error 1451 (23000): Cannot delete or update a parent row: a foreign key constraint fails (`Inventory`.`export_products`, CONSTRAINT `fk_exports_export_products` FOREIGN KEY (`export_id`) REFERENCES `exports` (`id`))
+2025/05/06 01:50:13 ❌ err in Export delete : Error 1451 (23000): Cannot delete or update a parent row: a foreign key constraint fails (`Inventory`.`export_products`, CONSTRAINT `fk_exports_export_products` FOREIGN KEY (`export_id`) REFERENCES `exports` (`id`))
+2025/05/06 01:55:45 خطا در دریافت اتصال دیتابیس: &{0xc000524090 <nil> 7 0xc000400540 0}
+2025/05/06 01:55:47 خطا در دریافت اتصال دیتابیس: &{0xc00078c000 <nil> 7 0xc000104700 0}
+2025/05/06 01:56:09 خطا در دریافت اتصال دیتابیس: &{0xc000908e10 <nil> 7 0xc000400fc0 0}
+2025/05/06 01:56:28 خطا در دریافت اتصال دیتابیس: &{0xc000414870 <nil> 7 0xc000401180 0}
+2025/05/06 01:56:46 خطا در دریافت اتصال دیتابیس: &{0xc0004145a0 <nil> 7 0xc000401a40 0}
+2025/05/06 01:57:16 خطا در دریافت اتصال دیتابیس: &{0xc000524000 <nil> 7 0xc00017ddc0 0}
+2025/05/06 01:57:56 خطا در دریافت اتصال دیتابیس: &{0xc0001843f0 <nil> 7 0xc000401a40 0}
+2025/05/06 02:02:03 خطا در دریافت اتصال دیتابیس: &{0xc000414510 <nil> 7 0xc000642380 0}
+2025/05/06 02:02:12 خطا در دریافت اتصال دیتابیس: &{0xc000414240 <nil> 7 0xc00059ca80 0}
+2025/05/06 02:02:38 خطا در دریافت اتصال دیتابیس: &{0xc000524900 <nil> 7 0xc000642a80 0}
+2025/05/06 02:02:42 خطا در دریافت اتصال دیتابیس: &{0xc0004141b0 <nil> 7 0xc000642380 0}
+2025/05/06 02:04:28 خطا در دریافت اتصال دیتابیس: &{0xc000524510 <nil> 7 0xc000642380 0}
+2025/05/06 02:04:33 خطا در دریافت اتصال دیتابیس: &{0xc000524090 <nil> 7 0xc000642e00 0}
+2025/05/06 02:05:09 خطا در دریافت اتصال دیتابیس: &{0xc0004142d0 <nil> 7 0xc0004e3180 0}
+2025/05/06 02:05:13 خطا در دریافت اتصال دیتابیس: &{0xc000524bd0 <nil> 7 0xc000643180 0}
+2025/05/06 02:05:54 خطا در دریافت اتصال دیتابیس: &{0xc00051e000 <nil> 7 0xc0004e3180 0}
+2025/05/06 02:05:58 خطا در دریافت اتصال دیتابیس: &{0xc00051e000 <nil> 7 0xc000104c40 0}
+2025/05/06 02:07:08 خطا در دریافت اتصال دیتابیس: &{0xc000414990 <nil> 7 0xc00039e380 0}
+2025/05/06 02:07:14 خطا در دریافت اتصال دیتابیس: &{0xc000524000 <nil> 7 0xc000607dc0 0}
+2025/05/06 02:07:27 خطا در دریافت اتصال دیتابیس: &{0xc000414000 <nil> 7 0xc0006fc540 0}
+2025/05/06 02:07:32 خطا در دریافت اتصال دیتابیس: &{0xc00051e240 <nil> 7 0xc0006fcfc0 0}
+2025/05/06 02:08:37 خطا در دریافت اتصال دیتابیس: &{0xc0001850e0 <nil> 7 0xc000607dc0 0}
+2025/05/06 02:08:41 خطا در دریافت اتصال دیتابیس: &{0xc00051f200 <nil> 7 0xc0006fddc0 0}
+2025/05/06 02:09:11 خطا در دریافت اتصال دیتابیس: &{0xc0005203f0 <nil> 7 0xc00069c700 0}
+2025/05/06 02:09:43 خطا در دریافت اتصال دیتابیس: &{0xc000520000 <nil> 7 0xc00069ca80 0}
+2025/05/06 02:09:46 خطا در دریافت اتصال دیتابیس: &{0xc000520000 <nil> 7 0xc0007d5880 0}
+2025/05/06 02:11:00 خطا در دریافت اتصال دیتابیس: &{0xc000520000 <nil> 7 0xc00069ca80 0}
+2025/05/06 02:11:05 خطا در دریافت اتصال دیتابیس: &{0xc00051e090 <nil> 7 0xc0007d5500 0}
+2025/05/06 02:15:44 خطا در دریافت اتصال دیتابیس: &{0xc0005241b0 <nil> 7 0xc0007d5500 0}
+2025/05/06 02:15:50 خطا در دریافت اتصال دیتابیس: &{0xc000524090 <nil> 7 0xc0007d5500 0}
+2025/05/06 02:16:22 خطا در دریافت اتصال دیتابیس: &{0xc0001853b0 <nil> 7 0xc00069dc00 0}
+2025/05/06 02:16:26 خطا در دریافت اتصال دیتابیس: &{0xc000184c60 <nil> 7 0xc00078e1c0 0}
+2025/05/06 02:21:55 خطا در دریافت اتصال دیتابیس: &{0xc000016000 <nil> 7 0xc0007d5500 0}
+2025/05/06 02:22:00 خطا در دریافت اتصال دیتابیس: &{0xc000016000 <nil> 7 0xc0007d5500 0}
+2025/05/06 02:23:47 new Export submited
+2025/05/06 02:26:32 🚀 Logger initialized
+2025/05/06 02:26:32 🔧 Booting application...
+2025/05/06 02:26:33 📦 ScheduleBackups started
+2025/05/06 02:26:33 ✅ created backup success backup-2025-05-05-02-26-33.sql
+2025/05/06 02:26:33 ✅ created backup success backup-2025-05-04-02-26-33.sql
+2025/05/06 02:26:36 خطا در دریافت اتصال دیتابیس: &{0xc0003cc480 <nil> 7 0xc000584540 0}
+2025/05/06 02:26:58 خطا در دریافت اتصال دیتابیس: &{0xc000184870 <nil> 7 0xc000585500 0}
+2025/05/06 02:28:07 new Export submited
+2025/05/06 02:28:38 خطا در دریافت اتصال دیتابیس: &{0xc0007a8090 <nil> 7 0xc0003a6fc0 0}
+2025/05/06 02:28:43 خطا در دریافت اتصال دیتابیس: &{0xc0003cc000 <nil> 7 0xc0001fd880 0}
+2025/05/06 02:30:52 🚀 Logger initialized
+2025/05/06 02:30:52 🔧 Booting application...
+2025/05/06 02:30:53 📦 ScheduleBackups started
+2025/05/06 02:30:53 ✅ created backup success backup-2025-05-05-02-30-53.sql
+2025/05/06 02:30:53 ✅ created backup success backup-2025-05-04-02-30-53.sql
+2025/05/06 02:30:56 خطا در دریافت اتصال دیتابیس: &{0xc00030c000 <nil> 7 0xc0000a0380 0}
+2025/05/06 02:31:07 خطا در دریافت اتصال دیتابیس: &{0xc00043c120 <nil> 7 0xc0001661c0 0}
+2025/05/06 02:32:54 new Export submited
+2025/05/06 03:17:32 ❌ err in Export delete : Error 1451 (23000): Cannot delete or update a parent row: a foreign key constraint fails (`Inventory`.`export_products`, CONSTRAINT `fk_exports_export_products` FOREIGN KEY (`export_id`) REFERENCES `exports` (`id`))
+2025/05/06 03:18:06 ❌ err in Export delete : Error 1451 (23000): Cannot delete or update a parent row: a foreign key constraint fails (`Inventory`.`export_products`, CONSTRAINT `fk_exports_export_products` FOREIGN KEY (`export_id`) REFERENCES `exports` (`id`))
+2025/05/06 03:25:38 🚀 Logger initialized
+2025/05/06 03:25:38 🔧 Booting application...
+2025/05/06 03:25:39 📦 ScheduleBackups started
+2025/05/06 03:25:39 ✅ created backup success backup-2025-05-05-03-25-39.sql
+2025/05/06 03:25:39 ✅ created backup success backup-2025-05-04-03-25-39.sql
+2025/05/06 03:25:54 ❌ Transaction failed: no export record found with ID 6

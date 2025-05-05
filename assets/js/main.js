@@ -3,34 +3,45 @@ let ProductsOfExport = [];
 let ExportTotalPrice = [];
 let Payments = [];
 let checks = [];
+let ExportNumber
 let ExportID
+if (document.getElementById("ExportID")) {
+    ExportID = document.getElementById("ExportID").value
+}
+
 if (document.getElementById("ExportNumber")) {
-    ExportID = document.getElementById("ExportNumber").value
+    ExportNumber = document.getElementById("ExportNumber").value
 }
 let tax = parseFloat(jQuery("input[name='Tax']").val())
 let draft = false;
 
 const directpaynumber = "PMT-" + Math.floor(Math.random() * 1000000)
-function fetchAndLogPayments() {
+function fetchAndLogPaymentsAndExportProducts() {
     if (Payments.length < 1) {
         return jQuery.ajax({
             method: "POST",
             url: "/Dashboard/getpaymentsbyexportid",
-            data: JSON.stringify({ "ExportNumber": ExportID }),
+            data: JSON.stringify({ "ExportNumber": ExportNumber }),
             contentType: "application/json; charset=utf-8",
         }).done(function (msg) {
             if (msg.sucess) {
 
-                // Payments = msg.data;
-                console.log("مدل دریافتی", msg)
+                ProductsOfExport = msg.Exports;
 
-                msg.data.forEach((element, i) => {
+                ProductsOfExport.forEach((element, i) => {
+                    var productPrice = {
+                        ProductID: element.ProductID,
+                        price: element.TotalPrice,
+                    };
+                    ExportTotalPrice.push(productPrice);
+                })
+                msg.Payments.forEach((element, i) => {
                     if (element.Method != "نقدی") {
                         var checkData = {
                             date: element.CreatedAt,
                             bank: element.Name,
                             serial: element.Number,
-                            amount: element.TotalPrice,
+                            amount: parseFloat(element.TotalPrice),
                             status: element.Status,
                         };
                         checks.push(checkData);
@@ -48,7 +59,7 @@ function fetchAndLogPayments() {
 }
 
 
-fetchAndLogPayments().then(function () {
+fetchAndLogPaymentsAndExportProducts().then(function () {
 
     // اینجا می‌توانید از Payments استفاده کنید
 });
@@ -57,7 +68,6 @@ jQuery('#myModal').modal('show')
 // add  New product to export list
 
 jQuery("#AddProductToExport").on("click", function () {
-
     var ID = jQuery("#ProductIs").val();
     var InventoryNumber = jQuery("#InventoryIS").val();
     var Meter = jQuery("#ProductBox input[name='Meter']").val() || "0";
@@ -82,12 +92,12 @@ jQuery("#AddProductToExport").on("click", function () {
     //     item.ProductID === ID || item.ProductID === ExportID
     // );
     var isDuplicate = false;
-    var isDuplicate = jQuery("#ExportProductsList tbody tr").toArray().some(function(row) {
+    var isDuplicate = jQuery("#ExportProductsList tbody tr").toArray().some(function (row) {
         return jQuery(row).attr("attr-id") == ID;
     });
     if (isDuplicate) {
         alert("این محصول قبلاً اضافه شده است!");
-        return false; // این کار از اجرای بقیه کد جلوگیری می‌کند
+        return false;
     }
     var edit = `<td dir="ltr" class="Edit" style="text-align:right;">
      <a class="me-3 remove"  href="./deleteExport?ExportId={{.ID}}"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
@@ -96,21 +106,27 @@ jQuery("#AddProductToExport").on("click", function () {
      </td>`;
     var value = '<tr attr-id="' + ID + '"><td   scope="row">' + ID + '</td><td>' + CurrentProductName + '</td><td class="prn">' + Rolle + '</td><td class="price">' + RollePrice + '</td><td class="price">' + Meter + '</td><td class="price">' + MeterPrice + '</td><td class="price">' + Weight + '</td><td class="price">' + WeightPrice + '</td><td class="price">' + Count + '</td><td class="price">' + CountPrice + '</td><td class="price">' + Barrel + '</td><td class="price">' + BarrelPrice + '</td><td class="itemtotalprice price">' + TotalPrice + '</td>' + edit + '</tr>';
     var newRow = {
-        InventoryID: InventoryNumber,
-        ProductID: ID,
-        ExportID: ExportID,
+        InventoryID: parseInt(InventoryNumber),
+        ProductID: parseInt(ID),
+        ExportID: parseInt(ExportID),
         Name: CurrentProductName,
-        Count: Count,
-        Meter: Meter,
-        Weight: Weight,
-        MeterPrice: MeterPrice,
-        RollePrice: RollePrice,
-        TotalPrice: TotalPrice
+        Count: parseInt(Count),
+        Roll: parseInt(Rolle),
+        Meter: parseFloat(Meter),
+        Weight: parseFloat(Weight),
+        Barrel: parseFloat(Barrel),
+        RollePrice: parseFloat(RollePrice),
+        MeterPrice: parseFloat(MeterPrice),
+        WeightPrice: parseFloat(WeightPrice),
+        BarrelPrice: parseFloat(BarrelPrice),
+        CountPrice: parseFloat(CountPrice),
+        TotalPrice: parseFloat(TotalPrice),
+
 
     };
     var NewPrice = {
-        ProductId: ID,
-        price: TotalPrice
+        ProductID: parseInt(ID),
+        price: parseFloat(TotalPrice)
     }
     ExportTotalPrice.push(NewPrice)
     ProductsOfExport.push(newRow)
@@ -154,6 +170,7 @@ jQuery("#AddProductToExport").on("click", function () {
         });
     });
     // }
+    jQuery("#ProductBox input").attr("value", "")
 
 })
 // directpay.addEventListener("click",function(){
@@ -286,44 +303,51 @@ function ToggleSIBoxInExport(value) {
 
 jQuery(".ExportPeoducts select#ProductIs").on("change", function () {
     var ID = this.value;
-    CurrentProductName = jQuery(this).find("option:selected").text();
-    if (ID != 0) {
-        jQuery.ajax({
-            method: "POST",
-            url: "/Dashboard/getproductbyid",
-            data: JSON.stringify({ name: "ProductIs", "id": ID }),
-            contentType: "application/json; charset=utf-8",
-        })
-            .done(function (msg) {
-                if (msg.result.length > 0) {
-                    var product = msg.result[0];
-                    ToggleSIBoxInExport(product.MeasurementSystem)
-                    jQuery(".ExportPeoducts .ProductsRolle").html(product.Roll)
-                    jQuery(".ExportPeoducts input[name='Count']").attr("max", product.Count)
-                    jQuery(".ExportPeoducts .ProductsMeter").html(product.Meter)
-                    jQuery(".ExportPeoducts input[name='Meter']").attr("max", product.Meter)
-                    jQuery(".ExportPeoducts input[name='Weight']").attr("max", product.Weight)
-                    jQuery(".ExportPeoducts .ProductNumber").html(product.Number)
-                    jQuery(".ExportPeoducts .ProductsWeight").html(product.Weight)
-                    jQuery(".ExportPeoducts .ProductsBarrel").html(product.Barrel)
-                    jQuery(".ExportPeoducts input[name='RollePrice']").attr("value", product.RollePrice)
-                    jQuery(".ExportPeoducts input[name='MeterPrice']").attr("value", product.MeterPrice)
-                    jQuery(".ExportPeoducts input[name='BarrelPrice']").attr("value", product.BarrelPrice)
-                    // jQuery(".ExportPeoducts input[name='TotalPrice']").attr("value", product.MeterPrice)
-                    jQuery(".ExportPeoducts .Content").slideDown();
-                    jQuery(".ExportPeoducts  input[type='number']").each(function () {
-                        var val = jQuery(this).val();
-                        var val = PersianTools.addCommas(val);
-                        var convertToFa = PersianTools.digitsEnToFa(val);
-                        var numberToWords = PersianTools.numberToWords(val);
-                        jQuery(this).parent().closest(".form-group").find(".out").html(convertToFa + "   " + numberToWords);
-                    });
-                }
-            });
-    } else {
-        jQuery(".modal-footer").slideUp();
-        jQuery(".Content").slideUp();
-    }
+   jQuery(`#ProductBox input[name='Count'],#ProductBox input[name='Meter'],
+    #ProductBox input[name='Weight'],#ProductBox input[name='Barrel'],#ProductBox input[name='Rolle']
+    `).val("")
+
+        CurrentProductName = jQuery(this).find("option:selected").text();
+        if (ID != 0) {
+            jQuery.ajax({
+                method: "POST",
+                url: "/Dashboard/getproductbyid",
+                data: JSON.stringify({ name: "ProductIs", "id": ID }),
+                contentType: "application/json; charset=utf-8",
+            })
+                .done(function (msg) {
+                    if (msg.result.length > 0) {
+                        var product = msg.result[0];
+                        ToggleSIBoxInExport(product.MeasurementSystem)
+                        jQuery(".ExportPeoducts .ProductsRolle").html(product.Roll)
+                        jQuery(".ExportPeoducts input[name='Count']").attr("max", product.Count)
+                        jQuery(".ExportPeoducts .ProductsMeter").html(product.Meter)
+                        jQuery(".ExportPeoducts input[name='Meter']").attr("max", product.Meter)
+                        jQuery(".ExportPeoducts input[name='Rolle']").attr("max", product.Rolle)
+                        jQuery(".ExportPeoducts input[name='Weight']").attr("max", product.Weight)
+                        jQuery(".ExportPeoducts input[name='Barrel']").attr("max", product.Barrel)
+                        jQuery(".ExportPeoducts .ProductNumber").html(product.Number)
+                        jQuery(".ExportPeoducts .ProductsWeight").html(product.Weight)
+                        jQuery(".ExportPeoducts .ProductsBarrel").html(product.Barrel)
+                        jQuery(".ExportPeoducts input[name='RollePrice']").attr("value", product.RollePrice)
+                        jQuery(".ExportPeoducts input[name='MeterPrice']").attr("value", product.MeterPrice)
+                        jQuery(".ExportPeoducts input[name='BarrelPrice']").attr("value", product.BarrelPrice)
+                        // jQuery(".ExportPeoducts input[name='TotalPrice']").attr("value", product.MeterPrice)
+                        jQuery(".ExportPeoducts .Content").slideDown();
+                        jQuery(".ExportPeoducts  input[type='number']").each(function () {
+                            var val = jQuery(this).val();
+                            var val = PersianTools.addCommas(val);
+                            var convertToFa = PersianTools.digitsEnToFa(val);
+                            var numberToWords = PersianTools.numberToWords(val);
+                            jQuery(this).parent().closest(".form-group").find(".out").html(convertToFa + "   " + numberToWords);
+                        });
+                    }
+                });
+        } else {
+            jQuery(".modal-footer").slideUp();
+            jQuery(".Content").slideUp();
+        }
+    // }
 })
 jQuery("span.price").each(function () {
     var priceText = jQuery(this).text().trim(); // "۱,۱۹۷,۹۶۰"
@@ -352,6 +376,7 @@ jQuery("span.price").each(function () {
 // Select  Product name for fech the detail of product in Production Page
 jQuery(".production select#ProductIs").on("change", function () {
     var ID = this.value;
+
     CurrentProductName = jQuery(this).find("option:selected").text();
     if (ID != 0) {
         jQuery.ajax({
@@ -531,7 +556,7 @@ jQuery("form[name='expotform']").submit(function (e) {
                     window.location.replace("./exportshow?ExportId=" + msg.id);
                 }
             })
-            .error(function (msg) {
+            .fail(function (msg) {
                 alert("خطا در ارسال اطلاعات");
             });
     } else {
@@ -539,7 +564,58 @@ jQuery("form[name='expotform']").submit(function (e) {
     }
 
 })
+jQuery("form[name='expotform'] button").hover(function () {
+    console.log(Payments, ProductsOfExport, ExportTotalPrice)
+})
+jQuery("form[name='expotupdateform']").submit(function (e) {
+    e.preventDefault();
+    var formValues = jQuery("form[name='expotupdateform']").find("input, select, textarea").map(function () {
+        var $this = $(this);
 
+        // اگر عنصر checkbox بود
+        if ($this.attr('type') === 'checkbox') {
+            return $this.attr('name') + "=" + $this.prop('checked');
+        }
+        // برای سایر عناصر
+        return $this.attr("name") + "=" + $this.val();
+    }).get().join("&");
+    ExportPrice = GetExportTotalPrice(ExportTotalPrice);
+
+    if (Array.isArray(ProductsOfExport) && ProductsOfExport.length > 0) {
+        calculateTotalPayments(Payments)
+        if (parseFloat(calculateTotalPayments(Payments)) < parseFloat(ExportPrice)) {
+            const isConfirmed = confirm("مبلغ پرداختی کمتر از قیمت فاکتور میباشد آیا از ادامه مطمین هستید؟");
+            if (!isConfirmed) {
+                return;
+            }
+        }
+
+
+        jQuery.ajax({
+            method: "PUT",
+            url: "/Dashboard/exportupdate/" + ExportID,
+            data: JSON.stringify({
+                Name: "expotupdateform",
+                TotalPrice: ExportPrice,
+                Content: formValues,
+                Products: ProductsOfExport,
+                Payments: Payments
+            }),
+            contentType: "application/json; charset=utf-8",
+        })
+            .done(function (msg) {
+                if (msg.message == "sucess") {
+                    window.location.replace("./exportshow?ExportId=" + msg.id);
+                }
+            })
+            .fail(function (msg) {
+                alert("خطا در ارسال اطلاعات");
+            });
+    } else {
+        alert("لطفا محصولی را اضافه کنید !")
+    }
+
+})
 
 jQuery("#find").on("click", function (e) {
     e.preventDefault()
@@ -615,7 +691,7 @@ jQuery("#findpayment").on("click", function (e) {
                     html += '<td class="' + index.UserName + '" style="text-align:right;">' + index.UserName + '</td>';
                     html += '<td class="' + index.CreatedAt + '" style="text-align:right;">' + index.CreatedAt + '</td>';
                     html += '<td class="' + index.export_number + '" style="text-align:right;">' + index.export_number + '</td>';
-                    html += '<td class="' + index.ExportID + '" style="text-align:right;"><a class="me-3" href="./exportshow?ExportId=' + index.ExportID + '">';
+                    html += '<td class="' + index.ExportNumber + '" style="text-align:right;"><a class="me-3" href="./exportshow?ExportId=' + index.ExportNumber + '">';
                     html += '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">';
                     html += '<path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z" />';
                     html += '<path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0" />';
@@ -769,8 +845,8 @@ jQuery("#Userfind").on("click", function (e) {
                 let html = "";
                 msg.message.forEach(function (index) {
 
-                    html += '<tr>';
-                    html += '<td class="' + index.ID + '" style="text-align:right;">' + index.ID + '</td>';
+                    html += '<tr attr-id="' + index.ID + '">';
+                    html += '<td class="id" style="text-align:right;">' + index.ID + '</td>';
                     html += '<td class="' + index.Name + '" style="text-align:right;">' + index.Name + '</td>';
                     html += '<td class="' + index.Phonenumber + '" style="text-align:right;">' + index.Phonenumber + '</td>';
                     html += '<td class="' + index.Address + '" style="text-align:right;">' + index.Address + '</td>';
@@ -812,9 +888,10 @@ jQuery("input[name='Tax']").on("keyup", function (e) {
 })
 jQuery(document).on('click', '.remove', function (e) {
     e.preventDefault()
-    var id = jQuery(this).parent().closest("tr").find(".id").html();
+    id = jQuery(this).parent().closest("tr").attr("attr-id");
     id = parseInt(id)
     RemoveItem(this, id);
+
 })
 
 
@@ -823,13 +900,13 @@ jQuery(document).on('click', '.remove', function (e) {
 function RemoveItem(target, id) {
 
     ExportTotalPrice.forEach((element, index) => {
-        console.log(index == id, element.ProductId, id)
-        if (parseInt(element.ProductId) == id) {
+        if (parseInt(element.ProductID) == id) {
             ExportTotalPrice.splice(index, 1);
         }
     });
+    console.log(ExportTotalPrice);
     ProductsOfExport.forEach((element, index) => {
-        if (parseInt(element.ProductId) == id) {
+        if (parseInt(element.ProductID) == id) {
             ProductsOfExport.splice(index, 1);
         }
     });
@@ -1146,7 +1223,7 @@ function renderChecksTable() {
             Name: getBankName(check.bank),
             ExportID: jQuery("input[name='ExportNumber']").val(),
             Status: check.status,
-            TotalPrice: check.amount,
+            TotalPrice: parseFloat(check.amount),
             Number: check.serial,
             CreatedAt: check.date
         };
@@ -1188,7 +1265,6 @@ function renderChecksTable() {
             if (confirm('آیا از حذف این چک مطمئن هستید؟')) {
                 const index = parseInt(this.getAttribute('data-index'));
                 checks.splice(index, 1);
-                console.log("Payments1", Payments)
                 // حذف از آرایه Payments با مقایسه صحیح
                 Payments.forEach((element, i) => {
                     if (element.Number.toString() === checkNumber) {
@@ -1196,7 +1272,6 @@ function renderChecksTable() {
                         return; // برای توقف حلقه بعد از حذف
                     }
                 });
-                console.log("Payments2", Payments)
                 renderChecksTable();
             }
         });
