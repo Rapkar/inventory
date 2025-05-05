@@ -319,6 +319,7 @@ func GetExportById2(c *gin.Context) (Boot.EscapeExport, []Boot.EscapeExportProdu
 			RollePrice:      exportProduct.RollePrice,
 			MeterPrice:      exportProduct.MeterPrice,
 			CountPrice:      exportProduct.CountPrice,
+			ProductID:       exportProduct.ProductID,
 			BarrelPrice:     exportProduct.BarrelPrice,
 		}
 		escapeExportProducts = append(escapeExportProducts, escapeExportProduct)

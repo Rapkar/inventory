@@ -245,8 +245,8 @@
                                         </thead>
                                         <tbody>
                                             {{range .products}}
-                                            <tr>
-                                                <td>{{.ID}}</td>
+                                            <tr attr-id="{{.ProductID}}">
+                                                <td>{{.ProductID}}</td>
                                                 <td>{{.Name}}</td>
                                                 <td class="price">{{.Roll}}</td>
                                                 <td class="price">{{printf "%.0f" .RollePrice}}</td>
