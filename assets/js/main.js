@@ -16,8 +16,9 @@ let tax = parseFloat(jQuery("input[name='Tax']").val())
 let draft = false;
 
 const directpaynumber = "PMT-" + Math.floor(Math.random() * 1000000)
+
 function fetchAndLogPaymentsAndExportProducts() {
-    if (Payments.length < 1) {
+    if (Payments.length < 1 && document.getElementById("ExportNumber") && document.getElementById("ExportID").length > 0) {
         return jQuery.ajax({
             method: "POST",
             url: "/Dashboard/getpaymentsbyexportid",
@@ -57,13 +58,13 @@ function fetchAndLogPaymentsAndExportProducts() {
         })
     }
 }
+if (document.getElementById("ExportNumber") && document.getElementById("ExportID").length > 0) {
 
+    fetchAndLogPaymentsAndExportProducts().then(function () {
 
-fetchAndLogPaymentsAndExportProducts().then(function () {
-
-    // اینجا می‌توانید از Payments استفاده کنید
-});
-
+        // اینجا می‌توانید از Payments استفاده کنید
+    });
+}
 jQuery('#myModal').modal('show')
 // add  New product to export list
 
@@ -303,50 +304,50 @@ function ToggleSIBoxInExport(value) {
 
 jQuery(".ExportPeoducts select#ProductIs").on("change", function () {
     var ID = this.value;
-   jQuery(`#ProductBox input[name='Count'],#ProductBox input[name='Meter'],
+    jQuery(`#ProductBox input[name='Count'],#ProductBox input[name='Meter'],
     #ProductBox input[name='Weight'],#ProductBox input[name='Barrel'],#ProductBox input[name='Rolle']
     `).val("")
 
-        CurrentProductName = jQuery(this).find("option:selected").text();
-        if (ID != 0) {
-            jQuery.ajax({
-                method: "POST",
-                url: "/Dashboard/getproductbyid",
-                data: JSON.stringify({ name: "ProductIs", "id": ID }),
-                contentType: "application/json; charset=utf-8",
-            })
-                .done(function (msg) {
-                    if (msg.result.length > 0) {
-                        var product = msg.result[0];
-                        ToggleSIBoxInExport(product.MeasurementSystem)
-                        jQuery(".ExportPeoducts .ProductsRolle").html(product.Roll)
-                        jQuery(".ExportPeoducts input[name='Count']").attr("max", product.Count)
-                        jQuery(".ExportPeoducts .ProductsMeter").html(product.Meter)
-                        jQuery(".ExportPeoducts input[name='Meter']").attr("max", product.Meter)
-                        jQuery(".ExportPeoducts input[name='Rolle']").attr("max", product.Rolle)
-                        jQuery(".ExportPeoducts input[name='Weight']").attr("max", product.Weight)
-                        jQuery(".ExportPeoducts input[name='Barrel']").attr("max", product.Barrel)
-                        jQuery(".ExportPeoducts .ProductNumber").html(product.Number)
-                        jQuery(".ExportPeoducts .ProductsWeight").html(product.Weight)
-                        jQuery(".ExportPeoducts .ProductsBarrel").html(product.Barrel)
-                        jQuery(".ExportPeoducts input[name='RollePrice']").attr("value", product.RollePrice)
-                        jQuery(".ExportPeoducts input[name='MeterPrice']").attr("value", product.MeterPrice)
-                        jQuery(".ExportPeoducts input[name='BarrelPrice']").attr("value", product.BarrelPrice)
-                        // jQuery(".ExportPeoducts input[name='TotalPrice']").attr("value", product.MeterPrice)
-                        jQuery(".ExportPeoducts .Content").slideDown();
-                        jQuery(".ExportPeoducts  input[type='number']").each(function () {
-                            var val = jQuery(this).val();
-                            var val = PersianTools.addCommas(val);
-                            var convertToFa = PersianTools.digitsEnToFa(val);
-                            var numberToWords = PersianTools.numberToWords(val);
-                            jQuery(this).parent().closest(".form-group").find(".out").html(convertToFa + "   " + numberToWords);
-                        });
-                    }
-                });
-        } else {
-            jQuery(".modal-footer").slideUp();
-            jQuery(".Content").slideUp();
-        }
+    CurrentProductName = jQuery(this).find("option:selected").text();
+    if (ID != 0) {
+        jQuery.ajax({
+            method: "POST",
+            url: "/Dashboard/getproductbyid",
+            data: JSON.stringify({ name: "ProductIs", "id": ID }),
+            contentType: "application/json; charset=utf-8",
+        })
+            .done(function (msg) {
+                if (msg.result.length > 0) {
+                    var product = msg.result[0];
+                    ToggleSIBoxInExport(product.MeasurementSystem)
+                    jQuery(".ExportPeoducts .ProductsRolle").html(product.Roll)
+                    jQuery(".ExportPeoducts input[name='Count']").attr("max", product.Count)
+                    jQuery(".ExportPeoducts .ProductsMeter").html(product.Meter)
+                    jQuery(".ExportPeoducts input[name='Meter']").attr("max", product.Meter)
+                    jQuery(".ExportPeoducts input[name='Rolle']").attr("max", product.Rolle)
+                    jQuery(".ExportPeoducts input[name='Weight']").attr("max", product.Weight)
+                    jQuery(".ExportPeoducts input[name='Barrel']").attr("max", product.Barrel)
+                    jQuery(".ExportPeoducts .ProductNumber").html(product.Number)
+                    jQuery(".ExportPeoducts .ProductsWeight").html(product.Weight)
+                    jQuery(".ExportPeoducts .ProductsBarrel").html(product.Barrel)
+                    jQuery(".ExportPeoducts input[name='RollePrice']").attr("value", product.RollePrice)
+                    jQuery(".ExportPeoducts input[name='MeterPrice']").attr("value", product.MeterPrice)
+                    jQuery(".ExportPeoducts input[name='BarrelPrice']").attr("value", product.BarrelPrice)
+                    // jQuery(".ExportPeoducts input[name='TotalPrice']").attr("value", product.MeterPrice)
+                    jQuery(".ExportPeoducts .Content").slideDown();
+                    jQuery(".ExportPeoducts  input[type='number']").each(function () {
+                        var val = jQuery(this).val();
+                        var val = PersianTools.addCommas(val);
+                        var convertToFa = PersianTools.digitsEnToFa(val);
+                        var numberToWords = PersianTools.numberToWords(val);
+                        jQuery(this).parent().closest(".form-group").find(".out").html(convertToFa + "   " + numberToWords);
+                    });
+                }
+            });
+    } else {
+        jQuery(".modal-footer").slideUp();
+        jQuery(".Content").slideUp();
+    }
     // }
 })
 jQuery("span.price").each(function () {
@@ -634,7 +635,10 @@ jQuery("#find").on("click", function (e) {
 
             if (lengthofres > 0) {
                 let html = "";
+
                 msg.message.forEach(function (index) {
+                    console.log(index.Draft)
+
                     html += '<tr>';
                     html += '<td class="' + index.ID + '" style="text-align:right;">' + index.ID + '</td>';
                     html += '<td class="' + index.Name + '" style="text-align:right;">' + index.Name + '</td>';
@@ -644,14 +648,56 @@ jQuery("#find").on("click", function (e) {
                     html += '<td class="' + index.TotalPrice + '" style="text-align:right;">' + index.TotalPrice + '</td>';
                     html += '<td class="' + index.Tax + '" style="text-align:right;">' + index.Tax + '</td>';
                     html += '<td class="' + index.CreatedAt + '" style="text-align:right;">' + index.CreatedAt + '</td>';
-                    html += '<td class="' + index.InventoryNumber + '" style="text-align:right;">' + index.InventoryNumber + '</td>';
+                    html += '<td class="' + index.InventoryName + '" style="text-align:right;">' + index.InventoryName + '</td>';
+                    html += `<td style="text-align:right;">
+                    <label class="switch">
+                      <input id="draft" class="draft" Export-id="${index.ID}" name="draft" type="checkbox" ${index.Draft ? "" : "checked"}>
+                      <span class="slider round"></span>
+                    </label>
+                  </td>`;
+                    html += `<td>
+                    <table>
+                  <tbody>
+                    <tr>`;
+                    html += `<td  class="Edit"  >
+
+                      <a href="#" class="me-3" data-bs-toggle="modal" data-bs-target="#Exportshowmodal${index.ID}"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                          class="bi bi-eye" viewBox="0 0 16 16">
+                          <path
+                            d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z" />
+                          <path
+                            d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0" />
+                        </svg></a>
+                        <div class="modal fade dark" id="Exportshowmodal${index.ID}" tabindex="-1" aria-labelledby="Exportshowmodal${index.ID}"
+                        aria-hidden="true">
+                        <div class="modal-dialog modal-md">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title" id="editModalLabel${index.ID}">Edit Export #{{.ID}}
+                              </h5>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body text-center">
+                              <a target="_blank" href="/Dashboard/exportshow?ExportId=${index.ID}&type=buyer"  class="btn btn-success" >فاکتور خریدار</a>
+                              <a target="_blank" href="/Dashboard/exportshow?ExportId=${index.ID}&type=seller" class="btn btn-primary" >فاکتور فروشنده</a>
+                            </div>
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">بستن</button>
+                            </div>
+                          </div>
+                        </div>
+                      </div></td>`;
                     html += '<td dir="ltr" class="Edit" style="text-align:right;">';
-                    html += '<a href="./exportshow?ExportId=' + index.ID + '"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">';
-                    html += '<path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z"/><path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"/></svg></a>';
-                    html += '<a class="me-3" href="./deleteExport?ExportId=' + index.ID + '"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">';
+                    html += `<a class="me-3" href="./exportedit?ExportId=${index.ID}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                          class="bi bi-pen" viewBox="0 0 16 16">
+                          <path
+                            d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001m-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708z" />
+                        </svg></a>`;
+                    html += '</td><td dir="ltr" class="Edit" style="text-align:right;"><a class="me-3" href="./deleteExport?ExportId=' + index.ID + '"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">';
                     html += '<path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5"/>';
                     html += '</td>';
-                    html += '</tr>';
+                    html += '</tr></tbody></table></td></tr>';
                     // console.log(html)
                 });
                 // console.log(html)
@@ -843,15 +889,69 @@ jQuery("#Userfind").on("click", function (e) {
 
             if (lengthofres > 0) {
                 let html = "";
-                msg.message.forEach(function (index) {
+                msg.users.forEach(function (index) {
 
-                    html += '<tr attr-id="' + index.ID + '">';
+                    html += '<tr   class="user'+ index.ID +'" attr-id="' + index.ID + '">';
                     html += '<td class="id" style="text-align:right;">' + index.ID + '</td>';
                     html += '<td class="' + index.Name + '" style="text-align:right;">' + index.Name + '</td>';
+
                     html += '<td class="' + index.Phonenumber + '" style="text-align:right;">' + index.Phonenumber + '</td>';
                     html += '<td class="' + index.Address + '" style="text-align:right;">' + index.Address + '</td>';
-                    html += '<td dir="ltr" class="Edit" style="text-align:right;"><a href="./deleteuser?user-id=' + index.ID + '">  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">';
-                    html += '<path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5"/></svg></a></td>';
+                    html += `<td dir="ltr"  style="text-align:right;">
+              <div class="modal fade" id="editModal${index.ID}" tabindex="-1"
+              aria-labelledby="editModalLabel${index.ID}" aria-hidden="true">
+              <div class="modal-dialog modal-xl">
+                  <div class="modal-content">
+                      <div class="modal-header">
+                          <h5 class="modal-title" id="editModalLabel${index.ID}">Edit Export #{{.ID}}
+                          </h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal"
+                              aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                          <!-- Your edit form goes here -->
+                          <form action="./updatepayment" method="POST">
+                              <input type="hidden" name="PaymentID" value="${index.ID}">
+                              <div class="row">
+                              </div>
+                              <!-- Add more fields as needed -->
+                      </div>
+                      <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary"
+                              data-bs-dismiss="modal">بستن</button>
+                          <button type="submit" class="btn btn-primary"
+                              onclick="document.forms[0].submit()">ذخیره</button>
+                      </div>
+                      </form>
+
+                  </div>
+              </div>
+          </div>
+          <a href="./user/details/?user-id=${index.ID}"  >
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+          class="bi bi-eye" viewBox="0 0 16 16">
+          <path
+              d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z" />
+          <path
+              d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0" />
+      </svg>
+      </a>
+                </td>`;
+                    html += `<td dir="ltr"style="text-align:right;"><a
+                href="./deleteuser?user-id=${index.ID}&user=${index.Role}}"><svg xmlns="http://www.w3.org/2000/svg" width="16"
+                  height="16" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
+                  <path
+                    d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5" />
+                </svg></a>
+              <a href="./edituser?user-id=${index.ID}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pen"
+                  viewBox="0 0 16 16">
+                  <path
+                    d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001m-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708z" />
+                </svg>
+              </a>
+
+            </td>`;
                     html += '</tr>';
 
 
@@ -1414,8 +1514,37 @@ jQuery(document).ready(function () {
         format: 'YYYY/MM/DD',
         autoClose: true
     });
-});
 
+});
+$(document).ready(function () {
+    var now = new persianDate();
+    var oneMonthAgo = now.clone().subtract('month', 1);
+
+    // مقداردهی به فیلد با مقدار اولیه
+    $('#dateFromFilter').val(oneMonthAgo.format('YYYY/MM/DD'));
+
+
+
+
+    $("#dateFromFilter").persianDatepicker({
+        format: 'YYYY/MM/DD',
+        minDate: oneMonthAgo,
+        maxDate: now,
+        initialValue: true,
+        initialValueType: 'persian',
+        autoClose: true,
+        observer: true,
+        altField: '#from'
+    });
+
+    $("#dateToFilter").persianDatepicker({
+        format: 'YYYY/MM/DD',
+        initialValueType: 'persian',
+        autoClose: true,
+        altField: '#to',
+    });
+
+});
 function convertToEnglishNumbers(input) {
     const persianNumbers = [/۰/g, /۱/g, /۲/g, /۳/g, /۴/g, /۵/g, /۶/g, /۷/g, /۸/g, /۹/g];
     const arabicNumbers = [/٠/g, /١/g, /٢/g, /٣/g, /٤/g, /٥/g, /٦/g, /٧/g, /٨/g, /٩/g];

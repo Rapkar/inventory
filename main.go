@@ -14,6 +14,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 
@@ -22,6 +23,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/afero"
 	"github.com/spf13/viper"
+	"gopkg.in/natefinch/lumberjack.v2"
 	"gorm.io/gorm"
 )
 
@@ -31,18 +33,23 @@ func bitAnd(a, b int16) bool {
 func increment(i int) int {
 	return i + 1
 }
-
 func main() {
-
-	logFile, err := os.OpenFile("app.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
-	if err != nil {
-		log.Fatalf("❌ Failed to open log file: %v", err)
+	const backupDir = "./backups"
+	logWriter := &lumberjack.Logger{
+		Filename:   "app.log",
+		MaxSize:    10,
+		MaxBackups: 5,
+		MaxAge:     30,
+		Compress:   true,
 	}
-	multiWriter := io.MultiWriter(os.Stdout, logFile)
-	log.SetOutput(multiWriter)
-	log.Println("🚀 Logger initialized")
 
+	multiWriter := io.MultiWriter(os.Stdout, logWriter)
+	log.SetOutput(multiWriter)
+	log.SetFlags(log.LstdFlags | log.Llongfile)
+
+	log.Println("🚀 Logger initialized")
 	log.Println("🔧 Booting application...")
+
 	const postperpage int = 20
 	boot.Init()
 
@@ -56,7 +63,11 @@ func main() {
 		log.Println("📦 ScheduleBackups started")
 	}()
 
-	r := gin.Default()
+	// ✅ ایجاد Gin با لاگر سفارشی
+	r := gin.New()
+	r.Use(gin.LoggerWithWriter(multiWriter), gin.Recovery())
+
+	// اضافه‌کردن template functions و فایل‌ها
 	r.SetFuncMap(template.FuncMap{
 		"bitAnd":    bitAnd,
 		"increment": increment,
@@ -64,11 +75,15 @@ func main() {
 	})
 	r.LoadHTMLGlob("Views/templates/*")
 	r.Static("assets", "./assets")
-	inventories := model.GetAllInventories()
+	// r.Static("/backups", "./backups")
 
+	// فراخوانی اولیه موجودی‌ها
+	inventories := model.GetAllInventories()
+	_ = inventories
+
+	// سشن‌ها
 	store := cookie.NewStore([]byte("secret"))
 	r.Use(sessions.Sessions("mysession", store))
-
 	// Defualt  Routes
 	r.GET("/", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "home.html", gin.H{
@@ -151,7 +166,7 @@ func main() {
 		})
 		v2.GET("/api/allexports", middleware.AuthMiddleware(), func(c *gin.Context) {
 			c.JSON(http.StatusOK,
-				model.GetAllExports(),
+				model.GetAllExportsLimited(),
 			)
 
 		})
@@ -627,6 +642,7 @@ func main() {
 			}
 
 			result, message := model.GetUsersByNameAndPhone(data.Name, data.Phone)
+			fmt.Println(result)
 			c.JSON(http.StatusOK, gin.H{
 				"message": message,
 				"users":   result,
@@ -1000,8 +1016,8 @@ func main() {
 				"title":        "فاکتور",
 				"date":         Utility.CurrentTime(),
 				"exportnumber": uniqueString,
-				"products":     model.GetAllProductsByInventory(1),
-				"HasDraft":     HasDraft,
+				// "products":     model.GetAllProductsByInventory(1),
+				"HasDraft": HasDraft,
 			})
 
 		})
@@ -1707,21 +1723,7 @@ func main() {
 			})
 
 		})
-		v2.GET("/backup", middleware.AuthMiddleware(), func(c *gin.Context) {
-			session := sessions.Default(c)
-			// fmt.Println(resExport, Export.ID)
-			fs := afero.NewOsFs()
 
-			baseURL := viper.GetString("LOCAL_URL")
-			backups, _ := boot.GetBackupList(fs, baseURL)
-			c.HTML(http.StatusOK, "backups.html", gin.H{
-				"Username":    session.Get("UserName"),
-				"UserRole":    session.Get("UserRole"),
-				"inventories": model.GetAllInventories(),
-				"title":       "بک آپ ها",
-				"backups":     backups,
-			})
-		})
 		v2.GET("/inventories", middleware.AuthMiddleware(), func(c *gin.Context) {
 			session := sessions.Default(c)
 			c.HTML(http.StatusOK, "inventories.html", gin.H{
@@ -1849,15 +1851,15 @@ func main() {
 		})
 		v2.GET("/createinventory", middleware.AuthMiddleware(), func(c *gin.Context) {
 			session := sessions.Default(c)
-			if err != nil {
-				c.Redirect(http.StatusFound, "/inventories")
-				return
-			}
+			// if err != nil {
+			// 	c.Redirect(http.StatusFound, "/inventories")
+			// 	return
+			// }
 
-			if err != nil {
-				c.Redirect(http.StatusFound, "/inventories")
-				return
-			}
+			// if err != nil {
+			// 	c.Redirect(http.StatusFound, "/inventories")
+			// 	return
+			// }
 
 			c.HTML(http.StatusOK, "inventory_edit.html", gin.H{
 				"Username":    session.Get("UserName"),
@@ -1870,8 +1872,11 @@ func main() {
 			filename := c.Param("filename")
 			fs := afero.NewOsFs()
 
-			// بررسی وجود فایل با استفاده از afero.Fs
-			fileInfo, err := fs.Stat(filename)
+			// مسیر واقعی فایل
+			filePath := filepath.Join("backups", filename)
+
+			// بررسی وجود فایل
+			fileInfo, err := fs.Stat(filePath)
 			if err != nil {
 				if os.IsNotExist(err) {
 					c.JSON(http.StatusNotFound, gin.H{"error": "فایل یافت نشد"})
@@ -1881,15 +1886,15 @@ func main() {
 				return
 			}
 
-			// باز کردن فایل با استفاده از afero
-			file, err := fs.Open(filename)
+			// باز کردن فایل
+			file, err := fs.Open(filePath)
 			if err != nil {
 				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 				return
 			}
 			defer file.Close()
 
-			// تنظیم هدرهای مناسب برای دانلود
+			// هدر دانلود
 			c.Header("Content-Description", "File Transfer")
 			c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", filename))
 			c.Header("Content-Type", "application/octet-stream")
@@ -1901,19 +1906,57 @@ func main() {
 				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			}
 		})
+
 		v2.GET("/charts", middleware.AuthMiddleware(), func(c *gin.Context) {
 			session := sessions.Default(c)
+			GetTotalPayment, _ := model.GetTotalPayment(c)
+			GetTotalIncome, _ := model.GetTotalIncome(c)
+			GetTotalPrices, _ := model.GetTotalPrices(c)
+
 			c.HTML(http.StatusOK, "charts.html", gin.H{
-				"title":       "صفحه اصلی",
-				"Username":    session.Get("UserName"),
-				"UserRole":    session.Get("UserRole"),
-				"inventories": model.GetAllInventories(),
-				"message":     boot.Messages("login success"),
-				"success":     true,
-				"users":       model.GetAllUsersByRole("guest"),
-				"exports":     model.GetAllExportsByPaginate(0, 5, false),
-				"allexports":  model.GetAllExports(),
+				"title":          "صفحه اصلی",
+				"Username":       session.Get("UserName"),
+				"UserRole":       session.Get("UserRole"),
+				"inventories":    model.GetAllInventories(),
+				"message":        boot.Messages("login success"),
+				"success":        true,
+				"users":          model.GetAllUsersByRole("guest"),
+				"exports":        model.GetAllExportsByPaginate(0, 5, false),
+				"allexports":     model.GetAllExports(),
+				"TotalPayment":   GetTotalPayment,
+				"GetTotalIncome": GetTotalIncome,
+				"GetTotalPrices": GetTotalPrices,
 			})
+
+		})
+		v2.GET("/charts/between", middleware.AuthMiddleware(), func(c *gin.Context) {
+			session := sessions.Default(c)
+			from := c.Query("from") // یا c.PostForm("from")
+			to := c.Query("to")
+
+			GetTotalPayment, _ := model.GetTotalPaymentByDateRange(c, from, to)
+			GetTotalIncome, _ := model.GetTotalIncomeByDateRange(c, from, to)
+			GetTotalPrices, _ := model.GetTotalPriceByDateRange(c, from, to)
+			GetTotalProfit := GetTotalIncome - GetTotalPrices
+			if GetTotalProfit < 0 {
+				GetTotalProfit = -0
+			}
+			c.HTML(http.StatusOK, "charts.html", gin.H{
+				"title":          "صفحه اصلی",
+				"Username":       session.Get("UserName"),
+				"UserRole":       session.Get("UserRole"),
+				"inventories":    model.GetAllInventories(),
+				"message":        boot.Messages("login success"),
+				"success":        true,
+				"users":          model.GetAllUsersByRole("guest"),
+				"exports":        model.GetAllExportsByPaginate(0, 5, false),
+				"allexports":     model.GetAllExports(),
+				"TotalPayment":   GetTotalPayment,
+				"GetTotalIncome": GetTotalIncome,
+				"GetTotalPrices": GetTotalPrices,
+				"GetTotalProfit": GetTotalProfit,
+			})
+
 		})
 		v2.GET("/deletePayments", middleware.AuthMiddleware("Admin"), func(c *gin.Context) {
 			session := sessions.Default(c)
@@ -2004,6 +2047,31 @@ func main() {
 			c.JSON(http.StatusOK, gin.H{"message": "باموفقیت تغییر انجام شد", "sucess": true, "Payments": Payments, "Exports": Exports})
 
 		})
+		v2.GET("/backup", middleware.AuthMiddleware(), func(c *gin.Context) {
+			session := sessions.Default(c)
+			// fmt.Println(resExport, Export.ID)
+			fs := afero.NewOsFs()
+			// in env file :LOCAL_URL=http://127.0.0.1:8080
+
+			baseURL := viper.GetString("LOCAL_URL")
+			backups, _ := boot.GetBackupList2(fs, baseURL)
+			c.HTML(http.StatusOK, "backups.html", gin.H{
+				"Username":    session.Get("UserName"),
+				"UserRole":    session.Get("UserRole"),
+				"inventories": model.GetAllInventories(),
+				"title":       "بک آپ ها",
+				"backups":     backups,
+			})
+		})
+		v2.GET("/logs", middleware.AuthMiddleware(), func(c *gin.Context) {
+			logContent, err := Utility.GetLastLines("app.log", 500)
+			if err != nil {
+				c.String(http.StatusInternalServerError, "خطا در خواندن فایل لاگ")
+				return
+			}
+			c.Data(http.StatusOK, "text/plain; charset=utf-8", []byte(logContent))
+		})
+
 		// v2.GET("/Download", middleware.AuthMiddleware(), func(c *gin.Context) {
 		// 	session := sessions.Default(c)
 		// 	// Id := c.Request.URL.Query().Get("ExportId")

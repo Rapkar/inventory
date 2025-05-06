@@ -3,9 +3,11 @@ package Utility
 import (
 
 	// Model "inventory/app/Model"
+	"bufio"
 	"encoding/json"
 	"fmt"
 	"math/rand"
+	"os"
 	"regexp"
 	"strconv"
 	"strings"
@@ -275,4 +277,31 @@ func MakeRandValue() string {
 }
 func BitAnd(a, b int16) bool {
 	return a&b != 0
+}
+
+const logLinesToShow = 100
+
+func GetLastLines(path string, maxLines int) (string, error) {
+	file, err := os.Open(path)
+	if err != nil {
+		return "", err
+	}
+	defer file.Close()
+
+	var lines []string
+	scanner := bufio.NewScanner(file)
+
+	// خواندن همه خطوط و نگه داشتن فقط n خط آخر
+	for scanner.Scan() {
+		lines = append(lines, scanner.Text())
+		if len(lines) > maxLines {
+			lines = lines[1:] // حذف اولین خط برای محدود نگه داشتن
+		}
+	}
+
+	if err := scanner.Err(); err != nil {
+		return "", err
+	}
+
+	return strings.Join(lines, "\n"), nil
 }

@@ -9651,7 +9651,7 @@ h4, h5, h6 {
   padding: 0;
   list-style-type: none;
 }
-input[type="date"] {
+input[type="date"] ,#dateFromFilter{
   -webkit-appearance: none !important;
   -moz-appearance: none !important;
   appearance: none !important;

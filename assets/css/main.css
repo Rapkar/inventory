@@ -58,7 +58,7 @@ select{
 1px solid #ddd;
 }
 .jumbotron a{
-  font-size: 14px;
+  font-size: 18px;
 }
  /* The switch - the box around the slider */
  .switch {
@@ -128,9 +128,25 @@ input:checked + .slider:before {
 }
 .users_box table{
   white-space: nowrap;
-  display: block;
+  /* display: block;
   overflow: scroll;
   padding: 1rem;
+  width: 100%;
+  min-width: 600px; */
+}
+.users_box table th{
+ padding-bottom: 1rem;
 }
 }
- 
+input[type="date"] ,#dateFromFilter{
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+}
+ th{
+  white-space: nowrap;
+  text-align: center;
+ }
+ .superadmin1 , .user1{
+display: none;
+ }

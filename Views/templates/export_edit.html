@@ -169,14 +169,13 @@
                                                 <div class="col-md-3 form-group">
                                                     <label for="serialCode" class="form-label">کد
                                                         سریال</label>
-                                                    <input data-code="" type="text" class="form-control price serial"
+                                                    <input data-code="" type="text" class="form-control serial"
                                                         id="serialCode" placeholder="123-456-789">
                                                 </div>
                                                 <div class="col-md-3 form-group">
                                                     <label for="checkAmount" class="form-label">مبلغ
                                                         (تومان)</label>
-                                                    <input type="text" class="form-control price" id="checkAmount"
-                                                        placeholder="1,000,000">
+                                                        <input type="text" class="form-control price" id="checkAmount" placeholder="1,000,000">
                                                     <span class="out"></span>&nbsp;تومان
 
                                                 </div>
@@ -491,9 +490,9 @@
     <script>
         $(document).ready(function () {
             // Format price inputs
-            $('.price').on('input', function () {
+            $('input.price').on('input', function () {
                 let value = $(this).val().replace(/,/g, '');
-                $(this).val(parseInt(value || 0).toLocaleString('en-US'));
+                // $(this).val(parseInt(value || 0).toLocaleString('en-US'));
                 $(this).next('.out').text(parseInt(value || 0).toLocaleString('fa-IR'));
             }).trigger('input');
 
@@ -529,7 +528,7 @@
                     </div>
                     <div class="form-group">
                         <label>قیمت هر رول (تومان)</label>
-                        <input type="number" class="form-control price" name="RollePrice" required>
+                        <input type="number" class="form-control " name="RollePrice" required>
                     </div>
                 `);
                 } else if (measurementSystem === 'meter') {
@@ -540,7 +539,7 @@
                     </div>
                     <div class="form-group">
                         <label>قیمت هر متر (تومان)</label>
-                        <input type="number" class="form-control price" name="MeterPrice" required>
+                        <input type="number" class="form-control " name="MeterPrice" required>
                     </div>
                 `);
                 } // Add other measurement systems as needed

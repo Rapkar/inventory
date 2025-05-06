@@ -45,205 +45,62 @@
 </head>
 <body>
     <div class="container mt-5">
-        <h1 class="text-center mb-4">سیستم گزارش‌گیری مالی با فیلتر پیشرفته</h1>
+        <h1 class="text-center mb-4"> گزارش‌گیری مالی </h1>
         
         <!-- بخش فیلترها -->
-        <div class="filter-section">
+        <form method="get" action="/Dashboard/charts/between" class="filter-section">
             <h5 class="mb-3">فیلتر اطلاعات</h5>
+        
+            <!-- فیلدهای مخفی که مقدار واقعی می‌گیرن -->
+            <!-- <input type="hidden" name="from" id="from">
+            <input type="hidden" name="to" id="to"> -->
+        
             <div class="row">
-                <div class="col-md-3">
-                    <label for="accountTypeFilter" class="form-label">نوع حساب:</label>
-                    <select id="accountTypeFilter" class="form-select">
-                        <option value="">همه انواع</option>
-                        <option value="دارایی">دارایی</option>
-                        <option value="درآمد">درآمد</option>
-                        <option value="هزینه">هزینه</option>
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <label for="dateFromFilter" class="form-label">از تاریخ:</label>
-                    <input type="date" id="dateFromFilter" class="form-control">
-                </div>
-                <div class="col-md-3">
-                    <label for="dateToFilter" class="form-label">تا تاریخ:</label>
-                    <input type="date" id="dateToFilter" class="form-control">
-                </div>
-                <div class="col-md-3">
-                    <label for="amountFilter" class="form-label">مبلغ بیشتر از:</label>
-                    <input type="number" id="amountFilter" class="form-control" placeholder="ریال">
-                </div>
-            </div>
-            <div class="row mt-3">
                 <div class="col-md-6">
-                    <label for="searchFilter" class="form-label">جستجوی آزاد:</label>
-                    <input type="text" id="searchFilter" class="form-control" placeholder="جستجو در شرح، نام حساب...">
+                    <label for="dateFromFilter" class="form-label">از تاریخ:</label>
+                    <!-- فیلد نمایشی -->
+                    <input type="text" name="from" value="0" id="dateFromFilter" class="form-control">
                 </div>
-                <div class="col-md-3 d-flex align-items-end">
-                    <button id="applyFilter" class="btn btn-primary w-100">اعمال فیلتر</button>
-                </div>
-                <div class="col-md-3 d-flex align-items-end">
-                    <button id="resetFilter" class="btn btn-outline-secondary w-100">حذف فیلترها</button>
+                <div class="col-md-6">
+                    <label for="dateToFilter" class="form-label">تا تاریخ:</label>
+                    <!-- فیلد نمایشی -->
+                    <input type="text" name="to"  value="0" id="dateToFilter" class="form-control">
                 </div>
             </div>
-        </div>
+        
+            <div class="row mt-3">
+                <div class="col-md-3 d-flex align-items-end">
+                    <button type="submit" id="applyFilter" class="btn btn-primary w-100">اعمال فیلتر</button>
+                </div>
+            </div>
+        </form>
+        
 
         <!-- کارت‌های خلاصه اطلاعات -->
         <div class="row">
             <div class="col-md-4">
                 <div class="summary-card assets-card">
                     <h5>دارایی‌ها</h5>
-                    <h3 class="positive">400,000,000 ریال</h3>
+                    <h3 class="positive price">{{ printf "%.0f" .TotalPayment}}</h3>
                     <p class="text-muted">جمع کل دارایی‌های جاری</p>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="summary-card income-card">
                     <h5>درآمدها</h5>
-                    <h3 class="positive">230,000,000 ریال</h3>
+                    <h3 class="positive price">{{printf "%.0f" .GetTotalIncome}}</h3>
                     <p class="text-muted">کل درآمد دوره</p>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="summary-card expenses-card">
                     <h5>هزینه‌ها</h5>
-                    <h3 class="negative">80,000,000 ریال</h3>
+                    <h3 class="negative price">{{printf "%.0f" .GetTotalPrices}}</h3>
                     <p class="text-muted">کل هزینه‌های دوره</p>
                 </div>
             </div>
         </div>
 
-        <!-- جدول اصلی تراکنش‌ها -->
-        <div class="table-responsive">
-            <table class="table table-striped table-hover table-bordered" id="accountingTable">
-                <thead class="table-dark">
-                    <tr>
-                        <th>ردیف</th>
-                        <th>تاریخ</th>
-                        <th>کد حساب</th>
-                        <th>نام حساب</th>
-                        <th>نوع حساب</th>
-                        <th>بدهکار (ریال)</th>
-                        <th>بستانکار (ریال)</th>
-                        <th>توضیحات</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>1403/04/01</td>
-                        <td>101</td>
-                        <td>صندوق</td>
-                        <td>دارایی</td>
-                        <td class="positive">50,000,000</td>
-                        <td>-</td>
-                        <td>موجودی اول دوره</td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>1403/04/01</td>
-                        <td>102</td>
-                        <td>بانک ملی</td>
-                        <td>دارایی</td>
-                        <td class="positive">200,000,000</td>
-                        <td>-</td>
-                        <td>موجودی اول دوره</td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td>1403/04/05</td>
-                        <td>401</td>
-                        <td>فروش نقدی</td>
-                        <td>درآمد</td>
-                        <td>-</td>
-                        <td class="positive">150,000,000</td>
-                        <td>فروش محصولات A</td>
-                    </tr>
-                    <tr>
-                        <td>4</td>
-                        <td>1403/04/05</td>
-                        <td>110</td>
-                        <td>صندوق</td>
-                        <td>دارایی</td>
-                        <td class="positive">150,000,000</td>
-                        <td>-</td>
-                        <td>دریافت نقدی فروش</td>
-                    </tr>
-                    <tr>
-                        <td>5</td>
-                        <td>1403/04/08</td>
-                        <td>402</td>
-                        <td>فروش نسیه</td>
-                        <td>درآمد</td>
-                        <td>-</td>
-                        <td class="positive">80,000,000</td>
-                        <td>فروش محصولات B</td>
-                    </tr>
-                    <tr>
-                        <td>6</td>
-                        <td>1403/04/08</td>
-                        <td>103</td>
-                        <td>چک‌های دریافتنی</td>
-                        <td>دارایی</td>
-                        <td class="positive">80,000,000</td>
-                        <td>-</td>
-                        <td>چک 3 ماهه از مشتری X</td>
-                    </tr>
-                    <tr>
-                        <td>7</td>
-                        <td>1403/04/10</td>
-                        <td>511</td>
-                        <td>هزینه حقوق</td>
-                        <td>هزینه</td>
-                        <td class="negative">60,000,000</td>
-                        <td>-</td>
-                        <td>پرداخت حقوق کارکنان</td>
-                    </tr>
-                    <tr>
-                        <td>8</td>
-                        <td>1403/04/10</td>
-                        <td>102</td>
-                        <td>بانک ملی</td>
-                        <td>دارایی</td>
-                        <td>-</td>
-                        <td class="negative">60,000,000</td>
-                        <td>پرداخت از حساب بانکی</td>
-                    </tr>
-                    <tr>
-                        <td>9</td>
-                        <td>1403/04/15</td>
-                        <td>512</td>
-                        <td>هزینه اجاره</td>
-                        <td>هزینه</td>
-                        <td class="negative">20,000,000</td>
-                        <td>-</td>
-                        <td>پرداخت اجاره ساختمان</td>
-                    </tr>
-                    <tr>
-                        <td>10</td>
-                        <td>1403/04/15</td>
-                        <td>101</td>
-                        <td>صندوق</td>
-                        <td>دارایی</td>
-                        <td>-</td>
-                        <td class="negative">20,000,000</td>
-                        <td>پرداخت از صندوق</td>
-                    </tr>
-                </tbody>
-                <tfoot class="table-secondary">
-                    <tr>
-                        <td colspan="5" class="text-end">جمع کل:</td>
-                        <td class="positive">560,000,000</td>
-                        <td class="positive">310,000,000</td>
-                        <td></td>
-                    </tr>
-                </tfoot>
-            </table>
-            <div id="noResults" class="no-results">
-                <i class="fas fa-search fa-3x mb-3"></i>
-                <h4>موردی یافت نشد</h4>
-                <p>لطفاً فیلترهای جستجو را تغییر دهید</p>
-            </div>
-        </div>
 
         <!-- گزارش سود و زیان -->
         <div class="row mt-4">
@@ -256,15 +113,15 @@
                         <table class="table">
                             <tr>
                                 <td>کل درآمدها:</td>
-                                <td class="text-end positive">230,000,000 ریال</td>
+                                <td class="text-end positive price">{{ printf "%.0f" .TotalPayment}}</td>
                             </tr>
                             <tr>
                                 <td>کل هزینه‌ها:</td>
-                                <td class="text-end negative">80,000,000 ریال</td>
+                                <td class="text-end negative price">{{printf "%.0f" .GetTotalPrices}}</td>
                             </tr>
                             <tr class="table-active">
                                 <td><strong>سود خالص:</strong></td>
-                                <td class="text-end positive"><strong>150,000,000 ریال</strong></td>
+                                <td class="text-end positive price">{{printf "%.0f" .GetTotalProfit}}</td>
                             </tr>
                         </table>
                     </div>
@@ -281,92 +138,9 @@
         </div>
     </div>
 
-    <!-- Font Awesome برای آیکون‌ها -->
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-    <!-- Bootstrap 5 JS Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <!-- اسکریپت فیلتر کردن جدول -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const applyFilterBtn = document.getElementById('applyFilter');
-            const resetFilterBtn = document.getElementById('resetFilter');
-            const table = document.getElementById('accountingTable');
-            const rows = table.querySelectorAll('tbody tr');
-            const noResults = document.getElementById('noResults');
-            
-            // تابع اعمال فیلتر
-            function applyFilters() {
-                const accountType = document.getElementById('accountTypeFilter').value.toLowerCase();
-                const dateFrom = document.getElementById('dateFromFilter').value;
-                const dateTo = document.getElementById('dateToFilter').value;
-                const amount = document.getElementById('amountFilter').value;
-                const searchText = document.getElementById('searchFilter').value.toLowerCase();
-                
-                let visibleRows = 0;
-                
-                rows.forEach(row => {
-                    const cells = row.querySelectorAll('td');
-                    const rowAccountType = cells[4].textContent.toLowerCase();
-                    const rowDate = cells[1].textContent;
-                    const rowDebit = parseInt(cells[5].textContent.replace(/,/g, '')) || 0;
-                    const rowCredit = parseInt(cells[6].textContent.replace(/,/g, '')) || 0;
-                    const rowMaxAmount = Math.max(rowDebit, rowCredit);
-                    const rowText = row.textContent.toLowerCase();
-                    
-                    // اعمال فیلترها
-                    const typeMatch = !accountType || rowAccountType.includes(accountType);
-                    const dateMatch = (!dateFrom || rowDate >= dateFrom) && (!dateTo || rowDate <= dateTo);
-                    const amountMatch = !amount || rowMaxAmount >= parseInt(amount);
-                    const searchMatch = !searchText || rowText.includes(searchText);
-                    
-                    if (typeMatch && dateMatch && amountMatch && searchMatch) {
-                        row.style.display = '';
-                        visibleRows++;
-                    } else {
-                        row.style.display = 'none';
-                    }
-                });
-                
-                // نمایش پیام عدم وجود نتیجه
-                if (visibleRows === 0) {
-                    noResults.style.display = 'block';
-                    table.style.display = 'none';
-                } else {
-                    noResults.style.display = 'none';
-                    table.style.display = 'table';
-                }
-            }
-            
-            // تابع ریست فیلترها
-            function resetFilters() {
-                document.getElementById('accountTypeFilter').value = '';
-                document.getElementById('dateFromFilter').value = '';
-                document.getElementById('dateToFilter').value = '';
-                document.getElementById('amountFilter').value = '';
-                document.getElementById('searchFilter').value = '';
-                
-                rows.forEach(row => {
-                    row.style.display = '';
-                });
-                
-                noResults.style.display = 'none';
-                table.style.display = 'table';
-            }
-            
-            // رویدادهای کلیک
-            applyFilterBtn.addEventListener('click', applyFilters);
-            resetFilterBtn.addEventListener('click', resetFilters);
-            
-            // امکان فیلتر با اینتر در جستجوی آزاد
-            document.getElementById('searchFilter').addEventListener('keyup', function(e) {
-                if (e.key === 'Enter') {
-                    applyFilters();
-                }
-            });
-        });
-    </script>
-
+ 
+ 
+  
  
     
     <div class="col-lg-10 m-auto">

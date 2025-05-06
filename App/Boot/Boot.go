@@ -126,7 +126,7 @@ type EscapeExport struct {
 	CreatorName     string           `gorm:"size:255;"`
 	InventoryNumber int32            `gorm:"size:255;"`
 	ExportProducts  []ExportProducts `gorm:"foreignKey:ExportID"`
-	// Inventory       Inventory        `gorm:"foreignKey:InventoryNumber"`
+	InventoryName   string           `gorm:"size:255;"`
 }
 type EscapeExportProducts struct {
 	ID          uint64  `gorm:"primaryKey"`

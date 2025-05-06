@@ -39,7 +39,7 @@
         </thead>
         <tbody dir="rtl">
           {{range .users}}
-          <tr>
+          <tr class="superadmin{{.ID}}" >
             <th scope="row">{{.ID}}</th>
             <td>{{.Name}}</td>
             <td dir="ltr" style="text-align:right;">{{.Phonenumber}}</td>

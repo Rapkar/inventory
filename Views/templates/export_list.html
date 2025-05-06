@@ -50,9 +50,9 @@
             <th class="d-none d-md-table-cell" scope="col">قیمت کل خرید</th>
             <th class="d-none d-md-table-cell" scope="col">مالیات</th>
             <th class="d-none d-md-table-cell" scope="col">تاریخ خرید</th>
-            <th class="d-none d-md-table-cell" scope="col">شماره انبار</th>
+            <th class="d-none d-md-table-cell" scope="col"> انبار</th>
             {{if eq .HasDraft true}}
-            <th class="d-none d-md-table-cell" scope="col">پیش فاکتور</th>
+            <th class="d-none d-md-table-cell" scope="col">فاکتور نهایی</th>
 
             {{else}}
             <th class="d-none d-md-table-cell" scope="col">فاکتور نهایی</th>
@@ -77,10 +77,10 @@
               .TotalPrice}}</td>
             <td dir="ltr" class="Tax d-none d-md-table-cell" style="text-align:right;">{{.Tax}}</td>
             <td dir="" class="CreatedAt d-none d-md-table-cell" style="text-align:right;">{{.CreatedAt}}</td>
-            <td dir="" class="InventoryNumber d-none d-md-table-cell" style="text-align:right;">{{.InventoryNumber}}
+            <td dir="" class="InventoryNumber d-none d-md-table-cell" style="text-align:right;">{{.InventoryName}}
             </td>
 
-            <td dir="" class="InventoryNumber " style="text-align:right;">
+            <td dir="" class=" " style="text-align:right;">
               <label class="switch">
                 {{if eq $.HasDraft true}}
                 <input id="draft" class="draft" Export-id="{{.ID}}" {{if eq .Draft true}}checked{{end}} name="draft"

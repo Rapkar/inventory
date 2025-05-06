@@ -6,6 +6,7 @@ import (
 	"inventory/App/Boot"
 	"inventory/App/Utility"
 	"log"
+	"slices"
 	"strconv"
 	"strings"
 
@@ -42,41 +43,74 @@ func GetAllExports() []Boot.EscapeExport {
 
 	return EscapeExport
 }
-
-func GetAllExportsByPaginate(offset int, limit int, draft bool) []Boot.EscapeExport {
-	var Export []Boot.EscapeExport
+func GetAllExportsLimited() []Boot.EscapeExport {
+	var Export []Boot.Export
 	var EscapeExport []Boot.EscapeExport
 	db := Boot.DB()
-	if draft {
-		if err := db.Model(&Boot.Export{}).Select("*").Where("draft", true).Offset(offset).Limit(limit).Order("id DESC").Scan(&Export).Error; err != nil {
-			log.Println("❌ err in GetAllExportsByPaginate", err)
-		}
-	} else {
-		if err := db.Model(&Boot.Export{}).Select("*").Where("draft", false).Offset(offset).Limit(limit).Order("id DESC").Scan(&Export).Error; err != nil {
-			log.Println("❌ err in GetAllExportsByPaginate", err)
-		}
+
+	// ترتیب نزولی براساس CreatedAt یا ID برای دریافت آخرین‌ها
+	if err := db.Model(&Boot.Export{}).
+		Order("created_at DESC"). // یا: Order("id DESC")
+		Limit(5).                 // تعداد دلخواه
+		Scan(&Export).Error; err != nil {
+		log.Println("❌ err in GetAllExportsLimited:", err)
 	}
+
+	// برعکس کردن برای نمایش از قدیمی به جدید (اختیاری برای نمودار)
+	slices.Reverse(Export)
 
 	EscapeExport = make([]Boot.EscapeExport, len(Export))
-
 	for i, value := range Export {
-		var escapeExport Boot.EscapeExport
-		escapeExport.ID = value.ID
-		escapeExport.Name = value.Name
-		escapeExport.Address = value.Address
-		escapeExport.Number = value.Number
-		escapeExport.Phonenumber = value.Phonenumber
-		escapeExport.Tax = value.Tax
-		escapeExport.InventoryNumber = value.InventoryNumber
-		escapeExport.ExportProducts = value.ExportProducts
-		escapeExport.CreatedAt = value.CreatedAt
-		escapeExport.TotalPrice = value.TotalPrice
-		// Add other fields here...
-		EscapeExport[i] = escapeExport
+		EscapeExport[i] = Boot.EscapeExport{
+			ID:              value.ID,
+			Name:            value.Name,
+			Address:         value.Address,
+			Number:          value.Number,
+			Phonenumber:     value.Phonenumber,
+			Tax:             value.Tax,
+			InventoryNumber: int32(value.InventoryID),
+			ExportProducts:  value.ExportProducts,
+			CreatedAt:       value.CreatedAt,
+			TotalPrice:      value.TotalPrice,
+		}
 	}
-
 	return EscapeExport
 }
+func GetAllExportsByPaginate(offset int, limit int, draft bool) []Boot.EscapeExport {
+	var exports []Boot.Export
+	var escapeExports []Boot.EscapeExport
+
+	db := Boot.DB()
+	query := db.Model(&Boot.Export{}).Preload("Inventory").
+		Where("draft = ?", draft).
+		Offset(offset).Limit(limit).
+		Order("id DESC")
+
+	if err := query.Find(&exports).Error; err != nil {
+		log.Println("❌ err in GetAllExportsByPaginate:", err)
+		return escapeExports
+	}
+
+	escapeExports = make([]Boot.EscapeExport, len(exports))
+	for i, value := range exports {
+		escapeExports[i] = Boot.EscapeExport{
+			ID:              value.ID,
+			Name:            value.Name,
+			Address:         value.Address,
+			Number:          value.Number,
+			Phonenumber:     value.Phonenumber,
+			Tax:             value.Tax,
+			InventoryNumber: int32(value.InventoryID),
+			ExportProducts:  value.ExportProducts,
+			CreatedAt:       value.CreatedAt,
+			TotalPrice:      value.TotalPrice,
+			InventoryName:   value.Inventory.Name, // ✅ اینجا مقدار از رابطه پر میشه
+		}
+	}
+
+	return escapeExports
+}
+
 func GetAllPaymentsByPaginate(offset int, limit int) []Boot.Payments {
 	var Payments []Boot.Payments
 	Boot.DB().Model(&Boot.Payments{}).
@@ -400,6 +434,7 @@ func GetAllExportsByPhoneAndName(searchTerm string) []Boot.EscapeExport {
 
 	db := Boot.DB()
 	err := db.Model(&Boot.Export{}).
+		Preload("Inventory").
 		Where("name LIKE ? OR phonenumber LIKE ? OR number LIKE ?",
 			"%"+searchTerm+"%", "%"+searchTerm+"%", "%"+searchTerm+"%").
 		Find(&exports).Error
@@ -422,7 +457,8 @@ func GetAllExportsByPhoneAndName(searchTerm string) []Boot.EscapeExport {
 			ExportProducts:  value.ExportProducts,
 			CreatedAt:       value.CreatedAt,
 			TotalPrice:      value.TotalPrice,
-			// اگر فیلد دیگه‌ای هست اضافه کن
+			Draft:           value.Draft,
+			InventoryName:   value.Inventory.Name,
 		}
 	}
 
@@ -434,10 +470,10 @@ func GetAllPaymentsByAttribiute(searchTerm string) []Boot.PaymentWithExportAndUs
 
 	db := Boot.DB()
 	err := db.Table("payments").
-		Select("payments.*, exports.number as export_number, users.name as user_name").
+		Select("payments.*, exports.number as export_number, users.name as user_name, users.phonenumber as phonenumber").
 		Joins("LEFT JOIN exports ON exports.id = payments.export_id").
 		Joins("LEFT JOIN users ON users.id = payments.user_id").
-		Where("payments.created_at LIKE ? OR payments.number LIKE ?  OR users.name LIKE ?", "%"+searchTerm+"%", "%"+searchTerm+"%", "%"+searchTerm+"%").
+		Where("payments.created_at LIKE ? OR payments.number LIKE ?  OR users.name LIKE ? OR users.phonenumber LIKE ?", "%"+searchTerm+"%", "%"+searchTerm+"%", "%"+searchTerm+"%", "%"+searchTerm+"%").
 		Scan(&result).Error
 
 	if err != nil {
@@ -620,6 +656,8 @@ func GetPaymentNumberByExportId(ExportNumber string) ([]Boot.Payments, []Boot.Ex
 		First(&export).Error; err != nil {
 
 		if errors.Is(err, gorm.ErrRecordNotFound) {
+			log.Printf("❌ export with number %s not found", ExportNumber)
+
 			return nil, nil, fmt.Errorf("export with number %s not found", ExportNumber)
 		}
 		log.Printf("❌ Database error in finding export: %v", err)

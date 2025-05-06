@@ -208,6 +208,88 @@ func GetUserFullDetailsByID(userID uint64) (UserFullDetails, error) {
 
 	return result, nil
 }
+func GetTotalPayment(c *gin.Context) (float64, error) {
+
+	var total float64
+	if err := Boot.DB().Model(&Boot.Payments{}).Select("SUM(total_price)").Scan(&total).Error; err != nil {
+		log.Fatal("GetTotalPayment err:", err)
+		return 0, err
+	}
+
+	return total, nil
+}
+func GetTotalIncome(c *gin.Context) (float64, error) {
+
+	var totalIncome float64
+	err := Boot.DB().Model(&Boot.Payments{}).
+		Select("SUM(total_price)").
+		Where("status = ?", "collected").
+		Scan(&totalIncome).Error
+
+	if err != nil {
+		log.Printf("GetTotalIncome error: %v", err)
+		return 0, err
+	}
+
+	return totalIncome, nil
+}
+func GetTotalPrices(c *gin.Context) (float64, error) {
+
+	var TotalPrice float64
+	err := Boot.DB().Model(&Boot.Export{}).
+		Select("SUM(total_price)").
+		Scan(&TotalPrice).Error
+
+	if err != nil {
+		log.Printf("GetTotalIncome error: %v", err)
+		return 0, err
+	}
+
+	return TotalPrice, nil
+}
+func GetTotalPaymentByDateRange(c *gin.Context, fromDate, toDate string) (float64, error) {
+	var total float64
+	err := Boot.DB().Model(&Boot.Payments{}).
+		Select("SUM(total_price)").
+		Where("created_at BETWEEN ? AND ?", fromDate, toDate).
+		Scan(&total).Error
+
+	if err != nil {
+		log.Printf("GetTotalPaymentByDateRange error: %v", err)
+		return 0, err
+	}
+
+	return total, nil
+}
+func GetTotalIncomeByDateRange(c *gin.Context, fromDate, toDate string) (float64, error) {
+	var totalIncome float64
+	err := Boot.DB().Model(&Boot.Payments{}).
+		Select("SUM(total_price)").
+		Where("status = ? AND created_at BETWEEN ? AND ?", "collected", fromDate, toDate).
+		Scan(&totalIncome).Error
+
+	if err != nil {
+		log.Printf("GetTotalIncomeByDateRange error: %v", err)
+		return 0, err
+	}
+
+	return totalIncome, nil
+}
+func GetTotalPriceByDateRange(c *gin.Context, fromDate, toDate string) (float64, error) {
+	var totalIncome float64
+	err := Boot.DB().Model(&Boot.Export{}).
+		Select("SUM(total_price)").
+		Where("created_at BETWEEN ? AND ?", fromDate, toDate).
+		Scan(&totalIncome).Error
+
+	if err != nil {
+		log.Printf("GetTotalPriceByDateRange error: %v", err)
+		return 0, err
+	}
+
+	return totalIncome, nil
+}
+
 func ChangeExportDraftStatus(id uint64, value bool) bool {
 	// result := Boot.DB().Model(&Boot.Export{}).Where("id = ?", id).Update("draft", value)
 

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>مشاهده لاگ</title>
+  <style>
+    #logContent {
+      white-space: pre-wrap;
+      background-color: #f0f0f0;
+      border: 1px solid #ccc;
+      padding: 1rem;
+      max-height: 400px;
+      overflow-y: scroll;
+      font-family: monospace;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <a href="#" onclick="loadLog()">📄 مشاهده لاگ</a>
+  <div id="logContent"></div>
+
+  <script>
+    function loadLog() {
+      fetch('/Dashboard/logs')
+        .then(response => response.text())
+        .then(data => {
+          document.getElementById('logContent').textContent = data;
+        })
+        .catch(err => {
+          document.getElementById('logContent').textContent = 'خطا در دریافت لاگ';
+          console.error(err);
+        });
+    }
+  </script>
+</body>
+</html>

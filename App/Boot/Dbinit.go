@@ -1,6 +1,7 @@
 package Boot
 
 import (
+	"compress/gzip"
 	"errors"
 	"fmt"
 	"inventory/App/Utility"
@@ -9,6 +10,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"sort"
 	"strings"
 	"time"
 
@@ -400,6 +402,10 @@ func Init() {
 // 	}
 
 // }
+
+const backupDir = "./backups"
+const maxBackups = 5 // مثلاً ۵ عدد آخر رو نگه داریم
+
 func TakeBackup2(fs afero.Fs, backupType int) error {
 	// خواندن تنظیمات از محیط
 	viper.SetConfigFile(".env")
@@ -428,18 +434,19 @@ func TakeBackup2(fs afero.Fs, backupType int) error {
 	if dbUser == "" || dbName == "" || dbPass == "" {
 		return errors.New("تنظیمات دیتابیس ناقص است")
 	}
+	fs.MkdirAll(backupDir, 0755)
 
-	// ایجاد نام فایل بکاپ
-	backupTime := time.Now().Add(-time.Hour * 24 * time.Duration(backupType))
-	backupName := fmt.Sprintf("backup-%s.sql", backupTime.Format("2006-01-02-15-04-05"))
+	backupTime := time.Now()
+	filename := fmt.Sprintf("backup-%d-%s.sql", backupType, backupTime.Format("2006-01-02-15-04-05"))
+	backupPath := filepath.Join(backupDir, filename)
 
-	// اجرای دستور mysqldump
+	// اجرای mysqldump
 	cmd := exec.Command("mysqldump", "-u", dbUser, dbName)
 	cmd.Env = append(os.Environ(), fmt.Sprintf("MYSQL_PWD=%s", dbPass))
 
-	file, err := fs.Create(backupName)
+	file, err := fs.Create(backupPath)
 	if err != nil {
-		return fmt.Errorf("error in make backup file: %v", err)
+		return fmt.Errorf("cannot create backup file: %v", err)
 	}
 	defer file.Close()
 
@@ -447,38 +454,72 @@ func TakeBackup2(fs afero.Fs, backupType int) error {
 	cmd.Stderr = os.Stderr
 
 	if err := cmd.Run(); err != nil {
-		return fmt.Errorf("eror in  mysqldump: %v", err)
+		return fmt.Errorf("mysqldump failed: %v", err)
 	}
 
-	// مدیریت فایل‌های قدیمی
-	if err := manageOldBackups(fs, backupType, backupTime); err != nil {
-		log.Printf("error in manage old backup files: %v", err)
+	// فشرده‌سازی فایل
+	if err := compressFile(fs, backupPath); err != nil {
+		return fmt.Errorf("gzip compress failed: %v", err)
 	}
 
-	log.Printf("✅ created backup success %s", backupName)
+	// حذف فایل .sql پس از فشرده‌سازی
+	fs.Remove(backupPath)
+
+	// پاک‌سازی بکاپ‌های قدیمی
+	if err := cleanupOldBackups(fs, backupType); err != nil {
+		log.Println("⚠️ error in cleanup:", err)
+	}
+
+	log.Println("✅ backup created and compressed:", filename+".gz")
 	return nil
 }
 
-func manageOldBackups(fs afero.Fs, backupType int, backupTime time.Time) error {
-	// تعریف سیاست‌های نگهداری بکاپ‌ها
-	retentionDays := map[int]int{
-		1: 7,   // بکاپ روزانه - نگهداری 7 روز
-		2: 30,  // بکاپ هفتگی - نگهداری 30 روز
-		3: 365, // بکاپ ماهانه - نگهداری 1 سال
+func compressFile(fs afero.Fs, src string) error {
+	srcFile, err := fs.Open(src)
+	if err != nil {
+		return err
+	}
+	defer srcFile.Close()
+
+	dstFile, err := fs.Create(src + ".gz")
+	if err != nil {
+		return err
+	}
+	defer dstFile.Close()
+
+	writer := gzip.NewWriter(dstFile)
+	defer writer.Close()
+
+	_, err = io.Copy(writer, srcFile)
+	return err
+}
+
+func cleanupOldBackups(fs afero.Fs, backupType int) error {
+	files, err := afero.ReadDir(fs, backupDir)
+	if err != nil {
+		return err
 	}
 
-	days, exists := retentionDays[backupType]
-	if !exists {
-		return nil
+	var matched []os.FileInfo
+	prefix := fmt.Sprintf("backup-%d-", backupType)
+
+	for _, f := range files {
+		if strings.HasPrefix(f.Name(), prefix) && strings.HasSuffix(f.Name(), ".sql.gz") {
+			matched = append(matched, f)
+		}
 	}
 
-	oldBackupTime := backupTime.Add(-time.Hour * 24 * time.Duration(days))
-	oldBackupName := fmt.Sprintf("backup-%s.sql", oldBackupTime.Format("2006-01-02-15-04-05"))
+	// مرتب‌سازی قدیمی‌ترین به جدیدترین
+	sort.Slice(matched, func(i, j int) bool {
+		return matched[i].ModTime().Before(matched[j].ModTime())
+	})
 
-	if err := fs.Remove(oldBackupName); err != nil && !os.IsNotExist(err) {
-		return fmt.Errorf("error in remove old backup files: %v", err)
+	// حذف اضافی‌ها
+	if len(matched) > maxBackups {
+		for _, old := range matched[:len(matched)-maxBackups] {
+			fs.Remove(filepath.Join(backupDir, old.Name()))
+		}
 	}
-
 	return nil
 }
 func ScheduleBackups() {
@@ -486,7 +527,7 @@ func ScheduleBackups() {
 	go func() {
 		for {
 			TakeBackup2(afero.NewOsFs(), 1)
-			time.Sleep(24 * time.Hour)
+			time.Sleep(1 * time.Minute)
 		}
 	}()
 
@@ -533,6 +574,53 @@ func GetBackupList(fs afero.Fs, baseURL string) ([]BackupFile, error) {
 	// بقیه کد مانند قبل...
 	return backups, nil
 }
+func GetBackupList2(fs afero.Fs, baseURL string) ([]BackupFile, error) {
+	var backups []BackupFile
+
+	// فقط پوشه backups رو بخون
+	err := afero.Walk(fs, "backups", func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
+		if !info.IsDir() && strings.HasPrefix(info.Name(), "backup-") && strings.HasSuffix(info.Name(), ".sql.gz") {
+			// timeStr := strings.TrimPrefix(info.Name(), "backup-")
+			// timeStr = strings.TrimSuffix(timeStr, ".sql.gz")
+
+			parts := strings.SplitN(info.Name(), "-", 3)
+			if len(parts) < 3 {
+				log.Printf("نام فایل بک‌آپ معتبر نیست: %s", info.Name())
+				return nil
+			}
+
+			timeStr := strings.TrimSuffix(parts[2], ".sql.gz")
+			backupTime, err := time.Parse("2006-01-02-15-04-05", timeStr)
+			if err != nil {
+				log.Printf("خطا در تجزیه تاریخ فایل بک‌آپ %s: %v", info.Name(), err)
+				return nil
+			}
+
+			// ساخت لینک دانلود
+			downloadURL := fmt.Sprintf("%s/backups/%s", strings.TrimRight(baseURL, "/"), info.Name())
+
+			backups = append(backups, BackupFile{
+				Name:        info.Name(),
+				Size:        info.Size(),
+				ModTime:     info.ModTime(),
+				BackupTime:  backupTime,
+				DownloadURL: downloadURL,
+			})
+		}
+		fmt.Println("sssss2")
+		return nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return backups, nil
+}
 
 type BackupFile struct {
 	Name        string    `json:"name"`        // نام فایل
@@ -550,26 +638,26 @@ func RemoveFileName(t time.Time, backupName string, ordertiem int) string {
 	return oldBackupName
 }
 
-func PeroudBackup() {
-	is := 1
-	// oldbackupName := ""
-	ticker := time.NewTicker(24 * time.Hour)
-	fs := afero.NewOsFs()
-	for range ticker.C {
-		fmt.Println("\n in parent round number is =", is)
+// func PeroudBackup() {
+// 	is := 1
+// 	// oldbackupName := ""
+// 	ticker := time.NewTicker(24 * time.Hour)
+// 	fs := afero.NewOsFs()
+// 	for range ticker.C {
+// 		fmt.Println("\n in parent round number is =", is)
 
-		if is == 1 {
-			TakeBackup2(fs, 1)
-		} else if is == 2 {
-			TakeBackup2(fs, 2)
-		} else if is == 3 {
-			TakeBackup2(fs, 3)
-		} else if is == 4 {
-			TakeBackup2(fs, 4)
-			is = 0
-		}
-		is++
-		// fmt.Println("number=", is, " name=", oldbackupName)
+// 		if is == 1 {
+// 			TakeBackup2(fs, 1)
+// 		} else if is == 2 {
+// 			TakeBackup2(fs, 2)
+// 		} else if is == 3 {
+// 			TakeBackup2(fs, 3)
+// 		} else if is == 4 {
+// 			TakeBackup2(fs, 4)
+// 			is = 0
+// 		}
+// 		is++
+// 		// fmt.Println("number=", is, " name=", oldbackupName)
 
-	}
-}
+// 	}
+// }
