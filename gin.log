@@ -2,40 +2,41 @@
  - using env:	export GIN_MODE=release
  - using code:	gin.SetMode(gin.ReleaseMode)
 
-[GIN-debug] Loaded HTML Templates (33): 
+[GIN-debug] Loaded HTML Templates (34): 
+	- add_product.html
+	- export_edit.html
+	- login.html
+	- test.html
+	- danger_notif
+	- error.html
+	- export.html
+	- 
+	- production.html
+	- header.html
+	- payments.html
+	- charts.html
+	- danger.html
+	- dashboard.html
+	- navbar.html
+	- navbar
+	- users.html
+	- footer.html
+	- header
+	- inventory.html
 	- inventories.html
 	- logs.html
 	- 404.html
-	- danger.html
-	- danger_notif
-	- exportshow.html
-	- test.html
-	- backups.html
-	- dashboard.html
 	- details_user.html
-	- navbar.html
-	- login.html
-	- payments.html
-	- success_notif
-	- 
-	- add_product.html
-	- export_list.html
-	- header
-	- production.html
-	- users.html
-	- error.html
-	- header.html
-	- inventory_edit.html
-	- navbar
-	- admins.html
-	- inventory.html
-	- charts.html
-	- export.html
-	- footer.html
-	- success.html
-	- edit_user.html
-	- export_edit.html
 	- home.html
+	- success.html
+	- backups.html
+	- export_list.html
+	- inventory_edit.html
+	- exportshow.html
+	- success_notif
+	- add_payment.html
+	- admins.html
+	- edit_user.html
 
 [GIN-debug] GET    /assets/*filepath         --> github.com/gin-gonic/gin.(*RouterGroup).createStaticHandler.func1 (3 handlers)
 [GIN-debug] HEAD   /assets/*filepath         --> github.com/gin-gonic/gin.(*RouterGroup).createStaticHandler.func1 (3 handlers)
@@ -78,29 +79,35 @@
 [GIN-debug] POST   /Dashboard/payment-find   --> main.main.func40 (5 handlers)
 [GIN-debug] POST   /Dashboard/draft          --> main.main.func41 (5 handlers)
 [GIN-debug] GET    /Dashboard/payments       --> main.main.func42 (5 handlers)
-[GIN-debug] GET    /Dashboard/inventories    --> main.main.func43 (5 handlers)
-[GIN-debug] GET    /Dashboard/deleteinventories --> main.main.func44 (5 handlers)
-[GIN-debug] GET    /Dashboard/editinventory  --> main.main.func45 (5 handlers)
-[GIN-debug] POST   /Dashboard/updateinventory --> main.main.func46 (5 handlers)
-[GIN-debug] POST   /Dashboard/createinventory --> main.main.func47 (5 handlers)
-[GIN-debug] GET    /Dashboard/createinventory --> main.main.func48 (5 handlers)
-[GIN-debug] GET    /backups/:filename        --> main.main.func49 (4 handlers)
-[GIN-debug] GET    /Dashboard/charts         --> main.main.func50 (5 handlers)
-[GIN-debug] GET    /Dashboard/charts/between --> main.main.func51 (5 handlers)
-[GIN-debug] GET    /Dashboard/deletePayments --> main.main.func52 (5 handlers)
-[GIN-debug] GET    /Dashboard/exportshow     --> main.main.func53 (5 handlers)
-[GIN-debug] GET    /Dashboard/exportedit     --> main.main.func54 (5 handlers)
-[GIN-debug] POST   /Dashboard/getpaymentsbyexportid --> main.main.func55 (5 handlers)
-[GIN-debug] GET    /Dashboard/backup         --> main.main.func56 (5 handlers)
-[GIN-debug] GET    /Dashboard/logs           --> main.main.func57 (5 handlers)
+[GIN-debug] GET    /Dashboard/payment/add    --> main.main.func43 (5 handlers)
+[GIN-debug] GET    /Dashboard/inventories    --> main.main.func44 (5 handlers)
+[GIN-debug] GET    /Dashboard/deleteinventories --> main.main.func45 (5 handlers)
+[GIN-debug] GET    /Dashboard/editinventory  --> main.main.func46 (5 handlers)
+[GIN-debug] POST   /Dashboard/balance-adjustments --> inventory/App/Model.CreateBalanceAdjustment (5 handlers)
+[GIN-debug] POST   /Dashboard/balance-adjustments/delete/:id --> inventory/App/Model.DeleteBalanceAdjustment (5 handlers)
+[GIN-debug] POST   /Dashboard/updateinventory/delete/ --> main.main.func47 (5 handlers)
+[GIN-debug] POST   /Dashboard/createinventory --> main.main.func48 (5 handlers)
+[GIN-debug] GET    /Dashboard/createinventory --> main.main.func49 (5 handlers)
+[GIN-debug] GET    /backups/:filename        --> main.main.func50 (4 handlers)
+[GIN-debug] GET    /Dashboard/charts         --> main.main.func51 (5 handlers)
+[GIN-debug] GET    /Dashboard/charts/between --> main.main.func52 (5 handlers)
+[GIN-debug] GET    /Dashboard/deletePayments --> main.main.func53 (5 handlers)
+[GIN-debug] GET    /Dashboard/exportshow     --> main.main.func54 (5 handlers)
+[GIN-debug] GET    /Dashboard/exportedit     --> main.main.func55 (5 handlers)
+[GIN-debug] POST   /Dashboard/getpaymentsbyexportid --> main.main.func56 (5 handlers)
+[GIN-debug] GET    /Dashboard/backup         --> main.main.func57 (5 handlers)
+[GIN-debug] GET    /Dashboard/logs           --> main.main.func58 (5 handlers)
 [GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
 Please check https://pkg.go.dev/github.com/gin-gonic/gin#readme-don-t-trust-all-proxies for details.
 [GIN-debug] Environment variable PORT is undefined. Using port :8080 by default
 [GIN-debug] Listening and serving HTTP on :8080
-[GIN-debug] redirecting request 301: /Dashboard/user/details --> /Dashboard/user/details?user-id=1
-[GIN-debug] redirecting request 301: /Dashboard/user/details --> /Dashboard/user/details?user-id=6
 [GIN-debug] redirecting request 301: /auth/ --> /auth/
 [GIN-debug] redirecting request 301: /Dashboard/ --> /Dashboard/
-[GIN-debug] redirecting request 301: /Dashboard/user/details --> /Dashboard/user/details?user-id=2
 [GIN-debug] redirecting request 301: /Dashboard/ --> /Dashboard/
-[GIN-debug] redirecting request 301: /Dashboard/user/details --> /Dashboard/user/details?user-id=7
+[GIN-debug] redirecting request 301: /Dashboard/ --> /Dashboard/
+[GIN-debug] redirecting request 301: /Dashboard/ --> /Dashboard/
+[GIN-debug] redirecting request 301: /Dashboard/ --> /Dashboard/
+[GIN-debug] redirecting request 301: /Dashboard/ --> /Dashboard/
+[GIN-debug] redirecting request 301: /Dashboard/ --> /Dashboard/
+[GIN-debug] redirecting request 301: /Dashboard/ --> /Dashboard/
+[GIN-debug] redirecting request 301: /Dashboard/ --> /Dashboard/

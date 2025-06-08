@@ -1,7 +1,12 @@
 {{template "header" . }}
-{{template "navbar" . }}
 
 <body>
+  <div class="row">
+
+
+
+    <div class="col-lg-2">{{template "navbar" . }}</div>
+    <div class="col-lg-10">
     <div class="h-100 d-flex align-items-center mt-5">
         <div class="container mt-5 users_box">
             {{if .success}}
@@ -9,6 +14,7 @@
             {{else if eq .success false}}
             {{template "danger_notif" .}}
             {{end}}
+            <div class="table-responsive-sm">
 
 
             <table dir="rtl" id="userlist" class="table table-sm table-dark">
@@ -39,8 +45,10 @@
                     {{end}}
                 </tbody>
             </table>
-
+</div>
         </div>
     </div>
+</div>
+</div>
 
     {{template "footer.html"}}

@@ -52,6 +52,9 @@
     width: 30px  !important;
     height: 30px !important;
 }
+.nav-link{
+  color: #fff !important;
+}
 select{
   height: 40px;
   border:
@@ -150,3 +153,14 @@ input[type="date"] ,#dateFromFilter{
  .superadmin1 , .user1{
 display: none;
  }
+ .nav-link svg{
+    color: #34bb34;
+    position: absolute;
+    left: 3rem;
+  }
+  .nav-link svg.text-red{
+    color: #9b2626 ;
+  }
+  table{
+    box-shadow: -1px 35px 50px #000;
+  }

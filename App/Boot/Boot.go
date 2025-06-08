@@ -153,9 +153,20 @@ type PaymentWithExportAndUser struct {
 	Payments
 	ExportNumber string `json:"export_number"`
 	UserName     string `json:"UserName"`
+	PhoneNumber  string `json:"PhoneNumber"`
 }
 
 type ProductWithInventory struct {
 	Product
 	Inventory
+}
+type BalanceAdjustment struct {
+	ID            uint64  `gorm:"primaryKey"`
+	UserID        uint64  `gorm:"index"`
+	OffsetAmount  float64 // مثبت یا منفی
+	Reason        string
+	CreatedBy     uint64 `gorm:"index"`
+	CreatedAt     string
+	User          Users `gorm:"foreignKey:UserID"` // کاربر مربوطه
+	CreatedByUser Users `gorm:"foreignKey:CreatedBy"`
 }

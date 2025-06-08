@@ -77,7 +77,7 @@ func Init() {
 	// Auto Make Faker Data With Transaction
 	experror := DB().Transaction(func(tx *gorm.DB) error {
 
-		if err := tx.AutoMigrate(&Users{}, &Inventory{}, &Product{}, &Export{}, &ExportProducts{}, &Payments{}); err != nil {
+		if err := tx.AutoMigrate(&Users{}, &Inventory{}, &Product{}, &Export{}, &ExportProducts{}, &Payments{}, &BalanceAdjustment{}); err != nil {
 			log.Fatal("❌ Erro in Create Base Tables . #")
 			return err
 		}
@@ -327,12 +327,30 @@ func Init() {
 			fmt.Println("base Inventory Found")
 		}
 
+		var balanceAdjustment BalanceAdjustment
+		if err := tx.Where("id =?", 1).First(&balanceAdjustment).Error; err != nil {
+			balanceAdjustment = BalanceAdjustment{
+				UserID:       existingUser.ID,
+				OffsetAmount: 0,
+				Reason:       "قیمت اصلاحی",
+				CreatedBy:    existingUser.ID,
+				CreatedAt:    Utility.CurrentTime(),
+			}
+
+			if err := tx.Create(&balanceAdjustment).Error; err != nil {
+				log.Fatal("❌ Erro in insert data to balanceAdjustment Table . #")
+				return err
+			}
+		} else {
+			fmt.Println("base Inventory Found")
+		}
+
 		return err
 
 	})
 
 	if experror != nil {
-		fmt.Println("❌ خطا در تراکنش:", err)
+		fmt.Println("❌ خطا در ساخت دیتابیس ها:", err)
 		return
 	}
 
@@ -527,7 +545,7 @@ func ScheduleBackups() {
 	go func() {
 		for {
 			TakeBackup2(afero.NewOsFs(), 1)
-			time.Sleep(1 * time.Minute)
+			time.Sleep(24 * time.Hour)
 		}
 	}()
 

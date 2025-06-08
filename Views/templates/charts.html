@@ -1,150 +1,165 @@
 {{template "header" . }}
-{{template "navbar" . }}
 
 <body>
-    <style>
-        .table-responsive {
-            margin-top: 20px;
-        }
-        .positive {
-            color: green;
-            font-weight: bold;
-        }
-        .negative {
-            color: red;
-            font-weight: bold;
-        }
-        .summary-card {
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-            padding: 15px;
-        }
-        .assets-card {
-            border-right: 5px solid #3498db;
-        }
-        .income-card {
-            border-right: 5px solid #2ecc71;
-        }
-        .expenses-card {
-            border-right: 5px solid #e74c3c;
-        }
-        .filter-section {
-            background-color: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-        .no-results {
-            display: none;
-            text-align: center;
-            padding: 20px;
-            color: #6c757d;
-        }
-    </style>
-</head>
-<body>
-    <div class="container mt-5">
-        <h1 class="text-center mb-4"> گزارش‌گیری مالی </h1>
-        
-        <!-- بخش فیلترها -->
-        <form method="get" action="/Dashboard/charts/between" class="filter-section">
-            <h5 class="mb-3">فیلتر اطلاعات</h5>
-        
-            <!-- فیلدهای مخفی که مقدار واقعی می‌گیرن -->
-            <!-- <input type="hidden" name="from" id="from">
+    <div class="row">
+
+
+
+        <div class="col-lg-2">{{template "navbar" . }}</div>
+        <div class="col-lg-10">
+            <style>
+                .table-responsive {
+                    margin-top: 20px;
+                }
+
+                .positive {
+                    color: green;
+                    font-weight: bold;
+                }
+
+                .negative {
+                    color: red;
+                    font-weight: bold;
+                }
+
+                .summary-card {
+                    border-radius: 10px;
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                    margin-bottom: 20px;
+                    padding: 15px;
+                }
+
+                .assets-card {
+                    border-right: 5px solid #3498db;
+                }
+
+                .income-card {
+                    border-right: 5px solid #2ecc71;
+                }
+
+                .expenses-card {
+                    border-right: 5px solid #e74c3c;
+                }
+
+                .filter-section {
+                    background-color: #f8f9fa;
+                    padding: 15px;
+                    border-radius: 8px;
+                    margin-bottom: 20px;
+                }
+
+                .no-results {
+                    display: none;
+                    text-align: center;
+                    padding: 20px;
+                    color: #6c757d;
+                }
+            </style>
+
+            <div class="container mt-5">
+                <h1 class="text-center mb-4"> گزارش‌گیری مالی </h1>
+
+                <!-- بخش فیلترها -->
+                <form method="get" action="/Dashboard/charts/between" class="filter-section">
+                    <h5 class="mb-3">فیلتر اطلاعات</h5>
+
+                    <!-- فیلدهای مخفی که مقدار واقعی می‌گیرن -->
+                    <!-- <input type="hidden" name="from" id="from">
             <input type="hidden" name="to" id="to"> -->
-        
-            <div class="row">
-                <div class="col-md-6">
-                    <label for="dateFromFilter" class="form-label">از تاریخ:</label>
-                    <!-- فیلد نمایشی -->
-                    <input type="text" name="from" value="0" id="dateFromFilter" class="form-control">
-                </div>
-                <div class="col-md-6">
-                    <label for="dateToFilter" class="form-label">تا تاریخ:</label>
-                    <!-- فیلد نمایشی -->
-                    <input type="text" name="to"  value="0" id="dateToFilter" class="form-control">
-                </div>
-            </div>
-        
-            <div class="row mt-3">
-                <div class="col-md-3 d-flex align-items-end">
-                    <button type="submit" id="applyFilter" class="btn btn-primary w-100">اعمال فیلتر</button>
-                </div>
-            </div>
-        </form>
-        
 
-        <!-- کارت‌های خلاصه اطلاعات -->
-        <div class="row">
-            <div class="col-md-4">
-                <div class="summary-card assets-card">
-                    <h5>دارایی‌ها</h5>
-                    <h3 class="positive price">{{ printf "%.0f" .TotalPayment}}</h3>
-                    <p class="text-muted">جمع کل دارایی‌های جاری</p>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="dateFromFilter" class="form-label">از تاریخ:</label>
+                            <!-- فیلد نمایشی -->
+                            <input type="text" name="from" value="0" id="dateFromFilter" class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="dateToFilter" class="form-label">تا تاریخ:</label>
+                            <!-- فیلد نمایشی -->
+                            <input type="text" name="to" value="0" id="dateToFilter" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="row mt-3">
+                        <div class="col-md-3 d-flex align-items-end">
+                            <button type="submit" id="applyFilter" class="btn btn-primary w-100">اعمال فیلتر</button>
+                        </div>
+                    </div>
+                </form>
+
+
+                <!-- کارت‌های خلاصه اطلاعات -->
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="summary-card assets-card">
+                            <h5>دارایی‌ها</h5>
+                            <h3 class="positive price">{{ printf "%.0f" .TotalPayment}}</h3>
+                            <p class="text-muted">جمع کل دارایی‌های جاری</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="summary-card income-card">
+                            <h5>درآمدها</h5>
+                            <h3 class="positive price">{{printf "%.0f" .GetTotalIncome}}</h3>
+                            <p class="text-muted">کل درآمد دوره</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="summary-card expenses-card">
+                            <h5>هزینه‌ها</h5>
+                            <h3 class="negative price">{{printf "%.0f" .GetTotalPrices}}</h3>
+                            <p class="text-muted">کل هزینه‌های دوره</p>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="col-md-4">
-                <div class="summary-card income-card">
-                    <h5>درآمدها</h5>
-                    <h3 class="positive price">{{printf "%.0f" .GetTotalIncome}}</h3>
-                    <p class="text-muted">کل درآمد دوره</p>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="summary-card expenses-card">
-                    <h5>هزینه‌ها</h5>
-                    <h3 class="negative price">{{printf "%.0f" .GetTotalPrices}}</h3>
-                    <p class="text-muted">کل هزینه‌های دوره</p>
+
+
+                <!-- گزارش سود و زیان -->
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header bg-success text-white">
+                                <h5 class="card-title mb-0">گزارش سود و زیان</h5>
+                            </div>
+                            <div class="card-body">
+                                <table class="table">
+                                    <tr>
+                                        <td>کل درآمدها:</td>
+                                        <td class="text-end positive price">{{ printf "%.0f" .TotalPayment}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>کل هزینه‌ها:</td>
+                                        <td class="text-end negative price">{{printf "%.0f" .GetTotalPrices}}</td>
+                                    </tr>
+                                    <tr class="table-active">
+                                        <td><strong>سود خالص:</strong></td>
+                                        <td class="text-end positive price">{{printf "%.0f" .GetTotalProfit}}</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="col-lg-10 m-auto">
+                            <canvas id="myChart"></canvas>
+
+                        </div>
+
+                    </div>
                 </div>
             </div>
         </div>
 
 
-        <!-- گزارش سود و زیان -->
-        <div class="row mt-4">
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header bg-success text-white">
-                        <h5 class="card-title mb-0">گزارش سود و زیان</h5>
-                    </div>
-                    <div class="card-body">
-                        <table class="table">
-                            <tr>
-                                <td>کل درآمدها:</td>
-                                <td class="text-end positive price">{{ printf "%.0f" .TotalPayment}}</td>
-                            </tr>
-                            <tr>
-                                <td>کل هزینه‌ها:</td>
-                                <td class="text-end negative price">{{printf "%.0f" .GetTotalPrices}}</td>
-                            </tr>
-                            <tr class="table-active">
-                                <td><strong>سود خالص:</strong></td>
-                                <td class="text-end positive price">{{printf "%.0f" .GetTotalProfit}}</td>
-                            </tr>
-                        </table>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="col-lg-10 m-auto">
-                    <canvas id="myChart"></canvas>
 
-                </div>
 
-            </div>
-        </div>
+
+
+        <div class="col-lg-10 m-auto">
+            <canvas id="myPieChart"></canvas>
+
         </div>
     </div>
 
- 
- 
-  
- 
-    
-    <div class="col-lg-10 m-auto">
-        <canvas id="myPieChart"></canvas>
 
-    </div>
     {{template "footer.html"}}

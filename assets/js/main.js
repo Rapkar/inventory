@@ -18,7 +18,10 @@ let draft = false;
 const directpaynumber = "PMT-" + Math.floor(Math.random() * 1000000)
 
 function fetchAndLogPaymentsAndExportProducts() {
-    if (Payments.length < 1 && document.getElementById("ExportNumber") && document.getElementById("ExportID").length > 0) {
+
+    if (Payments.length < 1 && document.getElementById("ExportID") && document.getElementById("ExportID").value > 0) {
+        console.log(Payments.length < 1, document.getElementById("ExportID"), document.getElementById("ExportID").value > 0)
+
         return jQuery.ajax({
             method: "POST",
             url: "/Dashboard/getpaymentsbyexportid",
@@ -58,7 +61,7 @@ function fetchAndLogPaymentsAndExportProducts() {
         })
     }
 }
-if (document.getElementById("ExportNumber") && document.getElementById("ExportID").length > 0) {
+if (document.getElementById("ExportID") && document.getElementById("ExportID").value > 0) {
 
     fetchAndLogPaymentsAndExportProducts().then(function () {
 
@@ -891,7 +894,7 @@ jQuery("#Userfind").on("click", function (e) {
                 let html = "";
                 msg.users.forEach(function (index) {
 
-                    html += '<tr   class="user'+ index.ID +'" attr-id="' + index.ID + '">';
+                    html += '<tr   class="user' + index.ID + '" attr-id="' + index.ID + '">';
                     html += '<td class="id" style="text-align:right;">' + index.ID + '</td>';
                     html += '<td class="' + index.Name + '" style="text-align:right;">' + index.Name + '</td>';
 
@@ -1293,9 +1296,10 @@ function ToFaDigit(val) {
     return convertToFa
 }
 function renderChecksTable() {
-    if (checksTableBody && Payments.length != 0) {
+    if (checksTableBody) {
         checksTableBody.innerHTML = '';
     }
+    console.log(checks)
     checks.forEach((check, index) => {
         const row = document.createElement('tr');
 
@@ -1372,6 +1376,7 @@ function renderChecksTable() {
                         return; // برای توقف حلقه بعد از حذف
                     }
                 });
+
                 renderChecksTable();
             }
         });
@@ -1591,43 +1596,48 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 });
-
 document.addEventListener('DOMContentLoaded', function () {
-    const measurementSystem = document.querySelector('select[name="MeasurementSystem"]');
+    // انتخاب تمام رادیو باتن‌ها با نام MeasurementSystem
+    const measurementRadios = document.querySelectorAll('input[name="MeasurementSystem"]');
 
-    if (measurementSystem) {
-        // For edit mode
-        measurementSystem.addEventListener('change', function () {
-            const selectedValue = this.value;
+    if (measurementRadios.length > 0) {
+        // برای حالت ویرایش و نمایش
+        measurementRadios.forEach(radio => {
+            radio.addEventListener('change', function () {
+                const selectedValue = this.value;
+                // jQuery("#addproduct input[type='number'],#addproduct input[type='text']").val("")
+                // مخفی کردن تمام بخش‌ها
+                document.querySelectorAll('[id$="-section"]').forEach(section => {
+                    section.style.display = 'none';
+                });
 
-            // Hide all sections first
-            document.querySelectorAll('[id$="-section"]').forEach(section => {
-                section.style.display = 'none';
+                // نمایش بخش انتخاب شده
+                if (selectedValue) {
+                    const section = document.getElementById(selectedValue + '-section');
+                    if (section) {
+                        section.style.display = 'block';
+                    }
+                }
             });
 
-            // Show selected section
-            if (selectedValue) {
-                document.getElementById(selectedValue + '-section').style.display = 'block';
+            // اگر رادیویی از قبل انتخاب شده باشد، رویداد change را اجرا کن
+            if (radio.checked) {
+                radio.dispatchEvent(new Event('change'));
             }
         });
-
-        // Trigger change event on page load for edit mode
-        if (measurementSystem.value) {
-            measurementSystem.dispatchEvent(new Event('change'));
-        }
     } else {
-        // For add mode
+        // برای حالت اضافه کردن (اگر هنوز از select استفاده شود)
         const addModeSelect = document.getElementById('measurement-system');
         if (addModeSelect) {
             addModeSelect.addEventListener('change', function () {
                 const selectedValue = this.value;
 
-                // Hide all sections first
+                // مخفی کردن تمام بخش‌ها
                 document.querySelectorAll('[id$="-section"]').forEach(section => {
                     section.style.display = 'none';
                 });
 
-                // Show selected section
+                // نمایش بخش انتخاب شده
                 if (selectedValue) {
                     document.getElementById(selectedValue + '-section').style.display = 'block';
                 }
@@ -1636,40 +1646,105 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
-// FechPaymentS
+jQuery("form[name='balance-adjustments-offset_amount']").submit(function (e) {
+    e.preventDefault();
+    const form = jQuery(this);
+    const user_id = jQuery("input[name='user_id']").val();
+    const offset_amount = jQuery("input[name='offset_amount']").val();
+    const created_by = jQuery("input[name='created_by']").val();
+    const reason = jQuery("textarea[name='reason']").val(); // اختیاری
 
-/**
- * دریافت لیست پرداخت‌ها بر اساس ExportID
- * @param {string} ExportID - شناسه صادراتی مورد نظر
- * @param {string} token - توکن احراز هویت
- * @returns {Promise<Object>} - نتیجه درخواست
- */
-// async function getPaymentsByExportId() {
-//     try {
-//         const apiUrl = `/Dashboard/getpaymentsbyexportid?ExportNumber=${encodeURIComponent(ExportID)}`;
+    jQuery.ajax({
+        method: "POST",
+        url: "/Dashboard/balance-adjustments",
+        data: JSON.stringify({
+            user_id: parseInt(user_id),
+            offset_amount: parseFloat(offset_amount),
+            created_by: parseInt(created_by),
+            reason: reason,
+        }),
+        contentType: "application/json; charset=utf-8",
+    })
+        .done(function (msg) {
+            if (msg.message == "sucess") {
+                alert("با موفقیت ثبت شد");
+                $("#DebtAmount").modal("hide");
+                form[0].reset();
+                  location.reload();
+            }
+        })
+        .fail(function (msg) {
+            alert("خطا در ارسال اطلاعات");
+        });
+});
 
-//         const response = await fetch(apiUrl, {
-//             method: 'GET',
-//             headers: {
-//                 'Content-Type': 'application/json',
-//                 'Accept-Language': 'fa-IR' // برای پیام‌های فارسی
-//             }
-//         });
+jQuery(".deleteadjustments").on("click", function (e) {
+    e.preventDefault();
 
-//         if (!response.ok) {
-//             const errorData = await response.json();
-//             throw new Error(errorData.error || 'خطا در دریافت اطلاعات');
-//         }
+    const data_id = $(this).attr("data-id");
 
-//         const result = await response.json();
+    const confirmed = confirm("آیا از حذف این مورد مطمئن هستید؟");
 
-//         if (result.message && result.data) {
-//             return result.data; // بازگرداندن داده‌های پرداخت
-//         } else {
-//             throw new Error('فرمت پاسخ سرور نامعتبر است');
-//         }
-//     } catch (error) {
-//         console.error('❌ خطا در دریافت پرداخت‌ها:', error.message);
-//         throw error; // پرتاب مجدد خطا برای مدیریت توسط caller
-//     }
-// }
+    if (!confirmed) return;
+
+    jQuery.ajax({
+        method: "POST",
+        url: "/Dashboard/balance-adjustments/delete/" + data_id, // ID در URL
+        contentType: "application/json; charset=utf-8",
+    })
+        .done(function (msg) {
+            alert("با موفقیت حذف شد");
+            location.reload(); // رفرش صفحه بعد از حذف
+        })
+        .fail(function (msg) {
+            alert("خطا در حذف اطلاعات");
+        });
+});
+document.addEventListener("DOMContentLoaded", function () {
+  const roleSelect = document.querySelector("select[name='Role']");
+  const emailPasswordFields = document.querySelectorAll(".email-password");
+  const emailInput = document.querySelector("input[name='Email']");
+  const passwordInput = document.querySelector("input[name='Password']");
+
+  function toggleFields() {
+    if (!roleSelect) return;
+
+    if (roleSelect.value === "guest") {
+      emailPasswordFields?.forEach(el => {
+        el.style.display = "none";
+      });
+
+      if (emailInput) {
+        emailInput.disabled = true;
+        emailInput.removeAttribute("required");
+        emailInput.value = "";
+      }
+
+      if (passwordInput) {
+        passwordInput.disabled = true;
+        passwordInput.removeAttribute("required");
+        passwordInput.value = "";
+      }
+    } else {
+      emailPasswordFields?.forEach(el => {
+        el.style.display = "";
+      });
+
+      if (emailInput) {
+        emailInput.disabled = false;
+        emailInput.setAttribute("required", "required");
+      }
+
+      if (passwordInput) {
+        passwordInput.disabled = false;
+        passwordInput.setAttribute("required", "required");
+      }
+    }
+  }
+
+  // اگر همه چی هست، اجراش کن
+  if (roleSelect) {
+    toggleFields(); // بار اول، بر اساس نقش فعلی
+    roleSelect.addEventListener("change", toggleFields);
+  }
+});

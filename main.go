@@ -116,7 +116,7 @@ func main() {
 			login.Email = c.PostForm("email")
 			login.Password = c.PostForm("pass")
 
-			authorized, name, role, err := auth.CheckAuth(login)
+			authorized, name, role, id, err := auth.CheckAuth(login)
 
 			if err != nil || !authorized {
 				// اگر خطایی رخ داد، کاربر را به صفحه لاگین با پیام خطا هدایت کنیم
@@ -135,6 +135,7 @@ func main() {
 					session.Set("Auth", "logedin")
 					session.Set("UserRole", role)
 					session.Set("UserName", name)
+					session.Set("UserID", id)
 					session.Save()
 				}
 
@@ -427,24 +428,29 @@ func main() {
 			}
 			Totalprice, _ := model.GetUserTotalPrice(user.ID)
 			TotalPaid, _ := model.GetUserTotalPaid(user.ID)
+			adjustments, _ := model.GetUserAdjustments(user.ID)
+
+			var totalOffset float64
+			for _, adj := range adjustments {
+				totalOffset += adj.OffsetAmount
+			}
+
 			var CreditAmount float64
 			var DebtAmount float64
 
-			difference := Totalprice - TotalPaid
+			difference := Totalprice - TotalPaid - totalOffset
 
 			if difference > 0 {
-				// مشتری بدهکار است (باید بیشتر پرداخت کند)
 				CreditAmount = difference
 				DebtAmount = 0
 			} else if difference < 0 {
-				// مشتری بستانکار است (پرداخت بیش از حد انجام داده)
-				DebtAmount = -difference // استفاده از مقدار مطلق
+				DebtAmount = -difference
 				CreditAmount = 0
 			} else {
-				// تسویه کامل شده
 				CreditAmount = 0
 				DebtAmount = 0
 			}
+
 			var userCalc UserCalculations
 			userCalc.ExportTotalprice, _ = model.GetUserTotalPrice(user.ID)
 			userCalc.TotalPaid, _ = model.GetUserTotalPaid(user.ID)
@@ -454,10 +460,12 @@ func main() {
 			c.HTML(http.StatusOK, "details_user.html", gin.H{
 				"Username":         session.Get("UserName"),
 				"UserRole":         session.Get("UserRole"),
+				"UserID":           session.Get("UserID"),
 				"inventories":      inventories,
 				"title":            "ویرایش کاربر",
 				"details":          UserFullDetails,
 				"UserCalculations": userCalc,
+				"adjustments":      adjustments,
 				"action":           "edituser",
 			})
 
@@ -681,16 +689,17 @@ func main() {
 
 			if res.RowsAffected > 0 {
 				c.HTML(http.StatusOK, "add_product.html", gin.H{
-					"title":   "محصول",
-					"action":  "addproduct",
-					"message": boot.Messages("product_add_success"),
-					"success": true,
+					"title":       "محصول",
+					"action":      "addproduct",
+					"inventories": model.GetAllInventories(),
+					"message":     boot.Messages("product made success"),
+					"success":     true,
 				})
 			} else {
 				c.HTML(http.StatusOK, "add_product.html", gin.H{
 					"title":   "محصول",
 					"action":  "addproduct",
-					"message": boot.Messages("product_add_failed"),
+					"message": boot.Messages("product made faild"),
 					"success": false,
 				})
 			}
@@ -1723,7 +1732,16 @@ func main() {
 			})
 
 		})
+		v2.GET("/payment/add", middleware.AuthMiddleware(), func(c *gin.Context) {
 
+			session := sessions.Default(c)
+			c.HTML(http.StatusOK, "add_payment.html", gin.H{
+				"Username":    session.Get("UserName"),
+				"UserRole":    session.Get("UserRole"),
+				"title":       "ثبت پرداخت جدید",
+				"inventories": model.GetAllInventories(),
+			})
+		})
 		v2.GET("/inventories", middleware.AuthMiddleware(), func(c *gin.Context) {
 			session := sessions.Default(c)
 			c.HTML(http.StatusOK, "inventories.html", gin.H{
@@ -1788,8 +1806,10 @@ func main() {
 				"inventory": inventory,
 			})
 		})
+		v2.POST("/balance-adjustments", middleware.AuthMiddleware(), model.CreateBalanceAdjustment)
+		v2.POST("/balance-adjustments/delete/:id", middleware.AuthMiddleware(), model.DeleteBalanceAdjustment)
 
-		v2.POST("/updateinventory", middleware.AuthMiddleware(), func(c *gin.Context) {
+		v2.POST("/updateinventory/delete/", middleware.AuthMiddleware(), func(c *gin.Context) {
 			session := sessions.Default(c)
 
 			id, err := strconv.ParseUint(c.PostForm("inventory-id"), 10, 64)

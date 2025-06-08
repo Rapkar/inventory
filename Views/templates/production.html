@@ -1,294 +1,299 @@
-{{template "header" .}}
-{{template "navbar" .}}
+{{template "header" . }}
 
 <body>
-  <div class="h-100 d-flex align-items-center mt-5">
-    <div class="container mt-5">
-      {{if .success}}
-      {{template "success_notif" .}}
-      {{else if eq .success false}}
-      {{template "danger_notif" .}}
-      {{end}}
-      <div class="col-xs-12 col-sm-12">
-        <form class="form-horizontal" method="post" action="/Dashboard/{{.action}}">
-          <div class="panel panel-default">
-            <div class="panel-heading">
-              <h4 class="panel-title"><i class="fas fa-industry"></i> ثبت تولید جدید</h4>
-            </div>
-            <div class="panel-body">
-              <!-- انتخاب محصول و سیستم اندازه‌گیری -->
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="form-group mt-3">
-                    <label class="col-sm-3 control-label">محصول</label>
-                    <div class="col-sm-9">
-                      <select name="ProductID" class="form-control"  id="product-select">
-                        <option value="">-- انتخاب محصول --</option>
-                        {{range .products}}
-                        <option value="{{.ID}}" 
-                                data-measurement="{{.MeasurementSystem}}"
-                                data-count="{{.Count}}"
-                                data-meter="{{.Meter}}"
-                                data-weight="{{.Weight}}"
-                                data-itemcount="{{.Count}}"
-                                data-barrel="{{.Barrel}}"
-                                data-rollprice="{{.RollePrice}}"
-                                data-meterprice="{{.MeterPrice}}"
-                                data-weightprice="{{.WeightPrice}}"
-                                data-itemprice="{{.CountPrice}}"
-                                data-barrelprice="{{.BarrelPrice}}">
-                          {{.Name}} ({{.Inventory.Name}})
-                        </option>
-                        {{end}}
-                      </select>
-                    </div>
-                  </div>
+  <div class="row">
+
+
+
+    <div class="col-lg-2">{{template "navbar" . }}</div>
+    <div class="col-lg-10">
+      <div class="h-100 d-flex align-items-center mt-5">
+        <div class="container mt-5">
+          {{if .success}}
+          {{template "success_notif" .}}
+          {{else if eq .success false}}
+          {{template "danger_notif" .}}
+          {{end}}
+          <div class="col-xs-12 col-sm-12">
+            <form class="form-horizontal" method="post" action="/Dashboard/{{.action}}">
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <h4 class="panel-title"><i class="fas fa-industry"></i> ثبت تولید جدید</h4>
                 </div>
-                
-                <div class="col-md-6">
-                  <div class="form-group mt-3">
-                    <label class="col-sm-3 control-label">سیستم اندازه‌گیری</label>
-                    <div class="col-sm-9">
-                      <select aria-readonly="true"  readonly name="MeasurementSystem" class="form-control"  id="measurement-system">
-                        <option value="">-- انتخاب کنید --</option>
-                        <option value="roll">رول</option>
-                        <option value="meter">متراژ</option>
-                        <option value="weight">وزن</option>
-                        <option value="count">تعداد</option>
-                        <option value="barrel">بشکه</option>
-                      </select>
+                <div class="panel-body">
+                  <!-- انتخاب محصول و سیستم اندازه‌گیری -->
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="form-group mt-3">
+                        <label class="col-sm-3 control-label">محصول</label>
+                        <div class="col-sm-9">
+                          <select name="ProductID" class="form-control" id="product-select">
+                            <option value="">-- انتخاب محصول --</option>
+                            {{range .products}}
+                            <option value="{{.ID}}" data-measurement="{{.MeasurementSystem}}" data-count="{{.Count}}"
+                              data-meter="{{.Meter}}" data-weight="{{.Weight}}" data-itemcount="{{.Count}}"
+                              data-barrel="{{.Barrel}}" data-rollprice="{{.RollePrice}}"
+                              data-meterprice="{{.MeterPrice}}" data-weightprice="{{.WeightPrice}}"
+                              data-itemprice="{{.CountPrice}}" data-barrelprice="{{.BarrelPrice}}">
+                              {{.Name}} ({{.Inventory.Name}})
+                            </option>
+                            {{end}}
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="col-md-6">
+                      <div class="form-group mt-3">
+                        <label class="col-sm-3 control-label">سیستم اندازه‌گیری</label>
+                        <div class="col-sm-9">
+                          <select aria-readonly="true" readonly name="MeasurementSystem" class="form-control"
+                            id="measurement-system">
+                            <option value="">-- انتخاب کنید --</option>
+                            <option value="roll">رول</option>
+                            <option value="meter">متراژ</option>
+                            <option value="weight">وزن</option>
+                            <option value="count">تعداد</option>
+                            <option value="barrel">بشکه</option>
+                          </select>
+                        </div>
+                      </div>
                     </div>
                   </div>
+
+                  <!-- بخش‌های مختلف اندازه‌گیری -->
+                  <div id="sections-container">
+                    <!-- بخش رول -->
+                    <div id="roll-section" class="row mt-3" style="display: none;">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <h5 class="text-primary"><i class="fas fa-boxes"></i> اطلاعات رول</h5>
+                        </div>
+                        <div class="form-group">
+                          <label class="col-sm-4 control-label">تعداد رول تولید شده</label>
+                          <div class="col-sm-8">
+                            <input name="ProducedRoll" type="number" class="form-control">
+                            <small class="text-muted">موجودی فعلی: <span id="current-count">0</span> رول</small>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label class="col-sm-4 control-label">قیمت هر رول</label>
+                          <div class="col-sm-8 input-group">
+                            <input name="RollePrice" type="number" class="form-control">
+                            <span class="input-group-text">تومان</span>
+                            <small class="text-muted  w-100">قیمت فعلی: <span id="current-rollprice">0</span>
+                              تومان</small>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- بخش متراژ -->
+                    <div id="meter-section" class="row mt-3" style="display: none;">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <h5 class="text-success"><i class="fas fa-ruler-combined"></i> اطلاعات متراژ</h5>
+                        </div>
+                        <div class="form-group">
+                          <label class="col-sm-4 control-label">متراژ تولید شده</label>
+                          <div class="col-sm-8">
+                            <input name="ProducedMeter" type="number" class="form-control" min="0.1" step="0.01">
+                            <small class="text-muted">موجودی فعلی: <span id="current-meter">0</span> متر</small>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label class="col-sm-4 control-label">قیمت هر متر</label>
+                          <div class="col-sm-8 input-group">
+                            <input name="MeterPrice" type="number" class="form-control">
+                            <span class="input-group-text">تومان</span>
+                            <small class="text-muted  w-100">قیمت فعلی: <span id="current-meterprice">0</span>
+                              تومان</small>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- بخش وزن -->
+                    <div id="weight-section" class="row mt-3" style="display: none;">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <h5 class="text-danger"><i class="fas fa-weight"></i> اطلاعات وزن</h5>
+                        </div>
+                        <div class="form-group">
+                          <label class="col-sm-4 control-label">وزن تولید شده</label>
+                          <div class="col-sm-8">
+                            <input name="ProducedWeight" type="number" class="form-control" min="0.1" step="0.01">
+                            <small class="text-muted ">موجودی فعلی: <span id="current-weight">0</span> کیلوگرم</small>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label class="col-sm-4 control-label">قیمت هر کیلو</label>
+                          <div class="col-sm-8 input-group">
+                            <input name="WeightPrice" type="number" class="form-control">
+                            <span class="input-group-text">تومان</span>
+                            <small class="text-muted  w-100">قیمت فعلی: <span id="current-weightprice">0</span>
+                              تومان</small>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- بخش تعداد -->
+                    <div id="count-section" class="row mt-3" style="display: none;">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <h5 class="text-warning"><i class="fas fa-cubes"></i> اطلاعات تعداد</h5>
+                        </div>
+                        <div class="form-group">
+                          <label class="col-sm-4 control-label">تعداد تولید شده</label>
+                          <div class="col-sm-8">
+                            <input name="ProducedCount" type="number" class="form-control" min="1">
+                            <small class="text-muted">موجودی فعلی: <span id="current-itemcount">0</span> عدد</small>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label class="col-sm-4 control-label">قیمت هر عدد</label>
+                          <div class="col-sm-8 input-group">
+                            <input name="CountPrice" type="number" class="form-control" min="1000">
+                            <span class="input-group-text">تومان</span>
+                            <small class="text-muted  w-100">قیمت فعلی: <span id="current-itemprice">0</span>
+                              تومان</small>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- بخش بشکه -->
+                    <div id="barrel-section" class="row mt-3" style="display: none;">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <h5 class="text-dark"><i class="fas fa-oil-can"></i> اطلاعات بشکه</h5>
+                        </div>
+                        <div class="form-group">
+                          <label class="col-sm-4 control-label">تعداد بشکه</label>
+                          <div class="col-sm-8">
+                            <input name="ProducedBarrel" type="number" class="form-control" min="1">
+                            <small class="text-muted">موجودی فعلی: <span id="current-barrel">0</span> بشکه</small>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label class="col-sm-4 control-label">قیمت هر بشکه</label>
+                          <div class="col-sm-8 input-group">
+                            <input name="BarrelPrice" type="number" class="form-control">
+                            <span class="input-group-text">تومان</span>
+                            <small class="text-muted w-100">قیمت فعلی: <span id="current-barrelprice">0</span>
+                              تومان</small>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- توضیحات و تاریخ -->
+
                 </div>
               </div>
-              
-              <!-- بخش‌های مختلف اندازه‌گیری -->
-              <div id="sections-container">
-                <!-- بخش رول -->
-                <div id="roll-section" class="row mt-3" style="display: none;">
-                  <div class="col-md-6">
-                    <div class="form-group">
-                      <h5 class="text-primary"><i class="fas fa-boxes"></i> اطلاعات رول</h5>
-                    </div>
-                    <div class="form-group">
-                      <label class="col-sm-4 control-label">تعداد رول تولید شده</label>
-                      <div class="col-sm-8">
-                        <input name="ProducedCount" type="number" class="form-control" >
-                        <small class="text-muted">موجودی فعلی: <span id="current-count">0</span> رول</small>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-md-6">
-                    <div class="form-group">
-                      <label class="col-sm-4 control-label">قیمت هر رول</label>
-                      <div class="col-sm-8 input-group">
-                        <input name="RollePrice" type="number" class="form-control"  >
-                        <span class="input-group-text">تومان</span>
-                        <small class="text-muted  w-100">قیمت فعلی: <span id="current-rollprice">0</span> تومان</small>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                
-                <!-- بخش متراژ -->
-                <div id="meter-section" class="row mt-3" style="display: none;">
-                  <div class="col-md-6">
-                    <div class="form-group">
-                      <h5 class="text-success"><i class="fas fa-ruler-combined"></i> اطلاعات متراژ</h5>
-                    </div>
-                    <div class="form-group">
-                      <label class="col-sm-4 control-label">متراژ تولید شده</label>
-                      <div class="col-sm-8">
-                        <input name="ProducedMeter" type="number" class="form-control" min="0.1" step="0.01">
-                        <small class="text-muted">موجودی فعلی: <span id="current-meter">0</span> متر</small>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-md-6">
-                    <div class="form-group">
-                      <label class="col-sm-4 control-label">قیمت هر متر</label>
-                      <div class="col-sm-8 input-group">
-                        <input name="MeterPrice" type="number" class="form-control"  >
-                        <span class="input-group-text">تومان</span>
-                        <small class="text-muted  w-100">قیمت فعلی: <span id="current-meterprice">0</span> تومان</small>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                
-                <!-- بخش وزن -->
-                <div id="weight-section" class="row mt-3" style="display: none;">
-                  <div class="col-md-6">
-                    <div class="form-group">
-                      <h5 class="text-danger"><i class="fas fa-weight"></i> اطلاعات وزن</h5>
-                    </div>
-                    <div class="form-group">
-                      <label class="col-sm-4 control-label">وزن تولید شده</label>
-                      <div class="col-sm-8">
-                        <input name="ProducedWeight" type="number" class="form-control" min="0.1" step="0.01">
-                        <small class="text-muted ">موجودی فعلی: <span id="current-weight">0</span> کیلوگرم</small>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-md-6">
-                    <div class="form-group">
-                      <label class="col-sm-4 control-label">قیمت هر کیلو</label>
-                      <div class="col-sm-8 input-group">
-                        <input name="WeightPrice" type="number" class="form-control"  >
-                        <span class="input-group-text">تومان</span>
-                        <small class="text-muted  w-100">قیمت فعلی: <span id="current-weightprice">0</span> تومان</small>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                
-                <!-- بخش تعداد -->
-                <div id="count-section" class="row mt-3" style="display: none;">
-                  <div class="col-md-6">
-                    <div class="form-group">
-                      <h5 class="text-warning"><i class="fas fa-cubes"></i> اطلاعات تعداد</h5>
-                    </div>
-                    <div class="form-group">
-                      <label class="col-sm-4 control-label">تعداد تولید شده</label>
-                      <div class="col-sm-8">
-                        <input name="ProducedCount" type="number" class="form-control" min="1">
-                        <small class="text-muted">موجودی فعلی: <span id="current-itemcount">0</span> عدد</small>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-md-6">
-                    <div class="form-group">
-                      <label class="col-sm-4 control-label">قیمت هر عدد</label>
-                      <div class="col-sm-8 input-group">
-                        <input name="CountPrice" type="number" class="form-control" min="1000">
-                        <span class="input-group-text">تومان</span>
-                        <small class="text-muted  w-100">قیمت فعلی: <span id="current-itemprice">0</span> تومان</small>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                
-                <!-- بخش بشکه -->
-                <div id="barrel-section" class="row mt-3" style="display: none;">
-                  <div class="col-md-6">
-                    <div class="form-group">
-                      <h5 class="text-dark"><i class="fas fa-oil-can"></i> اطلاعات بشکه</h5>
-                    </div>
-                    <div class="form-group">
-                      <label class="col-sm-4 control-label">تعداد بشکه</label>
-                      <div class="col-sm-8">
-                        <input name="ProducedBarrel" type="number" class="form-control" min="1">
-                        <small class="text-muted">موجودی فعلی: <span id="current-barrel">0</span> بشکه</small>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-md-6">
-                    <div class="form-group">
-                      <label class="col-sm-4 control-label">قیمت هر بشکه</label>
-                      <div class="col-sm-8 input-group">
-                        <input name="BarrelPrice" type="number" class="form-control" >
-                        <span class="input-group-text">تومان</span>
-                        <small class="text-muted w-100">قیمت فعلی: <span id="current-barrelprice">0</span> تومان</small>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+
+              <div class="text-center mt-4">
+                <button type="submit" class="btn btn-success btn-lg">
+                  <i class="fas fa-save"></i> ثبت تولید
+                </button>
+
               </div>
-              
-              <!-- توضیحات و تاریخ -->
- 
-            </div>
+            </form>
           </div>
-          
-          <div class="text-center mt-4">
-            <button type="submit" class="btn btn-success btn-lg">
-              <i class="fas fa-save"></i> ثبت تولید
-            </button>
-            <a href="/Dashboard/Production" class="btn btn-secondary btn-lg">
-              <i class="fas fa-list"></i> لیست تولیدات
-            </a>
-          </div>
-        </form>
+        </div>
       </div>
+
+      <script>
+        document.addEventListener('DOMContentLoaded', function () {
+          const productSelect = document.getElementById('product-select');
+          const measurementSystem = document.getElementById('measurement-system');
+
+          // نمایش اطلاعات محصول انتخاب شده
+          productSelect.addEventListener('change', function () {
+            const selectedOption = this.options[this.selectedIndex];
+            if (selectedOption.value) {
+              // نمایش سیستم اندازه‌گیری پیشفرض محصول
+              measurementSystem.value = selectedOption.dataset.measurement;
+              triggerMeasurementChange();
+
+              // // به روزرسانی اطلاعات موجودی و قیمت
+              updateField('current-count', selectedOption.dataset.count, 'رول');
+              updateField('current-meter', selectedOption.dataset.meter, 'متر');
+              updateField('current-weight', selectedOption.dataset.weight, 'کیلوگرم');
+              updateField('current-itemcount', selectedOption.dataset.itemcount, 'عدد');
+              updateField('current-barrel', selectedOption.dataset.barrel, 'بشکه');
+
+              // به روزرسانی قیمت‌ها
+              updatePriceField('RollePrice', selectedOption.dataset.rollprice);
+              updatePriceField('MeterPrice', selectedOption.dataset.meterprice);
+              updatePriceField('WeightPrice', selectedOption.dataset.weightprice);
+              updatePriceField('CountPrice', selectedOption.dataset.countprice);
+              updatePriceField('BarrelPrice', selectedOption.dataset.barrelprice);
+
+              // نمایش قیمت‌های فعلی
+              updateDisplay('current-rollprice', selectedOption.dataset.rollprice);
+              updateDisplay('current-meterprice', selectedOption.dataset.meterprice);
+              updateDisplay('current-weightprice', selectedOption.dataset.weightprice);
+              updateDisplay('current-countprice', selectedOption.dataset.countprice);
+              updateDisplay('current-barrelprice', selectedOption.dataset.barrelprice);
+            }
+          });
+
+          // // تغییر سیستم اندازه‌گیری
+          measurementSystem.addEventListener('change', triggerMeasurementChange);
+
+          function triggerMeasurementChange() {
+            const value = measurementSystem.value;
+
+            // مخفی کردن تمام بخش‌ها
+            document.querySelectorAll('#sections-container > div').forEach(div => {
+              div.style.display = 'none';
+            });
+
+            // نمایش بخش مربوطه
+            if (value) {
+              document.getElementById(`${value}-section`).style.display = 'flex';
+            }
+          }
+
+          function updateField(elementId, value, unit = '') {
+            const element = document.getElementById(elementId);
+            if (element) {
+              element.textContent = value ? `${value} ${unit}` : `0 ${unit}`;
+            }
+          }
+
+          function updatePriceField(fieldName, value) {
+            const field = document.getElementsByName(fieldName)[0];
+            if (field && value) {
+              field.value = value;
+            }
+          }
+
+          function updateDisplay(elementId, value) {
+            const element = document.getElementById(elementId);
+            if (element) {
+              element.textContent = value ? Number(value).toLocaleString() : '0';
+            }
+          }
+        });
+      </script>
     </div>
   </div>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      const productSelect = document.getElementById('product-select');
-      const measurementSystem = document.getElementById('measurement-system');
-      
-      // نمایش اطلاعات محصول انتخاب شده
-      productSelect.addEventListener('change', function() {
-        const selectedOption = this.options[this.selectedIndex];
-        if (selectedOption.value) {
-          // نمایش سیستم اندازه‌گیری پیشفرض محصول
-          measurementSystem.value = selectedOption.dataset.measurement;
-          triggerMeasurementChange();
-          
-          // // به روزرسانی اطلاعات موجودی و قیمت
-          updateField('current-count', selectedOption.dataset.count, 'رول');
-          updateField('current-meter', selectedOption.dataset.meter, 'متر');
-          updateField('current-weight', selectedOption.dataset.weight, 'کیلوگرم');
-          updateField('current-itemcount', selectedOption.dataset.itemcount, 'عدد');
-          updateField('current-barrel', selectedOption.dataset.barrel, 'بشکه');
-          
-          // به روزرسانی قیمت‌ها
-          updatePriceField('RollePrice', selectedOption.dataset.rollprice);
-          updatePriceField('MeterPrice', selectedOption.dataset.meterprice);
-          updatePriceField('WeightPrice', selectedOption.dataset.weightprice);
-          updatePriceField('CountPrice', selectedOption.dataset.countprice);
-          updatePriceField('BarrelPrice', selectedOption.dataset.barrelprice);
-          
-          // نمایش قیمت‌های فعلی
-          updateDisplay('current-rollprice', selectedOption.dataset.rollprice);
-          updateDisplay('current-meterprice', selectedOption.dataset.meterprice);
-          updateDisplay('current-weightprice', selectedOption.dataset.weightprice);
-          updateDisplay('current-countprice', selectedOption.dataset.countprice);
-          updateDisplay('current-barrelprice', selectedOption.dataset.barrelprice);
-        }
-      });
-      
-      // // تغییر سیستم اندازه‌گیری
-      measurementSystem.addEventListener('change', triggerMeasurementChange);
-      
-      function triggerMeasurementChange() {
-        const value = measurementSystem.value;
-        
-        // مخفی کردن تمام بخش‌ها
-        document.querySelectorAll('#sections-container > div').forEach(div => {
-          div.style.display = 'none';
-        });
-        
-        // نمایش بخش مربوطه
-        if (value) {
-          document.getElementById(`${value}-section`).style.display = 'flex';
-        }
-      }
-      
-      function updateField(elementId, value, unit = '') {
-        const element = document.getElementById(elementId);
-        if (element) {
-          element.textContent = value ? `${value} ${unit}` : `0 ${unit}`;
-        }
-      }
-      
-      function updatePriceField(fieldName, value) {
-        const field = document.getElementsByName(fieldName)[0];
-        if (field && value) {
-          field.value = value;
-        }
-      }
-      
-      function updateDisplay(elementId, value) {
-        const element = document.getElementById(elementId);
-        if (element) {
-          element.textContent = value ? Number(value).toLocaleString() : '0';
-        }
-      }
-    });
-  </script> 
-
   {{template "footer.html"}}
 </body>
+
 </html>

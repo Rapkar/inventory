@@ -469,11 +469,14 @@ func GetAllPaymentsByAttribiute(searchTerm string) []Boot.PaymentWithExportAndUs
 	var result []Boot.PaymentWithExportAndUser
 
 	db := Boot.DB()
+	query := "%" + searchTerm + "%"
+
 	err := db.Table("payments").
 		Select("payments.*, exports.number as export_number, users.name as user_name, users.phonenumber as phonenumber").
 		Joins("LEFT JOIN exports ON exports.id = payments.export_id").
 		Joins("LEFT JOIN users ON users.id = payments.user_id").
-		Where("payments.created_at LIKE ? OR payments.number LIKE ?  OR users.name LIKE ? OR users.phonenumber LIKE ?", "%"+searchTerm+"%", "%"+searchTerm+"%", "%"+searchTerm+"%", "%"+searchTerm+"%").
+		Where("payments.created_at LIKE ? OR payments.number LIKE ? OR users.name LIKE ? OR users.phonenumber LIKE ?",
+			query, query, query, query).
 		Scan(&result).Error
 
 	if err != nil {

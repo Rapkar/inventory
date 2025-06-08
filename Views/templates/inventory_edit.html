@@ -1,59 +1,68 @@
 {{template "header" . }}
-{{template "navbar" . }}
 
 <body>
-  <div class="h-100 d-flex align-items-center mt-5">
-    <div class="container mt-5 users_box">
-      <div class="row justify-content-center">
-        <div class="col-md-6">
-          <div class="card">
-            <div class="card-header bg-dark text-white">
-              {{ if .inventory.ID}}
-              <h4 class="mb-0">ویرایش انبار</h4>
-              {{else}}
-              <h4 class="mb-0">افزودن انبار</h4>
-            {{end}}
-            </div>
-            <div class="card-body">
-              {{ if .inventory.ID}}
-              <form action="/Dashboard/updateinventory" method="POST">
-                <input type="hidden" name="inventory-id" value="{{.inventory.ID}}">
+  <div class="row">
 
-                <div class="form-group mb-3">
-                  <label for="name" class="form-label">نام انبار</label>
-                  <input type="text" class="form-control" id="name" name="name" value="{{.inventory.Name}}" required>
+
+
+    <div class="col-lg-2">{{template "navbar" . }}</div>
+    <div class="col-lg-10">
+      <div class="h-100 d-flex align-items-center mt-5">
+        <div class="container mt-5 users_box">
+          <div class="row justify-content-center">
+            <div class="col-md-6">
+              <div class="card">
+                <div class="card-header bg-dark text-white">
+                  {{ if .inventory.ID}}
+                  <h4 class="mb-0">ویرایش انبار</h4>
+                  {{else}}
+                  <h4 class="mb-0">افزودن انبار</h4>
+                  {{end}}
                 </div>
+                <div class="card-body">
+                  {{ if .inventory.ID}}
+                  <form action="/Dashboard/updateinventory" method="POST">
+                    <input type="hidden" name="inventory-id" value="{{.inventory.ID}}">
+
+                    <div class="form-group mb-3">
+                      <label for="name" class="form-label">نام انبار</label>
+                      <input type="text" class="form-control" id="name" name="name" value="{{.inventory.Name}}"
+                        required>
+                    </div>
 
 
 
 
-                <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
-                  <button type="submit" class="btn btn-primary me-md-2">
-                    <i class="bi bi-save"></i> ذخیره تغییرات
-                  </button>
-                  <a href="/Dashboard/inventories" class="btn btn-secondary">
-                    <i class="bi bi-x-circle"></i> انصراف
-                  </a>
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                      <button type="submit" class="btn btn-primary me-md-2">
+                        <i class="bi bi-save"></i> ذخیره تغییرات
+                      </button>
+                      <a href="/Dashboard/inventories" class="btn btn-secondary">
+                        <i class="bi bi-x-circle"></i> انصراف
+                      </a>
+                    </div>
+                  </form>
+                  {{else}}
+                  <form action="/Dashboard/createinventory" method="POST">
+                    <input type="hidden" name="inventory-id" value="">
+
+                    <div class="form-group mb-3">
+                      <label for="name" class="form-label">نام انبار</label>
+                      <input type="text" required class="form-control" id="name" name="name" value="{{.inventory.Name}}"
+                        required>
+                    </div>
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                      <button type="submit" class="btn btn-primary me-md-2">
+                        <i class="bi bi-save"></i> ذخیره تغییرات
+                      </button>
+                      <a href="/Dashboard/inventories" class="btn btn-secondary">
+                        <i class="bi bi-x-circle"></i> انصراف
+                      </a>
+                    </div>
+                  </form>
+                  {{end}}
                 </div>
-              </form>
-              {{else}}
-              <form action="/Dashboard/createinventory" method="POST">
-                <input type="hidden" name="inventory-id" value="">
-
-                <div class="form-group mb-3">
-                  <label for="name" class="form-label">نام انبار</label>
-                  <input type="text" required class="form-control" id="name" name="name" value="{{.inventory.Name}}" required>
-                </div>
-                <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
-                  <button type="submit" class="btn btn-primary me-md-2">
-                    <i class="bi bi-save"></i> ذخیره تغییرات
-                  </button>
-                  <a href="/Dashboard/inventories" class="btn btn-secondary">
-                    <i class="bi bi-x-circle"></i> انصراف
-                  </a>
-                </div>
-              </form>
-              {{end}}
+              </div>
             </div>
           </div>
         </div>

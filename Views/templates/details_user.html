@@ -1,114 +1,388 @@
 {{template "header" . }}
-{{template "navbar" . }}
 
 <body>
-    <div class="h-100 d-flex align-items-center mt-5">
-        <div class="container mt-5 users_box">
-            {{if .success}}
-            {{template "success_notif" .}}
-            {{else if eq .success false}}
-            {{template "danger_notif" .}}
-            {{end}}
-
-            <h2 class="text-dark ">سوابق کاربر</h2>
-            <table dir="rtl" id="userlist" class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">نام</th>
-                        <th scope="col">شماره تماس</th>
-                        <th scope="col">آدرس</th>
-                        <th scope="col">بستانکار</th>
-                        <th scope="col">بدهکار</th>
-                        <th scope="col">کل مبلغ خرید</th>
-                        <th scope="col">تعداد خرید </th>
-                        <th scope="col">کل مبلغ پرداختی</th>
-                        <!-- سایر فیلدهای کاربر -->
-                    </tr>
-                </thead>
-                <tbody dir="rtl">
-                    <tr>
-                        <td>{{.details.User.ID}}</td>
-                        <td>{{.details.User.Name}}</td>
-                        <td>{{.details.User.Phonenumber}}</td>
-                        <td>{{.details.User.Address}}</td>
-                        <td class="price">{{.UserCalculations.DebtAmount}}</td>
-                        <td class="price">{{.UserCalculations.CreditAmount}}</td>
-                        <td class="price">{{.UserCalculations.ExportTotalprice}}</td>
-                        <td class="price">{{.UserCalculations.ExportsCount}}</td>
-                        <td class="price">{{.UserCalculations.TotalPaid}}</td>
-                        <!-- سایر فیلدهای کاربر -->
-                    </tr>
-                </tbody>
-            </table>
-            <hr>
+    <div class="row">
 
 
-            <h3 class="text-dark">لیست سفارشات</h3>
-            <table dir="rtl" id="userlist" class="table table-sm table-striped table-dark">
-                <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">تاریخ</th>
-                        <th scope="col">قیمت کل</th>
-                        <th scope="col">پرداختی</th>
-                        <th scope="col">ارزش افزوده</th>
-                        <th scope="col">مشاهده فاکتور</th>
-                        <th scope="col">پرداخت ها</th>
 
-                        <!-- سایر فیلدهای کاربر -->
-                    </tr>
-                </thead>
-                <tbody dir="rtl">
-                    {{range .details.Exports}}
-                    <tr>
-                        <td>{{.ID}}</td>
-                        <td>{{.CreatedAt}}</td>
-                        <td class="price" >{{.TotalPrice}}</td>
-                        <td class="price" >{{.TotalPrice}}</td>
-                        <td>{{.Tax}}</td>
-                        <td>
-                            <a href="/Dashboard/exportshow?ExportId={{.ID}}"><svg xmlns="http://www.w3.org/2000/svg"
-                                    width="16" height="16" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
-                                    <path
-                                        d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z" />
-                                    <path
-                                        d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0" />
-                                </svg></a>
-
-
-                        </td>
-                        <td>
-
-                            <a href="/Dashboard/payments?user_id={{.UserID}}"> <svg xmlns="http://www.w3.org/2000/svg"
-                                    width="16" height="16" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
-                                    <path
-                                        d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z" />
-                                    <path
-                                        d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0" />
-                                </svg>
-                            </a>
-
-
-                        </td>
-                        <!-- سایر فیلدهای فاکتور -->
-                    </tr>
+        <div class="col-lg-2">{{template "navbar" . }}</div>
+        <div class="col-lg-10">
+            <div class="h-100 d-flex align-items-center mt-5">
+                <div class="container mt-5 users_box">
+                    {{if .success}}
+                    {{template "success_notif" .}}
+                    {{else if eq .success false}}
+                    {{template "danger_notif" .}}
                     {{end}}
 
-                </tbody>
-            </table>
+                    <h2 class="text-dark ">سوابق کاربر</h2>
+                    <div class="d-md-block d-none">
+                        <table dir="rtl" id="userlist" class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">نام</th>
+                                    <th scope="col">شماره تماس</th>
+                                    <th scope="col">آدرس</th>
+                                    <th scope="col">بستانکار</th>
+                                    <th scope="col">بدهکار</th>
+                                    <th scope="col">کل مبلغ خرید</th>
+                                    <th scope="col">تعداد خرید </th>
+                                    <th scope="col">کل مبلغ پرداختی</th>
+                                    <!-- سایر فیلدهای کاربر -->
+                                </tr>
+                            </thead>
+                            <tbody dir="rtl">
+                                <tr>
+                                    <td>{{.details.User.ID}}</td>
+                                    <td>{{.details.User.Name}}</td>
+                                    <td>{{.details.User.Phonenumber}}</td>
+                                    <td>{{.details.User.Address}}</td>
+                                    <td class="">
+                                        <table>
+                                            <tbody>
+                                                <tr>
+                                                    <td class="price">{{printf "%.0f" .UserCalculations.DebtAmount}}
+                                                    </td>
+                                                    <td> </td>
+                                                    <td><a href="#" data-toggle="modal" data-target="#DebtAmount">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16"
+                                                                height="16" fill="currentColor" class="bi bi-pen"
+                                                                viewBox="0 0 16 16">
+                                                                <path
+                                                                    d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001m-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708z" />
+                                                            </svg>
+                                                        </a>
+                                                        <!-- Modal -->
+                                                        <div class="modal fade bd-example-modal-lg" id="DebtAmount"
+                                                            tabindex="-1" role="dialog"
+                                                            aria-labelledby="exampleModalCenterTitle"
+                                                            aria-hidden="true">
+                                                            <div class="modal-dialog modal-dialog-centered modal-lg"
+                                                                role="document">
+                                                                <div class="modal-content" style="direction: rtl;">
+                                                                    <div class="modal-header">
+                                                                        <h5 class="modal-title"
+                                                                            id="exampleModalLongTitle">
+                                                                            تغییر در بستانکاری / بدهکاری
+                                                                        </h5>
+                                                                        <button type="button" class="close ml-0"
+                                                                            data-dismiss="modal" aria-label="بستن">
+                                                                            <span aria-hidden="true">&times;</span>
+                                                                        </button>
+                                                                    </div>
+
+                                                                    <form method="post"
+                                                                        name="balance-adjustments-offset_amount"
+                                                                        action="/Dashboard/balance-adjustments">
+                                                                        <div class="modal-body">
+                                                                            <input type="hidden" name="user_id"
+                                                                                value="{{.details.User.ID}}">
+                                                                            <input type="hidden" name="created_by"
+                                                                                value="{{.UserID}}">
+                                                                            <div class="form-group">
+                                                                                <label for="offsetAmount">مقدار تغییر
+                                                                                    (تومان)</label>
+
+                                                                                <input type="number"
+                                                                                    class="form-control"
+                                                                                    id="offset_amount"
+                                                                                    name="offset_amount"
+                                                                                    placeholder="مثلاً +5000 یا -10000"
+                                                                                    required>
+                                                                            </div>
+
+                                                                            <div class="form-group">
+                                                                                <label for="reason">توضیح</label>
+                                                                                <textarea class="form-control"
+                                                                                    id="reason" name="reason" rows="3"
+                                                                                    placeholder="مثلاً اصلاح بدهی یا تخفیف دستی..."
+                                                                                    required></textarea>
+                                                                            </div>
+                                                                        </div>
+
+                                                                        <div class="modal-footer">
+                                                                            <button type="submit"
+                                                                                class="btn btn-primary">ثبت
+                                                                                تغییر</button>
+                                                                            <button type="button"
+                                                                                class="btn btn-secondary"
+                                                                                data-dismiss="modal">بستن</button>
+                                                                        </div>
+                                                                    </form>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                    <td class="">
+                                        <table>
+                                            <tbody>
+                                                <tr>
+                                                    <td class="price">{{printf "%.0f" .UserCalculations.CreditAmount}}
+                                                    </td>
+                                                    <td> </td>
+                                                    <td><a href="" data-toggle="modal" data-target="#DebtAmount">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16"
+                                                                height="16" fill="currentColor" class="bi bi-pen"
+                                                                viewBox="0 0 16 16">
+                                                                <path
+                                                                    d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001m-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708z" />
+                                                            </svg>
+                                                        </a></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+
+                                    </td>
+                                    <td class="price">{{printf "%.0f" .UserCalculations.ExportTotalprice}}</td>
+                                    <td class="price">{{.UserCalculations.ExportsCount}}</td>
+                                    <td class="price">{{printf "%.0f" .UserCalculations.TotalPaid}}</td>
+                                    <!-- سایر فیلدهای کاربر -->
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="d-block d-md-none">
+                        <table dir="rtl" id="userlist" class="table table-bordered">
+                            <tbody dir="rtl">
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <td>{{.details.User.ID}}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="col">نام</th>
+                                    <td>{{.details.User.Name}}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="col">شماره تماس</th>
+                                    <td>{{.details.User.Phonenumber}}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="col">آدرس</th>
+                                    <td>{{.details.User.Address}}</td>
+                                </tr>
+
+                                <tr>
+                                    <th scope="col">بستانکار</th>
+                                    <td>
+                                        <div class="d-flex justify-content-between align-items-center w-100"
+                                            style="gap: 1rem;">
+                                            <!-- مقدار مبلغ -->
+                                            <div class="price" style="font-weight: bold; font-size: 1.1rem;">{{printf
+                                                "%.0f"
+                                                .UserCalculations.DebtAmount}}</div>
+
+                                            <!-- دکمه ویرایش -->
+                                            <div>
+                                                <a href="#" data-toggle="modal" data-target="#DebtAmountmb">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                                        fill="currentColor" class="bi bi-pen" viewBox="0 0 16 16">
+                                                        <path
+                                                            d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001m-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708z">
+                                                        </path>
+                                                    </svg>
+                                                </a>
+                                            </div>
+                                        </div>
+
+                                        <!-- مودال -->
+                                        <div class="modal fade bd-example-modal-lg" id="DebtAmountmb" tabindex="-1"
+                                            role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                                                <div class="modal-content" style="direction: rtl;">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title">تغییر در بستانکاری / بدهکاری</h5>
+                                                        <button type="button" class="close ml-0" data-dismiss="modal"
+                                                            aria-label="بستن">
+                                                            <span aria-hidden="true">×</span>
+                                                        </button>
+                                                    </div>
+                                                    <form method="post" action="/Dashboard/balance-adjustments">
+                                                        <div class="modal-body">
+                                                            <input type="hidden" name="user_id" value="3">
+                                                            <input type="hidden" name="created_by" value="1">
+                                                            <div class="form-group">
+                                                                <label for="offsetAmount">مقدار تغییر (تومان)</label>
+                                                                <input type="number" class="form-control"
+                                                                    id="offset_amount" name="offset_amount"
+                                                                    placeholder="مثلاً +5000 یا -10000" required>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="reason">توضیح</label>
+                                                                <textarea class="form-control" id="reason" name="reason"
+                                                                    rows="3"
+                                                                    placeholder="مثلاً اصلاح بدهی یا تخفیف دستی..."
+                                                                    required></textarea>
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="submit" class="btn btn-primary">ثبت
+                                                                تغییر</button>
+                                                            <button type="button" class="btn btn-secondary"
+                                                                data-dismiss="modal">بستن</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="col">بدهکار</th>
+                                    <td>
+                                        <div class="d-flex justify-content-between align-items-center w-100"
+                                            style="gap: 1rem;">
+                                            <!-- مبلغ -->
+                                            <div class="price" style="font-weight: bold; font-size: 1.1rem;">{{printf
+                                                "%.0f"
+                                                .UserCalculations.CreditAmount}}</div>
+
+                                            <!-- آیکون ویرایش -->
+                                            <div>
+                                                <a href="#" data-toggle="modal" data-target="#DebtAmountmb">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                                        fill="currentColor" class="bi bi-pen" viewBox="0 0 16 16">
+                                                        <path
+                                                            d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001m-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708z" />
+                                                    </svg>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th scope="col">کل مبلغ خرید</th>
+                                    <td class="price">{{printf "%.0f" .UserCalculations.ExportTotalprice}}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="col">تعداد خرید </th>
+                                    <td class="price">{{.UserCalculations.ExportsCount}}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="col">کل مبلغ پرداختی</th>
+                                    <td class="price">{{printf "%.0f" .UserCalculations.TotalPaid}}</td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <hr>
+
+                    <br>
+                    <h3 class="text-white text-Info bg-danger bg-dark  px-3 py-3 ">لیست سفارشات</h3>
+                    <div class="table-responsive-sm">
+                        <table dir="rtl" id="userlist" class="table table-sm table-striped table-dark">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">تاریخ</th>
+                                    <th scope="col">قیمت کل</th>
+                                    <th scope="col">پرداختی</th>
+                                    <th scope="col">ارزش افزوده</th>
+                                    <th scope="col">مشاهده فاکتور</th>
+                                    <th scope="col">پرداخت ها</th>
+
+                                    <!-- سایر فیلدهای کاربر -->
+                                </tr>
+                            </thead>
+                            <tbody dir="rtl">
+                                {{range .details.Exports}}
+                                <tr>
+                                    <td>{{.ID}}</td>
+                                    <td>{{.CreatedAt}}</td>
+                                    <td class="price">{{.TotalPrice}}</td>
+                                    <td class="price">{{.TotalPrice}}</td>
+                                    <td>{{.Tax}}</td>
+                                    <td>
+                                        <a href="/Dashboard/exportshow?ExportId={{.ID}}"><svg
+                                                xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
+                                                <path
+                                                    d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z" />
+                                                <path
+                                                    d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0" />
+                                            </svg></a>
 
 
+                                    </td>
+                                    <td>
 
+                                        <a href="/Dashboard/payments?user_id={{.UserID}}"> <svg
+                                                xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
+                                                <path
+                                                    d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z" />
+                                                <path
+                                                    d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0" />
+                                            </svg>
+                                        </a>
+
+
+                                    </td>
+                                    <!-- سایر فیلدهای فاکتور -->
+                                </tr>
+                                {{end}}
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <br>
+                    <h4 class="text-Info  bg-warning px-3 py-3 "> تغییرات و پیوست ها</h2>
+                        <div class="table-responsive-sm">
+                            <table dir="rtl" id="userlist" class="table table-bordered bg-warning  ">
+                                <thead>
+                                    <tr>
+                                        <th class="table-Info" scope="col">#</th>
+                                        <th scope="col">مبلغ</th>
+                                        <th scope="col">توسط</th>
+                                        <th scope="col">تاریخ</th>
+                                        <th scope="col">توضیح</th>
+                                        <th scope="col">عملیات</th>
+                                        <!-- سایر فیلدهای کاربر -->
+                                    </tr>
+                                </thead>
+                                <tbody dir="rtl" id="adjustments">
+                                    {{range .adjustments}}
+                                    <tr>
+                                        <td>{{.ID}}</td>
+                                        <td dir="ltr" class="price">{{printf "%.0f" .OffsetAmount}}</td>
+                                        <td>{{.CreatedByUser.Name}}</td>
+                                        <td>{{.CreatedAt}}</td>
+                                        <td>{{.Reason}}</td>
+                                        <td class="text-center"><a data-id="{{.ID}}" class="deleteadjustments"
+                                                href="/balance-adjustments/delete/{{.ID}}"><svg
+                                                    xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                    fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
+                                                    <path
+                                                        d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5" />
+                                                </svg></a></td>
+
+                                    </tr>
+                                    {{end}}
+                                </tbody>
+                            </table>
+
+                        </div>
+
+                </div>
+            </div>
+            <div class="container ">
+                <nav aria-label="Page navigation example" class="justify-content-center d-flex" id="userspaginate">
+                    <ul class="pagination">
+
+                        {{.Paginate }}
+
+                    </ul>
+                </nav>
+            </div>
         </div>
     </div>
-    <div class="container ">
-        <nav aria-label="Page navigation example" class="justify-content-center d-flex" id="userspaginate">
-            <ul class="pagination">
 
-                {{.Paginate }}
-
-            </ul>
-        </nav>
-    </div>
     {{template "footer.html"}}

@@ -1,87 +1,99 @@
 {{template "header" . }}
-{{template "navbar" . }}
 
 <body>
-  {{if .success}}
-  {{template "success_notif" .}}
-  {{end}}
-  <div class="container">
-  </div>
-
-  <div class="h-100 d-flex align-items-center ">
-    <div class="container mt-lg-5 mt-0">
-      <h1 class="d-flex justify-content-center w-100">عایق سازان سپید گام</h1>
-      <div class="row mt-5">
-
-        <div class="col-lg-3 col-6 mt-3 ">
-          <div class="jumbotron ">
-            <a class="btn btn-success btn-lg" href="./export" role="button">ثبت فاکتور جدید</a>
-          </div>
-        </div>
-        <div class="col-lg-3 col-6 mt-3 ">
-          <div class="jumbotron ">
-            <a class="btn  btn-info btn-lg text-white" href="./export-list" role="button">مشاهده فاکتور ها</a>
-          </div>
-        </div>
-        {{ if eq .UserRole "Admin"}}
-
-        <div class="col-lg-3 col-12 text-center  mt-3 mt-lg-a">
-
-          <div class="jumbotron">
-            <a class="btn btn-primary btn-lg" href="./addproduct?inventory=1" role="button"> ثبت محصول انبار اشتهارد</a>
-          </div>
-        </div>
-        {{end}}
-
-        <div class="col-lg-3 col-12 text-center mt-3 mt-lg-a mb-4">
-
-          <div class="jumbotron">
-            <a class="btn btn-primary btn-lg" href="./addproduct?inventory=2" role="button"> ثبت محصول انبار زنجان</a>
-
-          </div>
-        </div>
-        <div class="col-lg-6 col-12 px-0 mt-3">
-    <canvas id="myChart"></canvas>
-
-        </div>
-        <div class="col-lg-6 col-12 mt-5">
-          <h2>آخرین فاکتورها</h2>
-
-          <table dir="rtl" class="table table-sm table-dark " id="exportlist">
-            <thead>
-              <tr>
-                <th scope="col">#</th>
-                <th scope="col">نام کاربر</th>
-                <th scope="col"> شماره فاکتور</th>
-                <th scope="col">تلفن تماس</th>
-                <th scope="col" class="d-none d-md-table-cell">قیمت کل </th>
-                <th scope="col" class="d-none d-md-table-cell">تاریخ خرید</th>
-              </tr>
-            </thead>
-
-            <tbody dir="rtl">
-
-              {{range .exports}}
-              <tr>
-                <th scope="row">{{.ID}}</th>
-                <td>{{.Name}}</td>
-                <td>{{.Number}}</td>
-                <td dir="ltr" class="Phonenumber" style="text-align:right;">{{.Phonenumber}}</td>
-                <td dir="ltr" class="TotalPrice d-none d-md-table-cell" style="text-align:right;">{{.TotalPrice}}</td>
-                <td dir="" class="CreatedAt d-none d-md-table-cell" style="text-align:right;">{{.CreatedAt}}</td>
-       
- 
-              </tr>
-              {{end}}
-
-            </tbody>
-          </table>
-        </div>
+  <div class="row">
 
 
+
+    <div class="col-lg-2">{{template "navbar" . }}</div>
+    <div class="col-lg-10">
+      {{if .success}}
+      {{template "success_notif" .}}
+      {{end}}
+      <div class="container">
       </div>
 
+      <div class="h-100 d-flex align-items-center ">
+        <div class="container mt-lg-5 mt-0">
+          <h1 class="d-flex justify-content-center w-100">عایق سازان سپید گام</h1>
+          <div class="row mt-5">
 
+            <div class="col-lg-3 col-6 mt-3 ">
+              <div class="jumbotron ">
+                <a class="btn btn-success btn-lg" href="./export" role="button">ثبت فاکتور جدید</a>
+              </div>
+            </div>
+            <div class="col-lg-3 col-6 mt-3 ">
+              <div class="jumbotron ">
+                <a class="btn  btn-info btn-lg text-white" href="./export-list" role="button">مشاهده فاکتور ها</a>
+              </div>
+            </div>
+
+            <!-- <div class="col-lg-3 col-12 text-center  mt-3 mt-lg-a">
+
+              <div class="jumbotron">
+                <a class="btn btn-primary btn-lg" href="./addproduct?inventory=1" role="button"> ثبت محصول انبار
+                  اشتهارد</a>
+              </div>
+            </div>
+             -->
+            {{range $.inventories}}
+        
+
+            <div class="col-lg-3 col-12 text-center mt-3 mt-lg-a mb-4">
+
+              <div class="jumbotron">
+                <a class="btn btn-primary btn-lg" href="./addproduct?inventory={{.ID}}" role="button"> ثبت محصول 
+                  {{.Name}}</a>
+
+              </div>
+            </div>
+            {{end}}
+            <div class="col-lg-6 col-12 px-0 mt-3">
+              <canvas id="myChart"></canvas>
+
+            </div>
+            <div class="col-lg-6 col-12 mt-5">
+              <h2>آخرین فاکتورها</h2>
+
+              <table dir="rtl" class="table table-sm table-dark " id="exportlist">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">نام کاربر</th>
+                    <th scope="col"> شماره فاکتور</th>
+                    <th scope="col">تلفن تماس</th>
+                    <th scope="col" class="d-none d-md-table-cell">قیمت کل </th>
+                    <th scope="col" class="d-none d-md-table-cell">تاریخ خرید</th>
+                  </tr>
+                </thead>
+
+                <tbody dir="rtl">
+
+                  {{range .exports}}
+                  <tr>
+                    <th scope="row">{{.ID}}</th>
+                    <td>{{.Name}}</td>
+                    <td>{{.Number}}</td>
+                    <td dir="ltr" class="Phonenumber" style="text-align:right;">{{.Phonenumber}}</td>
+                    <td dir="ltr" class="TotalPrice d-none d-md-table-cell" style="text-align:right;">{{.TotalPrice}}
+                    </td>
+                    <td dir="" class="CreatedAt d-none d-md-table-cell" style="text-align:right;">{{.CreatedAt}}</td>
+
+
+                  </tr>
+                  {{end}}
+
+                </tbody>
+              </table>
+            </div>
+
+
+          </div>
+
+
+        </div>
+      </div>
     </div>
   </div>
   {{template "footer.html"}}

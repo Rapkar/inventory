@@ -1,534 +1,599 @@
 {{template "header" . }}
-{{template "navbar" . }}
 
 <body>
-    <div class="h-100 d-flex align-items-center mt-5">
-        <div class="container mt-5">
-            {{if .success}}
-            {{template "success_notif" .}}
-            {{else if eq .success false}}
-            {{template "danger_notif" .}}
-            {{end}}
-            <div class="col-xs-12 col-sm-12">
-                <form name="expotform" class="form-horizontal mb-4" method="post" action="/Dashboard/{{.action}}">
-                    <div class="row ">
-                        <div class="panel panel-default col-12">
-                            <div class="panel-heading col-12">
-                                <div class="row">
-                                    <div class="col-3 col-lg-6 date">
-                                        {{if eq .HasDraft true}}
-                                        <h2 class="date">ثبت پیش فاکتور</h2>
-                                        {{else}}
-                                        <h2 class="date">ثبت فاکتور</h2>
-                                        {{end}}
-                                    </div>
-                                    <div class="col-9 col-lg-6 ">
-                                        <h4 class="date">تاریخ :{{.date}}</h4>
-                                    </div>
-                                </div>
-                            </div>
+    <div class="row">
 
-                            <div class="panel-body row">
-                                <div class="form-group col-lg-6  mt-3 col-lg-12">
-                                    {{if eq .HasDraft true}}
-                                    <div class="alert alert-secondary" role="alert">
-                                        سند پیش‌نویس - فاکتور قطعی پس از تایید صادر می‌شود
-                                    </div>
 
-                                    <input id="draft" name="draft" type="checkbox" class="d-none" checked>
-                                    {{end}}
-                                </div>
 
-                                <div class="form-group col-lg-6  mt-3">
-                                    <label class="col-sm-12 control-label"> شماره تماس</label>
-                                    <div class="col-sm-12">
-                                        <input required name="Phonenumber" type="tel" placeholder="0912 517 4854"
-                                            class="form-control">
-                                        <small for="Phonenumber" class="form-text">
-                                            مثال: 09123456789
-                                        </small>
-                                    </div>
-                                </div>
-                                <div class="form-group col-lg-6  mt-3">
-                                    <label class="col-sm-12 control-label">نام خریدار</label>
-                                    <div class="col-sm-12">
-                                        <input required name="Name" type="text" placeholder="سالار کمیلی"
-                                            class="form-control">
-                                        <small for="Name" class="form-text">
-                                            مثال: 09123456789
-                                        </small>
-                                    </div>
-                                </div>
-                                <div class="alert alert-info mt-3">
-                                    <i class="fas fa-info-circle"></i>
-                                    توجه داشته باشید اولویت برای استعلام فیلد شماره تماس میباشد
-                                </div>
-                                <div class="form-group col-lg-12  mt-3">
-
-                                    <!-- Modal -->
-                                    <div class="modal fade bd-example-modal-lg " id="inquiry" tabindex="-1"
-                                        role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                                        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title" id="exampleModalLongTitle">مشتریان موجود
-                                                    </h5>
-                                                    <button type="button" class="close" data-dismiss="modal"
-                                                        aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <div class="row">
-                                                        <table dir="rtl" class="table table-sm table-dark ">
-                                                            <thead>
-                                                                <th>#</th>
-                                                                <th>نام و نام خانوادگی</th>
-                                                                <th>شماره تماس</th>
-                                                                <th>مشاهده جزییات</th>
-                                                            </thead>
-                                                            <tbody id="inquirybox">
-
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                </div>
-                                                <div class="modal-footer" style="display: none;">
-                                                    <button type="button" class="btn btn-secondary"
-                                                        data-dismiss="modal">بستن</button>
-                                                </div>
+        <div class="col-lg-2">{{template "navbar" . }}</div>
+        <div class="col-lg-10">
+            <div class="h-100 d-flex align-items-center mt-5">
+                <div class="container mt-5">
+                    {{if .success}}
+                    {{template "success_notif" .}}
+                    {{else if eq .success false}}
+                    {{template "danger_notif" .}}
+                    {{end}}
+                    <div class="col-xs-12 col-sm-12">
+                        <form name="expotform" class="form-horizontal mb-4" method="post"
+                            action="/Dashboard/{{.action}}">
+                            <div class="row ">
+                                <div class="panel panel-default col-12">
+                                    <div class="panel-heading col-12">
+                                        <div class="row">
+                                            <div class="col-3 col-lg-6 date">
+                                                {{if eq .HasDraft true}}
+                                                <h2 class="date">ثبت پیش فاکتور</h2>
+                                                {{else}}
+                                                <h2 class="date">ثبت فاکتور</h2>
+                                                {{end}}
+                                            </div>
+                                            <div class="col-9 col-lg-6 ">
+                                                <h4 class="date">تاریخ :{{.date}}</h4>
                                             </div>
                                         </div>
                                     </div>
-                                    <button name="inquiry" class="btn btn-primary" disabled data-toggle="modal"
-                                        data-target="#inquiry">استعلام</button>
-                                </div>
 
-                                <div class="form-group col-lg-12  mt-3">
-                                    <label class="col-sm-12 control-label">آدرس</label>
-                                    <div class="col-sm-12">
-                                        <textarea name="Address" class="col-sm-12 w-100"
-                                            placeholder="استان البرز - کرج - شاهین  ویلا - شهرک یاس..."></textarea>
-                                    </div>
-                                </div>
-                                <div class="form-group col-lg-6  mt-3">
-                                    <label class="col-sm-12 control-label">شماره فاکتور </label>
-                                    <div class="col-sm-12">
-                                        <input required name="ExportID"  id="ExportNumber"readonly value="{{.exportnumber}}" type="text"
-                                            placeholder="0912 517 4854" class="form-control">
-                                    </div>
-                                </div>
-                                <div class="form-group col-lg-6  mt-3">
-                                    <label class="col-sm-12 control-label">مالیات و ارزش افزوده</label>
-                                    <div class="col-sm-12">
-                                        <input required name="Tax" value="0" type="text" inputmode="numeric"
-                                            pattern="[0-9]*" placeholder="10" class="form-control price">
-                                    </div>
-                                    <span class="out"></span>&nbsp;تومان
-                                </div>
-                                <div class="form-group col-lg-12  mt-3 ">
-                                    <label class="col-sm-12 control-label">نوع پرداخت</label>
-                                    <div class="accordion" id="accordionExample">
-                                        <div class="accordion-item">
-                                            <h2 class="accordion-header" id="headingOne">
-                                                <button class="accordion-button" type="button" data-bs-toggle="collapse"
-                                                    data-bs-target="#collapseOne" aria-expanded="true"
-                                                    aria-controls="collapseOne">
-                                                    مستقیم
-                                                </button>
-                                            </h2>
-                                            <div id="collapseOne" class="accordion-collapse collapse show"
-                                                aria-labelledby="headingOne" data-bs-parent="#accordionExample">
-                                                <div class="accordion-body">
-                                                    <div class="">
-                                                        <input name="directpay" class="price" id="directpay" type='text'
-                                                            inputmode="numeric">
-                                                        <span class="out"></span>&nbsp;تومان
+                                    <div class="panel-body row">
+                                        <div class="form-group col-lg-6  mt-3 col-lg-12">
+                                            {{if eq .HasDraft true}}
+                                            <div class="alert alert-secondary" role="alert">
+                                                سند پیش‌نویس - فاکتور قطعی پس از تایید صادر می‌شود
+                                            </div>
 
+                                            <input id="draft" name="draft" type="checkbox" class="d-none" checked>
+                                            {{end}}
+                                        </div>
+
+                                        <div class="form-group col-lg-6  mt-3">
+                                            <label class="col-sm-12 control-label"> شماره تماس</label>
+                                            <div class="col-sm-12">
+                                                <input required name="Phonenumber" type="tel"
+                                                    placeholder="0912 517 4854" class="form-control">
+                                                <small for="Phonenumber" class="form-text">
+                                                    مثال: 09123456789
+                                                </small>
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-lg-6  mt-3">
+                                            <label class="col-sm-12 control-label">نام خریدار</label>
+                                            <div class="col-sm-12">
+                                                <input required name="Name" type="text" placeholder="سالار کمیلی"
+                                                    class="form-control">
+                                                <small for="Name" class="form-text">
+                                                    مثال: 09123456789
+                                                </small>
+                                            </div>
+                                        </div>
+                                        <div class="alert alert-info mt-3">
+                                            <i class="fas fa-info-circle"></i>
+                                            توجه داشته باشید اولویت برای استعلام فیلد شماره تماس میباشد
+                                        </div>
+                                        <div class="form-group col-lg-12  mt-3">
+
+                                            <!-- Modal -->
+                                            <div class="modal fade bd-example-modal-lg " id="inquiry" tabindex="-1"
+                                                role="dialog" aria-labelledby="exampleModalCenterTitle"
+                                                aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered modal-lg"
+                                                    role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="exampleModalLongTitle">مشتریان
+                                                                موجود
+                                                            </h5>
+                                                            <button type="button" class="close" data-dismiss="modal"
+                                                                aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <div class="row">
+                                                                <table dir="rtl" class="table table-sm table-dark ">
+                                                                    <thead>
+                                                                        <th>#</th>
+                                                                        <th>نام و نام خانوادگی</th>
+                                                                        <th>شماره تماس</th>
+                                                                        <th>مشاهده جزییات</th>
+                                                                    </thead>
+                                                                    <tbody id="inquirybox">
+
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer" style="display: none;">
+                                                            <button type="button" class="btn btn-secondary"
+                                                                data-dismiss="modal">بستن</button>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
+                                            <button name="inquiry" class="btn btn-primary" disabled data-toggle="modal"
+                                                data-target="#inquiry">استعلام</button>
                                         </div>
-                                        <div class="accordion-item">
-                                            <h2 class="accordion-header" id="headingTwo">
-                                                <button class="accordion-button collapsed" type="button"
-                                                    data-bs-toggle="collapse" data-bs-target="#collapseTwo"
-                                                    aria-expanded="false" aria-controls="collapseTwo">
-                                                    چک‌ها
-                                                </button>
-                                            </h2>
-                                            <div id="collapseTwo" class="accordion-collapse collapse"
-                                                aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
-                                                <div class="accordion-body">
-                                                    <!-- Form for adding new checks -->
-                                                    <div class="mb-4 p-3 border rounded">
-                                                        <h5 class="mb-3">افزودن چک جدید</h5>
-                                                        <div class="row g-3">
-                                                            <div class="col-md-3">
-                                                                <label for="checkDate" class="form-label">تاریخ
-                                                                    چک</label>
-                                                                <input type="button" class="form-control"
-                                                                    id="checkDate">
-                                                            </div>
-                                                            <div class="col-md-3">
-                                                                <label for="bankName" class="form-label">بانک</label>
-                                                                <select class="form-select" id="bankName">
-                                                                    <option value="" selected disabled>انتخاب کنید...
-                                                                    </option>
-                                                                    <option value="melli">ملی</option>
-                                                                    <option value="mellat">ملت</option>
-                                                                    <option value="saderat">صادرات</option>
-                                                                    <option value="tejarat">تجارت</option>
-                                                                    <option value="saman">سامان</option>
-                                                                    <option value="shahr">شهر</option>
-                                                                    <option value="pasargad">پاسارگاد</option>
-                                                                    <option value="sepah">سپه</option>
-                                                                    <option value="keshavarzi">کشاورزی</option>
-                                                                    <option value="parsian">پارسیان</option>
-                                                                    <option value="eghtesad-novin">اقتصاد نوین</option>
-                                                                    <option value="ansar">انصار</option>
-                                                                    <option value="karafarin">کارآفرین</option>
-                                                                    <option value="sina">سینا</option>
-                                                                    <option value="sarmayeh">سرمایه</option>
-                                                                    <option value="tosee">توسعه</option>
-                                                                    <option value="tosee-saderat">توسعه صادرات</option>
-                                                                    <option value="tosee-taavon">توسعه تعاون</option>
-                                                                    <option value="day">دی</option>
-                                                                    <option value="hekmat">حکمت ایرانیان</option>
-                                                                    <option value="ayandeh">آینده</option>
-                                                                    <option value="ghavamin">قوامین</option>
-                                                                    <option value="khavar">خاورمیانه</option>
-                                                                    <option value="mehr-iran">مهر ایران</option>
-                                                                    <option value="mehr-eqtesad">مهر اقتصاد</option>
-                                                                    <option value="post">پست بانک</option>
-                                                                    <option value="qarzolqasaneh">قرض‌الحسنه مهر ایران
-                                                                    </option>
-                                                                    <option value="qarzolqasaneh-resalat">قرض‌الحسنه
-                                                                        رسالت</option>
-                                                                    <option value="iran-zamin">ایران زمین</option>
-                                                                    <option value="kosar">کوثر</option>
-                                                                    <option value="markazi">مرکزی</option>
-                                                                    <option value="reffah">رفاه</option>
-                                                                    <option value="tourism">گردشگری</option>
-                                                                    <option value="industry">صنعت و معدن</option>
-                                                                </select>
-                                                            </div>
-                                                            <div class="col-md-3 form-group">
-                                                                <label for="serialCode" class="form-label">کد
-                                                                    سریال</label>
-                                                                <input type="text" class="form-control price"
-                                                                    id="serialCode" placeholder="123-456-789">
-                                                            </div>
-                                                            <div class="col-md-3 form-group">
-                                                                <label for="checkAmount" class="form-label">مبلغ
-                                                                    (تومان)</label>
-                                                                <input type="text" class="form-control price"
-                                                                    id="checkAmount" placeholder="1,000,000">
+
+                                        <div class="form-group col-lg-12  mt-3">
+                                            <label class="col-sm-12 control-label">آدرس</label>
+                                            <div class="col-sm-12">
+                                                <textarea name="Address" class="col-sm-12 w-100"
+                                                    placeholder="استان البرز - کرج - شاهین  ویلا - شهرک یاس..."></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-lg-6  mt-3">
+                                            <label class="col-sm-12 control-label">شماره فاکتور </label>
+                                            <div class="col-sm-12">
+                                                <input required name="ExportID" id="ExportNumber" readonly
+                                                    value="{{.exportnumber}}" type="text" placeholder="0912 517 4854"
+                                                    class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-lg-6  mt-3">
+                                            <label class="col-sm-12 control-label">مالیات و ارزش افزوده</label>
+                                            <div class="col-sm-12">
+                                                <input required name="Tax" value="0" type="text" inputmode="numeric"
+                                                    pattern="[0-9]*" placeholder="10" class="form-control price">
+                                            </div>
+                                            <span class="out"></span>&nbsp;تومان
+                                        </div>
+                                        <div class="form-group col-lg-12  mt-3 ">
+                                            <label class="col-sm-12 control-label">نوع پرداخت</label>
+                                            <div class="accordion" id="accordionExample">
+                                                <div class="accordion-item">
+                                                    <h2 class="accordion-header" id="headingOne">
+                                                        <button class="accordion-button" type="button"
+                                                            data-bs-toggle="collapse" data-bs-target="#collapseOne"
+                                                            aria-expanded="true" aria-controls="collapseOne">
+                                                            مستقیم
+                                                        </button>
+                                                    </h2>
+                                                    <div id="collapseOne" class="accordion-collapse collapse show"
+                                                        aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                                                        <div class="accordion-body">
+                                                            <div class="">
+                                                                <input name="directpay" class="price" id="directpay"
+                                                                    type='text' inputmode="numeric">
                                                                 <span class="out"></span>&nbsp;تومان
 
                                                             </div>
                                                         </div>
-                                                        <button id="addcheck" class="btn btn-primary mt-3">ذخیره
-                                                            چک</button>
                                                     </div>
+                                                </div>
+                                                <div class="accordion-item">
+                                                    <h2 class="accordion-header" id="headingTwo">
+                                                        <button class="accordion-button collapsed" type="button"
+                                                            data-bs-toggle="collapse" data-bs-target="#collapseTwo"
+                                                            aria-expanded="false" aria-controls="collapseTwo">
+                                                            چک‌ها
+                                                        </button>
+                                                    </h2>
+                                                    <div id="collapseTwo" class="accordion-collapse collapse"
+                                                        aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                                                        <div class="accordion-body">
+                                                            <!-- Form for adding new checks -->
+                                                            <div class="mb-4 p-3 border rounded">
+                                                                <h5 class="mb-3">افزودن چک جدید</h5>
+                                                                <div class="row g-3">
+                                                                    <div class="col-md-3">
+                                                                        <label for="checkDate" class="form-label">تاریخ
+                                                                            چک</label>
+                                                                        <input type="button" class="form-control"
+                                                                            id="checkDate">
+                                                                    </div>
+                                                                    <div class="col-md-3">
+                                                                        <label for="bankName"
+                                                                            class="form-label">بانک</label>
+                                                                        <select class="form-select" id="bankName">
+                                                                            <option value="" selected disabled>انتخاب
+                                                                                کنید...
+                                                                            </option>
+                                                                            <option value="melli">ملی</option>
+                                                                            <option value="mellat">ملت</option>
+                                                                            <option value="saderat">صادرات</option>
+                                                                            <option value="tejarat">تجارت</option>
+                                                                            <option value="saman">سامان</option>
+                                                                            <option value="shahr">شهر</option>
+                                                                            <option value="pasargad">پاسارگاد</option>
+                                                                            <option value="sepah">سپه</option>
+                                                                            <option value="keshavarzi">کشاورزی</option>
+                                                                            <option value="parsian">پارسیان</option>
+                                                                            <option value="eghtesad-novin">اقتصاد نوین
+                                                                            </option>
+                                                                            <option value="ansar">انصار</option>
+                                                                            <option value="karafarin">کارآفرین</option>
+                                                                            <option value="sina">سینا</option>
+                                                                            <option value="sarmayeh">سرمایه</option>
+                                                                            <option value="tosee">توسعه</option>
+                                                                            <option value="tosee-saderat">توسعه صادرات
+                                                                            </option>
+                                                                            <option value="tosee-taavon">توسعه تعاون
+                                                                            </option>
+                                                                            <option value="day">دی</option>
+                                                                            <option value="hekmat">حکمت ایرانیان
+                                                                            </option>
+                                                                            <option value="ayandeh">آینده</option>
+                                                                            <option value="ghavamin">قوامین</option>
+                                                                            <option value="khavar">خاورمیانه</option>
+                                                                            <option value="mehr-iran">مهر ایران</option>
+                                                                            <option value="mehr-eqtesad">مهر اقتصاد
+                                                                            </option>
+                                                                            <option value="post">پست بانک</option>
+                                                                            <option value="qarzolqasaneh">قرض‌الحسنه مهر
+                                                                                ایران
+                                                                            </option>
+                                                                            <option value="qarzolqasaneh-resalat">
+                                                                                قرض‌الحسنه
+                                                                                رسالت</option>
+                                                                            <option value="iran-zamin">ایران زمین
+                                                                            </option>
+                                                                            <option value="kosar">کوثر</option>
+                                                                            <option value="markazi">مرکزی</option>
+                                                                            <option value="reffah">رفاه</option>
+                                                                            <option value="tourism">گردشگری</option>
+                                                                            <option value="industry">صنعت و معدن
+                                                                            </option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <div class="col-md-3 form-group">
+                                                                        <label for="serialCode" class="form-label">کد
+                                                                            سریال</label>
+                                                                        <input type="text" class="form-control price"
+                                                                            id="serialCode" placeholder="123-456-789">
+                                                                    </div>
+                                                                    <div class="col-md-3 form-group">
+                                                                        <label for="checkAmount" class="form-label">مبلغ
+                                                                            (تومان)</label>
+                                                                        <input type="text" class="form-control price"
+                                                                            id="checkAmount" placeholder="1,000,000">
+                                                                        <span class="out"></span>&nbsp;تومان
 
-                                                    <!-- List of registered checks -->
-                                                    <div class="mt-4">
-                                                        <h5>چک‌های ثبت شده</h5>
-                                                        <div class="table-responsive">
-                                                            <table class="table table-striped table-hover">
-                                                                <thead>
-                                                                    <tr>
-                                                                        <th>ردیف</th>
-                                                                        <th>تاریخ</th>
-                                                                        <th>بانک</th>
-                                                                        <th>کد سریال</th>
-                                                                        <th>مبلغ</th>
-                                                                        <th>وضعیت</th>
-                                                                        <th>عملیات</th>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody id="checksTableBody">
-                                                                    <!-- Checks will be added here dynamically -->
-                                                                </tbody>
-                                                            </table>
+                                                                    </div>
+                                                                </div>
+                                                                <button id="addcheck" class="btn btn-primary mt-3">ذخیره
+                                                                    چک</button>
+                                                            </div>
+
+                                                            <!-- List of registered checks -->
+                                                            <div class="mt-4">
+                                                                <h5>چک‌های ثبت شده</h5>
+                                                                <div class="table-responsive">
+                                                                    <table class="table table-striped table-hover">
+                                                                        <thead>
+                                                                            <tr>
+                                                                                <th>ردیف</th>
+                                                                                <th>تاریخ</th>
+                                                                                <th>بانک</th>
+                                                                                <th>کد سریال</th>
+                                                                                <th>مبلغ</th>
+                                                                                <th>وضعیت</th>
+                                                                                <th>عملیات</th>
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody id="checksTableBody">
+                                                                            <!-- Checks will be added here dynamically -->
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
+
+
+                                            </div>
+
+
+                                        </div>
+                                        <div class="form-group col-lg-12  mt-3">
+                                            <label class="col-sm-12 control-label">توضیحات</label>
+                                            <div class="col-sm-12">
+                                                <textarea class="w-100" name="describe"></textarea>
                                             </div>
                                         </div>
-
-
-                                    </div>
-
-
-                                </div>
-                                <div class="form-group col-lg-12  mt-3">
-                                    <label class="col-sm-12 control-label">توضیحات</label>
-                                    <div class="col-sm-12">
-                                        <textarea class="w-100" name="describe"></textarea>
-                                    </div>
-                                </div>
-                                <div id="ExportProductsList" class="users_box">
-                                    <table class="table" dir="rtl">
-                                        <thead>
-                                            <tr>
-                                                <th scope="col">#</th>
-                                                <th scope="col">نام محصول</th>
-                                                <th attr-si="roll" class="psi items"  scope="col"  >تعداد رول</th>
-                                                <th attr-si="roll" class="pr items" scope="col">قیمت هر رول</th>
-                                                <th attr-si="meter" class="psi items" scope="col">متراژ</th>
-                                                <th attr-si="meter" class="pr items" scope="col">قیمت هر متر</th>
-                                                <th attr-si="weight" class="psi items" scope="col">وزن</th>
-                                                <th attr-si="weight" class="pr items" scope="col">قیمت هر کیلو</th>
-                                                <th attr-si="count" class="psi items" scope="col">تعداد</th>
-                                                <th attr-si="count" class="pr items" scope="col">قیمت هر عدد</th>
-                                                <th attr-si="barrel" class="psi items" scope="col">تعداد</th>
-                                                <th attr-si="barrel" class="pr items" scope="col">قیمت هر بشکه</th>
-                                                <th scope="col"> قیمت کل</th>
-                                                <th scope="col"> حذف</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                           <tr> <td class="Notfound " colspan="14">محصولی اضافه نشده است</td></tr>
-                                        </tbody>
-                                        <tfoot style="background-color: #ddd;">
-                                            <tr>
-                                                <td class="price" colspan="14" style="text-align: left;">0</td>
-                                            </tr>
-                                            <input class="d-none" name="ExportTotalPrice" novalidate
-                                                id="ExportTotalPrice" type="number">
-                                        </tfoot>
-                                    </table>
-
-                                </div>
-                                <div
-                                    class="form-group col-lg-6  mt-3 text-success text-right d-flex justify-content-start">
-                                    <p>مجموع دریافتی از مشتری:
-                                        <span id="TotalPayments">0</span>
-                                        تومان
-                                    </p>
-                                </div>
-                                <div class="form-group col-lg-6  mt-3 text-left d-flex justify-content-end">
-                                    <button type="button" id="modal" class="btn btn-primary ms-auto "
-                                        data-toggle="modal" data-target="#ProductBox">
-                                        افزودن محصول +
-                                    </button>
-                                </div>
-                                <!-- Modal -->
-                                <div class="modal fade bd-example-modal-lg ExportPeoducts" id="ProductBox" tabindex="-1"
-                                    role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="exampleModalLongTitle">انتخاب محصول</h5>
-                                                <button type="button" class="close" data-dismiss="modal"
-                                                    aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                </button>
+                                        <div id="ExportProductsList" class="users_box">
+                                            <div class="table-responsive-sm">
+                                                <table class="table" dir="rtl">
+                                                    <thead>
+                                                        <tr>
+                                                            <th scope="col">#</th>
+                                                            <th scope="col">نام محصول</th>
+                                                            <th attr-si="roll" class="psi items" scope="col">تعداد رول
+                                                            </th>
+                                                            <th attr-si="roll" class="pr items" scope="col">قیمت هر رول
+                                                            </th>
+                                                            <th attr-si="meter" class="psi items" scope="col">متراژ</th>
+                                                            <th attr-si="meter" class="pr items" scope="col">قیمت هر متر
+                                                            </th>
+                                                            <th attr-si="weight" class="psi items" scope="col">وزن</th>
+                                                            <th attr-si="weight" class="pr items" scope="col">قیمت هر
+                                                                کیلو</th>
+                                                            <th attr-si="count" class="psi items" scope="col">تعداد</th>
+                                                            <th attr-si="count" class="pr items" scope="col">قیمت هر عدد
+                                                            </th>
+                                                            <th attr-si="barrel" class="psi items" scope="col">تعداد
+                                                            </th>
+                                                            <th attr-si="barrel" class="pr items" scope="col">قیمت هر
+                                                                بشکه</th>
+                                                            <th scope="col"> قیمت کل</th>
+                                                            <th scope="col"> حذف</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td class="Notfound " colspan="14">محصولی اضافه نشده است
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                    <tfoot style="background-color: #ddd;">
+                                                        <tr>
+                                                            <td class="price" colspan="14" style="text-align: left;">0
+                                                            </td>
+                                                        </tr>
+                                                        <input class="d-none" name="ExportTotalPrice" novalidate
+                                                            id="ExportTotalPrice" type="number">
+                                                    </tfoot>
+                                                </table>
                                             </div>
-                                            <div class="modal-body">
-                                                <div class="row">
-                                                    <div class="form-group col-12  mt-3">
-                                                        <label class="col-sm-12 control-label">نام انبار</label>
-                                                        <div class="col-sm-12">
 
-                                                            <select name="InventoryNumber" id="InventoryIS"
-                                                                class="col-12">
-                                                                <option defualt value="0">لطفا یک انبار را انتخاب کنید
-                                                                </option>
-                                                                {{range $.inventories}}
-                                                                <option defualt value="{{.ID}}">{{.Name}}</option>
-          {{end}}
-                                                            </select>
-
-                                                        </div>
+                                        </div>
+                                        <div
+                                            class="form-group col-lg-6  mt-3 text-success text-right d-flex justify-content-start">
+                                            <p>مجموع دریافتی از مشتری:
+                                                <span id="TotalPayments">0</span>
+                                                تومان
+                                            </p>
+                                        </div>
+                                        <div class="form-group col-lg-6  mt-3 text-left d-flex justify-content-end">
+                                            <button type="button" id="modal" class="btn btn-primary ms-auto "
+                                                data-toggle="modal" data-target="#ProductBox">
+                                                افزودن محصول +
+                                            </button>
+                                        </div>
+                                        <!-- Modal -->
+                                        <div class="modal fade bd-example-modal-lg ExportPeoducts" id="ProductBox"
+                                            tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+                                            aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="exampleModalLongTitle">انتخاب محصول
+                                                        </h5>
+                                                        <button type="button" class="close" data-dismiss="modal"
+                                                            aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
                                                     </div>
-                                                    <div class="form-group col-12  mt-3 ProductIs"
-                                                        style="display: none;">
-                                                        <label class="col-sm-12 control-label">نام کالا</label>
-                                                        <div class="col-sm-12">
-
-                                                            <select disabled name="ProductName" id="ProductIs"
-                                                                class="col-12">
-                                                                <option defualt value="0">لطفا یک محصول را انتخاب کنید
-                                                                </option>
-                                                            </select>
-
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="Content" style="display: none;">
+                                                    <div class="modal-body">
                                                         <div class="row">
-                                                            <!-- inputs  -->
-                                                            <input type="hidden" name="measurementsystem">
-                                                            <div class="inputs">
-                                                                <div attr-si="roll"
-                                                                    class="form-group col-lg-12  mt-3 d-none">
-                                                                    <label class="col-sm-12 control-label" min="0">تعداد
-                                                                        رول</label>
-                                                                    <div class="col-sm-12">
-                                                                        <input style="text-align:right;" min="0"
-                                                                            name="Rolle" pattern="[0-9]*" type="number"
-                                                                            class="form-control">
-                                                                        <small class="text-muted w-100">موجودی فعلی:
-                                                                            <span class="ProductsRolle">0</span>
-                                                                            رول</small>
-                                                                    </div>
-                                                                </div>
-                                                                <div attr-si="meter"
-                                                                    class="form-group col-lg-12  mt-3 d-none">
-                                                                    <label class="col-sm-12 control-label"
-                                                                        min="0">متراژ</label>
-                                                                    <div class="col-sm-12">
-                                                                        <input name="Meter" pattern="[0-9]*" min="0"
-                                                                            type="number" class="form-control ">
-                                                                        <small class="text-muted w-100">موجودی فعلی:
-                                                                            <span class="ProductsMeter">0</span>
-                                                                            متر</small>
-                                                                    </div>
-                                                                </div>
-                                                                <div attr-si="weight"
-                                                                    class="form-group col-lg-12  mt-3 d-none">
-                                                                    <label class="col-sm-12 control-label"
-                                                                        min="0">وزن</label>
-                                                                    <div class="col-sm-12">
-                                                                        <input name="Weight" pattern="[0-9]*" min="0"
-                                                                            type="number" class="form-control ">
-                                                                        <small class="text-muted w-100">موجودی فعلی:
-                                                                            <span class="ProductsWeight">0</span>
-                                                                            کیلوگرم</small>
-                                                                    </div>
-                                                                </div>
-                                                                <div attr-si="count"
-                                                                    class="form-group col-lg-12  mt-3 d-none">
-                                                                    <label class="col-sm-12 control-label"
-                                                                        min="0">تعداد</label>
-                                                                    <div class="col-sm-12">
-                                                                        <input name="Count" pattern="[0-9]*" min="0"
-                                                                            type="number" class="form-control ">
-
-                                                                        <small class="text-muted w-100">موجودی فعلی:
-                                                                            <span class="ProductsWeight">0</span>
-                                                                            عدد</small>
-                                                                    </div>
-                                                                </div>
-                                                                <div attr-si="barrel"
-                                                                    class="form-group col-lg-12  mt-3 d-none">
-                                                                    <label class="col-sm-12 control-label"
-                                                                        min="0">بشکه</label>
-                                                                    <div class="col-sm-12">
-                                                                        <input name="Barrel" pattern="[0-9]*" min="0"
-                                                                            type="number" class="form-control ">
-                                                                        <small class="text-muted w-100">موجودی فعلی:
-                                                                            <span class="ProductsBarrel">0</span>
-                                                                            بشکه</small>
-
-                                                                    </div>
-                                                                </div>
-
-
-                                                            </div>
-                                                            <div class="calculator">
-                                                                <!-- calculator -->
-                                                                <div attr-si="roll" class="form-group col-lg-12  mt-3">
-                                                                    <label class="col-sm-12   control-label"
-                                                                        min="0">قیمت هر
-                                                                        رول</label>
-                                                                    <div class="col-sm-12">
-                                                                        <input name="RollePrice" min="0" readonly
-                                                                            type="number" value="{{.RollePrice}}"
-                                                                            class="form-control bg-dark text-white">
-                                                                    </div>
-                                                                    <span class="out"></span>&nbsp;تومان
-                                                                </div>
-                                                                <div attr-si="meter"
-                                                                    class="form-group  col-lg-12  mt-3">
-                                                                    <label class="col-sm-12 control-label" min="0">قیمت
-                                                                        هر
-                                                                        متر</label>
-                                                                    <div class="col-sm-12">
-                                                                        <input name="MeterPrice" min="0" readonly
-                                                                            type="number" value="{{.MeterPrice}}"
-                                                                            class="form-control bg-dark text-white">
-                                                                    </div>
-                                                                    <span class="out"></span>&nbsp;تومان
-                                                                </div>
-                                                                <div attr-si="weight"
-                                                                    class="form-group  col-lg-12  mt-3">
-                                                                    <label class="col-sm-12 control-label" min="0">قیمت
-                                                                        هر
-                                                                        متر</label>
-                                                                    <div class="col-sm-12">
-                                                                        <input name="WeightPrice" min="0" readonly
-                                                                            type="number" value="{{.WeightPrice}}"
-                                                                            class="form-control bg-dark text-white">
-                                                                    </div>
-                                                                    <span class="out"></span>&nbsp;تومان
-                                                                </div>
-                                                                <div attr-si="count"
-                                                                    class="form-group  col-lg-12  mt-3">
-                                                                    <label
-                                                                        class="col-sm-12 control-label bg-dark text-white"
-                                                                        min="0">قیمت
-                                                                        هر
-                                                                        عدد</label>
-                                                                    <div class="col-sm-12">
-                                                                        <input name="CountPrice" min="0" readonly
-                                                                            type="number" value="{{.CountPrice}}"
-                                                                            class="form-control bg-dark text-white">
-                                                                    </div>
-                                                                    <span class="out"></span>&nbsp;تومان
-                                                                </div>
-                                                                <div attr-si="barrel"
-                                                                    class="form-group  col-lg-12  mt-3">
-                                                                    <label class="col-sm-12 control-label" min="0">قیمت
-                                                                        هر
-                                                                        بشکه</label>
-                                                                    <div class="col-sm-12">
-                                                                        <input name="BarrelPrice" min="0" readonly
-                                                                            type="number" value="{{.BarrelPrice}}"
-                                                                            class="form-control bg-dark text-white">
-                                                                    </div>
-                                                                    <span class="out"></span>&nbsp;تومان
-                                                                </div>
-
-                                                            </div>
-                                                            <div class="form-group mt-3">
-                                                                <label class="col-sm-12 control-label" min="0">مجموع
-                                                                    قیمت </label>
+                                                            <div class="form-group col-12  mt-3">
+                                                                <label class="col-sm-12 control-label">نام انبار</label>
                                                                 <div class="col-sm-12">
-                                                                    <input type="number"
-                                                                        class="form-control bg-dark text-white" min="0"
-                                                                        name="TotalPrice" readonly>
+
+                                                                    <select name="InventoryNumber" id="InventoryIS"
+                                                                        class="col-12">
+                                                                        <option defualt value="0">لطفا یک انبار را
+                                                                            انتخاب کنید
+                                                                        </option>
+                                                                        {{range $.inventories}}
+                                                                        <option defualt value="{{.ID}}">{{.Name}}
+                                                                        </option>
+                                                                        {{end}}
+                                                                    </select>
+
                                                                 </div>
-                                                                <span class="out"></span>&nbsp;تومان
+                                                            </div>
+                                                            <div class="form-group col-12  mt-3 ProductIs"
+                                                                style="display: none;">
+                                                                <label class="col-sm-12 control-label">نام کالا</label>
+                                                                <div class="col-sm-12">
+
+                                                                    <select disabled name="ProductName" id="ProductIs"
+                                                                        class="col-12">
+                                                                        <option defualt value="0">لطفا یک محصول را
+                                                                            انتخاب کنید
+                                                                        </option>
+                                                                    </select>
+
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="Content" style="display: none;">
+                                                                <div class="row">
+                                                                    <!-- inputs  -->
+                                                                    <input type="hidden" name="measurementsystem">
+                                                                    <div class="inputs">
+                                                                        <div attr-si="roll"
+                                                                            class="form-group col-lg-12  mt-3 d-none">
+                                                                            <label class="col-sm-12 control-label"
+                                                                                min="0">تعداد
+                                                                                رول</label>
+                                                                            <div class="col-sm-12">
+                                                                                <input style="text-align:right;" min="0"
+                                                                                    name="Rolle" pattern="[0-9]*"
+                                                                                    type="number" class="form-control">
+                                                                                <small class="text-muted w-100">موجودی
+                                                                                    فعلی:
+                                                                                    <span class="ProductsRolle">0</span>
+                                                                                    رول</small>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div attr-si="meter"
+                                                                            class="form-group col-lg-12  mt-3 d-none">
+                                                                            <label class="col-sm-12 control-label"
+                                                                                min="0">متراژ</label>
+                                                                            <div class="col-sm-12">
+                                                                                <input name="Meter" pattern="[0-9]*"
+                                                                                    min="0" type="number"
+                                                                                    class="form-control ">
+                                                                                <small class="text-muted w-100">موجودی
+                                                                                    فعلی:
+                                                                                    <span class="ProductsMeter">0</span>
+                                                                                    متر</small>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div attr-si="weight"
+                                                                            class="form-group col-lg-12  mt-3 d-none">
+                                                                            <label class="col-sm-12 control-label"
+                                                                                min="0">وزن</label>
+                                                                            <div class="col-sm-12">
+                                                                                <input name="Weight" pattern="[0-9]*"
+                                                                                    min="0" type="number"
+                                                                                    class="form-control ">
+                                                                                <small class="text-muted w-100">موجودی
+                                                                                    فعلی:
+                                                                                    <span
+                                                                                        class="ProductsWeight">0</span>
+                                                                                    کیلوگرم</small>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div attr-si="count"
+                                                                            class="form-group col-lg-12  mt-3 d-none">
+                                                                            <label class="col-sm-12 control-label"
+                                                                                min="0">تعداد</label>
+                                                                            <div class="col-sm-12">
+                                                                                <input name="Count" pattern="[0-9]*"
+                                                                                    min="0" type="number"
+                                                                                    class="form-control ">
+
+                                                                                <small class="text-muted w-100">موجودی
+                                                                                    فعلی:
+                                                                                    <span
+                                                                                        class="ProductsWeight">0</span>
+                                                                                    عدد</small>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div attr-si="barrel"
+                                                                            class="form-group col-lg-12  mt-3 d-none">
+                                                                            <label class="col-sm-12 control-label"
+                                                                                min="0">بشکه</label>
+                                                                            <div class="col-sm-12">
+                                                                                <input name="Barrel" pattern="[0-9]*"
+                                                                                    min="0" type="number"
+                                                                                    class="form-control ">
+                                                                                <small class="text-muted w-100">موجودی
+                                                                                    فعلی:
+                                                                                    <span
+                                                                                        class="ProductsBarrel">0</span>
+                                                                                    بشکه</small>
+
+                                                                            </div>
+                                                                        </div>
+
+
+                                                                    </div>
+                                                                    <div class="calculator">
+                                                                        <!-- calculator -->
+                                                                        <div attr-si="roll"
+                                                                            class="form-group col-lg-12  mt-3">
+                                                                            <label class="col-sm-12   control-label"
+                                                                                min="0">قیمت هر
+                                                                                رول</label>
+                                                                            <div class="col-sm-12">
+                                                                                <input name="RollePrice" min="0"
+                                                                                    readonly type="number"
+                                                                                    value="{{.RollePrice}}"
+                                                                                    class="form-control bg-dark text-white">
+                                                                            </div>
+                                                                            <span class="out"></span>&nbsp;تومان
+                                                                        </div>
+                                                                        <div attr-si="meter"
+                                                                            class="form-group  col-lg-12  mt-3">
+                                                                            <label class="col-sm-12 control-label"
+                                                                                min="0">قیمت
+                                                                                هر
+                                                                                متر</label>
+                                                                            <div class="col-sm-12">
+                                                                                <input name="MeterPrice" min="0"
+                                                                                    readonly type="number"
+                                                                                    value="{{.MeterPrice}}"
+                                                                                    class="form-control bg-dark text-white">
+                                                                            </div>
+                                                                            <span class="out"></span>&nbsp;تومان
+                                                                        </div>
+                                                                        <div attr-si="weight"
+                                                                            class="form-group  col-lg-12  mt-3">
+                                                                            <label class="col-sm-12 control-label"
+                                                                                min="0">قیمت
+                                                                                هر
+                                                                                متر</label>
+                                                                            <div class="col-sm-12">
+                                                                                <input name="WeightPrice" min="0"
+                                                                                    readonly type="number"
+                                                                                    value="{{.WeightPrice}}"
+                                                                                    class="form-control bg-dark text-white">
+                                                                            </div>
+                                                                            <span class="out"></span>&nbsp;تومان
+                                                                        </div>
+                                                                        <div attr-si="count"
+                                                                            class="form-group  col-lg-12  mt-3">
+                                                                            <label
+                                                                                class="col-sm-12 control-label bg-dark text-white"
+                                                                                min="0">قیمت
+                                                                                هر
+                                                                                عدد</label>
+                                                                            <div class="col-sm-12">
+                                                                                <input name="CountPrice" min="0"
+                                                                                    readonly type="number"
+                                                                                    value="{{.CountPrice}}"
+                                                                                    class="form-control bg-dark text-white">
+                                                                            </div>
+                                                                            <span class="out"></span>&nbsp;تومان
+                                                                        </div>
+                                                                        <div attr-si="barrel"
+                                                                            class="form-group  col-lg-12  mt-3">
+                                                                            <label class="col-sm-12 control-label"
+                                                                                min="0">قیمت
+                                                                                هر
+                                                                                بشکه</label>
+                                                                            <div class="col-sm-12">
+                                                                                <input name="BarrelPrice" min="0"
+                                                                                    readonly type="number"
+                                                                                    value="{{.BarrelPrice}}"
+                                                                                    class="form-control bg-dark text-white">
+                                                                            </div>
+                                                                            <span class="out"></span>&nbsp;تومان
+                                                                        </div>
+
+                                                                    </div>
+                                                                    <div class="form-group mt-3">
+                                                                        <label class="col-sm-12 control-label"
+                                                                            min="0">مجموع
+                                                                            قیمت </label>
+                                                                        <div class="col-sm-12">
+                                                                            <input type="number"
+                                                                                class="form-control bg-dark text-white"
+                                                                                min="0" name="TotalPrice" readonly>
+                                                                        </div>
+                                                                        <span class="out"></span>&nbsp;تومان
+                                                                    </div>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
+                                                    <div class="modal-footer" style="display: none;">
+                                                        <button type="button" class="btn btn-secondary"
+                                                            data-dismiss="modal">بستن</button>
+                                                        <button id="AddProductToExport" type="button"
+                                                            class="btn btn-primary">ذخیره
+                                                            اطلاعات</button>
+                                                    </div>
                                                 </div>
                                             </div>
-                                            <div class="modal-footer" style="display: none;">
-                                                <button type="button" class="btn btn-secondary"
-                                                    data-dismiss="modal">بستن</button>
-                                                <button id="AddProductToExport" type="button"
-                                                    class="btn btn-primary">ذخیره
-                                                    اطلاعات</button>
-                                            </div>
                                         </div>
+
+
+
+
                                     </div>
                                 </div>
-
-
-
-
+                                <button type="submit" class=" mt-5 btn btn-success">ثبت فاکتور</button>
                             </div>
-                        </div>
-                        <button type="submit" class=" mt-5 btn btn-success">ثبت فاکتور</button>
+                        </form>
                     </div>
-                </form>
-            </div>
 
+                </div>
+            </div>
         </div>
     </div>
+
     {{template "footer.html"}}
